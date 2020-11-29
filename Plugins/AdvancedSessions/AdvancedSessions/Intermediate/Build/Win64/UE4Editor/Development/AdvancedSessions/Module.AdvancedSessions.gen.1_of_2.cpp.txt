@@ -1,9 +1,9 @@
-D:\YandexDisk\DUDE\IMBA\Plugins\AdvancedSessions\AdvancedSessions\Intermediate\Build\Win64\UE4Editor\Development\AdvancedSessions\Definitions.AdvancedSessions.h
-D:/YandexDisk/DUDE/IMBA/Plugins/AdvancedSessions/AdvancedSessions/Intermediate/Build/Win64/UE4Editor/Inc/AdvancedSessions/AdvancedExternalUILibrary.gen.cpp
+D:\Game\PUPSYA\IMBA\Plugins\AdvancedSessions\AdvancedSessions\Intermediate\Build\Win64\UE4Editor\Development\AdvancedSessions\Definitions.AdvancedSessions.h
+D:/Game/PUPSYA/IMBA/Plugins/AdvancedSessions/AdvancedSessions/Intermediate/Build/Win64/UE4Editor/Inc/AdvancedSessions/AdvancedExternalUILibrary.gen.cpp
 D:\Program Files (x86)\UE_4.24\Engine\Source\Runtime\CoreUObject\Public\UObject/GeneratedCppIncludes.h
 D:\Program Files (x86)\UE_4.24\Engine\Source\Runtime\CoreUObject\Public\UObject/MetaData.h
-D:\YandexDisk\DUDE\IMBA\Plugins\AdvancedSessions\AdvancedSessions\Source\AdvancedSessions/Classes/AdvancedExternalUILibrary.h
-D:\YandexDisk\DUDE\IMBA\Plugins\AdvancedSessions\AdvancedSessions\Source\AdvancedSessions\Classes\BlueprintDataDefinitions.h
+D:\Game\PUPSYA\IMBA\Plugins\AdvancedSessions\AdvancedSessions\Source\AdvancedSessions/Classes/AdvancedExternalUILibrary.h
+D:\Game\PUPSYA\IMBA\Plugins\AdvancedSessions\AdvancedSessions\Source\AdvancedSessions\Classes\BlueprintDataDefinitions.h
 D:\Program Files (x86)\UE_4.24\Engine\Source\Runtime\Engine\Classes\GameFramework/PlayerState.h
 D:\Program Files (x86)\UE_4.24\Engine\Intermediate\Build\Win64\UE4Editor\Inc\Engine\PlayerState.generated.h
 D:\Program Files (x86)\UE_4.24\Engine\Plugins\Online\OnlineSubsystem\Source\Public\Interfaces/OnlineSessionInterface.h
@@ -140,21 +140,21 @@ D:\Program Files (x86)\UE_4.24\Engine\Plugins\Online\OnlineSubsystemUtils\Source
 D:\Program Files (x86)\UE_4.24\Engine\Plugins\Online\OnlineSubsystemUtils\Intermediate\Build\Win64\UE4Editor\Inc\OnlineSubsystemUtils\ShowLoginUICallbackProxy.generated.h
 D:\Program Files (x86)\UE_4.24\Engine\Plugins\Online\OnlineSubsystemUtils\Source\OnlineSubsystemUtils/Classes/TurnBasedBlueprintLibrary.h
 D:\Program Files (x86)\UE_4.24\Engine\Plugins\Online\OnlineSubsystemUtils\Intermediate\Build\Win64\UE4Editor\Inc\OnlineSubsystemUtils\TurnBasedBlueprintLibrary.generated.h
-D:\YandexDisk\DUDE\IMBA\Plugins\AdvancedSessions\AdvancedSessions\Intermediate\Build\Win64\UE4Editor\Inc\AdvancedSessions\BlueprintDataDefinitions.generated.h
-D:\YandexDisk\DUDE\IMBA\Plugins\AdvancedSessions\AdvancedSessions\Intermediate\Build\Win64\UE4Editor\Inc\AdvancedSessions\AdvancedExternalUILibrary.generated.h
-D:/YandexDisk/DUDE/IMBA/Plugins/AdvancedSessions/AdvancedSessions/Intermediate/Build/Win64/UE4Editor/Inc/AdvancedSessions/AdvancedFriendsGameInstance.gen.cpp
-D:\YandexDisk\DUDE\IMBA\Plugins\AdvancedSessions\AdvancedSessions\Source\AdvancedSessions/Classes/AdvancedFriendsGameInstance.h
-D:\YandexDisk\DUDE\IMBA\Plugins\AdvancedSessions\AdvancedSessions\Source\AdvancedSessions\Classes\AdvancedFriendsInterface.h
-D:\YandexDisk\DUDE\IMBA\Plugins\AdvancedSessions\AdvancedSessions\Intermediate\Build\Win64\UE4Editor\Inc\AdvancedSessions\AdvancedFriendsInterface.generated.h
-D:\YandexDisk\DUDE\IMBA\Plugins\AdvancedSessions\AdvancedSessions\Intermediate\Build\Win64\UE4Editor\Inc\AdvancedSessions\AdvancedFriendsGameInstance.generated.h
-D:/YandexDisk/DUDE/IMBA/Plugins/AdvancedSessions/AdvancedSessions/Intermediate/Build/Win64/UE4Editor/Inc/AdvancedSessions/AdvancedFriendsInterface.gen.cpp
-D:/YandexDisk/DUDE/IMBA/Plugins/AdvancedSessions/AdvancedSessions/Intermediate/Build/Win64/UE4Editor/Inc/AdvancedSessions/AdvancedFriendsLibrary.gen.cpp
-D:\YandexDisk\DUDE\IMBA\Plugins\AdvancedSessions\AdvancedSessions\Source\AdvancedSessions/Classes/AdvancedFriendsLibrary.h
-D:\YandexDisk\DUDE\IMBA\Plugins\AdvancedSessions\AdvancedSessions\Intermediate\Build\Win64\UE4Editor\Inc\AdvancedSessions\AdvancedFriendsLibrary.generated.h
-D:/YandexDisk/DUDE/IMBA/Plugins/AdvancedSessions/AdvancedSessions/Intermediate/Build/Win64/UE4Editor/Inc/AdvancedSessions/AdvancedIdentityLibrary.gen.cpp
-D:\YandexDisk\DUDE\IMBA\Plugins\AdvancedSessions\AdvancedSessions\Source\AdvancedSessions/Classes/AdvancedIdentityLibrary.h
-D:\YandexDisk\DUDE\IMBA\Plugins\AdvancedSessions\AdvancedSessions\Intermediate\Build\Win64\UE4Editor\Inc\AdvancedSessions\AdvancedIdentityLibrary.generated.h
-D:/YandexDisk/DUDE/IMBA/Plugins/AdvancedSessions/AdvancedSessions/Intermediate/Build/Win64/UE4Editor/Inc/AdvancedSessions/AdvancedSessions.init.gen.cpp
-D:/YandexDisk/DUDE/IMBA/Plugins/AdvancedSessions/AdvancedSessions/Intermediate/Build/Win64/UE4Editor/Inc/AdvancedSessions/AdvancedSessionsLibrary.gen.cpp
-D:\YandexDisk\DUDE\IMBA\Plugins\AdvancedSessions\AdvancedSessions\Source\AdvancedSessions/Classes/AdvancedSessionsLibrary.h
-D:\YandexDisk\DUDE\IMBA\Plugins\AdvancedSessions\AdvancedSessions\Intermediate\Build\Win64\UE4Editor\Inc\AdvancedSessions\AdvancedSessionsLibrary.generated.h
+D:\Game\PUPSYA\IMBA\Plugins\AdvancedSessions\AdvancedSessions\Intermediate\Build\Win64\UE4Editor\Inc\AdvancedSessions\BlueprintDataDefinitions.generated.h
+D:\Game\PUPSYA\IMBA\Plugins\AdvancedSessions\AdvancedSessions\Intermediate\Build\Win64\UE4Editor\Inc\AdvancedSessions\AdvancedExternalUILibrary.generated.h
+D:/Game/PUPSYA/IMBA/Plugins/AdvancedSessions/AdvancedSessions/Intermediate/Build/Win64/UE4Editor/Inc/AdvancedSessions/AdvancedFriendsGameInstance.gen.cpp
+D:\Game\PUPSYA\IMBA\Plugins\AdvancedSessions\AdvancedSessions\Source\AdvancedSessions/Classes/AdvancedFriendsGameInstance.h
+D:\Game\PUPSYA\IMBA\Plugins\AdvancedSessions\AdvancedSessions\Source\AdvancedSessions\Classes\AdvancedFriendsInterface.h
+D:\Game\PUPSYA\IMBA\Plugins\AdvancedSessions\AdvancedSessions\Intermediate\Build\Win64\UE4Editor\Inc\AdvancedSessions\AdvancedFriendsInterface.generated.h
+D:\Game\PUPSYA\IMBA\Plugins\AdvancedSessions\AdvancedSessions\Intermediate\Build\Win64\UE4Editor\Inc\AdvancedSessions\AdvancedFriendsGameInstance.generated.h
+D:/Game/PUPSYA/IMBA/Plugins/AdvancedSessions/AdvancedSessions/Intermediate/Build/Win64/UE4Editor/Inc/AdvancedSessions/AdvancedFriendsInterface.gen.cpp
+D:/Game/PUPSYA/IMBA/Plugins/AdvancedSessions/AdvancedSessions/Intermediate/Build/Win64/UE4Editor/Inc/AdvancedSessions/AdvancedFriendsLibrary.gen.cpp
+D:\Game\PUPSYA\IMBA\Plugins\AdvancedSessions\AdvancedSessions\Source\AdvancedSessions/Classes/AdvancedFriendsLibrary.h
+D:\Game\PUPSYA\IMBA\Plugins\AdvancedSessions\AdvancedSessions\Intermediate\Build\Win64\UE4Editor\Inc\AdvancedSessions\AdvancedFriendsLibrary.generated.h
+D:/Game/PUPSYA/IMBA/Plugins/AdvancedSessions/AdvancedSessions/Intermediate/Build/Win64/UE4Editor/Inc/AdvancedSessions/AdvancedIdentityLibrary.gen.cpp
+D:\Game\PUPSYA\IMBA\Plugins\AdvancedSessions\AdvancedSessions\Source\AdvancedSessions/Classes/AdvancedIdentityLibrary.h
+D:\Game\PUPSYA\IMBA\Plugins\AdvancedSessions\AdvancedSessions\Intermediate\Build\Win64\UE4Editor\Inc\AdvancedSessions\AdvancedIdentityLibrary.generated.h
+D:/Game/PUPSYA/IMBA/Plugins/AdvancedSessions/AdvancedSessions/Intermediate/Build/Win64/UE4Editor/Inc/AdvancedSessions/AdvancedSessions.init.gen.cpp
+D:/Game/PUPSYA/IMBA/Plugins/AdvancedSessions/AdvancedSessions/Intermediate/Build/Win64/UE4Editor/Inc/AdvancedSessions/AdvancedSessionsLibrary.gen.cpp
+D:\Game\PUPSYA\IMBA\Plugins\AdvancedSessions\AdvancedSessions\Source\AdvancedSessions/Classes/AdvancedSessionsLibrary.h
+D:\Game\PUPSYA\IMBA\Plugins\AdvancedSessions\AdvancedSessions\Intermediate\Build\Win64\UE4Editor\Inc\AdvancedSessions\AdvancedSessionsLibrary.generated.h

@@ -1,0 +1,14 @@
+/NOLOGO
+/errorReport:prompt
+/MACHINE:x64
+/SUBSYSTEM:WINDOWS
+/DEF
+/NAME:"UE4Editor-AdvancedSteamSessions.dll"
+/IGNORE:4221
+/NODEFAULTLIB
+"D:\YandexDisk\DUDE\IMBA\Intermediate\Build\Win64\MyProject9Editor\Development\Engine\SharedPCH.Engine.ShadowErrors.h.obj"
+"D:\YandexDisk\DUDE\IMBA\Plugins\AdvancedSessions\AdvancedSteamSessions\Intermediate\Build\Win64\UE4Editor\Development\AdvancedSteamSessions\Module.AdvancedSteamSessions.cpp.obj"
+"D:\YandexDisk\DUDE\IMBA\Plugins\AdvancedSessions\AdvancedSteamSessions\Intermediate\Build\Win64\UE4Editor\Development\AdvancedSteamSessions\Module.AdvancedSteamSessions.gen.cpp.obj"
+"D:\YandexDisk\DUDE\IMBA\Plugins\AdvancedSessions\AdvancedSteamSessions\Intermediate\Build\Win64\UE4Editor\Development\AdvancedSteamSessions\Default.rc2.res"
+/OUT:"D:\YandexDisk\DUDE\IMBA\Plugins\AdvancedSessions\AdvancedSteamSessions\Intermediate\Build\Win64\UE4Editor\Development\AdvancedSteamSessions\UE4Editor-AdvancedSteamSessions.lib"
+/INCLUDE:IMPLEMENT_MODULE_AdvancedSteamSessions

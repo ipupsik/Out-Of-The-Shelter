@@ -1,7 +1,7 @@
-D:\YandexDisk\DUDE\IMBA\Plugins\AdvancedSessions\AdvancedSteamSessions\Intermediate\Build\Win64\UE4Editor\Development\AdvancedSteamSessions\Definitions.AdvancedSteamSessions.h
-D:/YandexDisk/DUDE/IMBA/Plugins/AdvancedSessions/AdvancedSteamSessions/Source/AdvancedSteamSessions/Private/AdvancedSteamFriendsLibrary.cpp
-D:\YandexDisk\DUDE\IMBA\Plugins\AdvancedSessions\AdvancedSteamSessions\Source\AdvancedSteamSessions\Classes\AdvancedSteamFriendsLibrary.h
-D:\YandexDisk\DUDE\IMBA\Plugins\AdvancedSessions\AdvancedSessions\Source\AdvancedSessions\Classes\BlueprintDataDefinitions.h
+D:\Game\PUPSYA\IMBA\Plugins\AdvancedSessions\AdvancedSteamSessions\Intermediate\Build\Win64\UE4Editor\Development\AdvancedSteamSessions\Definitions.AdvancedSteamSessions.h
+D:/Game/PUPSYA/IMBA/Plugins/AdvancedSessions/AdvancedSteamSessions/Source/AdvancedSteamSessions/Private/AdvancedSteamFriendsLibrary.cpp
+D:\Game\PUPSYA\IMBA\Plugins\AdvancedSessions\AdvancedSteamSessions\Source\AdvancedSteamSessions\Classes\AdvancedSteamFriendsLibrary.h
+D:\Game\PUPSYA\IMBA\Plugins\AdvancedSessions\AdvancedSessions\Source\AdvancedSessions\Classes\BlueprintDataDefinitions.h
 D:\Program Files (x86)\UE_4.24\Engine\Source\Runtime\Engine\Classes\GameFramework/PlayerState.h
 D:\Program Files (x86)\UE_4.24\Engine\Intermediate\Build\Win64\UE4Editor\Inc\Engine\PlayerState.generated.h
 D:\Program Files (x86)\UE_4.24\Engine\Plugins\Online\OnlineSubsystem\Source\Public\Interfaces/OnlineSessionInterface.h
@@ -138,7 +138,7 @@ D:\Program Files (x86)\UE_4.24\Engine\Plugins\Online\OnlineSubsystemUtils\Source
 D:\Program Files (x86)\UE_4.24\Engine\Plugins\Online\OnlineSubsystemUtils\Intermediate\Build\Win64\UE4Editor\Inc\OnlineSubsystemUtils\ShowLoginUICallbackProxy.generated.h
 D:\Program Files (x86)\UE_4.24\Engine\Plugins\Online\OnlineSubsystemUtils\Source\OnlineSubsystemUtils/Classes/TurnBasedBlueprintLibrary.h
 D:\Program Files (x86)\UE_4.24\Engine\Plugins\Online\OnlineSubsystemUtils\Intermediate\Build\Win64\UE4Editor\Inc\OnlineSubsystemUtils\TurnBasedBlueprintLibrary.generated.h
-D:\YandexDisk\DUDE\IMBA\Plugins\AdvancedSessions\AdvancedSessions\Intermediate\Build\Win64\UE4Editor\Inc\AdvancedSessions\BlueprintDataDefinitions.generated.h
+D:\Game\PUPSYA\IMBA\Plugins\AdvancedSessions\AdvancedSessions\Intermediate\Build\Win64\UE4Editor\Inc\AdvancedSessions\BlueprintDataDefinitions.generated.h
 D:\Program Files (x86)\UE_4.24\Engine\Source\ThirdParty\Steamworks\Steamv146\sdk\public\steam/steam_api.h
 D:\Program Files (x86)\UE_4.24\Engine\Source\ThirdParty\Steamworks\Steamv146\sdk\public\steam\steam_api_common.h
 D:\Program Files (x86)\UE_4.24\Engine\Source\ThirdParty\Steamworks\Steamv146\sdk\public\steam\steamtypes.h
@@ -169,18 +169,18 @@ D:\Program Files (x86)\UE_4.24\Engine\Source\ThirdParty\Steamworks\Steamv146\sdk
 D:\Program Files (x86)\UE_4.24\Engine\Source\ThirdParty\Steamworks\Steamv146\sdk\public\steam\isteamvideo.h
 D:\Program Files (x86)\UE_4.24\Engine\Source\ThirdParty\Steamworks\Steamv146\sdk\public\steam\isteamparentalsettings.h
 D:\Program Files (x86)\UE_4.24\Engine\Source\ThirdParty\Steamworks\Steamv146\sdk\public\steam\isteamremoteplay.h
-D:\YandexDisk\DUDE\IMBA\Plugins\AdvancedSessions\AdvancedSteamSessions\Intermediate\Build\Win64\UE4Editor\Inc\AdvancedSteamSessions\AdvancedSteamFriendsLibrary.generated.h
-D:\YandexDisk\DUDE\IMBA\Plugins\AdvancedSessions\AdvancedSessions\Source\AdvancedSessions\Classes\OnlineSubSystemHeader.h
-D:/YandexDisk/DUDE/IMBA/Plugins/AdvancedSessions/AdvancedSteamSessions/Source/AdvancedSteamSessions/Private/AdvancedSteamSessions.cpp
-D:\YandexDisk\DUDE\IMBA\Plugins\AdvancedSessions\AdvancedSteamSessions\Source\AdvancedSteamSessions\Classes\AdvancedSteamSessions.h
-D:/YandexDisk/DUDE/IMBA/Plugins/AdvancedSessions/AdvancedSteamSessions/Source/AdvancedSteamSessions/Private/AdvancedSteamWorkshopLibrary.cpp
-D:\YandexDisk\DUDE\IMBA\Plugins\AdvancedSessions\AdvancedSteamSessions\Source\AdvancedSteamSessions\Classes\AdvancedSteamWorkshopLibrary.h
-D:\YandexDisk\DUDE\IMBA\Plugins\AdvancedSessions\AdvancedSteamSessions\Intermediate\Build\Win64\UE4Editor\Inc\AdvancedSteamSessions\AdvancedSteamWorkshopLibrary.generated.h
-D:/YandexDisk/DUDE/IMBA/Plugins/AdvancedSessions/AdvancedSteamSessions/Source/AdvancedSteamSessions/Private/SteamRequestGroupOfficersCallbackProxy.cpp
-D:\YandexDisk\DUDE\IMBA\Plugins\AdvancedSessions\AdvancedSteamSessions\Source\AdvancedSteamSessions\Classes\SteamRequestGroupOfficersCallbackProxy.h
+D:\Game\PUPSYA\IMBA\Plugins\AdvancedSessions\AdvancedSteamSessions\Intermediate\Build\Win64\UE4Editor\Inc\AdvancedSteamSessions\AdvancedSteamFriendsLibrary.generated.h
+D:\Game\PUPSYA\IMBA\Plugins\AdvancedSessions\AdvancedSessions\Source\AdvancedSessions\Classes\OnlineSubSystemHeader.h
+D:/Game/PUPSYA/IMBA/Plugins/AdvancedSessions/AdvancedSteamSessions/Source/AdvancedSteamSessions/Private/AdvancedSteamSessions.cpp
+D:\Game\PUPSYA\IMBA\Plugins\AdvancedSessions\AdvancedSteamSessions\Source\AdvancedSteamSessions\Classes\AdvancedSteamSessions.h
+D:/Game/PUPSYA/IMBA/Plugins/AdvancedSessions/AdvancedSteamSessions/Source/AdvancedSteamSessions/Private/AdvancedSteamWorkshopLibrary.cpp
+D:\Game\PUPSYA\IMBA\Plugins\AdvancedSessions\AdvancedSteamSessions\Source\AdvancedSteamSessions\Classes\AdvancedSteamWorkshopLibrary.h
+D:\Game\PUPSYA\IMBA\Plugins\AdvancedSessions\AdvancedSteamSessions\Intermediate\Build\Win64\UE4Editor\Inc\AdvancedSteamSessions\AdvancedSteamWorkshopLibrary.generated.h
+D:/Game/PUPSYA/IMBA/Plugins/AdvancedSessions/AdvancedSteamSessions/Source/AdvancedSteamSessions/Private/SteamRequestGroupOfficersCallbackProxy.cpp
+D:\Game\PUPSYA\IMBA\Plugins\AdvancedSessions\AdvancedSteamSessions\Source\AdvancedSteamSessions\Classes\SteamRequestGroupOfficersCallbackProxy.h
 D:\Program Files (x86)\UE_4.24\Engine\Plugins\Online\OnlineSubsystemSteam\Source\Public\OnlineSubsystemSteam.h
 D:\Program Files (x86)\UE_4.24\Engine\Plugins\Online\OnlineSubsystemSteam\Source\Public\OnlineSubsystemSteamPackage.h
-D:\YandexDisk\DUDE\IMBA\Plugins\AdvancedSessions\AdvancedSteamSessions\Intermediate\Build\Win64\UE4Editor\Inc\AdvancedSteamSessions\SteamRequestGroupOfficersCallbackProxy.generated.h
-D:/YandexDisk/DUDE/IMBA/Plugins/AdvancedSessions/AdvancedSteamSessions/Source/AdvancedSteamSessions/Private/SteamWSRequestUGCDetailsCallbackProxy.cpp
-D:\YandexDisk\DUDE\IMBA\Plugins\AdvancedSessions\AdvancedSteamSessions\Source\AdvancedSteamSessions\Classes\SteamWSRequestUGCDetailsCallbackProxy.h
-D:\YandexDisk\DUDE\IMBA\Plugins\AdvancedSessions\AdvancedSteamSessions\Intermediate\Build\Win64\UE4Editor\Inc\AdvancedSteamSessions\SteamWSRequestUGCDetailsCallbackProxy.generated.h
+D:\Game\PUPSYA\IMBA\Plugins\AdvancedSessions\AdvancedSteamSessions\Intermediate\Build\Win64\UE4Editor\Inc\AdvancedSteamSessions\SteamRequestGroupOfficersCallbackProxy.generated.h
+D:/Game/PUPSYA/IMBA/Plugins/AdvancedSessions/AdvancedSteamSessions/Source/AdvancedSteamSessions/Private/SteamWSRequestUGCDetailsCallbackProxy.cpp
+D:\Game\PUPSYA\IMBA\Plugins\AdvancedSessions\AdvancedSteamSessions\Source\AdvancedSteamSessions\Classes\SteamWSRequestUGCDetailsCallbackProxy.h
+D:\Game\PUPSYA\IMBA\Plugins\AdvancedSessions\AdvancedSteamSessions\Intermediate\Build\Win64\UE4Editor\Inc\AdvancedSteamSessions\SteamWSRequestUGCDetailsCallbackProxy.generated.h

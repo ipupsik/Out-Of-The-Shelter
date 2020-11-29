@@ -31,7 +31,7 @@
 /wd4838
 /we4668
 /I .
-/I D:\YandexDisk\DUDE\IMBA\Plugins\AdvancedSessions\AdvancedSteamSessions\Source\AdvancedSteamSessions\Private
+/I D:\Game\PUPSYA\IMBA\Plugins\AdvancedSessions\AdvancedSteamSessions\Source\AdvancedSteamSessions\Private
 /I ..\Plugins\Online\OnlineSubsystem\Intermediate\Build\Win64\UE4Editor\Inc\OnlineSubsystem
 /I ..\Plugins\Online\OnlineSubsystem
 /I ..\Plugins\Online\OnlineSubsystem\Source
@@ -238,13 +238,13 @@
 /I ..\Intermediate\Build\Win64\UE4Editor\Inc\ClothingSystemRuntimeInterface
 /I Runtime\ClothingSystemRuntimeInterface\Public
 /I Runtime\AudioMixerCore\Public
-/I D:\YandexDisk\DUDE\IMBA\Plugins\AdvancedSessions\AdvancedSteamSessions\Intermediate\Build\Win64\UE4Editor\Inc\AdvancedSteamSessions
-/I D:\YandexDisk\DUDE\IMBA\Plugins\AdvancedSessions\AdvancedSteamSessions\Source
+/I D:\Game\PUPSYA\IMBA\Plugins\AdvancedSessions\AdvancedSteamSessions\Intermediate\Build\Win64\UE4Editor\Inc\AdvancedSteamSessions
+/I D:\Game\PUPSYA\IMBA\Plugins\AdvancedSessions\AdvancedSteamSessions\Source
 /I ..\Plugins\Online\OnlineSubsystemSteam\Source\Private
-/I D:\YandexDisk\DUDE\IMBA\Plugins\AdvancedSessions\AdvancedSteamSessions\Source\AdvancedSteamSessions\Classes
-/I D:\YandexDisk\DUDE\IMBA\Plugins\AdvancedSessions\AdvancedSessions\Intermediate\Build\Win64\UE4Editor\Inc\AdvancedSessions
-/I D:\YandexDisk\DUDE\IMBA\Plugins\AdvancedSessions\AdvancedSessions\Source
-/I D:\YandexDisk\DUDE\IMBA\Plugins\AdvancedSessions\AdvancedSessions\Source\AdvancedSessions\Classes
+/I D:\Game\PUPSYA\IMBA\Plugins\AdvancedSessions\AdvancedSteamSessions\Source\AdvancedSteamSessions\Classes
+/I D:\Game\PUPSYA\IMBA\Plugins\AdvancedSessions\AdvancedSessions\Intermediate\Build\Win64\UE4Editor\Inc\AdvancedSessions
+/I D:\Game\PUPSYA\IMBA\Plugins\AdvancedSessions\AdvancedSessions\Source
+/I D:\Game\PUPSYA\IMBA\Plugins\AdvancedSessions\AdvancedSessions\Source\AdvancedSessions\Classes
 /I ThirdParty\Steamworks\Steamv146\sdk\public
 /I ..\Plugins\Online\OnlineSubsystemSteam\Intermediate\Build\Win64\UE4Editor\Inc\OnlineSubsystemSteam
 /I ..\Plugins\Online\OnlineSubsystemSteam
@@ -279,12 +279,12 @@
 /I "C:\Program Files (x86)\Windows Kits\10\include\10.0.18362.0\shared"
 /I "C:\Program Files (x86)\Windows Kits\10\include\10.0.18362.0\um"
 /I "C:\Program Files (x86)\Windows Kits\10\include\10.0.18362.0\winrt"
-/FI"D:\YandexDisk\DUDE\IMBA\Intermediate\Build\Win64\MyProject9Editor\Development\Engine\SharedPCH.Engine.ShadowErrors.h"
-/Yu"D:\YandexDisk\DUDE\IMBA\Intermediate\Build\Win64\MyProject9Editor\Development\Engine\SharedPCH.Engine.ShadowErrors.h"
-/Fp"D:\YandexDisk\DUDE\IMBA\Intermediate\Build\Win64\MyProject9Editor\Development\Engine\SharedPCH.Engine.ShadowErrors.h.pch"
-"D:\YandexDisk\DUDE\IMBA\Plugins\AdvancedSessions\AdvancedSteamSessions\Intermediate\Build\Win64\UE4Editor\Development\AdvancedSteamSessions\Module.AdvancedSteamSessions.cpp"
-/FI"D:\YandexDisk\DUDE\IMBA\Plugins\AdvancedSessions\AdvancedSteamSessions\Intermediate\Build\Win64\UE4Editor\Development\AdvancedSteamSessions\Definitions.AdvancedSteamSessions.h"
-/Fo"D:\YandexDisk\DUDE\IMBA\Plugins\AdvancedSessions\AdvancedSteamSessions\Intermediate\Build\Win64\UE4Editor\Development\AdvancedSteamSessions\Module.AdvancedSteamSessions.cpp.obj"
+/FI"D:\Game\PUPSYA\IMBA\Intermediate\Build\Win64\MyProject9Editor\Development\Engine\SharedPCH.Engine.ShadowErrors.h"
+/Yu"D:\Game\PUPSYA\IMBA\Intermediate\Build\Win64\MyProject9Editor\Development\Engine\SharedPCH.Engine.ShadowErrors.h"
+/Fp"D:\Game\PUPSYA\IMBA\Intermediate\Build\Win64\MyProject9Editor\Development\Engine\SharedPCH.Engine.ShadowErrors.h.pch"
+"D:\Game\PUPSYA\IMBA\Plugins\AdvancedSessions\AdvancedSteamSessions\Intermediate\Build\Win64\UE4Editor\Development\AdvancedSteamSessions\Module.AdvancedSteamSessions.cpp"
+/FI"D:\Game\PUPSYA\IMBA\Plugins\AdvancedSessions\AdvancedSteamSessions\Intermediate\Build\Win64\UE4Editor\Development\AdvancedSteamSessions\Definitions.AdvancedSteamSessions.h"
+/Fo"D:\Game\PUPSYA\IMBA\Plugins\AdvancedSessions\AdvancedSteamSessions\Intermediate\Build\Win64\UE4Editor\Development\AdvancedSteamSessions\Module.AdvancedSteamSessions.cpp.obj"
 /TP
 /GR-
 /W4

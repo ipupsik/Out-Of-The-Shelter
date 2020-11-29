@@ -1,9 +1,9 @@
-D:\YandexDisk\DUDE\IMBA\Plugins\AdvancedSessions\AdvancedSessions\Intermediate\Build\Win64\UE4Editor\Development\AdvancedSessions\Definitions.AdvancedSessions.h
-D:/YandexDisk/DUDE/IMBA/Plugins/AdvancedSessions/AdvancedSessions/Intermediate/Build/Win64/UE4Editor/Inc/AdvancedSessions/AdvancedVoiceLibrary.gen.cpp
+D:\Game\PUPSYA\IMBA\Plugins\AdvancedSessions\AdvancedSessions\Intermediate\Build\Win64\UE4Editor\Development\AdvancedSessions\Definitions.AdvancedSessions.h
+D:/Game/PUPSYA/IMBA/Plugins/AdvancedSessions/AdvancedSessions/Intermediate/Build/Win64/UE4Editor/Inc/AdvancedSessions/AdvancedVoiceLibrary.gen.cpp
 D:\Program Files (x86)\UE_4.24\Engine\Source\Runtime\CoreUObject\Public\UObject/GeneratedCppIncludes.h
 D:\Program Files (x86)\UE_4.24\Engine\Source\Runtime\CoreUObject\Public\UObject/MetaData.h
-D:\YandexDisk\DUDE\IMBA\Plugins\AdvancedSessions\AdvancedSessions\Source\AdvancedSessions/Classes/AdvancedVoiceLibrary.h
-D:\YandexDisk\DUDE\IMBA\Plugins\AdvancedSessions\AdvancedSessions\Source\AdvancedSessions\Classes\BlueprintDataDefinitions.h
+D:\Game\PUPSYA\IMBA\Plugins\AdvancedSessions\AdvancedSessions\Source\AdvancedSessions/Classes/AdvancedVoiceLibrary.h
+D:\Game\PUPSYA\IMBA\Plugins\AdvancedSessions\AdvancedSessions\Source\AdvancedSessions\Classes\BlueprintDataDefinitions.h
 D:\Program Files (x86)\UE_4.24\Engine\Source\Runtime\Engine\Classes\GameFramework/PlayerState.h
 D:\Program Files (x86)\UE_4.24\Engine\Intermediate\Build\Win64\UE4Editor\Inc\Engine\PlayerState.generated.h
 D:\Program Files (x86)\UE_4.24\Engine\Plugins\Online\OnlineSubsystem\Source\Public\Interfaces/OnlineSessionInterface.h
@@ -140,42 +140,42 @@ D:\Program Files (x86)\UE_4.24\Engine\Plugins\Online\OnlineSubsystemUtils\Source
 D:\Program Files (x86)\UE_4.24\Engine\Plugins\Online\OnlineSubsystemUtils\Intermediate\Build\Win64\UE4Editor\Inc\OnlineSubsystemUtils\ShowLoginUICallbackProxy.generated.h
 D:\Program Files (x86)\UE_4.24\Engine\Plugins\Online\OnlineSubsystemUtils\Source\OnlineSubsystemUtils/Classes/TurnBasedBlueprintLibrary.h
 D:\Program Files (x86)\UE_4.24\Engine\Plugins\Online\OnlineSubsystemUtils\Intermediate\Build\Win64\UE4Editor\Inc\OnlineSubsystemUtils\TurnBasedBlueprintLibrary.generated.h
-D:\YandexDisk\DUDE\IMBA\Plugins\AdvancedSessions\AdvancedSessions\Intermediate\Build\Win64\UE4Editor\Inc\AdvancedSessions\BlueprintDataDefinitions.generated.h
-D:\YandexDisk\DUDE\IMBA\Plugins\AdvancedSessions\AdvancedSessions\Intermediate\Build\Win64\UE4Editor\Inc\AdvancedSessions\AdvancedVoiceLibrary.generated.h
-D:/YandexDisk/DUDE/IMBA/Plugins/AdvancedSessions/AdvancedSessions/Intermediate/Build/Win64/UE4Editor/Inc/AdvancedSessions/BlueprintDataDefinitions.gen.cpp
-D:/YandexDisk/DUDE/IMBA/Plugins/AdvancedSessions/AdvancedSessions/Intermediate/Build/Win64/UE4Editor/Inc/AdvancedSessions/CancelFindSessionsCallbackProxy.gen.cpp
-D:\YandexDisk\DUDE\IMBA\Plugins\AdvancedSessions\AdvancedSessions\Source\AdvancedSessions/Classes/CancelFindSessionsCallbackProxy.h
-D:\YandexDisk\DUDE\IMBA\Plugins\AdvancedSessions\AdvancedSessions\Intermediate\Build\Win64\UE4Editor\Inc\AdvancedSessions\CancelFindSessionsCallbackProxy.generated.h
-D:/YandexDisk/DUDE/IMBA/Plugins/AdvancedSessions/AdvancedSessions/Intermediate/Build/Win64/UE4Editor/Inc/AdvancedSessions/CreateSessionCallbackProxyAdvanced.gen.cpp
-D:\YandexDisk\DUDE\IMBA\Plugins\AdvancedSessions\AdvancedSessions\Source\AdvancedSessions/Classes/CreateSessionCallbackProxyAdvanced.h
-D:\YandexDisk\DUDE\IMBA\Plugins\AdvancedSessions\AdvancedSessions\Intermediate\Build\Win64\UE4Editor\Inc\AdvancedSessions\CreateSessionCallbackProxyAdvanced.generated.h
-D:/YandexDisk/DUDE/IMBA/Plugins/AdvancedSessions/AdvancedSessions/Intermediate/Build/Win64/UE4Editor/Inc/AdvancedSessions/EndSessionCallbackProxy.gen.cpp
-D:\YandexDisk\DUDE\IMBA\Plugins\AdvancedSessions\AdvancedSessions\Source\AdvancedSessions/Classes/EndSessionCallbackProxy.h
-D:\YandexDisk\DUDE\IMBA\Plugins\AdvancedSessions\AdvancedSessions\Intermediate\Build\Win64\UE4Editor\Inc\AdvancedSessions\EndSessionCallbackProxy.generated.h
-D:/YandexDisk/DUDE/IMBA/Plugins/AdvancedSessions/AdvancedSessions/Intermediate/Build/Win64/UE4Editor/Inc/AdvancedSessions/FindFriendSessionCallbackProxy.gen.cpp
-D:\YandexDisk\DUDE\IMBA\Plugins\AdvancedSessions\AdvancedSessions\Source\AdvancedSessions/Classes/FindFriendSessionCallbackProxy.h
-D:\YandexDisk\DUDE\IMBA\Plugins\AdvancedSessions\AdvancedSessions\Intermediate\Build\Win64\UE4Editor\Inc\AdvancedSessions\FindFriendSessionCallbackProxy.generated.h
-D:/YandexDisk/DUDE/IMBA/Plugins/AdvancedSessions/AdvancedSessions/Intermediate/Build/Win64/UE4Editor/Inc/AdvancedSessions/FindSessionsCallbackProxyAdvanced.gen.cpp
-D:\YandexDisk\DUDE\IMBA\Plugins\AdvancedSessions\AdvancedSessions\Source\AdvancedSessions/Classes/FindSessionsCallbackProxyAdvanced.h
-D:\YandexDisk\DUDE\IMBA\Plugins\AdvancedSessions\AdvancedSessions\Intermediate\Build\Win64\UE4Editor\Inc\AdvancedSessions\FindSessionsCallbackProxyAdvanced.generated.h
-D:/YandexDisk/DUDE/IMBA/Plugins/AdvancedSessions/AdvancedSessions/Intermediate/Build/Win64/UE4Editor/Inc/AdvancedSessions/GetFriendsCallbackProxy.gen.cpp
-D:\YandexDisk\DUDE\IMBA\Plugins\AdvancedSessions\AdvancedSessions\Source\AdvancedSessions/Classes/GetFriendsCallbackProxy.h
-D:\YandexDisk\DUDE\IMBA\Plugins\AdvancedSessions\AdvancedSessions\Intermediate\Build\Win64\UE4Editor\Inc\AdvancedSessions\GetFriendsCallbackProxy.generated.h
-D:/YandexDisk/DUDE/IMBA/Plugins/AdvancedSessions/AdvancedSessions/Intermediate/Build/Win64/UE4Editor/Inc/AdvancedSessions/GetRecentPlayersCallbackProxy.gen.cpp
-D:\YandexDisk\DUDE\IMBA\Plugins\AdvancedSessions\AdvancedSessions\Source\AdvancedSessions/Classes/GetRecentPlayersCallbackProxy.h
-D:\YandexDisk\DUDE\IMBA\Plugins\AdvancedSessions\AdvancedSessions\Intermediate\Build\Win64\UE4Editor\Inc\AdvancedSessions\GetRecentPlayersCallbackProxy.generated.h
-D:/YandexDisk/DUDE/IMBA/Plugins/AdvancedSessions/AdvancedSessions/Intermediate/Build/Win64/UE4Editor/Inc/AdvancedSessions/GetUserPrivilegeCallbackProxy.gen.cpp
-D:\YandexDisk\DUDE\IMBA\Plugins\AdvancedSessions\AdvancedSessions\Source\AdvancedSessions/Classes/GetUserPrivilegeCallbackProxy.h
-D:\YandexDisk\DUDE\IMBA\Plugins\AdvancedSessions\AdvancedSessions\Intermediate\Build\Win64\UE4Editor\Inc\AdvancedSessions\GetUserPrivilegeCallbackProxy.generated.h
-D:/YandexDisk/DUDE/IMBA/Plugins/AdvancedSessions/AdvancedSessions/Intermediate/Build/Win64/UE4Editor/Inc/AdvancedSessions/LoginUserCallbackProxy.gen.cpp
-D:\YandexDisk\DUDE\IMBA\Plugins\AdvancedSessions\AdvancedSessions\Source\AdvancedSessions/Classes/LoginUserCallbackProxy.h
-D:\YandexDisk\DUDE\IMBA\Plugins\AdvancedSessions\AdvancedSessions\Intermediate\Build\Win64\UE4Editor\Inc\AdvancedSessions\LoginUserCallbackProxy.generated.h
-D:/YandexDisk/DUDE/IMBA/Plugins/AdvancedSessions/AdvancedSessions/Intermediate/Build/Win64/UE4Editor/Inc/AdvancedSessions/LogoutUserCallbackProxy.gen.cpp
-D:\YandexDisk\DUDE\IMBA\Plugins\AdvancedSessions\AdvancedSessions\Source\AdvancedSessions/Classes/LogoutUserCallbackProxy.h
-D:\YandexDisk\DUDE\IMBA\Plugins\AdvancedSessions\AdvancedSessions\Intermediate\Build\Win64\UE4Editor\Inc\AdvancedSessions\LogoutUserCallbackProxy.generated.h
-D:/YandexDisk/DUDE/IMBA/Plugins/AdvancedSessions/AdvancedSessions/Intermediate/Build/Win64/UE4Editor/Inc/AdvancedSessions/SendFriendInviteCallbackProxy.gen.cpp
-D:\YandexDisk\DUDE\IMBA\Plugins\AdvancedSessions\AdvancedSessions\Source\AdvancedSessions/Classes/SendFriendInviteCallbackProxy.h
-D:\YandexDisk\DUDE\IMBA\Plugins\AdvancedSessions\AdvancedSessions\Intermediate\Build\Win64\UE4Editor\Inc\AdvancedSessions\SendFriendInviteCallbackProxy.generated.h
-D:/YandexDisk/DUDE/IMBA/Plugins/AdvancedSessions/AdvancedSessions/Intermediate/Build/Win64/UE4Editor/Inc/AdvancedSessions/UpdateSessionCallbackProxyAdvanced.gen.cpp
-D:\YandexDisk\DUDE\IMBA\Plugins\AdvancedSessions\AdvancedSessions\Source\AdvancedSessions/Classes/UpdateSessionCallbackProxyAdvanced.h
-D:\YandexDisk\DUDE\IMBA\Plugins\AdvancedSessions\AdvancedSessions\Intermediate\Build\Win64\UE4Editor\Inc\AdvancedSessions\UpdateSessionCallbackProxyAdvanced.generated.h
+D:\Game\PUPSYA\IMBA\Plugins\AdvancedSessions\AdvancedSessions\Intermediate\Build\Win64\UE4Editor\Inc\AdvancedSessions\BlueprintDataDefinitions.generated.h
+D:\Game\PUPSYA\IMBA\Plugins\AdvancedSessions\AdvancedSessions\Intermediate\Build\Win64\UE4Editor\Inc\AdvancedSessions\AdvancedVoiceLibrary.generated.h
+D:/Game/PUPSYA/IMBA/Plugins/AdvancedSessions/AdvancedSessions/Intermediate/Build/Win64/UE4Editor/Inc/AdvancedSessions/BlueprintDataDefinitions.gen.cpp
+D:/Game/PUPSYA/IMBA/Plugins/AdvancedSessions/AdvancedSessions/Intermediate/Build/Win64/UE4Editor/Inc/AdvancedSessions/CancelFindSessionsCallbackProxy.gen.cpp
+D:\Game\PUPSYA\IMBA\Plugins\AdvancedSessions\AdvancedSessions\Source\AdvancedSessions/Classes/CancelFindSessionsCallbackProxy.h
+D:\Game\PUPSYA\IMBA\Plugins\AdvancedSessions\AdvancedSessions\Intermediate\Build\Win64\UE4Editor\Inc\AdvancedSessions\CancelFindSessionsCallbackProxy.generated.h
+D:/Game/PUPSYA/IMBA/Plugins/AdvancedSessions/AdvancedSessions/Intermediate/Build/Win64/UE4Editor/Inc/AdvancedSessions/CreateSessionCallbackProxyAdvanced.gen.cpp
+D:\Game\PUPSYA\IMBA\Plugins\AdvancedSessions\AdvancedSessions\Source\AdvancedSessions/Classes/CreateSessionCallbackProxyAdvanced.h
+D:\Game\PUPSYA\IMBA\Plugins\AdvancedSessions\AdvancedSessions\Intermediate\Build\Win64\UE4Editor\Inc\AdvancedSessions\CreateSessionCallbackProxyAdvanced.generated.h
+D:/Game/PUPSYA/IMBA/Plugins/AdvancedSessions/AdvancedSessions/Intermediate/Build/Win64/UE4Editor/Inc/AdvancedSessions/EndSessionCallbackProxy.gen.cpp
+D:\Game\PUPSYA\IMBA\Plugins\AdvancedSessions\AdvancedSessions\Source\AdvancedSessions/Classes/EndSessionCallbackProxy.h
+D:\Game\PUPSYA\IMBA\Plugins\AdvancedSessions\AdvancedSessions\Intermediate\Build\Win64\UE4Editor\Inc\AdvancedSessions\EndSessionCallbackProxy.generated.h
+D:/Game/PUPSYA/IMBA/Plugins/AdvancedSessions/AdvancedSessions/Intermediate/Build/Win64/UE4Editor/Inc/AdvancedSessions/FindFriendSessionCallbackProxy.gen.cpp
+D:\Game\PUPSYA\IMBA\Plugins\AdvancedSessions\AdvancedSessions\Source\AdvancedSessions/Classes/FindFriendSessionCallbackProxy.h
+D:\Game\PUPSYA\IMBA\Plugins\AdvancedSessions\AdvancedSessions\Intermediate\Build\Win64\UE4Editor\Inc\AdvancedSessions\FindFriendSessionCallbackProxy.generated.h
+D:/Game/PUPSYA/IMBA/Plugins/AdvancedSessions/AdvancedSessions/Intermediate/Build/Win64/UE4Editor/Inc/AdvancedSessions/FindSessionsCallbackProxyAdvanced.gen.cpp
+D:\Game\PUPSYA\IMBA\Plugins\AdvancedSessions\AdvancedSessions\Source\AdvancedSessions/Classes/FindSessionsCallbackProxyAdvanced.h
+D:\Game\PUPSYA\IMBA\Plugins\AdvancedSessions\AdvancedSessions\Intermediate\Build\Win64\UE4Editor\Inc\AdvancedSessions\FindSessionsCallbackProxyAdvanced.generated.h
+D:/Game/PUPSYA/IMBA/Plugins/AdvancedSessions/AdvancedSessions/Intermediate/Build/Win64/UE4Editor/Inc/AdvancedSessions/GetFriendsCallbackProxy.gen.cpp
+D:\Game\PUPSYA\IMBA\Plugins\AdvancedSessions\AdvancedSessions\Source\AdvancedSessions/Classes/GetFriendsCallbackProxy.h
+D:\Game\PUPSYA\IMBA\Plugins\AdvancedSessions\AdvancedSessions\Intermediate\Build\Win64\UE4Editor\Inc\AdvancedSessions\GetFriendsCallbackProxy.generated.h
+D:/Game/PUPSYA/IMBA/Plugins/AdvancedSessions/AdvancedSessions/Intermediate/Build/Win64/UE4Editor/Inc/AdvancedSessions/GetRecentPlayersCallbackProxy.gen.cpp
+D:\Game\PUPSYA\IMBA\Plugins\AdvancedSessions\AdvancedSessions\Source\AdvancedSessions/Classes/GetRecentPlayersCallbackProxy.h
+D:\Game\PUPSYA\IMBA\Plugins\AdvancedSessions\AdvancedSessions\Intermediate\Build\Win64\UE4Editor\Inc\AdvancedSessions\GetRecentPlayersCallbackProxy.generated.h
+D:/Game/PUPSYA/IMBA/Plugins/AdvancedSessions/AdvancedSessions/Intermediate/Build/Win64/UE4Editor/Inc/AdvancedSessions/GetUserPrivilegeCallbackProxy.gen.cpp
+D:\Game\PUPSYA\IMBA\Plugins\AdvancedSessions\AdvancedSessions\Source\AdvancedSessions/Classes/GetUserPrivilegeCallbackProxy.h
+D:\Game\PUPSYA\IMBA\Plugins\AdvancedSessions\AdvancedSessions\Intermediate\Build\Win64\UE4Editor\Inc\AdvancedSessions\GetUserPrivilegeCallbackProxy.generated.h
+D:/Game/PUPSYA/IMBA/Plugins/AdvancedSessions/AdvancedSessions/Intermediate/Build/Win64/UE4Editor/Inc/AdvancedSessions/LoginUserCallbackProxy.gen.cpp
+D:\Game\PUPSYA\IMBA\Plugins\AdvancedSessions\AdvancedSessions\Source\AdvancedSessions/Classes/LoginUserCallbackProxy.h
+D:\Game\PUPSYA\IMBA\Plugins\AdvancedSessions\AdvancedSessions\Intermediate\Build\Win64\UE4Editor\Inc\AdvancedSessions\LoginUserCallbackProxy.generated.h
+D:/Game/PUPSYA/IMBA/Plugins/AdvancedSessions/AdvancedSessions/Intermediate/Build/Win64/UE4Editor/Inc/AdvancedSessions/LogoutUserCallbackProxy.gen.cpp
+D:\Game\PUPSYA\IMBA\Plugins\AdvancedSessions\AdvancedSessions\Source\AdvancedSessions/Classes/LogoutUserCallbackProxy.h
+D:\Game\PUPSYA\IMBA\Plugins\AdvancedSessions\AdvancedSessions\Intermediate\Build\Win64\UE4Editor\Inc\AdvancedSessions\LogoutUserCallbackProxy.generated.h
+D:/Game/PUPSYA/IMBA/Plugins/AdvancedSessions/AdvancedSessions/Intermediate/Build/Win64/UE4Editor/Inc/AdvancedSessions/SendFriendInviteCallbackProxy.gen.cpp
+D:\Game\PUPSYA\IMBA\Plugins\AdvancedSessions\AdvancedSessions\Source\AdvancedSessions/Classes/SendFriendInviteCallbackProxy.h
+D:\Game\PUPSYA\IMBA\Plugins\AdvancedSessions\AdvancedSessions\Intermediate\Build\Win64\UE4Editor\Inc\AdvancedSessions\SendFriendInviteCallbackProxy.generated.h
+D:/Game/PUPSYA/IMBA/Plugins/AdvancedSessions/AdvancedSessions/Intermediate/Build/Win64/UE4Editor/Inc/AdvancedSessions/UpdateSessionCallbackProxyAdvanced.gen.cpp
+D:\Game\PUPSYA\IMBA\Plugins\AdvancedSessions\AdvancedSessions\Source\AdvancedSessions/Classes/UpdateSessionCallbackProxyAdvanced.h
+D:\Game\PUPSYA\IMBA\Plugins\AdvancedSessions\AdvancedSessions\Intermediate\Build\Win64\UE4Editor\Inc\AdvancedSessions\UpdateSessionCallbackProxyAdvanced.generated.h
