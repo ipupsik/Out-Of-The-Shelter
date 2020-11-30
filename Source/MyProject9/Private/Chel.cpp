@@ -66,7 +66,7 @@ void AChel::BeginPlay()
 	if (GetLocalRole() != ROLE_Authority)
 		MyBeginPlay();
 
-	CameraTrans = CameraComp->GetRelativeTransform();
+	MeshTrans = PoseableMeshComp->GetRelativeTransform();
 }
 
 void AChel::MyBeginPlay()
@@ -473,18 +473,11 @@ void AChel::LookUp(float input)
 	{
 		if (input != 0.0f) {
 			input *= Sensetivity * WebCamSensetivity;
-			float NewPitchRot = CameraComp->GetRelativeRotation().Pitch;
-			float YawRotation = CameraComp->GetRelativeRotation().Yaw;
-			if (NewPitchRot + input >= -MaxPitchAngle && NewPitchRot + input <= MaxPitchAngle) {
-				NewPitchRot += input;
-			}
-			else if (NewPitchRot + input > MaxPitchAngle) {
-				NewPitchRot = MaxPitchAngle;
-			}
-			else
-				NewPitchRot = -MaxPitchAngle;
-			
-			CameraComp->SetRelativeRotation({ CameraComp->GetRelativeRotation().Roll , YawRotation,  NewPitchRot });
+			float NewPitchRot = PoseableMeshComp->GetRelativeRotation().Roll;
+
+			NewPitchRot = FMath::Clamp<float>(NewPitchRot + input, -MaxPitchAngle, MaxPitchAngle);
+
+			PoseableMeshComp->SetRelativeRotation(FRotator(PoseableMeshComp->GetRelativeRotation().Pitch, PoseableMeshComp->GetRelativeRotation().Yaw, NewPitchRot));
 		}
 	}
 }
@@ -502,18 +495,11 @@ void AChel::LookRight(float input)
 	{
 		if (input != 0.0f) {
 			input *= Sensetivity * WebCamSensetivity;
-			float NewYawRot = CameraComp->GetRelativeRotation().Yaw;
-			float PitchRotation = CameraComp->GetRelativeRotation().Pitch;
-			if (NewYawRot + input >= -MaxYawAngle && NewYawRot + input <= MaxYawAngle) {
-				NewYawRot += input;
-			}
-			else if (NewYawRot + input > MaxYawAngle) {
-				NewYawRot = MaxYawAngle;
-			}
-			else
-				NewYawRot = -MaxYawAngle;
+			float NewYawRot = PoseableMeshComp->GetRelativeRotation().Yaw;
+			
+			NewYawRot = FMath::Clamp<float>(NewYawRot + input, -MaxYawAngle, MaxYawAngle);
 
-			CameraComp->SetRelativeRotation({ CameraComp->GetRelativeRotation().Roll , NewYawRot,  PitchRotation });
+			PoseableMeshComp->SetRelativeRotation(FRotator(PoseableMeshComp->GetRelativeRotation().Pitch, NewYawRot, PoseableMeshComp->GetRelativeRotation().Roll));
 		}
 	}
 }
@@ -558,6 +544,7 @@ void AChel::PlaySpawnAnimationSleep_Implementation() {
 
 //PlayStartingAnimation---------------------
 void AChel::PlaySpawnAnimationAwake_Implementation() {
+	PoseableMeshComp->SetRelativeTransform(MeshTrans);
 	UserView->SetVisibility(ESlateVisibility::Visible);
 	UserView->PlayAnimation(UserView->Shading, 0, 1, EUMGSequencePlayMode::Type::Reverse);
 	SetActorEnableCollision(true);
@@ -764,8 +751,11 @@ void AChel::GoToWebCam_Implementation()
 	TArray<AActor*> WebCamSpectators;
 	UGameplayStatics::GetAllActorsOfClassWithTag(World, ATargetPoint::StaticClass(), FName("WebCam"), WebCamSpectators);
 	FTransform NewTrans = WebCamSpectators[FMath::Rand() % WebCamSpectators.Num()]->GetActorTransform();
-	NewTrans.SetScale3D(CameraComp->GetRelativeScale3D());
-	CameraComp->SetWorldTransform(NewTrans);
+	NewTrans.SetScale3D(PoseableMeshComp->GetRelativeScale3D());
+	PoseableMeshComp->SetWorldTransform(NewTrans);
+
+	UpdatePositionClient(NewTrans);
+
 	UE_LOG(LogTemp, Warning, TEXT("Staying on webcam"));
 }
 
@@ -774,11 +764,15 @@ bool AChel::GoToWebCam_Validate()
 	return true;
 }
 
+void AChel::UpdatePositionClient_Implementation(FTransform NewTrans)
+{
+	PoseableMeshComp->SetWorldTransform(NewTrans);
+}
+
 void AChel::SpawnPlayer()
 {
-	CameraComp->SetRelativeTransform(CameraTrans);
-
 	UE_LOG(LogTemp, Warning, TEXT("Setting camera from webcam to player"));
+	PoseableMeshComp->SetRelativeTransform(MeshTrans);
 
 	EnableCollisionEverywhere();
 	SetActorHiddenInGame(false);

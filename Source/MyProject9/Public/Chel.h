@@ -123,6 +123,9 @@ public:
 	UFUNCTION(Client, Reliable)
 		void RefreshWidgets_Winner(int32 EscapeWay);
 
+	UFUNCTION(Client, Reliable)
+		void UpdatePositionClient(FTransform NewTrans);
+
 	UFUNCTION(NetMulticast, Reliable)
 		void HideStoneMulticast();
 	UFUNCTION(Client, Reliable)
@@ -241,7 +244,7 @@ public:
 	bool bLineTrace_is_need_refresh;
 	bool bCanPossessWebCam;
 	bool isTracedBad;
-	UPROPERTY(Replicated)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Replicated)
 		bool IsEnableInput;
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite) //!!!!!!!!!!!!!!
 	bool IsSuccessOpening;
@@ -252,5 +255,5 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite) //!!!!!!!!!!!!!!
 	float MoveCoeff = 1; //!!!!!!!!!!!!!! (для уменьшения скорости в области льда)
 
-	FTransform CameraTrans;
+	FTransform MeshTrans;
 };
