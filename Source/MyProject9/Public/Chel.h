@@ -7,7 +7,6 @@
 #include "Net/UnrealNetwork.h"
 
 #include "Spectator.h"
-#include "WebCamSpectator.h"
 
 #include "GI.h"
 #include "GS.h"
@@ -80,6 +79,9 @@ public:
 
 	UFUNCTION(Server, Reliable, WithValidation)
 		void MeshCompRepServer(float RotationRoll);
+
+	UFUNCTION(Server, Reliable, WithValidation)
+		void GoToWebCam();
 
 	UFUNCTION(Server, Reliable, WithValidation)
 		void DeliverNicknameToServer(const FText& newNickName);
@@ -172,9 +174,6 @@ public:
 
 	UPROPERTY(EditAnywhere, Category = "Spectator")
 		TSubclassOf<ASpectator> SpectatorClass;
-	UPROPERTY(EditAnywhere, Category = "Spectator")
-		TSubclassOf<AWebCamSpectator> WebCamSpectatorClass;
-
 
 	UPROPERTY(EditAnywhere, Category = "UI HUD")
 		TSubclassOf<UPlayerKillPlayer> PlayerKillPlayer_class;
@@ -217,6 +216,12 @@ public:
 	//Settings Variables
 	UPROPERTY(EditAnywhere, Category = "Settings")
 		float Sensetivity;
+	UPROPERTY(EditAnywhere, Category = "Settings")
+		float WebCamSensetivity;
+	UPROPERTY(EditAnywhere, Category = "Settings")
+		float MaxYawAngle;
+	UPROPERTY(EditAnywhere, Category = "Settings")
+		float MaxPitchAngle;
 	UPROPERTY(EditAnywhere, Replicated, Category = "Settings")
 		FText NickName;
 
@@ -230,9 +235,11 @@ public:
 	//KillFeed Vars
 	int KillerIndex;
 
+	
 public:
 	//Logic Boolean Variables
 	bool bLineTrace_is_need_refresh;
+	bool bCanPossessWebCam;
 	bool isTracedBad;
 	UPROPERTY(Replicated)
 		bool IsEnableInput;

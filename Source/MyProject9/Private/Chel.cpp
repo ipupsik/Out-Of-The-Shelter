@@ -55,6 +55,7 @@ AChel::AChel()
 	KillerIndex = -1;
 	IsSuccessOpening = false;
 	AreaCode = -1;
+	bCanPossessWebCam = false;
 }
 
 // Called when the game starts or when spawned
@@ -62,11 +63,7 @@ void AChel::BeginPlay()
 {
 	Super::BeginPlay();
 
-	if (GetLocalRole() == ROLE_Authority && UGameplayStatics::GetPlayerController(GetWorld(), 0) == GetController())
-	{
-
-	}
-	else
+	if (GetLocalRole() != ROLE_Authority)
 		MyBeginPlay();
 }
 
@@ -112,6 +109,7 @@ void AChel::MyBeginPlay()
 
 	if (IsServerAuth) {
 		Index = GS->AmountOfPlayers++;
+		UE_LOG(LogTemp, Warning, TEXT("AmountOfPlayers increase Chel"))
 		for (int i = 0; i < 2; ++i)
 		{
 			ASpectator* spec = World->SpawnActorDeferred<ASpectator>(SpectatorClass, CameraComp->GetComponentTransform());
@@ -143,6 +141,7 @@ void AChel::PossessedBy(AController* NewController)
 void AChel::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
 	if (IsInGame == true) {
 		if (IsServerAuth) {
 			DeltaTime *= 2 * 0.01f * RadCoeff;
@@ -169,8 +168,6 @@ void AChel::Tick(float DeltaTime)
 			}
 		}
 	}
-
-
 
 	if (IsPlayerOwner) {
 		UserView->RadiationPoints->SetPercent(Health);
@@ -454,28 +451,68 @@ bool AChel::MeshCompRepServer_Validate(float RotationRoll)
 //MouseInput-------------------
 void AChel::LookUp(float input)
 {
-	if (input != 0.0f && IsEnableInput)
+	if (IsEnableInput) {
+		if (input != 0.0f)
+		{
+			input *= Sensetivity;
+			float RotationRoll = PoseableMeshComp->GetBoneRotationByName(TEXT("Bone_002"), EBoneSpaces::ComponentSpace).Roll;
+			if (RotationRoll + input >= 0.f && RotationRoll + input <= 179.f) {
+				RotationRoll += input;
+			}
+			else if (RotationRoll + input > 179.f) {
+				RotationRoll = 179.f;
+			}
+			else
+				RotationRoll = 0;
+			MeshCompRepServer(RotationRoll);
+		}
+	}
+	else
 	{
-		input *= Sensetivity;
-		float RotationRoll = PoseableMeshComp->GetBoneRotationByName(TEXT("Bone_002"), EBoneSpaces::ComponentSpace).Roll;
-		if (RotationRoll + input >= 0.f && RotationRoll + input <= 179.f) {
-			RotationRoll += input;
+		if (input != 0.0f) {
+			input *= Sensetivity * WebCamSensetivity;
+			float NewPitchRot = CameraComp->GetRelativeRotation().Pitch;
+			float YawRotation = CameraComp->GetRelativeRotation().Yaw;
+			if (NewPitchRot + input >= -MaxPitchAngle && NewPitchRot + input <= MaxPitchAngle) {
+				NewPitchRot += input;
+			}
+			else if (NewPitchRot + input > MaxPitchAngle) {
+				NewPitchRot = MaxPitchAngle;
+			}
+			else
+				NewPitchRot = -MaxPitchAngle;
+			
+			CameraComp->SetRelativeRotation({ 0.0f, NewPitchRot, YawRotation });
 		}
-		else if (RotationRoll + input > 179.f) {
-			RotationRoll = 179.f;
-		}
-		else
-			RotationRoll = 0;
-		MeshCompRepServer(RotationRoll);
 	}
 }
 
 
 void AChel::LookRight(float input)
 {
-	if (input != 0.0f && IsEnableInput) {
-		input *= Sensetivity;
-		AddControllerYawInput(input);
+	if (IsEnableInput) {
+		if (input != 0.0f) {
+			input *= Sensetivity;
+			AddControllerYawInput(input);
+		}
+	}
+	else
+	{
+		if (input != 0.0f) {
+			input *= Sensetivity * WebCamSensetivity;
+			float NewYawRot = CameraComp->GetRelativeRotation().Yaw;
+			float PitchRotation = CameraComp->GetRelativeRotation().Pitch;
+			if (NewYawRot + input >= -MaxYawAngle && NewYawRot + input <= MaxYawAngle) {
+				NewYawRot += input;
+			}
+			else if (NewYawRot + input > MaxYawAngle) {
+				NewYawRot = MaxYawAngle;
+			}
+			else
+				NewYawRot = -MaxYawAngle;
+
+			CameraComp->SetRelativeRotation({ 0.0f, PitchRotation, NewYawRot });
+		}
 	}
 }
 //-----------------------------
@@ -483,7 +520,8 @@ void AChel::LookRight(float input)
 //Jump-------------------------
 void AChel::MyJump()
 {
-	Jump();
+	if (IsEnableInput)
+		Jump();
 }
 //-----------------------------
 
@@ -518,6 +556,7 @@ void AChel::PlaySpawnAnimationSleep_Implementation() {
 
 //PlayStartingAnimation---------------------
 void AChel::PlaySpawnAnimationAwake_Implementation() {
+	UserView->SetVisibility(ESlateVisibility::Visible);
 	UserView->PlayAnimation(UserView->Shading, 0, 1, EUMGSequencePlayMode::Type::Reverse);
 	SetActorEnableCollision(true);
 }
@@ -717,20 +756,30 @@ void AChel::KillPlayer()
 	IsInGame = false;
 	PlaySpawnAnimationSleep();
 	IsEnableInput = false;
+
 	FTimerHandle TimerHandle;
 	World->GetTimerManager().SetTimer(TimerHandle, this, &AChel::SpawnPlayer, SPAWN_TIME, false);
+}
 
+void AChel::GoToWebCam_Implementation()
+{
 	TArray<AActor*> WebCamSpectators;
 	UGameplayStatics::GetAllActorsOfClassWithTag(World, ATargetPoint::StaticClass(), FName("WebCam"), WebCamSpectators);
 	FTransform NewTrans = WebCamSpectators[FMath::Rand() % WebCamSpectators.Num()]->GetActorTransform();
-	FActorSpawnParameters SpawnParams;
-	AWebCamSpectator* WebSpec = World->SpawnActor<AWebCamSpectator>(WebCamSpectatorClass, NewTrans, SpawnParams);
-	WebSpec->Index = Index;
-	GetController()->Possess(WebSpec);
+
+	CameraComp->SetWorldTransform(NewTrans);
+	Stone->SetHiddenInGame(true);
+}
+
+bool AChel::GoToWebCam_Validate()
+{
+	return true;
 }
 
 void AChel::SpawnPlayer()
 {
+	CameraComp->ResetRelativeTransform();
+
 	EnableCollisionEverywhere();
 	SetActorHiddenInGame(false);
 	IsEnableInput = true;

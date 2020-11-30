@@ -8,7 +8,7 @@
 
 void UUserView::NativeConstruct() {
 	Super::NativeConstruct();
-	IsAwake = true;
+	IsAwake = false;
 }
 
 void UUserView::OnAnimationFinished_Implementation(const UWidgetAnimation* Animation)
@@ -45,9 +45,21 @@ void UUserView::OnAnimationFinished_Implementation(const UWidgetAnimation* Anima
 	}
 	else if (Animation == Shading)
 	{
-		if (!IsAwake)
-		{
-			SetVisibility(ESlateVisibility::Visible);
+		UE_LOG(LogTemp, Warning, TEXT("bCanPossessWebCam - %d"), (int)Player->bCanPossessWebCam);
+		UE_LOG(LogTemp, Warning, TEXT("bIsAwake - %d"), (int)IsAwake);
+		if (Player->bCanPossessWebCam) {
+			if (!IsAwake)
+			{
+				IsAwake = true;
+				SetVisibility(ESlateVisibility::Hidden);
+				Player->GoToWebCam();
+			}
+			else
+				IsAwake = false;
+		}
+		else {
+			Player->bCanPossessWebCam = true;
+			IsAwake = true;
 		}
 	}
 	PB_Opening->SetVisibility(ESlateVisibility::Hidden);
