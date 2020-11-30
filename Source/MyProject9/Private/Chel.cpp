@@ -469,7 +469,7 @@ void AChel::LookUp(float input)
 	}
 	else
 	{
-		if (input != 0.0f) {
+		/*if (input != 0.0f) {
 			input *= Sensetivity * WebCamSensetivity;
 			float NewPitchRot = CameraComp->GetRelativeRotation().Pitch;
 			float YawRotation = CameraComp->GetRelativeRotation().Yaw;
@@ -483,7 +483,7 @@ void AChel::LookUp(float input)
 				NewPitchRot = -MaxPitchAngle;
 			
 			CameraComp->SetRelativeRotation({ 0.0f, YawRotation, NewPitchRot });
-		}
+		}*/
 	}
 }
 
@@ -498,7 +498,7 @@ void AChel::LookRight(float input)
 	}
 	else
 	{
-		if (input != 0.0f) {
+		/*if (input != 0.0f) {
 			input *= Sensetivity * WebCamSensetivity;
 			float NewYawRot = CameraComp->GetRelativeRotation().Yaw;
 			float PitchRotation = CameraComp->GetRelativeRotation().Pitch;
@@ -512,7 +512,7 @@ void AChel::LookRight(float input)
 				NewYawRot = -MaxYawAngle;
 
 			CameraComp->SetRelativeRotation({ 0.0f, NewYawRot, PitchRotation });
-		}
+		}*/
 	}
 }
 //-----------------------------
