@@ -482,7 +482,7 @@ void AChel::LookUp(float input)
 			else
 				NewPitchRot = -MaxPitchAngle;
 			
-			CameraComp->SetRelativeRotation({ 0.0f, NewPitchRot, YawRotation });
+			CameraComp->SetRelativeRotation({ 0.0f, YawRotation, NewPitchRot });
 		}
 	}
 }
@@ -511,7 +511,7 @@ void AChel::LookRight(float input)
 			else
 				NewYawRot = -MaxYawAngle;
 
-			CameraComp->SetRelativeRotation({ 0.0f, PitchRotation, NewYawRot });
+			CameraComp->SetRelativeRotation({ 0.0f, NewYawRot, PitchRotation });
 		}
 	}
 }
