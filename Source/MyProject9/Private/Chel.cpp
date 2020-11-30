@@ -609,10 +609,6 @@ void AChel::NewHaveItemServer_Implementation(int32 ItemType)
 		{
 			TempItem->Destroy();
 		}
-		else
-		{
-			UE_LOG(LogTemp, Warning, TEXT("Final Server LineTrace to Spectator"))
-		}
 	}
 	
 }
