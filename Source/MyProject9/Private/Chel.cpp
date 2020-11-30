@@ -65,6 +65,8 @@ void AChel::BeginPlay()
 
 	if (GetLocalRole() != ROLE_Authority)
 		MyBeginPlay();
+
+	CameraTrans = CameraComp->GetRelativeTransform();
 }
 
 void AChel::MyBeginPlay()
@@ -469,7 +471,7 @@ void AChel::LookUp(float input)
 	}
 	else
 	{
-		/*if (input != 0.0f) {
+		if (input != 0.0f) {
 			input *= Sensetivity * WebCamSensetivity;
 			float NewPitchRot = CameraComp->GetRelativeRotation().Pitch;
 			float YawRotation = CameraComp->GetRelativeRotation().Yaw;
@@ -482,8 +484,8 @@ void AChel::LookUp(float input)
 			else
 				NewPitchRot = -MaxPitchAngle;
 			
-			CameraComp->SetRelativeRotation({ 0.0f, YawRotation, NewPitchRot });
-		}*/
+			CameraComp->SetRelativeRotation({ CameraComp->GetRelativeRotation().Roll , YawRotation,  NewPitchRot });
+		}
 	}
 }
 
@@ -498,7 +500,7 @@ void AChel::LookRight(float input)
 	}
 	else
 	{
-		/*if (input != 0.0f) {
+		if (input != 0.0f) {
 			input *= Sensetivity * WebCamSensetivity;
 			float NewYawRot = CameraComp->GetRelativeRotation().Yaw;
 			float PitchRotation = CameraComp->GetRelativeRotation().Pitch;
@@ -511,8 +513,8 @@ void AChel::LookRight(float input)
 			else
 				NewYawRot = -MaxYawAngle;
 
-			CameraComp->SetRelativeRotation({ 0.0f, NewYawRot, PitchRotation });
-		}*/
+			CameraComp->SetRelativeRotation({ CameraComp->GetRelativeRotation().Roll , NewYawRot,  PitchRotation });
+		}
 	}
 }
 //-----------------------------
@@ -762,9 +764,9 @@ void AChel::GoToWebCam_Implementation()
 	TArray<AActor*> WebCamSpectators;
 	UGameplayStatics::GetAllActorsOfClassWithTag(World, ATargetPoint::StaticClass(), FName("WebCam"), WebCamSpectators);
 	FTransform NewTrans = WebCamSpectators[FMath::Rand() % WebCamSpectators.Num()]->GetActorTransform();
-
+	NewTrans.SetScale3D(CameraComp->GetRelativeScale3D());
 	CameraComp->SetWorldTransform(NewTrans);
-	Stone->SetHiddenInGame(true);
+	UE_LOG(LogTemp, Warning, TEXT("Staying on webcam"));
 }
 
 bool AChel::GoToWebCam_Validate()
@@ -774,7 +776,9 @@ bool AChel::GoToWebCam_Validate()
 
 void AChel::SpawnPlayer()
 {
-	CameraComp->ResetRelativeTransform();
+	CameraComp->SetRelativeTransform(CameraTrans);
+
+	UE_LOG(LogTemp, Warning, TEXT("Setting camera from webcam to player"));
 
 	EnableCollisionEverywhere();
 	SetActorHiddenInGame(false);

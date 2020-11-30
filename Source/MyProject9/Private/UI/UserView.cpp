@@ -29,7 +29,7 @@ void UUserView::OnAnimationFinished_Implementation(const UWidgetAnimation* Anima
 			Player->StuffAvaliableUpdate(1);
 			HoldText->SetVisibility(ESlateVisibility::Hidden);
 			EscapeText->SetVisibility(ESlateVisibility::Visible);
-
+			Player->Stone->SetHiddenInGame(true);
 			Player->PlayerOpenAreaUpdate(1);
 		}
 	}
@@ -39,7 +39,6 @@ void UUserView::OnAnimationFinished_Implementation(const UWidgetAnimation* Anima
 			Player->StuffAvaliableUpdate(2);
 			HoldText->SetVisibility(ESlateVisibility::Hidden);
 			EscapeText->SetVisibility(ESlateVisibility::Visible);
-
 			Player->PlayerOpenAreaUpdate(2);
 		}
 	}
@@ -52,6 +51,7 @@ void UUserView::OnAnimationFinished_Implementation(const UWidgetAnimation* Anima
 			{
 				IsAwake = true;
 				SetVisibility(ESlateVisibility::Hidden);
+				UE_LOG(LogTemp, Warning, TEXT("Hide UserView. Ready go to Webcam"));
 				Player->GoToWebCam();
 			}
 			else

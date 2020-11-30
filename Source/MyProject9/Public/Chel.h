@@ -252,4 +252,5 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite) //!!!!!!!!!!!!!!
 	float MoveCoeff = 1; //!!!!!!!!!!!!!! (для уменьшения скорости в области льда)
 
+	FTransform CameraTrans;
 };
