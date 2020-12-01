@@ -56,6 +56,8 @@ protected:
 	void OpenAreaPressed();
 	void OpenAreaReleased();
 
+	void UpdateSpectating_Left();
+	void UpdateSpectating_Right();
 public:
 	void SpawnPlayer();
 	void PossessedBy(AController* NewController) override;
@@ -81,7 +83,9 @@ public:
 		void MeshCompRepServer(float RotationRoll);
 
 	UFUNCTION(Server, Reliable, WithValidation)
-		void GoToWebCam();
+		void GoToWebCamServer(int32 Iterator);
+
+	void GoToWebCam();
 
 	UFUNCTION(Server, Reliable, WithValidation)
 		void DeliverNicknameToServer(const FText& newNickName);
@@ -238,6 +242,7 @@ public:
 	//KillFeed Vars
 	int KillerIndex;
 
+	int32 WebCamIterator;
 	
 public:
 	//Logic Boolean Variables

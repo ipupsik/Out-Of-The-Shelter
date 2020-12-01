@@ -298,6 +298,48 @@ void AChel::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 	PlayerInputComponent->BindAction("PickUp", IE_Pressed, this, &AChel::PickUp);
 	PlayerInputComponent->BindAction("Opening", IE_Pressed, this, &AChel::OpenAreaPressed);
 	PlayerInputComponent->BindAction("Opening", IE_Released, this, &AChel::OpenAreaReleased);
+	PlayerInputComponent->BindAction("UpdateSpectating_Left", IE_Released, this, &AChel::UpdateSpectating_Left);
+	PlayerInputComponent->BindAction("UpdateSpectating_Right", IE_Released, this, &AChel::UpdateSpectating_Right);
+}
+
+void AChel::UpdateSpectating_Right()
+{
+	if (!IsEnableInput)
+	{
+		while (!GS->WebCam_IsEnabled[WebCamIterator])
+		{
+			WebCamIterator += 1;
+
+			if (WebCamIterator >= GS->WebCam_IsEnabled.Num())
+			{
+				WebCamIterator -= GS->WebCam_IsEnabled.Num();
+			}
+		}
+		UE_LOG(LogTemp, Warning, TEXT("WebCamIterator - %d"), WebCamIterator);
+		PoseableMeshComp->SetWorldRotation(GS->WebCam_Rotation[WebCamIterator]);
+		PoseableMeshComp->SetWorldLocation(GS->WebCam_Location[WebCamIterator]);
+		GoToWebCamServer(WebCamIterator);
+	}
+}
+
+void AChel::UpdateSpectating_Left()
+{
+	if (!IsEnableInput)
+	{
+		while (!GS->WebCam_IsEnabled[WebCamIterator])
+		{
+			WebCamIterator -= 1;
+
+			if (WebCamIterator < 0)
+			{
+				WebCamIterator += GS->WebCam_IsEnabled.Num();
+			}
+		}
+		UE_LOG(LogTemp, Warning, TEXT("WebCamIterator - %d"), WebCamIterator);
+		PoseableMeshComp->SetWorldRotation(GS->WebCam_Rotation[WebCamIterator]);
+		PoseableMeshComp->SetWorldLocation(GS->WebCam_Location[WebCamIterator]);
+		GoToWebCamServer(WebCamIterator);
+	}
 }
 
 void AChel::OpenAreaPressed() 
@@ -746,20 +788,35 @@ void AChel::KillPlayer()
 	World->GetTimerManager().SetTimer(TimerHandle, this, &AChel::SpawnPlayer, SPAWN_TIME, false);
 }
 
-void AChel::GoToWebCam_Implementation()
+void AChel::GoToWebCam()
 {
-	TArray<AActor*> WebCamSpectators;
-	UGameplayStatics::GetAllActorsOfClassWithTag(World, ATargetPoint::StaticClass(), FName("WebCam"), WebCamSpectators);
-	FTransform NewTrans = WebCamSpectators[FMath::Rand() % WebCamSpectators.Num()]->GetActorTransform();
-	NewTrans.SetScale3D(PoseableMeshComp->GetRelativeScale3D());
-	PoseableMeshComp->SetWorldTransform(NewTrans);
+	int32 Iterator = FMath::Rand() % GS->WebCam_IsEnabled.Num();
 
-	UpdatePositionClient(NewTrans);
+	while (!GS->WebCam_IsEnabled[Iterator])
+	{
+		Iterator += 1;
+
+		if (Iterator >= GS->WebCam_IsEnabled.Num())
+		{
+			Iterator -= GS->WebCam_IsEnabled.Num();
+		}
+	}
+	PoseableMeshComp->SetWorldRotation(GS->WebCam_Rotation[Iterator]);
+	PoseableMeshComp->SetWorldLocation(GS->WebCam_Location[Iterator]);
+	WebCamIterator = Iterator;
+	GoToWebCamServer(Iterator);
+}
+
+void AChel::GoToWebCamServer_Implementation(int32 Iterator)
+{
+	PoseableMeshComp->SetWorldRotation(GS->WebCam_Rotation[Iterator]);
+	PoseableMeshComp->SetWorldLocation(GS->WebCam_Location[Iterator]);
+	GS->WebCam_IsEnabled[Iterator] = false;
 
 	UE_LOG(LogTemp, Warning, TEXT("Staying on webcam"));
 }
 
-bool AChel::GoToWebCam_Validate()
+bool AChel::GoToWebCamServer_Validate(int32 Iterator)
 {
 	return true;
 }

@@ -13,6 +13,9 @@ AGS::AGS() {
 	Kills.Init(FText::FromString(TEXT("0")), 4);
 	Deaths.Init(FText::FromString(TEXT("1")), 4);
 	Winners.Init(FText::FromString(TEXT("")), 3);
+	WebCam_Rotation.Init({}, 0);
+	WebCam_Location.Init({}, 0);
+	WebCam_IsEnabled.Init({}, 0);
 	EscapeTime.Init(0, 4);
 	AcceptPiedistalAmount = 0;
 	AmountOfPlayers = 0;
@@ -36,6 +39,26 @@ void AGS::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps
 	DOREPLIFETIME(AGS, EscapeTime);
 	DOREPLIFETIME(AGS, AreaAvaliables);
 	DOREPLIFETIME(AGS, AreaClosed);
+	DOREPLIFETIME(AGS, WebCam_Rotation);
+	DOREPLIFETIME(AGS, WebCam_Location);
+	DOREPLIFETIME(AGS, WebCam_IsEnabled);
+}
+
+void AGS::BeginPlay()
+{
+	Super::BeginPlay();
+
+	if (GetLocalRole() == ROLE_Authority) {
+		TArray<AActor*>WebCamSpectators;
+		UGameplayStatics::GetAllActorsOfClassWithTag(GetWorld(), ATargetPoint::StaticClass(), FName("WebCam"), WebCamSpectators);
+
+		for (auto& i : WebCamSpectators)
+		{
+			WebCam_Rotation.Add(i->GetActorRotation());
+			WebCam_Location.Add(i->GetActorLocation());
+			WebCam_IsEnabled.Add(true);
+		}
+	}
 }
 
 void AGS::GameBegin() {

@@ -44,8 +44,8 @@ void UUserView::OnAnimationFinished_Implementation(const UWidgetAnimation* Anima
 	}
 	else if (Animation == Shading)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("bCanPossessWebCam - %d"), (int)Player->bCanPossessWebCam);
-		UE_LOG(LogTemp, Warning, TEXT("bIsAwake - %d"), (int)IsAwake);
+		//UE_LOG(LogTemp, Warning, TEXT("bCanPossessWebCam - %d"), (int)Player->bCanPossessWebCam);
+		//UE_LOG(LogTemp, Warning, TEXT("bIsAwake - %d"), (int)IsAwake);
 		if (Player->bCanPossessWebCam) {
 			if (!IsAwake)
 			{
@@ -55,12 +55,17 @@ void UUserView::OnAnimationFinished_Implementation(const UWidgetAnimation* Anima
 				Player->GoToWebCam();
 			}
 			else
+			{
 				IsAwake = false;
+			}
 		}
 		else {
 			Player->bCanPossessWebCam = true;
 			IsAwake = true;
 		}
+		//UE_LOG(LogTemp, Warning, TEXT("bCanPossessWebCam - %d"), (int)Player->bCanPossessWebCam);
+		//UE_LOG(LogTemp, Warning, TEXT("bIsAwake - %d"), (int)IsAwake);
+		//UE_LOG(LogTemp, Warning, TEXT("------------------------"));
 	}
 	PB_Opening->SetVisibility(ESlateVisibility::Hidden);
 	TimeLeft->SetVisibility(ESlateVisibility::Hidden);

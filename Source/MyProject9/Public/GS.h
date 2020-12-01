@@ -32,6 +32,13 @@ class ASpectator;
 
 class AAreaCollision;
 
+struct WebCamStruct
+{
+	FRotator Rotation;
+	FVector Location;
+	bool IsEnabled;
+};
+
 UCLASS()
 class MYPROJECT9_API AGS : public AGameStateBase
 {
@@ -44,12 +51,11 @@ public:
 	void GameBegin();
 
 	void Tick(float DeltaSeconds) override;
-
+	void BeginPlay() override;
 	UFUNCTION()
 		void SpawnPlayers();
 	UFUNCTION(BlueprintCallable)
 		void ResetGame();
-
 public:
 	//For indexing
 	UPROPERTY(BlueprintReadWrite)
@@ -76,6 +82,12 @@ public:
 	UPROPERTY(Replicated)
 		TArray<bool> AreaClosed;
 	TArray<AAreaCollision*>Areas;
+	UPROPERTY(Replicated)
+		TArray<FRotator>WebCam_Rotation;
+	UPROPERTY(Replicated)
+		TArray<FVector>WebCam_Location;
+	UPROPERTY(Replicated)
+		TArray<bool>WebCam_IsEnabled;
 
 	UPROPERTY(EditAnywhere, Category = "ItemClasses")
 		TSubclassOf<APickableItem> KeyShelter;
