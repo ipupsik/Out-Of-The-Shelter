@@ -4,6 +4,9 @@
 
 #include "CoreMinimal.h"
 #include "OpenAreaCPP.h"
+#include "DamageAreaCPP.h"
+#include "ParticleGasCPP.h"
+
 #include "GasArea.generated.h"
 
 /**
@@ -15,14 +18,20 @@ class MYPROJECT9_API AGasArea : public AOpenAreaCPP
 	GENERATED_BODY()
 public:
 	AGasArea();
-	
+	void DoSomethink() override;
+public:
 	UPROPERTY(EditAnywhere)
 	FName GasAreaDamageTag;
 	UPROPERTY(EditAnywhere)
-	FName GasAreaPointTag;
+	FName GasAreaParticleTag;
 	UPROPERTY(EditAnywhere)
 		int32 CurrentAreaType;
 
-	//UPROPERTY(EditAnywhere)
-		//TSubclassOf<>
+	UPROPERTY(EditAnywhere)
+		TSubclassOf<ADamageAreaCPP> DamageAreaClass;
+
+	UPROPERTY(EditAnywhere)
+		TSubclassOf<AParticleGasCPP> PS_Class;
+
+	void DeleteAllObjects();
 };

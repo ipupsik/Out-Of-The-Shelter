@@ -12,6 +12,8 @@
 #include "Components/HorizontalBox.h"
 #include "Animation/WidgetAnimation.h"
 #include "Components/HorizontalBoxSlot.h"
+#include "UI/RadiationWidget.h"
+
 #include "UserView.generated.h"
 
 
@@ -99,12 +101,12 @@ public:
 
 	UPROPERTY(meta = (BindWidgetAnim))
 		UWidgetAnimation* VentilaciaAnim;
-
+	
 	UPROPERTY(meta = (BindWidgetAnim))
 		UWidgetAnimation* OpenAreaAnim;
 
 	UPROPERTY(EditAnywhere, Category = "UI HUD")
-		TSubclassOf<UUserWidget> RadiationImage;
+		TSubclassOf<URadiationWidget> RadiationImage;
 	
 	UPROPERTY(EditAnywhere, Category = "UI HUD")
 		TSubclassOf<UUserWidget> FreezeImage;

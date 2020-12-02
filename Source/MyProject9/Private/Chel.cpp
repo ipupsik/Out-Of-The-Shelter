@@ -1019,6 +1019,7 @@ void AChel::CallDoThomethinkArea_Implementation()
 		MyCharacter->HideHudArea();
 	}
 
+	OpenAreaObj->DoSomethink();
 }
 bool AChel::CallDoThomethinkArea_Validate()
 {
@@ -1044,4 +1045,14 @@ void AChel::HideHudArea_Implementation()
 void AChel::ShowHudArea_Implementation() {
 	UserView->HoldText->SetVisibility(ESlateVisibility::Visible);
 	UserView->AreaUsedText->SetVisibility(ESlateVisibility::Hidden);
+}
+
+void AChel::AddDoubleRadiationWidget_Implementation()
+{
+	UserView->AddDoubleRadiationEffect();
+}
+
+void AChel::DisableDoubleRadiationWidget_Implementation()
+{
+	UserView->DisableDoubleRadiationEffect();
 }

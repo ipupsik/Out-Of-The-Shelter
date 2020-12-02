@@ -17,5 +17,4 @@ public:
 	
 	UParticleSystemComponent* PS;
 	int32 areaType;
-
 };

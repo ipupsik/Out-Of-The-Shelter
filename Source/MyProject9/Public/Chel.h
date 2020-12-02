@@ -139,6 +139,12 @@ public:
 		void HideHudArea();
 
 	UFUNCTION(Client, Reliable)
+		void AddDoubleRadiationWidget();
+
+	UFUNCTION(Client, Reliable)
+		void DisableDoubleRadiationWidget();
+
+	UFUNCTION(Client, Reliable)
 		void ShowHudArea();
 
 	UFUNCTION(NetMulticast, Reliable)

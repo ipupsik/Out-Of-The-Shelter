@@ -80,7 +80,7 @@ void UUserView::OnAnimationFinished_Implementation(const UWidgetAnimation* Anima
 }
 void UUserView::AddDoubleRadiationEffect() {
 	
-	UUserWidget* Image = CreateWidget(Player, RadiationImage);
+	UUserWidget* Image = CreateWidget(GetWorld(), RadiationImage);
 	UHorizontalBoxSlot* Hor_slot = Cast<UHorizontalBoxSlot>(Effects_Bar->AddChild(Image));
 	Hor_slot->SetHorizontalAlignment(EHorizontalAlignment::HAlign_Center);
 	Hor_slot->SetVerticalAlignment(EVerticalAlignment::VAlign_Center);
@@ -93,6 +93,10 @@ void UUserView::DisableDoubleRadiationEffect()
 {
 	TArray<UWidget*> EffectsWidgets = Effects_Bar->GetAllChildren();
 	for (auto& it : EffectsWidgets) {
-		
+		if (Cast<URadiationWidget>(it) != nullptr)
+		{
+			it->RemoveFromParent();
+			return;
+		}
 	}
 }

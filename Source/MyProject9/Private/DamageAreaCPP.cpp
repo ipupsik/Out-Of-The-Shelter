@@ -2,7 +2,7 @@
 
 
 #include "DamageAreaCPP.h"
-
+#include "Chel.h"
 // Sets default values
 ADamageAreaCPP::ADamageAreaCPP()
 {
@@ -16,9 +16,20 @@ ADamageAreaCPP::ADamageAreaCPP()
 
 void ADamageAreaCPP::OnOverlapBegin(UPrimitiveComponent * OverlappedComp, AActor * OtherActor, UPrimitiveComponent * OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult)
 {
-
+	if (GetLocalRole() == ROLE_Authority)
+	{
+		AChel* Player = Cast<AChel>(OtherActor);
+		Player->RadCoeff *= 2;
+		Player->AddDoubleRadiationWidget();
+	}
 }
 
 void ADamageAreaCPP::ComponentOverlapEnd(UPrimitiveComponent * OverlappedComponent, AActor * OverlappedActor, UPrimitiveComponent * OtherActor, int32 OtherBodyIndex)
 {
+	if (GetLocalRole() == ROLE_Authority)
+	{
+		AChel* Player = Cast<AChel>(OtherActor);
+		Player->RadCoeff /= 2;
+		Player->DisableDoubleRadiationWidget();
+	}
 }

@@ -50,6 +50,14 @@ void AOpenAreaCPP::ComponentOverlapEnd(UPrimitiveComponent * OverlappedComponent
 	}
 }
 
+void AOpenAreaCPP::GetLifetimeReplicatedProps(TArray < FLifetimeProperty >& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(AOpenAreaCPP, bIsAvaliable);
+}
+
 void AOpenAreaCPP::DoSomethink()
 {
+
 }
