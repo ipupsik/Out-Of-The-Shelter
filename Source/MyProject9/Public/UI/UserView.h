@@ -9,8 +9,9 @@
 #include "Components/Image.h"
 #include "Components/WidgetSwitcher.h"
 #include "Components/VerticalBox.h"
+#include "Components/HorizontalBox.h"
 #include "Animation/WidgetAnimation.h"
-
+#include "Components/HorizontalBoxSlot.h"
 #include "UserView.generated.h"
 
 
@@ -26,11 +27,20 @@ class MYPROJECT9_API UUserView : public UUserWidget
 	
 public:
 	void OnAnimationFinished_Implementation(const UWidgetAnimation* Animation) override;
-
+	void AddDoubleRadiationEffect();
+	void DisableDoubleRadiationEffect();
+	void AddFreezeEffect();
+	void DisableFreezeEffect();
 	//void Construct() override;
 public:
 	AChel* Player;
 	//---------------------------
+	UPROPERTY(meta = (BindWidget))
+		UTextBlock* AreaUsedText;
+
+	UPROPERTY(meta = (BindWidget))
+		UHorizontalBox* Effects_Bar;
+
 	UPROPERTY(meta = (BindWidget))
 		UTextBlock* PickUpLabel_Otvertka;
 
@@ -44,11 +54,11 @@ public:
 	UPROPERTY(meta = (BindWidget))
 		UTextBlock* AmmoLabel;
 	//---------------------------
-	UPROPERTY(BlueprintReadWrite, meta = (BindWidget)) //!!!!!!!!!!!!!!!!!!!!!!!
+	UPROPERTY(meta = (BindWidget)) //!!!!!!!!!!!!!!!!!!!!!!!
 		UTextBlock* TimeLeft;
 
 	//---------------------------
-	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))  //!!!!!!!!!!!!!!!!!!!!!!!
+	UPROPERTY(meta = (BindWidget))  //!!!!!!!!!!!!!!!!!!!!!!!
 		UTextBlock* HoldText;
 	UPROPERTY(meta = (BindWidget))
 		UTextBlock* EscapeText;
@@ -56,7 +66,7 @@ public:
 	UPROPERTY(meta = (BindWidget))
 		UProgressBar* RadiationPoints;
 	//---------------------------
-	UPROPERTY(BlueprintReadWrite,  meta = (BindWidget)) //!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+	UPROPERTY(meta = (BindWidget)) //!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 		UProgressBar* PB_Opening;
 	//---------------------------
 	UPROPERTY(meta = (BindWidget))
@@ -89,6 +99,15 @@ public:
 
 	UPROPERTY(meta = (BindWidgetAnim))
 		UWidgetAnimation* VentilaciaAnim;
+
+	UPROPERTY(meta = (BindWidgetAnim))
+		UWidgetAnimation* OpenAreaAnim;
+
+	UPROPERTY(EditAnywhere, Category = "UI HUD")
+		TSubclassOf<UUserWidget> RadiationImage;
+	
+	UPROPERTY(EditAnywhere, Category = "UI HUD")
+		TSubclassOf<UUserWidget> FreezeImage;
 
 	void NativeConstruct() override;
 

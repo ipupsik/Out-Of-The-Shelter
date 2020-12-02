@@ -17,7 +17,8 @@
 enum PickUpType {
 	Boltorez,
 	KeyShelter,
-	Otvertka
+	Otvertka,
+	Gas
 };
 
 // Sets default values
@@ -391,6 +392,10 @@ void AChel::OpenAreaPressed()
 				UserView->PlayAnimation(UserView->VentilaciaAnim);
 			}
 			break;
+		}
+		case Gas:
+		{
+
 		}
 		}
 	}
@@ -1005,7 +1010,20 @@ void AChel::PossessToSpectator()
 	}
 }
 
+void AChel::CallDoThomethinkArea_Implementation()
+{
+	TArray<AActor*> Players;
+	OpenAreaObj->Collision->GetOverlappingActors(Players, AChel::StaticClass());
+	for (auto& it : Players) {
+		AChel* MyCharacter = Cast<AChel>(it);
+		MyCharacter->HideHudArea();
+	}
 
+}
+bool AChel::CallDoThomethinkArea_Validate()
+{
+	return true;
+}
 void AChel::DeleteGameHUD_Implementation()
 {
 	UserView->RemoveFromParent();
@@ -1015,4 +1033,15 @@ void AChel::DeleteGameHUD_Implementation()
 	KillFeed->Destruct();
 	
 	Destroy();
+}
+
+void AChel::HideHudArea_Implementation()
+{
+	UserView->HoldText->SetVisibility(ESlateVisibility::Hidden);
+	UserView->AreaUsedText->SetVisibility(ESlateVisibility::Visible);
+}
+
+void AChel::ShowHudArea_Implementation() {
+	UserView->HoldText->SetVisibility(ESlateVisibility::Visible);
+	UserView->AreaUsedText->SetVisibility(ESlateVisibility::Hidden);
 }

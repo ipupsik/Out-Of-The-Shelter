@@ -67,6 +67,32 @@ void UUserView::OnAnimationFinished_Implementation(const UWidgetAnimation* Anima
 		//UE_LOG(LogTemp, Warning, TEXT("bIsAwake - %d"), (int)IsAwake);
 		//UE_LOG(LogTemp, Warning, TEXT("------------------------"));
 	}
+	else if (Animation == OpenAreaAnim) {
+		PB_Opening->SetPercent(0);
+		PB_Opening->SetVisibility(ESlateVisibility::Hidden);
+		TimeLeft->SetVisibility(ESlateVisibility::Hidden);
+		if (Player->AreaCode != -1 && Player->IsSuccessOpening) {
+			Player->CallDoThomethinkArea();
+		}
+	}
 	PB_Opening->SetVisibility(ESlateVisibility::Hidden);
 	TimeLeft->SetVisibility(ESlateVisibility::Hidden);
+}
+void UUserView::AddDoubleRadiationEffect() {
+	
+	UUserWidget* Image = CreateWidget(Player, RadiationImage);
+	UHorizontalBoxSlot* Hor_slot = Cast<UHorizontalBoxSlot>(Effects_Bar->AddChild(Image));
+	Hor_slot->SetHorizontalAlignment(EHorizontalAlignment::HAlign_Center);
+	Hor_slot->SetVerticalAlignment(EVerticalAlignment::VAlign_Center);
+	FSlateChildSize InSize = FSlateChildSize(ESlateSizeRule::Fill);
+	InSize.Value = 1.0f;
+	Hor_slot->SetSize(InSize);
+}
+
+void UUserView::DisableDoubleRadiationEffect()
+{
+	TArray<UWidget*> EffectsWidgets = Effects_Bar->GetAllChildren();
+	for (auto& it : EffectsWidgets) {
+		
+	}
 }

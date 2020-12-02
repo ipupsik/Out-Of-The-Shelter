@@ -12,6 +12,7 @@
 #include "GS.h"
 #include "Stone.h"
 #include "PickableItem.h"
+#include "OpenAreaCPP.h"
 #include "UI/UserView.h"
 #include "UI/PlayerKillPlayer.h"
 #include "UI/PlayerLostItem.h"
@@ -110,6 +111,10 @@ public:
 	void PossessToSpectator();
 
 	UFUNCTION(Server, Reliable, WithValidation)
+		void CallDoThomethinkArea();
+
+
+	UFUNCTION(Server, Reliable, WithValidation)
 		void StuffAvaliableUpdate(int32 EscapeWay);
 
 	UFUNCTION(Server, Reliable, WithValidation)
@@ -130,8 +135,15 @@ public:
 	UFUNCTION(Client, Reliable)
 		void UpdatePositionClient(FTransform NewTrans);
 
+	UFUNCTION(Client, Reliable)
+		void HideHudArea();
+
+	UFUNCTION(Client, Reliable)
+		void ShowHudArea();
+
 	UFUNCTION(NetMulticast, Reliable)
 		void HideStoneMulticast();
+
 	UFUNCTION(Client, Reliable)
 		void RefreshWidgets(const TArray<bool> &whatToUpdate, int KillerNickIndex, int VictimNickIndex, bool isSuicide);
 	//ThrowStoneFunctions
@@ -261,4 +273,6 @@ public:
 	float MoveCoeff = 1; //!!!!!!!!!!!!!! (для уменьшения скорости в области льда)
 
 	FTransform MeshTrans;
+
+	AOpenAreaCPP* OpenAreaObj;
 };
