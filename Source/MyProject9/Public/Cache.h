@@ -40,4 +40,7 @@ public:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Player")
 		USceneComponent* Scene;
+
+	UPROPERTY(BlueprintReadWrite)
+		bool IsEnabled;
 };

@@ -17,6 +17,8 @@ ACache::ACache()
 
 	Mesh = CreateDefaultSubobject<UStaticMeshComponent>("Mesh");
 	Mesh->SetupAttachment(Scene);
+
+	IsEnabled = true;
 }
 
 // Called when the game starts or when spawned

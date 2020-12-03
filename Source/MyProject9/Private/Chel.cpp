@@ -239,7 +239,7 @@ void AChel::Tick(float DeltaTime)
 						LastItem = TracedItem;
 						LastItem->Item->SetCustomDepthStencilValue(255);
 					}
-					else if (TracedCache)
+					else if (TracedCache && TracedCache->IsEnabled)
 					{
 						isTracedBad = false;
 						bLineTrace_is_need_refresh = true;
