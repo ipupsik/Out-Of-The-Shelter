@@ -51,10 +51,25 @@ public:
 
 	UPROPERTY(meta = (BindWidget))
 		UTextBlock* PickUpLabel_Boltorez;
+
+	UPROPERTY(meta = (BindWidget))
+		UTextBlock* OpenUp_Cache;
+
+	UPROPERTY(meta = (BindWidget))
+		UTextBlock* PickUp_CacheKey;
 	//---------------------------
 
 	UPROPERTY(meta = (BindWidget))
 		UTextBlock* AmmoLabel;
+
+	UPROPERTY(meta = (BindWidget))
+		UTextBlock* KeyLeft_Bronze;
+
+	UPROPERTY(meta = (BindWidget))
+		UTextBlock* KeyLeft_Silver;
+
+	UPROPERTY(meta = (BindWidget))
+		UTextBlock* KeyLeft_Gold;
 	//---------------------------
 	UPROPERTY(meta = (BindWidget)) //!!!!!!!!!!!!!!!!!!!!!!!
 		UTextBlock* TimeLeft;

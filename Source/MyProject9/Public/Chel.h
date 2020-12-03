@@ -7,6 +7,7 @@
 #include "Net/UnrealNetwork.h"
 
 #include "Spectator.h"
+#include "Cache.h"
 
 #include "GI.h"
 #include "GS.h"
@@ -232,8 +233,11 @@ public:
 	int32 AreaCode;
 	UPROPERTY(Replicated)
 		TArray<bool>DoesHave;
+	UPROPERTY(Replicated)
+		TArray<int32>KeysCount;
 	bool DoesHave_Owner;
 	APickableItem* LastItem;
+	ACache* LastCache;
 	//GlobalSettings
 	bool IsServerAuth;
 	bool IsPlayerOwner;

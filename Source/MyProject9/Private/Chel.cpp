@@ -13,12 +13,21 @@
 #include "Components/SkinnedMeshComponent.h"
 #include "AreaCollision.h"
 #include "BP_PlayerController.h"
+#include "Cache_Key.h"
 
 enum PickUpType {
 	Boltorez,
 	KeyShelter,
 	Otvertka,
-	Gas
+	OpenArea,
+	Cache,
+	CacheKey,
+};
+
+enum CacheType {
+	KeyBronze,
+	KeySilver,
+	KeyGold
 };
 
 // Sets default values
@@ -59,6 +68,8 @@ AChel::AChel()
 	bCanPossessWebCam = false;
 
 	OpenAreaObj = nullptr;
+
+	KeysCount.Init(0, 3);
 }
 
 // Called when the game starts or when spawned
@@ -197,6 +208,7 @@ void AChel::Tick(float DeltaTime)
 				AActor* HittableActor = OutHit.GetActor();
 				if (HittableActor) { //Если мы стукнулись в какой-то актор, а не в пустоту
 					APickableItem* TracedItem = Cast<APickableItem>(HittableActor);
+					ACache* TracedCache = Cast<ACache>(HittableActor);
 					if (TracedItem) { //Если мы стукнулись в нужный нам предмет
 						ItemCodePickUp = TracedItem->Type;
 						switch (ItemCodePickUp)
@@ -204,25 +216,21 @@ void AChel::Tick(float DeltaTime)
 							case Boltorez:
 							{
 								UserView->PickUpLabel_Boltorez->SetVisibility(ESlateVisibility::Visible);
-
-								UserView->PickUpLabel_KeyShelter->SetVisibility(ESlateVisibility::Hidden);
-								UserView->PickUpLabel_Otvertka->SetVisibility(ESlateVisibility::Hidden);
 								break;
 							}
 							case KeyShelter:
 							{
 								UserView->PickUpLabel_KeyShelter->SetVisibility(ESlateVisibility::Visible);
-
-								UserView->PickUpLabel_Boltorez->SetVisibility(ESlateVisibility::Hidden);
-								UserView->PickUpLabel_Otvertka->SetVisibility(ESlateVisibility::Hidden);
 								break;
 							}
 							case Otvertka:
 							{
 								UserView->PickUpLabel_Otvertka->SetVisibility(ESlateVisibility::Visible);
-
-								UserView->PickUpLabel_KeyShelter->SetVisibility(ESlateVisibility::Hidden);
-								UserView->PickUpLabel_Boltorez->SetVisibility(ESlateVisibility::Hidden);
+								break;
+							}
+							case CacheKey:
+							{
+								UserView->PickUp_CacheKey->SetVisibility(ESlateVisibility::Visible);
 								break;
 							}
 						}
@@ -230,6 +238,15 @@ void AChel::Tick(float DeltaTime)
 						bLineTrace_is_need_refresh = true;  //Говорим, что в текущем кадре мы ударились в нужный предмет
 						LastItem = TracedItem;
 						LastItem->Item->SetCustomDepthStencilValue(255);
+					}
+					else if (TracedCache)
+					{
+						isTracedBad = false;
+						bLineTrace_is_need_refresh = true;
+						ItemCodePickUp = Cache;
+						UserView->OpenUp_Cache->SetVisibility(ESlateVisibility::Visible);
+
+						LastCache = TracedCache;
 					}
 					else
 						isTracedBad = true; //Мы не попали в нужный нам предмет
@@ -255,6 +272,8 @@ void AChel::Tick(float DeltaTime)
 			UserView->PickUpLabel_KeyShelter->SetVisibility(ESlateVisibility::Hidden);
 			UserView->PickUpLabel_Boltorez->SetVisibility(ESlateVisibility::Hidden);
 			UserView->PickUpLabel_Otvertka->SetVisibility(ESlateVisibility::Hidden);
+			UserView->PickUp_CacheKey->SetVisibility(ESlateVisibility::Hidden);
+			UserView->OpenUp_Cache->SetVisibility(ESlateVisibility::Hidden);
 		}
 	}
 }
@@ -264,14 +283,15 @@ void AChel::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimePro
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
-	DOREPLIFETIME(AChel, Index)
-	DOREPLIFETIME(AChel, Health)
-	DOREPLIFETIME(AChel, NickName)
-	DOREPLIFETIME(AChel, Ammo)
-	DOREPLIFETIME(AChel, Death)
-	DOREPLIFETIME(AChel, Kills)
-	DOREPLIFETIME(AChel, IsEnableInput)
-	DOREPLIFETIME(AChel, DoesHave)
+	DOREPLIFETIME(AChel, Index);
+	DOREPLIFETIME(AChel, Health);
+	DOREPLIFETIME(AChel, NickName);
+	DOREPLIFETIME(AChel, Ammo);
+	DOREPLIFETIME(AChel, Death);
+	DOREPLIFETIME(AChel, Kills);
+	DOREPLIFETIME(AChel, IsEnableInput);
+	DOREPLIFETIME(AChel, DoesHave);
+	DOREPLIFETIME(AChel, KeysCount);
 }
 //-----------------------------
 
@@ -404,7 +424,7 @@ void AChel::OpenAreaPressed()
 			}
 			break;
 		}
-		case Gas:
+		case OpenArea:
 		{
 			if (OpenAreaObj->bIsAvaliable) {
 				UserView->PlayAnimation(UserView->OpenAreaAnim);
@@ -630,20 +650,80 @@ void AChel::PickUp() {
 			UserView->WS_Otvertka->SetActiveWidgetIndex(1);
 			break;
 		}
+		case CacheKey:
+		{
+			int KeyType = Cast<ACache_Key>(LastItem)->KeyType;
+			switch (KeyType)
+			{
+			case KeyBronze:
+			{
+				UserView->KeyLeft_Bronze->SetText(FText::AsNumber(KeysCount[KeyBronze] + 1));
+				break;
+			}
+			case KeySilver:
+			{
+				UserView->KeyLeft_Silver->SetText(FText::AsNumber(KeysCount[KeySilver] + 1));
+				break;
+			}
+			case KeyGold:
+			{
+				UserView->KeyLeft_Gold->SetText(FText::AsNumber(KeysCount[KeyGold] + 1));
+				break;
+			}
+			}
+			KeysCount[KeyType]++;
+			break;
+		}
+		case Cache:
+		{
+			if (LastCache != nullptr) {
+				if (KeysCount[LastCache->CacheType] > 0)
+				{
+					switch (LastCache->CacheType)
+					{
+					case KeyBronze:
+					{
+						UserView->KeyLeft_Bronze->SetText(FText::AsNumber(KeysCount[KeyBronze] - 1));
+						break;
+					}
+					case KeySilver:
+					{
+						UserView->KeyLeft_Silver->SetText(FText::AsNumber(KeysCount[KeySilver] - 1));
+						break;
+					}
+					case KeyGold:
+					{
+						UserView->KeyLeft_Gold->SetText(FText::AsNumber(KeysCount[KeyGold] - 1));
+						break;
+					}
+					}
+					KeysCount[LastCache->CacheType]--;
+					LastCache->Opening();
+				}
+			}
+			else
+			{
+				UE_LOG(LogTemp, Warning, TEXT("LastCache is nullptr"))
+			}
+			break;
+
 		}
 		DoesHave_Owner = true;
 		NewHaveItemServer(ItemCodePickUp);
+		}
 	}
 }
 
 
 void AChel::NewHaveItemServer_Implementation(int32 ItemType)
 {
-	DoesHave[ItemType] = true;
-	TArray<AActor*>Players;
-	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AChel::StaticClass(), Players);
-	for (auto Player:Players)
-		Cast<AChel>(Player)->NewHaveItemClient(ItemType);
+	if (ItemType >= 0 && ItemType <= 2) {
+		DoesHave[ItemType] = true;
+		TArray<AActor*>Players;
+		UGameplayStatics::GetAllActorsOfClass(GetWorld(), AChel::StaticClass(), Players);
+		for (auto Player : Players)
+			Cast<AChel>(Player)->NewHaveItemClient(ItemType);
+	}
 
 	FHitResult OutHit;
 
