@@ -92,9 +92,12 @@ void UUserView::AddDoubleRadiationEffect() {
 void UUserView::DisableDoubleRadiationEffect()
 {
 	TArray<UWidget*> EffectsWidgets = Effects_Bar->GetAllChildren();
+	UE_LOG(LogTemp, Warning, TEXT("DisableEffect"))
 	for (auto& it : EffectsWidgets) {
+		UE_LOG(LogTemp, Warning, TEXT("Child"))
 		if (Cast<URadiationWidget>(it) != nullptr)
 		{
+			UE_LOG(LogTemp, Warning, TEXT("Remove"))
 			it->RemoveFromParent();
 			return;
 		}
