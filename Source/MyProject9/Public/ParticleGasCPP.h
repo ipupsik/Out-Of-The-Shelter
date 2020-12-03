@@ -14,7 +14,7 @@ class MYPROJECT9_API AParticleGasCPP : public AActor
 	
 public:	
 	AParticleGasCPP();
-	
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Particle")
 	UParticleSystemComponent* PS;
 	int32 areaType;
 };

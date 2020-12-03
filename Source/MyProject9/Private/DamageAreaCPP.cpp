@@ -19,8 +19,11 @@ void ADamageAreaCPP::OnOverlapBegin(UPrimitiveComponent * OverlappedComp, AActor
 	if (GetLocalRole() == ROLE_Authority)
 	{
 		AChel* Player = Cast<AChel>(OtherActor);
-		Player->RadCoeff *= 2;
-		Player->AddDoubleRadiationWidget();
+		if (Player) {
+			Player->RadCoeff *= 2;
+			Player->AddDoubleRadiationWidget();
+		}
+		
 	}
 }
 
@@ -29,7 +32,10 @@ void ADamageAreaCPP::ComponentOverlapEnd(UPrimitiveComponent * OverlappedCompone
 	if (GetLocalRole() == ROLE_Authority)
 	{
 		AChel* Player = Cast<AChel>(OtherActor);
-		Player->RadCoeff /= 2;
-		Player->DisableDoubleRadiationWidget();
+		if (Player) {
+			Player->RadCoeff /= 2;
+			Player->DisableDoubleRadiationWidget();
+		}
+		
 	}
 }

@@ -57,6 +57,8 @@ AChel::AChel()
 	IsSuccessOpening = false;
 	AreaCode = -1;
 	bCanPossessWebCam = false;
+
+	OpenAreaObj = nullptr;
 }
 
 // Called when the game starts or when spawned
@@ -348,9 +350,18 @@ void AChel::OpenAreaPressed()
 	if (AreaCode != -1)
 	{
 		IsSuccessOpening = true;
-		if (!GS->AreaAvaliables[AreaCode] && DoesHave[AreaCode]) {
-			UserView->PB_Opening->SetVisibility(ESlateVisibility::Visible);
-			UserView->TimeLeft->SetVisibility(ESlateVisibility::Visible);
+		if (AreaCode <= 2 && AreaCode >= 0) {
+			if (!GS->AreaAvaliables[AreaCode] && DoesHave[AreaCode]) {
+				UserView->PB_Opening->SetVisibility(ESlateVisibility::Visible);
+				UserView->TimeLeft->SetVisibility(ESlateVisibility::Visible);
+			}
+		}
+		else if (AreaCode >= 3) {
+			if (OpenAreaObj != nullptr &&  OpenAreaObj->bIsAvaliable) {
+				UserView->PB_Opening->SetVisibility(ESlateVisibility::Visible);
+				UserView->TimeLeft->SetVisibility(ESlateVisibility::Visible);
+			
+			}
 		}
 		switch (AreaCode)
 		{
@@ -395,7 +406,10 @@ void AChel::OpenAreaPressed()
 		}
 		case Gas:
 		{
-
+			if (OpenAreaObj->bIsAvaliable) {
+				UserView->PlayAnimation(UserView->OpenAreaAnim);
+			}
+			break;
 		}
 		}
 	}

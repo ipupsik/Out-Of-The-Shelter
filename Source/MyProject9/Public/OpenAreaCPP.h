@@ -15,10 +15,12 @@ class MYPROJECT9_API AOpenAreaCPP : public AActor
 public:	
 	//functions
 	AOpenAreaCPP();
+
+	UFUNCTION()
+		void OnOverlapEnd(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 	UFUNCTION()
 		void OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
-	UFUNCTION()
-		void ComponentOverlapEnd(UPrimitiveComponent* OverlappedComponent,  AActor* OverlappedActor,  UPrimitiveComponent* OtherActor, int32 OtherBodyIndex);
+	
 	virtual void DoSomethink();
 	void GetLifetimeReplicatedProps(TArray < FLifetimeProperty >& OutLifetimeProps) const override;
 	//variables

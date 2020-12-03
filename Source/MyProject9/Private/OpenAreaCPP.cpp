@@ -11,8 +11,9 @@ AOpenAreaCPP::AOpenAreaCPP()
 	Collision = CreateDefaultSubobject<UBoxComponent>("Collision");
 	Collision->SetupAttachment(RootComponent);
 
-	Collision->OnComponentEndOverlap.AddDynamic(this, &AOpenAreaCPP::ComponentOverlapEnd);
+	
 	Collision->OnComponentBeginOverlap.AddDynamic(this, &AOpenAreaCPP::OnOverlapBegin);
+	Collision->OnComponentEndOverlap.AddDynamic(this, &AOpenAreaCPP::OnOverlapEnd);
 
 	bIsAvaliable = true;
 }
@@ -24,7 +25,7 @@ void AOpenAreaCPP::OnOverlapBegin(UPrimitiveComponent * OverlappedComp, AActor *
 		Player->OpenAreaObj = this;
 		UUserView* PlayerView = Player->UserView;
 		if (PlayerView != nullptr) {
-			Player->AreaCode = areaType;
+			Player->AreaCode = 3;
 			if (bIsAvaliable) {
 				PlayerView->HoldText->SetVisibility(ESlateVisibility::Visible);
 			}
@@ -35,7 +36,7 @@ void AOpenAreaCPP::OnOverlapBegin(UPrimitiveComponent * OverlappedComp, AActor *
 	}
 }
 
-void AOpenAreaCPP::ComponentOverlapEnd(UPrimitiveComponent * OverlappedComponent, AActor * OverlappedActor, UPrimitiveComponent * OtherActor, int32 OtherBodyIndex)
+void AOpenAreaCPP::OnOverlapEnd(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
 	AChel* Player = Cast<AChel>(OtherActor);
 	if (Player != nullptr) {
