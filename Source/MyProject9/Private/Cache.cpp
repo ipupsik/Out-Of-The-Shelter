@@ -2,6 +2,7 @@
 
 
 #include "Cache.h"
+#include "Net/UnrealNetwork.h"
 
 // Sets default values
 ACache::ACache()
@@ -19,6 +20,13 @@ ACache::ACache()
 	Mesh->SetupAttachment(Scene);
 
 	IsEnabled = true;
+}
+
+void ACache::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(ACache, IsEnabled);
 }
 
 // Called when the game starts or when spawned

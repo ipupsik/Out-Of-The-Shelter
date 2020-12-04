@@ -239,14 +239,16 @@ void AChel::Tick(float DeltaTime)
 						LastItem = TracedItem;
 						LastItem->Item->SetCustomDepthStencilValue(255);
 					}
-					else if (TracedCache && TracedCache->IsEnabled)
+					else if (TracedCache)
 					{
-						isTracedBad = false;
-						bLineTrace_is_need_refresh = true;
-						ItemCodePickUp = Cache;
-						UserView->OpenUp_Cache->SetVisibility(ESlateVisibility::Visible);
+						if (TracedCache->IsEnabled) {
+							isTracedBad = false;
+							bLineTrace_is_need_refresh = true;
+							ItemCodePickUp = Cache;
+							UserView->OpenUp_Cache->SetVisibility(ESlateVisibility::Visible);
 
-						LastCache = TracedCache;
+							LastCache = TracedCache;
+						}
 					}
 					else
 						isTracedBad = true; //Мы не попали в нужный нам предмет
@@ -266,8 +268,8 @@ void AChel::Tick(float DeltaTime)
 			bLineTrace_is_need_refresh = false;
 
 			ItemCodePickUp = -1;
-
-			LastItem->Item->SetCustomDepthStencilValue(0);
+			if (LastItem)
+				LastItem->Item->SetCustomDepthStencilValue(0);
 
 			UserView->PickUpLabel_KeyShelter->SetVisibility(ESlateVisibility::Hidden);
 			UserView->PickUpLabel_Boltorez->SetVisibility(ESlateVisibility::Hidden);
@@ -638,16 +640,22 @@ void AChel::PickUp() {
 		case Boltorez:
 		{
 			UserView->WS_Boltorez->SetActiveWidgetIndex(1);
+			DoesHave_Owner = true;
+			NewHaveItemServer(ItemCodePickUp);
 			break;
 		}
 		case KeyShelter:
 		{
 			UserView->WS_KeyShelter->SetActiveWidgetIndex(1);
+			DoesHave_Owner = true;
+			NewHaveItemServer(ItemCodePickUp);
 			break;
 		}
 		case Otvertka:
 		{
 			UserView->WS_Otvertka->SetActiveWidgetIndex(1);
+			DoesHave_Owner = true;
+			NewHaveItemServer(ItemCodePickUp);
 			break;
 		}
 		case CacheKey:
@@ -672,6 +680,8 @@ void AChel::PickUp() {
 			}
 			}
 			KeysCount[KeyType]++;
+			DoesHave_Owner = true;
+			NewHaveItemServer(ItemCodePickUp);
 			break;
 		}
 		case Cache:
@@ -698,7 +708,8 @@ void AChel::PickUp() {
 					}
 					}
 					KeysCount[LastCache->CacheType]--;
-					LastCache->Opening();
+
+					ChangeIsAvaliableCache();
 				}
 			}
 			else
@@ -708,12 +719,35 @@ void AChel::PickUp() {
 			break;
 
 		}
-		DoesHave_Owner = true;
-		NewHaveItemServer(ItemCodePickUp);
 		}
 	}
 }
 
+void AChel::ChangeIsAvaliableCache_Implementation()
+{
+	FHitResult OutHit;
+
+	FVector StartLocation = CameraComp->GetComponentLocation();
+	FVector EndLocation = StartLocation + CameraComp->GetForwardVector() * 300;
+
+	FCollisionQueryParams CollisionParams;
+
+	World->LineTraceSingleByChannel(OutHit, StartLocation, EndLocation, ECC_Visibility, CollisionParams);
+	if (OutHit.GetActor()) {
+		ACache* TempItem = Cast<ACache>(OutHit.GetActor());
+		if (TempItem)
+		{
+			TempItem->IsEnabled = false;
+			TempItem->Opening();
+			return;
+		}
+	}
+}
+
+bool AChel::ChangeIsAvaliableCache_Validate()
+{
+	return true;
+}
 
 void AChel::NewHaveItemServer_Implementation(int32 ItemType)
 {

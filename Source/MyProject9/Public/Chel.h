@@ -114,6 +114,8 @@ public:
 	UFUNCTION(Server, Reliable, WithValidation)
 		void CallDoThomethinkArea();
 
+	UFUNCTION(Server, Reliable, WithValidation)
+		void ChangeIsAvaliableCache();
 
 	UFUNCTION(Server, Reliable, WithValidation)
 		void StuffAvaliableUpdate(int32 EscapeWay);

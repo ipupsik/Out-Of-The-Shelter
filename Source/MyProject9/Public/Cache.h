@@ -26,6 +26,7 @@ public:
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
 		void Opening();
 public:	
+	void GetLifetimeReplicatedProps(TArray < FLifetimeProperty >& OutLifetimeProps) const override;
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
@@ -41,6 +42,6 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Player")
 		USceneComponent* Scene;
 
-	UPROPERTY(BlueprintReadWrite)
+	UPROPERTY(BlueprintReadWrite, Replicated)
 		bool IsEnabled;
 };
