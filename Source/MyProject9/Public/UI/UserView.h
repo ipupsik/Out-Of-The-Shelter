@@ -37,7 +37,7 @@ public:
 public:
 	AChel* Player;
 	//---------------------------
-	UPROPERTY(meta = (BindWidget))
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, meta = (BindWidget))
 		UTextBlock* AreaUsedText;
 
 	UPROPERTY(meta = (BindWidget))
@@ -75,7 +75,7 @@ public:
 		UTextBlock* TimeLeft;
 
 	//---------------------------
-	UPROPERTY(meta = (BindWidget))  //!!!!!!!!!!!!!!!!!!!!!!!
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, meta = (BindWidget))  //!!!!!!!!!!!!!!!!!!!!!!!
 		UTextBlock* HoldText;
 	UPROPERTY(meta = (BindWidget))
 		UTextBlock* EscapeText;
