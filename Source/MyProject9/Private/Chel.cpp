@@ -771,7 +771,15 @@ void AChel::NewHaveItemServer_Implementation(int32 ItemType)
 		APickableItem* TempItem = Cast<APickableItem>(OutHit.GetActor());
 		if (TempItem)
 		{
-			TempItem->Destroy();
+			ACache_Key* CacheKey = Cast<ACache_Key>(TempItem);
+			if (CacheKey)
+			{
+				CacheKey->RemoveAndRefreshTimer();
+			}
+			else
+			{
+				TempItem->Destroy();
+			}
 		}
 	}
 	

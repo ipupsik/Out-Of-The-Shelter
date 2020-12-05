@@ -26,6 +26,8 @@ class ASpectator;
 #define DeltaRadiation 0.0f
 
 #define SPAWN_TIME 10.f
+
+#define COUNT_CacheKey 3
 /**
  * 
  */
@@ -96,6 +98,13 @@ public:
 	UPROPERTY(EditAnywhere, Category = "ItemClasses")
 		TSubclassOf<APickableItem> Otvertka;
 
+	UPROPERTY(EditAnywhere, Category = "ItemClasses")
+		TSubclassOf<APickableItem> BronzeKey;
+	UPROPERTY(EditAnywhere, Category = "ItemClasses")
+		TSubclassOf<APickableItem> SilverKey;
+	UPROPERTY(EditAnywhere, Category = "ItemClasses")
+		TSubclassOf<APickableItem> GoldKey;
+
 	int CurrentOtvertka;
 	int CurrentKeyShelter;
 	int CurrentBoltorez;
@@ -105,4 +114,7 @@ public:
 	int32 GeneralLayer;
 
 	bool IsGameStarted;
+
+	TArray<FTransform>SpawnPoints_Stuff_Transform;
+	TArray<bool>SpawnPoints_Stuff_IsAvaliable;
 };
