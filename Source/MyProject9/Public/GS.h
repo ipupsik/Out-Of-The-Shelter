@@ -34,13 +34,6 @@ class ASpectator;
 
 class AAreaCollision;
 
-struct WebCamStruct
-{
-	FRotator Rotation;
-	FVector Location;
-	bool IsEnabled;
-};
-
 UCLASS()
 class MYPROJECT9_API AGS : public AGameStateBase
 {

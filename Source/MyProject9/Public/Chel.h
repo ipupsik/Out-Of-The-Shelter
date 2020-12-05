@@ -8,6 +8,8 @@
 
 #include "Spectator.h"
 #include "Cache.h"
+#include "GeneratorArea.h"
+#include "UI/GeneratorWidget.h"
 
 #include "GI.h"
 #include "GS.h"
@@ -18,6 +20,7 @@
 #include "UI/PlayerKillPlayer.h"
 #include "UI/PlayerLostItem.h"
 #include "UI/PlayerSuicide.h"
+#include "UI/GeneratorWidget.h"
 #include "Components/TimelineComponent.h"
 
 #include "Chel.generated.h"
@@ -112,6 +115,9 @@ public:
 	void PossessToSpectator();
 
 	UFUNCTION(Server, Reliable, WithValidation)
+		void ChangeGeneratorStas();
+
+	UFUNCTION(Server, Reliable, WithValidation)
 		void CallDoThomethinkArea();
 
 	UFUNCTION(Server, Reliable, WithValidation)
@@ -128,6 +134,12 @@ public:
 
 	UFUNCTION(Server, Reliable, WithValidation)
 		void PlayerOpenAreaUpdate(int32 EscapeWay);
+
+	UFUNCTION(Client, Reliable)
+		void ChangeCorretca_Client(int32 ValueV);
+
+	UFUNCTION(Client, Reliable)
+		void HideWidgetStas();
 
 	UFUNCTION(Client, Reliable)
 		void AreaClosedUpdate(int32 EscapeWay);
@@ -209,6 +221,8 @@ public:
 		TSubclassOf<UPlayerSuicide> PlayerSuicide_class;
 	UPROPERTY(EditAnywhere, Category = "UI HUD")
 		TSubclassOf<UPlayerLostItem> PlayerLostItem_class;
+	UPROPERTY(EditAnywhere, Category = "UI HUD")
+		TSubclassOf<UGeneratorWidget> GeneratorView_class;
 	//HUD Variables
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite) //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 		UUserView* UserView;
@@ -287,4 +301,7 @@ public:
 	FTransform MeshTrans;
 
 	AOpenAreaCPP* OpenAreaObj;
+
+	AGeneratorArea* GenAreaObj;
+	UGeneratorWidget* GeneratorView;
 };

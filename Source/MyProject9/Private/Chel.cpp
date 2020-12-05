@@ -22,6 +22,7 @@ enum PickUpType {
 	OpenArea,
 	Cache,
 	CacheKey,
+	GeneratorArea,
 };
 
 enum CacheType {
@@ -110,9 +111,12 @@ void AChel::MyBeginPlay()
 
 	if (IsPlayerOwner) {
 		UserView = Cast<UUserView>(CreateWidget(World, UserViewClass));
+		GeneratorView = Cast<UGeneratorWidget>(CreateWidget(World, GeneratorView_class));
 		KillFeed = CreateWidget(World, KillFeedClass);
 		UserView->AddToViewport();
 		KillFeed->AddToViewport();
+		GeneratorView->AddToViewport();
+		GeneratorView->SetVisibility(ESlateVisibility::Hidden);
 
 		UserView->Player = this;
 		UserView->AmmoLabel->SetText(FText::AsNumber((int32)Ammo));
@@ -430,6 +434,27 @@ void AChel::OpenAreaPressed()
 		{
 			if (OpenAreaObj->bIsAvaliable) {
 				UserView->PlayAnimation(UserView->OpenAreaAnim);
+			}
+			break;
+		}
+		case GeneratorArea:
+		{
+			if (GenAreaObj) {
+				if (GenAreaObj->IsAvalible) {
+					if (GeneratorView->IsVisible()) {
+						if (GeneratorView->Corretca->Value <= GeneratorView->PB_Repair->Percent) {
+							ChangeGeneratorStas();
+						}
+						else {
+							//Здесь могла быть ваша логика с обводкой конкретного челика для всех остальных, но уже 12 часов ночи, сори, бб
+						}
+					}
+					else {
+						UserView->HoldText->SetVisibility(ESlateVisibility::Hidden);
+						GeneratorView->ChangeCorretcaPosition(GenAreaObj->Stadiya);
+						GeneratorView->SetVisibility(ESlateVisibility::Visible);
+					}
+				}
 			}
 			break;
 		}
@@ -1146,6 +1171,29 @@ void AChel::PossessToSpectator()
 	}
 }
 
+void AChel::ChangeGeneratorStas_Implementation()
+{
+	GenAreaObj->Stadiya++;
+	if (GenAreaObj->Stadiya >= 3) {
+		GenAreaObj->Stadiya = 0;
+		GenAreaObj->DoSomethinkGen();
+
+		TArray<AActor*> Players;
+		GenAreaObj->GetOverlappingActors(Players, AChel::StaticClass());
+		for (auto& it : Players) {
+			Cast<AChel>(it)->HideWidgetStas;
+			Cast<AChel>(it)->ChangeCorretca_Client;
+		}
+	}
+	else {
+		TArray<AActor*> Players;
+		GenAreaObj->GetOverlappingActors(Players, AChel::StaticClass());
+		for (auto& it: Players) {
+			Cast<AChel>(it)->ChangeCorretca_Client(GenAreaObj->Stadiya);
+		}
+	}
+}
+
 void AChel::CallDoThomethinkArea_Implementation()
 {
 	TArray<AActor*> Players;
@@ -1191,4 +1239,16 @@ void AChel::AddDoubleRadiationWidget_Implementation()
 void AChel::DisableDoubleRadiationWidget_Implementation()
 {
 	UserView->DisableDoubleRadiationEffect();
+}
+
+void AChel::ChangeCorretca_Client_Implementation(int32 ValueV)
+{
+	GeneratorView->ChangeCorretcaPosition(ValueV);
+}
+
+void AChel::HideWidgetStas_Implementation()
+{
+	UserView->AreaUsedText->SetVisibility(ESlateVisibility::Hidden);
+	GeneratorView->SetVisibility(ESlateVisibility::Hidden);
+
 }
