@@ -17,4 +17,12 @@ class MYPROJECT9_API ACache_Key : public APickableItem
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Type")
 		int KeyType;
+
+	void RemoveAndRefreshTimer();
+
+	void Refresh();
+
+public:
+	//Vars
+	int ArrayIndex;
 };

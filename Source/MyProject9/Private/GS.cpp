@@ -7,6 +7,7 @@
 #include "Engine/TargetPoint.h"
 #include "AreaCollision.h"
 #include "GM.h"
+#include "Cache_Key.h"
 
 AGS::AGS() {
 	NickNames.Init(FText::FromString(TEXT(" ")), 4);
@@ -16,6 +17,8 @@ AGS::AGS() {
 	WebCam_Rotation.Init({}, 0);
 	WebCam_Location.Init({}, 0);
 	WebCam_IsEnabled.Init({}, 0);
+	SpawnPoints_Stuff_Transform.Init({}, 0);
+	SpawnPoints_Stuff_IsAvaliable.Init(true, 0);
 	EscapeTime.Init(0, 4);
 	AcceptPiedistalAmount = 0;
 	AmountOfPlayers = 0;
@@ -49,6 +52,13 @@ void AGS::BeginPlay()
 	Super::BeginPlay();
 
 	if (GetLocalRole() == ROLE_Authority) {
+		TArray<AActor*>FindAreas;
+		UGameplayStatics::GetAllActorsOfClass(GetWorld(), AAreaCollision::StaticClass(), FindAreas);
+		for (auto FindArea : FindAreas) {
+			Areas[Cast<AAreaCollision>(FindArea)->AreaType] = Cast<AAreaCollision>(FindArea);
+		}
+		UE_LOG(LogTemp, Warning, TEXT("%d"), Areas.Num());
+
 		TArray<AActor*>WebCamSpectators;
 		UGameplayStatics::GetAllActorsOfClassWithTag(GetWorld(), ATargetPoint::StaticClass(), FName("WebCam"), WebCamSpectators);
 
@@ -58,18 +68,75 @@ void AGS::BeginPlay()
 			WebCam_Location.Add(i->GetActorLocation());
 			WebCam_IsEnabled.Add(true);
 		}
+
+		TArray<AActor*>TargetPoints_KeyShelter;
+		UGameplayStatics::GetAllActorsOfClassWithTag(GetWorld(), ATargetPoint::StaticClass(), FName("KeyShelter"), TargetPoints_KeyShelter);
+
+		CurrentKeyShelter = MIN_COUNT_KeyShelter + FMath::Rand() % (MAX_COUNT_Boltorez - MIN_COUNT_KeyShelter + 1);
+		for (int i = 0; i < CurrentKeyShelter; ++i) {
+			GetWorld()->SpawnActor<AActor>(KeyShelter, TargetPoints_KeyShelter[i]->GetActorTransform());
+		}
+
+		TArray<AActor*>TargetPoints_Boltorez;
+		UGameplayStatics::GetAllActorsOfClassWithTag(GetWorld(), ATargetPoint::StaticClass(), FName("Boltorez"), TargetPoints_Boltorez);
+
+		CurrentBoltorez = MIN_COUNT_Boltorez + FMath::Rand() % (MAX_COUNT_Boltorez - MIN_COUNT_Boltorez + 1);
+		for (int i = 0; i < MIN_COUNT_Boltorez + FMath::Rand() % (MAX_COUNT_Boltorez - MIN_COUNT_Boltorez + 1); ++i) {
+			GetWorld()->SpawnActor<AActor>(Boltorez, TargetPoints_Boltorez[i]->GetActorTransform());
+		}
+
+		TArray<AActor*>TargetPoints_Otvertka;
+		UGameplayStatics::GetAllActorsOfClassWithTag(GetWorld(), ATargetPoint::StaticClass(), FName("Otvertka"), TargetPoints_Otvertka);
+
+		CurrentOtvertka = MIN_COUNT_Otvertka + FMath::Rand() % (MAX_COUNT_Otvertka - MIN_COUNT_Otvertka + 1);
+		for (int i = 0; i < CurrentOtvertka; ++i) {
+			GetWorld()->SpawnActor<AActor>(Otvertka, TargetPoints_Otvertka[i]->GetActorTransform());
+		}
+
+		TArray<AActor*>TargetPoints_CacheKey;
+		UGameplayStatics::GetAllActorsOfClassWithTag(GetWorld(), ATargetPoint::StaticClass(), FName("SpawnStuff"), TargetPoints_CacheKey);
+
+		for (int i = 0; i < TargetPoints_CacheKey.Num(); ++i)
+		{
+			SpawnPoints_Stuff_Transform.Add(TargetPoints_CacheKey[i]->GetActorTransform());
+			SpawnPoints_Stuff_IsAvaliable.Add(true);
+		}
+
+		for (int Keys = 0; Keys < 3; ++Keys)
+		{
+			for (int i = 0; i < COUNT_CacheKey; i++)
+			{
+				int ArrayIndex = 0;
+				while (!SpawnPoints_Stuff_IsAvaliable[ArrayIndex])
+				{
+					ArrayIndex = FMath::Rand() % SpawnPoints_Stuff_IsAvaliable.Num();
+				}
+
+				AActor* NewItem = nullptr;
+				if (Keys == 0)
+				{
+					NewItem = GetWorld()->SpawnActor<AActor>(BronzeKey, SpawnPoints_Stuff_Transform[ArrayIndex]);
+				}
+				else if (Keys == 1)
+				{
+					NewItem = GetWorld()->SpawnActor<AActor>(SilverKey, SpawnPoints_Stuff_Transform[ArrayIndex]);
+				}
+				else if (Keys == 2)
+				{
+					NewItem = GetWorld()->SpawnActor<AActor>(GoldKey, SpawnPoints_Stuff_Transform[ArrayIndex]);
+				}
+				if (NewItem) {
+					Cast<ACache_Key>(NewItem)->ArrayIndex = ArrayIndex;
+					SpawnPoints_Stuff_IsAvaliable[ArrayIndex] = false;
+
+				}
+			}
+		}
 	}
+
 }
 
 void AGS::GameBegin() {
-
-	TArray<AActor*>FindAreas;
-	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AAreaCollision::StaticClass(), FindAreas);
-	for (auto FindArea : FindAreas) {
-		Areas[Cast<AAreaCollision>(FindArea)->AreaType] = Cast<AAreaCollision>(FindArea);
-	}
-	UE_LOG(LogTemp, Warning, TEXT("%d"), Areas.Num());
-
 	IsGameStarted = true;
 	TArray<AActor*> Players;
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AChel::StaticClass(), Players);
@@ -78,32 +145,6 @@ void AGS::GameBegin() {
 		AChel* Chel = Cast<AChel>(Player);
 		Chel->PlaySpawnAnimationSleep();
 	}
-
-	TArray<AActor*>TargetPoints_KeyShelter;
-	UGameplayStatics::GetAllActorsOfClassWithTag(GetWorld(), ATargetPoint::StaticClass(), FName("KeyShelter"), TargetPoints_KeyShelter);
-
-	CurrentKeyShelter = MIN_COUNT_KeyShelter + FMath::Rand() % (MAX_COUNT_Boltorez - MIN_COUNT_KeyShelter + 1);
-	for (int i = 0; i < CurrentKeyShelter; ++i) {
-		GetWorld()->SpawnActor<AActor>(KeyShelter, TargetPoints_KeyShelter[i]->GetActorTransform());
-	}
-
-	TArray<AActor*>TargetPoints_Boltorez;
-	UGameplayStatics::GetAllActorsOfClassWithTag(GetWorld(), ATargetPoint::StaticClass(), FName("Boltorez"), TargetPoints_Boltorez);
-
-	CurrentBoltorez = MIN_COUNT_Boltorez + FMath::Rand() % (MAX_COUNT_Boltorez - MIN_COUNT_Boltorez + 1);
-	for (int i = 0; i < MIN_COUNT_Boltorez + FMath::Rand() % (MAX_COUNT_Boltorez - MIN_COUNT_Boltorez + 1); ++i) {
-		GetWorld()->SpawnActor<AActor>(Boltorez, TargetPoints_Boltorez[i]->GetActorTransform());
-	}
-
-	TArray<AActor*>TargetPoints_Otvertka;
-	UGameplayStatics::GetAllActorsOfClassWithTag(GetWorld(), ATargetPoint::StaticClass(), FName("Otvertka"), TargetPoints_Otvertka);
-
-	CurrentOtvertka = MIN_COUNT_Otvertka + FMath::Rand() % (MAX_COUNT_Otvertka - MIN_COUNT_Otvertka + 1);
-	for (int i = 0; i < CurrentOtvertka; ++i) {
-		GetWorld()->SpawnActor<AActor>(Otvertka, TargetPoints_Otvertka[i]->GetActorTransform());
-	}
-
-
 
 	FTimerHandle FuzeTimerHandle;
 	GetWorld()->GetTimerManager().SetTimer(FuzeTimerHandle, this, &AGS::SpawnPlayers, 2, false);
