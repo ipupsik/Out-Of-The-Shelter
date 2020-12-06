@@ -16,7 +16,7 @@ AGS::AGS() {
 	Winners.Init(FText::FromString(TEXT("")), 3);
 	WebCam_Rotation.Init({}, 0);
 	WebCam_Location.Init({}, 0);
-	WebCam_IsEnabled.Init({}, 0);
+	WebCam_IsEnabled.Init(true, 0);
 	SpawnPoints_Stuff_Transform.Init({}, 0);
 	SpawnPoints_Stuff_IsAvaliable.Init(true, 0);
 	EscapeTime.Init(0, 4);
@@ -30,6 +30,8 @@ AGS::AGS() {
 	Areas.Init(nullptr, 3);
 
 	IsGameStarted = false;
+
+	CurrentButtonCount = 0;
 }
 
 void AGS::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const

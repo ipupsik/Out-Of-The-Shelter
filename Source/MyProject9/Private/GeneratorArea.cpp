@@ -15,8 +15,7 @@ AGeneratorArea::AGeneratorArea()
 	Collision->OnComponentBeginOverlap.AddDynamic(this, &AGeneratorArea::OnOverlapBegin);
 	Collision->OnComponentEndOverlap.AddDynamic(this, &AGeneratorArea::OnOverlapEnd);
 
-
-
+	IsAvalible = true;
 }
 
 void AGeneratorArea::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const

@@ -102,6 +102,8 @@ public:
 	int CurrentKeyShelter;
 	int CurrentBoltorez;
 
+	int CurrentButtonCount;
+
 	int CurrentTime;
 
 	int32 GeneralLayer;

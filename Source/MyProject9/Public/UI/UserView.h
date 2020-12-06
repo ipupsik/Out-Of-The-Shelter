@@ -57,6 +57,9 @@ public:
 
 	UPROPERTY(meta = (BindWidget))
 		UTextBlock* PickUp_CacheKey;
+
+	UPROPERTY(meta = (BindWidget))
+		UTextBlock* PushButton;
 	//---------------------------
 
 	UPROPERTY(meta = (BindWidget))

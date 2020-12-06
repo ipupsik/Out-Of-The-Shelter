@@ -14,6 +14,7 @@
 #include "AreaCollision.h"
 #include "BP_PlayerController.h"
 #include "Cache_Key.h"
+#include "CanalizationDamageCollision.h"
 
 enum PickUpType {
 	Boltorez,
@@ -23,6 +24,7 @@ enum PickUpType {
 	Cache,
 	CacheKey,
 	GeneratorArea,
+	CanalizationButton,
 };
 
 enum CacheType {
@@ -63,10 +65,12 @@ AChel::AChel()
 	ItemCodePickUp = -1;
 	IsEnableInput = true;
 
+	CanalizationDamage = 1.0f;
+
 	KillerIndex = -1;
 	IsSuccessOpening = false;
 	AreaCode = -1;
-	bCanPossessWebCam = false;
+	bCanPossessWebCam = true;
 
 	OpenAreaObj = nullptr;
 
@@ -164,7 +168,7 @@ void AChel::Tick(float DeltaTime)
 
 	if (IsInGame == true) {
 		if (IsServerAuth) {
-			DeltaTime *= 2 * 0.01f * RadCoeff;
+			DeltaTime *= 2 * 0.01f * RadCoeff * CanalizationDamage;
 			Health += DeltaTime;
 			if (Health > 1.0f) {
 				if (DoesHave[Boltorez])
@@ -212,7 +216,6 @@ void AChel::Tick(float DeltaTime)
 				AActor* HittableActor = OutHit.GetActor();
 				if (HittableActor) { //Если мы стукнулись в какой-то актор, а не в пустоту
 					APickableItem* TracedItem = Cast<APickableItem>(HittableActor);
-					ACache* TracedCache = Cast<ACache>(HittableActor);
 					if (TracedItem) { //Если мы стукнулись в нужный нам предмет
 						ItemCodePickUp = TracedItem->Type;
 						switch (ItemCodePickUp)
@@ -243,19 +246,33 @@ void AChel::Tick(float DeltaTime)
 						LastItem = TracedItem;
 						LastItem->Item->SetCustomDepthStencilValue(255);
 					}
-					else if (TracedCache)
+					else
 					{
-						if (TracedCache->IsEnabled) {
-							isTracedBad = false;
-							bLineTrace_is_need_refresh = true;
-							ItemCodePickUp = Cache;
-							UserView->OpenUp_Cache->SetVisibility(ESlateVisibility::Visible);
+						ACache* TracedCache = Cast<ACache>(HittableActor);
+						if (TracedCache) {
+							if (TracedCache->IsEnabled) {
+								isTracedBad = false;
+								bLineTrace_is_need_refresh = true;
+								ItemCodePickUp = Cache;
+								UserView->OpenUp_Cache->SetVisibility(ESlateVisibility::Visible);
 
-							LastCache = TracedCache;
+								LastCache = TracedCache;
+							}
+						}
+						else
+						{
+							ACanalizationButton* TracedButton = Cast<ACanalizationButton>(HittableActor);
+							if (TracedButton) {
+								bLineTrace_is_need_refresh = true;
+								ItemCodePickUp = CanalizationButton;
+								UserView->PushButton->SetVisibility(ESlateVisibility::Visible);
+
+								LastButton = TracedButton;
+							}
+							else
+								isTracedBad = true; //Мы не попали в нужный нам предмет
 						}
 					}
-					else
-						isTracedBad = true; //Мы не попали в нужный нам предмет
 				}
 				else
 					isTracedBad = true;  //Мы не попали в нужный нам предмет
@@ -280,6 +297,7 @@ void AChel::Tick(float DeltaTime)
 			UserView->PickUpLabel_Otvertka->SetVisibility(ESlateVisibility::Hidden);
 			UserView->PickUp_CacheKey->SetVisibility(ESlateVisibility::Hidden);
 			UserView->OpenUp_Cache->SetVisibility(ESlateVisibility::Hidden);
+			UserView->PushButton->SetVisibility(ESlateVisibility::Hidden);
 		}
 	}
 }
@@ -335,16 +353,16 @@ void AChel::UpdateSpectating_Right()
 {
 	if (!IsEnableInput)
 	{
-		while (!GS->WebCam_IsEnabled[WebCamIterator])
+		do
 		{
 			WebCamIterator += 1;
-
 			if (WebCamIterator >= GS->WebCam_IsEnabled.Num())
 			{
 				WebCamIterator -= GS->WebCam_IsEnabled.Num();
 			}
-		}
-		UE_LOG(LogTemp, Warning, TEXT("WebCamIterator - %d"), WebCamIterator);
+			UE_LOG(LogTemp, Warning, TEXT("WebCamIterator - %d"), WebCamIterator);
+			UE_LOG(LogTemp, Warning, TEXT("Count - %d"), GS->WebCam_IsEnabled.Num());
+		} while (!GS->WebCam_IsEnabled[WebCamIterator]);
 		PoseableMeshComp->SetWorldRotation(GS->WebCam_Rotation[WebCamIterator]);
 		PoseableMeshComp->SetWorldLocation(GS->WebCam_Location[WebCamIterator]);
 		GoToWebCamServer(WebCamIterator);
@@ -355,16 +373,16 @@ void AChel::UpdateSpectating_Left()
 {
 	if (!IsEnableInput)
 	{
-		while (!GS->WebCam_IsEnabled[WebCamIterator])
+		do
 		{
 			WebCamIterator -= 1;
-
 			if (WebCamIterator < 0)
 			{
 				WebCamIterator += GS->WebCam_IsEnabled.Num();
 			}
-		}
-		UE_LOG(LogTemp, Warning, TEXT("WebCamIterator - %d"), WebCamIterator);
+			UE_LOG(LogTemp, Warning, TEXT("WebCamIterator - %d"), WebCamIterator);
+			UE_LOG(LogTemp, Warning, TEXT("Count - %d"), GS->WebCam_IsEnabled.Num());
+		} while (!GS->WebCam_IsEnabled[WebCamIterator]);
 		PoseableMeshComp->SetWorldRotation(GS->WebCam_Rotation[WebCamIterator]);
 		PoseableMeshComp->SetWorldLocation(GS->WebCam_Location[WebCamIterator]);
 		GoToWebCamServer(WebCamIterator);
@@ -733,7 +751,7 @@ void AChel::PickUp() {
 					}
 					}
 					KeysCount[LastCache->CacheType]--;
-
+					UserView->OpenUp_Cache->SetVisibility(ESlateVisibility::Hidden);
 					ChangeIsAvaliableCache();
 				}
 			}
@@ -743,6 +761,12 @@ void AChel::PickUp() {
 			}
 			break;
 
+		}
+		case CanalizationButton:
+		{
+			UserView->PushButton->SetVisibility(ESlateVisibility::Hidden);
+			ChangeButtonCount_Server();
+			break;
 		}
 		}
 	}
@@ -977,7 +1001,6 @@ void AChel::GoToWebCamServer_Implementation(int32 Iterator)
 {
 	PoseableMeshComp->SetWorldRotation(GS->WebCam_Rotation[Iterator]);
 	PoseableMeshComp->SetWorldLocation(GS->WebCam_Location[Iterator]);
-	GS->WebCam_IsEnabled[Iterator] = false;
 
 	UE_LOG(LogTemp, Warning, TEXT("Staying on webcam"));
 }
@@ -1181,8 +1204,8 @@ void AChel::ChangeGeneratorStas_Implementation()
 		TArray<AActor*> Players;
 		GenAreaObj->GetOverlappingActors(Players, AChel::StaticClass());
 		for (auto& it : Players) {
-			Cast<AChel>(it)->HideWidgetStas;
-			Cast<AChel>(it)->ChangeCorretca_Client;
+			Cast<AChel>(it)->HideWidgetStas();
+			Cast<AChel>(it)->ChangeCorretca_Client(0);
 		}
 	}
 	else {
@@ -1192,6 +1215,11 @@ void AChel::ChangeGeneratorStas_Implementation()
 			Cast<AChel>(it)->ChangeCorretca_Client(GenAreaObj->Stadiya);
 		}
 	}
+}
+
+bool AChel::ChangeGeneratorStas_Validate()
+{
+	return true;
 }
 
 void AChel::CallDoThomethinkArea_Implementation()
@@ -1251,4 +1279,41 @@ void AChel::HideWidgetStas_Implementation()
 	UserView->AreaUsedText->SetVisibility(ESlateVisibility::Hidden);
 	GeneratorView->SetVisibility(ESlateVisibility::Hidden);
 
+}
+
+void AChel::ChangeButtonCount_Server_Implementation()
+{
+	FHitResult OutHit;
+
+	FVector StartLocation = CameraComp->GetComponentLocation();
+	FVector EndLocation = StartLocation + CameraComp->GetForwardVector() * 300;
+
+	FCollisionQueryParams CollisionParams;
+
+	World->LineTraceSingleByChannel(OutHit, StartLocation, EndLocation, ECC_Visibility, CollisionParams);
+	if (OutHit.GetActor()) {
+		ACanalizationButton* TempItem = Cast<ACanalizationButton>(OutHit.GetActor());
+		if (TempItem)
+		{
+			if (!TempItem->DoesRefresh)
+			{
+				TempItem->Open();
+				GS->CurrentButtonCount++;
+				if (GS->CurrentButtonCount == 3)
+				{
+					TArray<AActor*>CanalAreas;
+					UGameplayStatics::GetAllActorsOfClass(World, ACanalizationDamageCollision::StaticClass(), CanalAreas);
+					if (CanalAreas.Num() != 0)
+					{
+						Cast<ACanalizationDamageCollision>(CanalAreas[0])->StopRadiation();
+					}
+				}
+			}
+		}
+	}
+}
+
+bool AChel::ChangeButtonCount_Server_Validate()
+{
+	return true;
 }

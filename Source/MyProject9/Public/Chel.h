@@ -10,6 +10,7 @@
 #include "Cache.h"
 #include "GeneratorArea.h"
 #include "UI/GeneratorWidget.h"
+#include "CanalizationButton.h"
 
 #include "GI.h"
 #include "GS.h"
@@ -124,6 +125,9 @@ public:
 		void ChangeIsAvaliableCache();
 
 	UFUNCTION(Server, Reliable, WithValidation)
+		void ChangeButtonCount_Server();
+
+	UFUNCTION(Server, Reliable, WithValidation)
 		void StuffAvaliableUpdate(int32 EscapeWay);
 
 	UFUNCTION(Server, Reliable, WithValidation)
@@ -231,7 +235,7 @@ public:
 	AGS* GS;
 	UGI* GI;
 	//PlayerVariables
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Replicated, Category = "PlayerVariables")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Replicated, Category = "PlayerVariables")
 		float Health;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Replicated, Category = "PlayerVariables")
 		int Index;
@@ -254,6 +258,7 @@ public:
 	bool DoesHave_Owner;
 	APickableItem* LastItem;
 	ACache* LastCache;
+	ACanalizationButton* LastButton;
 	//GlobalSettings
 	bool IsServerAuth;
 	bool IsPlayerOwner;
@@ -297,6 +302,8 @@ public:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite) //!!!!!!!!!!!!!!
 	float MoveCoeff = 1; //!!!!!!!!!!!!!! (для уменьшения скорости в области льда)
+
+	float CanalizationDamage;
 
 	FTransform MeshTrans;
 

@@ -22,16 +22,15 @@ void UGeneratorWidget::NativeTick(const FGeometry& MyGeometry, float DeltaTime)
 {
 	if (TickEnable) {
 		Super::NativeTick(MyGeometry, DeltaTime);
-
 		if (bToRight) {
-			PB_Repair->SetPercent(PB_Repair->Percent + curSpeed + FMath::FRand() * delta);
-			if (PB_Repair->Percent >= 1) {
+			PB_Repair->SetPercent(PB_Repair->Percent + (curSpeed + FMath::FRand() * delta) * DeltaTime);
+			if (PB_Repair->Percent >= 1.0f) {
 				bToRight = false;
 			}
 		}
 		else {
-			PB_Repair->SetPercent(PB_Repair->Percent + curSpeed - FMath::FRand() * delta);
-			if (PB_Repair->Percent <= 0) {
+			PB_Repair->SetPercent(PB_Repair->Percent - (curSpeed + FMath::FRand() * delta) * DeltaTime);
+			if (PB_Repair->Percent <= 0.0f) {
 				bToRight = true;
 			}
 		}
