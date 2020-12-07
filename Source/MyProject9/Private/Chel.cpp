@@ -70,7 +70,7 @@ AChel::AChel()
 	KillerIndex = -1;
 	IsSuccessOpening = false;
 	AreaCode = -1;
-	bCanPossessWebCam = false;
+	bCanPossessWebCam = true;
 
 	OpenAreaObj = nullptr;
 
@@ -243,6 +243,8 @@ void AChel::Tick(float DeltaTime)
 						}
 						isTracedBad = false;
 						bLineTrace_is_need_refresh = true;  //Говорим, что в текущем кадре мы ударились в нужный предмет
+						if (LastItem)
+							LastItem->Item->SetCustomDepthStencilValue(0);
 						LastItem = TracedItem;
 						LastItem->Item->SetCustomDepthStencilValue(2);
 					}

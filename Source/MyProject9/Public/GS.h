@@ -85,7 +85,7 @@ public:
 		TArray<FRotator>WebCam_Rotation;
 	UPROPERTY(Replicated)
 		TArray<FVector>WebCam_Location;
-	UPROPERTY(Replicated)
+	UPROPERTY(Replicated, BlueprintReadWrite)
 		TArray<bool>WebCam_IsEnabled;
 
 	UPROPERTY(EditAnywhere, Category = "ItemClasses")

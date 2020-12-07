@@ -8,6 +8,7 @@
 #include "AreaCollision.h"
 #include "GM.h"
 #include "Cache_Key.h"
+#include "WebCamPoint.h"
 
 AGS::AGS() {
 	NickNames.Init(FText::FromString(TEXT(" ")), 4);
@@ -62,12 +63,22 @@ void AGS::BeginPlay()
 		UE_LOG(LogTemp, Warning, TEXT("%d"), Areas.Num());
 
 		TArray<AActor*>WebCamSpectators;
-		UGameplayStatics::GetAllActorsOfClassWithTag(GetWorld(), ATargetPoint::StaticClass(), FName("WebCam"), WebCamSpectators);
-
-		for (auto& i : WebCamSpectators)
+		UGameplayStatics::GetAllActorsOfClass(GetWorld(), AWebCamPoint::StaticClass(), WebCamSpectators);
+		for (int i = 0; i < WebCamSpectators.Num(); ++i)
 		{
-			WebCam_Rotation.Add(i->GetActorRotation());
-			WebCam_Location.Add(i->GetActorLocation());
+			for (int j = 0; j < WebCamSpectators.Num() - 1 - i; ++j)
+			{
+				if (Cast<AWebCamPoint>(WebCamSpectators[j])->Index > Cast<AWebCamPoint>(WebCamSpectators[j + 1])->Index)
+				{
+					Swap<AActor*>(WebCamSpectators[j], WebCamSpectators[j + 1]);
+				}
+			}
+		}
+		for (int i = 0; i < WebCamSpectators.Num(); ++i)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Index - %d"), Cast<AWebCamPoint>(WebCamSpectators[i])->Index);
+			WebCam_Location.Add(WebCamSpectators[i]->GetActorLocation());
+			WebCam_Rotation.Add(WebCamSpectators[i]->GetActorRotation());
 			WebCam_IsEnabled.Add(true);
 		}
 
