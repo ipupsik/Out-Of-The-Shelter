@@ -51,6 +51,10 @@ public:
 		void SpawnPlayers();
 	UFUNCTION(BlueprintCallable)
 		void ResetGame();
+
+	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable) //легендарна€ св€зќчка
+		void SpawnNote();
+
 public:
 	//For indexing
 	UPROPERTY(BlueprintReadWrite)

@@ -147,11 +147,19 @@ public:
 	UFUNCTION(Client, Reliable)
 		void ChangeCorretca_Client(int32 ValueV);
 
+
+
 	UFUNCTION(Server, Reliable, WithValidation)
 		void OutlineBad_Server();
 
-	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
+	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable) //легендарна€ св€зќчка
 		void OutlineBad();
+
+
+
+	
+
+
 
 	UFUNCTION(Client, Reliable)
 		void HideWidgetStas();

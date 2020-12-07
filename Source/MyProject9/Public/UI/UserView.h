@@ -78,7 +78,7 @@ public:
 		UTextBlock* TimeLeft;
 
 	//---------------------------
-	UPROPERTY(meta = (BindWidget))  //!!!!!!!!!!!!!!!!!!!!!!!
+	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))  //!!!!!!!!!!!!!!!!!!!!!!!
 		UTextBlock* HoldText;
 	UPROPERTY(meta = (BindWidget))
 		UTextBlock* EscapeText;

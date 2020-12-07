@@ -1210,6 +1210,7 @@ void AChel::ChangeGeneratorStas_Implementation()
 			Cast<AChel>(it)->HideWidgetStas();
 			Cast<AChel>(it)->ChangeCorretca_Client(0);
 		}
+		GS->SpawnNote();
 	}
 	else {
 		TArray<AActor*> Players;
