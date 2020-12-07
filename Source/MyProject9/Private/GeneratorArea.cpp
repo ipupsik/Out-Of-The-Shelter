@@ -67,5 +67,4 @@ void AGeneratorArea::DoSomethinkGen() {
 void AGeneratorArea::ChangeLampochka_Implementation()
 {
 	Lamp->LampochkaModel->SetMaterial(0, Lamp->MaterialOn);
-
 }

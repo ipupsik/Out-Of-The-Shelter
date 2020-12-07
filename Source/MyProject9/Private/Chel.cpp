@@ -180,7 +180,7 @@ void AChel::Tick(float DeltaTime)
 
 				TArray<AActor*>Players;
 				UGameplayStatics::GetAllActorsOfClass(World, StaticClass(), Players);
-				for (auto Player : Players)
+				for (auto& Player : Players)
 					if (KillerIndex != -1)
 						Cast<AChel>(Player)->RefreshWidgets(DoesHave, KillerIndex, Index, false);
 					else
@@ -464,7 +464,8 @@ void AChel::OpenAreaPressed()
 							ChangeGeneratorStas();
 						}
 						else {
-							//Здесь могла быть ваша логика с обводкой конкретного челика для всех остальных, но уже 12 часов ночи, сори, бб
+							GeneratorView->ChangeCorretcaPosition(GenAreaObj->Stadiya);
+							OutlineBad_Server();//Здесь могла быть ваша логика с обводкой конкретного челика для всех остальных, но уже 12 часов ночи, сори, бб
 						}
 					}
 					else {
@@ -1276,9 +1277,8 @@ void AChel::ChangeCorretca_Client_Implementation(int32 ValueV)
 
 void AChel::HideWidgetStas_Implementation()
 {
-	UserView->AreaUsedText->SetVisibility(ESlateVisibility::Hidden);
+	UserView->AreaUsedText->SetVisibility(ESlateVisibility::Visible);
 	GeneratorView->SetVisibility(ESlateVisibility::Hidden);
-
 }
 
 void AChel::ChangeButtonCount_Server_Implementation()
@@ -1314,6 +1314,16 @@ void AChel::ChangeButtonCount_Server_Implementation()
 }
 
 bool AChel::ChangeButtonCount_Server_Validate()
+{
+	return true;
+}
+
+void AChel::OutlineBad_Server_Implementation()
+{
+	OutlineBad();
+}
+
+bool AChel::OutlineBad_Server_Validate()
 {
 	return true;
 }
