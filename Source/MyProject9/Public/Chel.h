@@ -134,6 +134,11 @@ public:
 		void PlayerEscape(int32 EscapeWay);
 
 	UFUNCTION(Client, Reliable)
+		void ShowRandomItem();
+
+		void HideRandomItem();
+
+	UFUNCTION(Client, Reliable)
 		void ExitAvaliableUpdate(int32 EscapeWay);
 
 	UFUNCTION(Server, Reliable, WithValidation)
@@ -317,4 +322,6 @@ public:
 
 	AGeneratorArea* GenAreaObj;
 	UGeneratorWidget* GeneratorView;
+
+	APickableItem* LastOutlineItem;
 };

@@ -70,7 +70,7 @@ AChel::AChel()
 	KillerIndex = -1;
 	IsSuccessOpening = false;
 	AreaCode = -1;
-	bCanPossessWebCam = true;
+	bCanPossessWebCam = false;
 
 	OpenAreaObj = nullptr;
 
@@ -244,7 +244,7 @@ void AChel::Tick(float DeltaTime)
 						isTracedBad = false;
 						bLineTrace_is_need_refresh = true;  //Говорим, что в текущем кадре мы ударились в нужный предмет
 						LastItem = TracedItem;
-						LastItem->Item->SetCustomDepthStencilValue(255);
+						LastItem->Item->SetCustomDepthStencilValue(2);
 					}
 					else
 					{
@@ -1197,10 +1197,12 @@ void AChel::PossessToSpectator()
 
 void AChel::ChangeGeneratorStas_Implementation()
 {
+	
 	GenAreaObj->Stadiya++;
 	if (GenAreaObj->Stadiya >= 3) {
 		GenAreaObj->Stadiya = 0;
 		GenAreaObj->DoSomethinkGen();
+		ShowRandomItem();
 
 		TArray<AActor*> Players;
 		GenAreaObj->GetOverlappingActors(Players, AChel::StaticClass());
@@ -1326,4 +1328,35 @@ void AChel::OutlineBad_Server_Implementation()
 bool AChel::OutlineBad_Server_Validate()
 {
 	return true;
+}
+
+void AChel::ShowRandomItem_Implementation() {
+	TArray<AActor*> Items;
+	UGameplayStatics::GetAllActorsOfClass(World, APickableItem::StaticClass(), Items);
+	TArray<APickableItem*> ImportantItems;
+	ImportantItems.Init(nullptr, 0);
+	for (auto& it : Items) 
+	{
+		if (Cast<APickableItem>(it)->Type <= 2) 
+		{
+			ImportantItems.Add(Cast<APickableItem>(it));
+		}
+	}
+	if (ImportantItems.Num() != 0)
+	{
+		LastOutlineItem = ImportantItems[FMath::Rand() % ImportantItems.Num()];
+		LastOutlineItem->Item->SetCustomDepthStencilValue(2);
+
+		FTimerHandle FuzeTimerHandle;
+		World->GetTimerManager().SetTimer(FuzeTimerHandle, this, &AChel::HideRandomItem, 5, false);
+
+	}
+}
+
+void AChel::HideRandomItem() {
+	if (LastOutlineItem) 
+	{
+		LastOutlineItem->Item->SetCustomDepthStencilValue(0);
+		LastOutlineItem = nullptr;
+	}
 }
