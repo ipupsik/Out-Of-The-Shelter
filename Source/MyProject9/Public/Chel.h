@@ -311,6 +311,9 @@ public:
 	bool bLineTrace_is_need_refresh;
 	bool bCanPossessWebCam;
 	bool isTracedBad;
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	bool bCanWalkingAndWatching;
+
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Replicated)
 		bool IsEnableInput;
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite) //!!!!!!!!!!!!!!

@@ -72,6 +72,7 @@ AChel::AChel()
 	IsSuccessOpening = false;
 	AreaCode = -1;
 	bCanPossessWebCam = true;
+	bCanWalkingAndWatching = true;
 
 	OpenAreaObj = nullptr;
 
@@ -188,7 +189,7 @@ void AChel::Tick(float DeltaTime)
 						Cast<AChel>(Player)->RefreshWidgets(DoesHave, -1, Index, true);
 				DoesHave.Init(false, 3);
 				KillerIndex = -1;
-
+				bCanWalkingAndWatching = true;
 				KillPlayer();
 			}
 		}
@@ -563,14 +564,18 @@ bool AChel::ThrowStoneServer_Validate(FTransform StoneTransform)
 
 //KeyBoardInput----------------
 void AChel::GoForward(float input) {
-	if (input != 0.0f && IsEnableInput) {
-		AddMovementInput(GetActorForwardVector(), input * MoveCoeff);
+	if (bCanWalkingAndWatching) {
+		if (input != 0.0f && IsEnableInput) {
+			AddMovementInput(GetActorForwardVector(), input * MoveCoeff);
+		}
 	}
 }
 
 void AChel::GoRight(float input) {
-	if (input != 0.0f && IsEnableInput) {
-		AddMovementInput(GetActorRightVector(), input * MoveCoeff);
+	if (bCanWalkingAndWatching) {
+		if (input != 0.0f && IsEnableInput) {
+			AddMovementInput(GetActorRightVector(), input * MoveCoeff);
+		}
 	}
 }
 //-----------------------------
@@ -596,31 +601,33 @@ bool AChel::MeshCompRepServer_Validate(float RotationRoll)
 //MouseInput-------------------
 void AChel::LookUp(float input)
 {
-	if (IsEnableInput) {
-		if (input != 0.0f)
-		{
-			input *= Sensetivity;
-			float RotationRoll = PoseableMeshComp->GetBoneRotationByName(TEXT("Bone_002"), EBoneSpaces::ComponentSpace).Roll;
-			if (RotationRoll + input >= 0.f && RotationRoll + input <= 179.f) {
-				RotationRoll += input;
+	if (bCanWalkingAndWatching) {
+		if (IsEnableInput) {
+			if (input != 0.0f)
+			{
+				input *= Sensetivity;
+				float RotationRoll = PoseableMeshComp->GetBoneRotationByName(TEXT("Bone_002"), EBoneSpaces::ComponentSpace).Roll;
+				if (RotationRoll + input >= 0.f && RotationRoll + input <= 179.f) {
+					RotationRoll += input;
+				}
+				else if (RotationRoll + input > 179.f) {
+					RotationRoll = 179.f;
+				}
+				else
+					RotationRoll = 0;
+				MeshCompRepServer(RotationRoll);
 			}
-			else if (RotationRoll + input > 179.f) {
-				RotationRoll = 179.f;
-			}
-			else
-				RotationRoll = 0;
-			MeshCompRepServer(RotationRoll);
 		}
-	}
-	else
-	{
-		if (input != 0.0f) {
-			input *= Sensetivity * WebCamSensetivity;
-			float NewPitchRot = PoseableMeshComp->GetRelativeRotation().Roll;
+		else
+		{
+			if (input != 0.0f) {
+				input *= Sensetivity * WebCamSensetivity;
+				float NewPitchRot = PoseableMeshComp->GetRelativeRotation().Roll;
 
-			NewPitchRot = FMath::Clamp<float>(NewPitchRot + input, -MaxPitchAngle, MaxPitchAngle);
+				NewPitchRot = FMath::Clamp<float>(NewPitchRot + input, -MaxPitchAngle, MaxPitchAngle);
 
-			PoseableMeshComp->SetRelativeRotation(FRotator(PoseableMeshComp->GetRelativeRotation().Pitch, PoseableMeshComp->GetRelativeRotation().Yaw, NewPitchRot));
+				PoseableMeshComp->SetRelativeRotation(FRotator(PoseableMeshComp->GetRelativeRotation().Pitch, PoseableMeshComp->GetRelativeRotation().Yaw, NewPitchRot));
+			}
 		}
 	}
 }
@@ -628,21 +635,23 @@ void AChel::LookUp(float input)
 
 void AChel::LookRight(float input)
 {
-	if (IsEnableInput) {
-		if (input != 0.0f) {
-			input *= Sensetivity;
-			AddControllerYawInput(input);
+	if (bCanWalkingAndWatching) {
+		if (IsEnableInput) {
+			if (input != 0.0f) {
+				input *= Sensetivity;
+				AddControllerYawInput(input);
+			}
 		}
-	}
-	else
-	{
-		if (input != 0.0f) {
-			input *= Sensetivity * WebCamSensetivity;
-			float NewYawRot = PoseableMeshComp->GetRelativeRotation().Yaw;
-			
-			NewYawRot = FMath::Clamp<float>(NewYawRot + input, -MaxYawAngle, MaxYawAngle);
+		else
+		{
+			if (input != 0.0f) {
+				input *= Sensetivity * WebCamSensetivity;
+				float NewYawRot = PoseableMeshComp->GetRelativeRotation().Yaw;
 
-			PoseableMeshComp->SetRelativeRotation(FRotator(PoseableMeshComp->GetRelativeRotation().Pitch, NewYawRot, PoseableMeshComp->GetRelativeRotation().Roll));
+				NewYawRot = FMath::Clamp<float>(NewYawRot + input, -MaxYawAngle, MaxYawAngle);
+
+				PoseableMeshComp->SetRelativeRotation(FRotator(PoseableMeshComp->GetRelativeRotation().Pitch, NewYawRot, PoseableMeshComp->GetRelativeRotation().Roll));
+			}
 		}
 	}
 }
@@ -651,15 +660,17 @@ void AChel::LookRight(float input)
 //Jump-------------------------
 void AChel::MyJump()
 {
-	if (IsEnableInput)
-		Jump();
+	if (bCanWalkingAndWatching) {
+		if (IsEnableInput)
+			Jump();
+	}
 }
 //-----------------------------
 
 
 //Sprint-----------------------
 void AChel::StartSprint() {
-	GetCharacterMovement()->MaxWalkSpeed = 1200.f;
+		GetCharacterMovement()->MaxWalkSpeed = 1200.f;
 }
 
 void AChel::StopSprint() {
@@ -924,6 +935,7 @@ void AChel::StoneAttack(int StoneIndex)
 			for (auto Player : Players)
 					Cast<AChel>(Player)->RefreshWidgets(DoesHave, KillerIndex, Index, false);
 			DoesHave.Init(false, 3);
+			bCanWalkingAndWatching = true;
 			KillPlayer();
 		}
 	}
