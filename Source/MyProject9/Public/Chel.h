@@ -11,6 +11,7 @@
 #include "GeneratorArea.h"
 #include "UI/GeneratorWidget.h"
 #include "CanalizationButton.h"
+#include "WebCamLocker.h"
 
 #include "GI.h"
 #include "GS.h"
@@ -155,9 +156,8 @@ public:
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable) //легендарна€ св€зќчка
 		void OutlineBad();
 
-
-
-	
+	UFUNCTION(Server, Reliable, WithValidation)
+		void LockWebCam_Server();
 
 
 
@@ -332,4 +332,6 @@ public:
 	UGeneratorWidget* GeneratorView;
 
 	APickableItem* LastOutlineItem;
+
+	AWebCamLocker* LastWebCamLocker;
 };

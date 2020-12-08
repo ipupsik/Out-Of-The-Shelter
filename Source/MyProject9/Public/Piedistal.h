@@ -33,8 +33,6 @@ public:
 	// declare overlap end function
 	UFUNCTION()
 		void OnOverlapEnd(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
-
-	virtual void Tick(float DeltaTime) override;
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Player")
 		UStaticMeshComponent* Piedistal;
 

@@ -25,6 +25,7 @@ enum PickUpType {
 	CacheKey,
 	GeneratorArea,
 	CanalizationButton,
+	WebCamLocker,
 };
 
 enum CacheType {
@@ -272,7 +273,20 @@ void AChel::Tick(float DeltaTime)
 								LastButton = TracedButton;
 							}
 							else
-								isTracedBad = true; //Мы не попали в нужный нам предмет
+							{
+								AWebCamLocker* TracedWebCamLocker = Cast<AWebCamLocker>(HittableActor);
+								if (TracedWebCamLocker)
+								{
+									bLineTrace_is_need_refresh = true;
+									ItemCodePickUp = WebCamLocker;
+									UserView->PushButton->SetVisibility(ESlateVisibility::Visible);
+
+									LastWebCamLocker = TracedWebCamLocker;
+								}
+								else
+									isTracedBad = true; //Мы не попали в нужный нам предмет
+								
+							}
 						}
 					}
 				}
@@ -769,6 +783,11 @@ void AChel::PickUp() {
 		{
 			UserView->PushButton->SetVisibility(ESlateVisibility::Hidden);
 			ChangeButtonCount_Server();
+			break;
+		}
+		case WebCamLocker:
+		{
+			LockWebCam_Server();
 			break;
 		}
 		}
@@ -1362,4 +1381,39 @@ void AChel::HideRandomItem() {
 		LastOutlineItem->Item->SetCustomDepthStencilValue(0);
 		LastOutlineItem = nullptr;
 	}
+}
+
+void AChel::LockWebCam_Server_Implementation()
+{
+	FHitResult OutHit;
+
+	FVector StartLocation = CameraComp->GetComponentLocation();
+	FVector EndLocation = StartLocation + CameraComp->GetForwardVector() * 300;
+
+	FCollisionQueryParams CollisionParams;
+
+	World->LineTraceSingleByChannel(OutHit, StartLocation, EndLocation, ECC_Visibility, CollisionParams);
+	if (OutHit.GetActor()) {
+		AWebCamLocker* TempItem = Cast<AWebCamLocker>(OutHit.GetActor());
+		if (TempItem)
+		{
+			if (TempItem->DoesLock)
+			{
+				TempItem->Close();
+				TempItem->DoesLock = false;
+				GS->WebCam_IsEnabled[TempItem->Index] = true;
+			}
+			else
+			{
+				TempItem->Open();
+				TempItem->DoesLock = true;
+				GS->WebCam_IsEnabled[TempItem->Index] = false;
+			}
+		}
+	}
+}
+
+bool AChel::LockWebCam_Server_Validate()
+{
+	return true;
 }

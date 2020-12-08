@@ -67,10 +67,3 @@ void APiedistal::OnOverlapEnd(UPrimitiveComponent* OverlappedComp, AActor* Other
 		}
 	}
 }
-
-// Called every frame
-void APiedistal::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-}
-
