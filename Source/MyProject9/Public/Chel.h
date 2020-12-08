@@ -153,13 +153,13 @@ public:
 	UFUNCTION(Server, Reliable, WithValidation)
 		void OutlineBad_Server();
 
-	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable) //легендарна€ св€зќчка
-		void OutlineBad();
+	UFUNCTION(NetMulticast, Reliable) //легендарна€ св€зќчка
+		void OutlineBad_Multicast();
+
+	void RefreshOutline();
 
 	UFUNCTION(Server, Reliable, WithValidation)
 		void LockWebCam_Server();
-
-
 
 	UFUNCTION(Client, Reliable)
 		void HideWidgetStas();

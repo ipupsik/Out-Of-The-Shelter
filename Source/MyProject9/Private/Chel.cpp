@@ -1342,9 +1342,23 @@ bool AChel::ChangeButtonCount_Server_Validate()
 	return true;
 }
 
+void AChel::RefreshOutline()
+{
+	PoseableMeshComp->SetCustomDepthStencilValue(0);
+}
+
+void AChel::OutlineBad_Multicast_Implementation()
+{
+	PoseableMeshComp->SetCustomDepthStencilValue(1);
+
+	FTimerHandle FuzeTimerHandle;
+	GetWorld()->GetTimerManager().SetTimer(FuzeTimerHandle, this, &AChel::RefreshOutline, 2, false);
+}
+
+
 void AChel::OutlineBad_Server_Implementation()
 {
-	OutlineBad();
+	OutlineBad_Multicast();
 }
 
 bool AChel::OutlineBad_Server_Validate()
