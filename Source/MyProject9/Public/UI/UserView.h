@@ -44,22 +44,7 @@ public:
 		UHorizontalBox* Effects_Bar;
 
 	UPROPERTY(meta = (BindWidget))
-		UTextBlock* PickUpLabel_Otvertka;
-
-	UPROPERTY(meta = (BindWidget))
-		UTextBlock* PickUpLabel_KeyShelter;
-
-	UPROPERTY(meta = (BindWidget))
-		UTextBlock* PickUpLabel_Boltorez;
-
-	UPROPERTY(meta = (BindWidget))
-		UTextBlock* OpenUp_Cache;
-
-	UPROPERTY(meta = (BindWidget))
-		UTextBlock* PickUp_CacheKey;
-
-	UPROPERTY(meta = (BindWidget))
-		UTextBlock* PushButton;
+		UImage* E_Mark;
 	//---------------------------
 
 	UPROPERTY(meta = (BindWidget))
