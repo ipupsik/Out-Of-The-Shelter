@@ -96,9 +96,6 @@ public:
 		TSubclassOf<APickableItem> Otvertka;
 
 	UPROPERTY(EditAnywhere, Category = "ItemClasses")
-		TSubclassOf<AActor> InvisiblePotion;
-
-	UPROPERTY(EditAnywhere, Category = "ItemClasses")
 		TSubclassOf<APickableItem> BronzeKey;
 	UPROPERTY(EditAnywhere, Category = "ItemClasses")
 		TSubclassOf<APickableItem> SilverKey;
@@ -117,9 +114,6 @@ public:
 
 	bool IsGameStarted;
 
-	TArray<FTransform>Keys_Transform;
-	TArray<bool>Keys_IsAvaliable;
-
-	TArray<FTransform>CacheItems_Stuff_Transform;
-	TArray<bool>CacheItems_Stuff_IsAvaliable;
+	TArray<FTransform>SpawnPoints_Stuff_Transform;
+	TArray<bool>SpawnPoints_Stuff_IsAvaliable;
 };

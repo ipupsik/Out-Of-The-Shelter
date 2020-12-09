@@ -224,22 +224,22 @@ void AChel::Tick(float DeltaTime)
 						{
 							case Boltorez:
 							{
-								UserView->E_Mark->SetVisibility(ESlateVisibility::Visible);
+								UserView->PickUpLabel_Boltorez->SetVisibility(ESlateVisibility::Visible);
 								break;
 							}
 							case KeyShelter:
 							{
-								UserView->E_Mark->SetVisibility(ESlateVisibility::Visible);
+								UserView->PickUpLabel_KeyShelter->SetVisibility(ESlateVisibility::Visible);
 								break;
 							}
 							case Otvertka:
 							{
-								UserView->E_Mark->SetVisibility(ESlateVisibility::Visible);
+								UserView->PickUpLabel_Otvertka->SetVisibility(ESlateVisibility::Visible);
 								break;
 							}
 							case CacheKey:
 							{
-								UserView->E_Mark->SetVisibility(ESlateVisibility::Visible);
+								UserView->PickUp_CacheKey->SetVisibility(ESlateVisibility::Visible);
 								break;
 							}
 						}
@@ -254,11 +254,11 @@ void AChel::Tick(float DeltaTime)
 					{
 						ACache* TracedCache = Cast<ACache>(HittableActor);
 						if (TracedCache) {
-							if (TracedCache->IsEnabled && KeysCount[TracedCache->CacheType] > 0) {
+							if (TracedCache->IsEnabled) {
 								isTracedBad = false;
 								bLineTrace_is_need_refresh = true;
 								ItemCodePickUp = Cache;
-								UserView->E_Mark->SetVisibility(ESlateVisibility::Visible);
+								UserView->OpenUp_Cache->SetVisibility(ESlateVisibility::Visible);
 
 								LastCache = TracedCache;
 							}
@@ -269,7 +269,7 @@ void AChel::Tick(float DeltaTime)
 							if (TracedButton) {
 								bLineTrace_is_need_refresh = true;
 								ItemCodePickUp = CanalizationButton;
-								UserView->E_Mark->SetVisibility(ESlateVisibility::Visible);
+								UserView->PushButton->SetVisibility(ESlateVisibility::Visible);
 
 								LastButton = TracedButton;
 							}
@@ -280,7 +280,7 @@ void AChel::Tick(float DeltaTime)
 								{
 									bLineTrace_is_need_refresh = true;
 									ItemCodePickUp = WebCamLocker;
-									UserView->E_Mark->SetVisibility(ESlateVisibility::Visible);
+									UserView->PushButton->SetVisibility(ESlateVisibility::Visible);
 
 									LastWebCamLocker = TracedWebCamLocker;
 								}
@@ -309,7 +309,12 @@ void AChel::Tick(float DeltaTime)
 			if (LastItem)
 				LastItem->Item->SetCustomDepthStencilValue(0);
 
-			UserView->E_Mark->SetVisibility(ESlateVisibility::Hidden);
+			UserView->PickUpLabel_KeyShelter->SetVisibility(ESlateVisibility::Hidden);
+			UserView->PickUpLabel_Boltorez->SetVisibility(ESlateVisibility::Hidden);
+			UserView->PickUpLabel_Otvertka->SetVisibility(ESlateVisibility::Hidden);
+			UserView->PickUp_CacheKey->SetVisibility(ESlateVisibility::Hidden);
+			UserView->OpenUp_Cache->SetVisibility(ESlateVisibility::Hidden);
+			UserView->PushButton->SetVisibility(ESlateVisibility::Hidden);
 		}
 	}
 }
@@ -774,7 +779,7 @@ void AChel::PickUp() {
 					}
 					}
 					KeysCount[LastCache->CacheType]--;
-					UserView->E_Mark->SetVisibility(ESlateVisibility::Hidden);
+					UserView->OpenUp_Cache->SetVisibility(ESlateVisibility::Hidden);
 					ChangeIsAvaliableCache();
 				}
 			}
@@ -787,7 +792,7 @@ void AChel::PickUp() {
 		}
 		case CanalizationButton:
 		{
-			UserView->E_Mark->SetVisibility(ESlateVisibility::Hidden);
+			UserView->PushButton->SetVisibility(ESlateVisibility::Hidden);
 			ChangeButtonCount_Server();
 			break;
 		}

@@ -9,7 +9,6 @@
 #include "GM.h"
 #include "Cache_Key.h"
 #include "WebCamPoint.h"
-#include "InvisiblePotion.h"
 
 AGS::AGS() {
 	NickNames.Init(FText::FromString(TEXT(" ")), 4);
@@ -19,10 +18,8 @@ AGS::AGS() {
 	WebCam_Rotation.Init({}, 0);
 	WebCam_Location.Init({}, 0);
 	WebCam_IsEnabled.Init(true, 0);
-	Keys_Transform.Init({}, 0);
-	Keys_IsAvaliable.Init(true, 0);
-	CacheItems_Stuff_Transform.Init({}, 0);
-	CacheItems_Stuff_IsAvaliable.Init(true, 0);
+	SpawnPoints_Stuff_Transform.Init({}, 0);
+	SpawnPoints_Stuff_IsAvaliable.Init(true, 0);
 	EscapeTime.Init(0, 4);
 	AcceptPiedistalAmount = 0;
 	AmountOfPlayers = 0;
@@ -85,82 +82,37 @@ void AGS::BeginPlay()
 			WebCam_IsEnabled.Add(true);
 		}
 
-		//----------------------------Cache Items
-
-		TArray<AActor*>TargetPoints_CacheItems;
-		UGameplayStatics::GetAllActorsOfClassWithTag(GetWorld(), ATargetPoint::StaticClass(), FName("CacheItems"), TargetPoints_CacheItems);
-		
-		for (int i = 0; i < TargetPoints_CacheItems.Num(); ++i)
-		{
-			CacheItems_Stuff_Transform.Add(TargetPoints_CacheItems[i]->GetActorTransform());
-			CacheItems_Stuff_IsAvaliable.Add(true);
-		}
-
-		for (int i = 0; i < 4; i++)
-		{
-			int ArrayIndex = 0;
-			while (!CacheItems_Stuff_IsAvaliable[ArrayIndex])
-			{
-				ArrayIndex = FMath::Rand() % CacheItems_Stuff_IsAvaliable.Num();
-			}
-
-			AActor* NewItem = GetWorld()->SpawnActor<AActor>(InvisiblePotion, CacheItems_Stuff_Transform[ArrayIndex]);
-
-			if (NewItem)
-				CacheItems_Stuff_IsAvaliable[ArrayIndex] = false;
-		}
+		TArray<AActor*>TargetPoints_KeyShelter;
+		UGameplayStatics::GetAllActorsOfClassWithTag(GetWorld(), ATargetPoint::StaticClass(), FName("KeyShelter"), TargetPoints_KeyShelter);
 
 		CurrentKeyShelter = MIN_COUNT_KeyShelter + FMath::Rand() % (MAX_COUNT_Boltorez - MIN_COUNT_KeyShelter + 1);
 		for (int i = 0; i < CurrentKeyShelter; ++i) {
-			int ArrayIndex = 0;
-			while (!CacheItems_Stuff_IsAvaliable[ArrayIndex])
-			{
-				ArrayIndex = FMath::Rand() % CacheItems_Stuff_IsAvaliable.Num();
-			}
-
-			AActor* NewItem = GetWorld()->SpawnActor<AActor>(KeyShelter, CacheItems_Stuff_Transform[ArrayIndex]);
-
-			if (NewItem)
-				CacheItems_Stuff_IsAvaliable[ArrayIndex] = false;
+			GetWorld()->SpawnActor<AActor>(KeyShelter, TargetPoints_KeyShelter[i]->GetActorTransform());
 		}
+
+		TArray<AActor*>TargetPoints_Boltorez;
+		UGameplayStatics::GetAllActorsOfClassWithTag(GetWorld(), ATargetPoint::StaticClass(), FName("Boltorez"), TargetPoints_Boltorez);
 
 		CurrentBoltorez = MIN_COUNT_Boltorez + FMath::Rand() % (MAX_COUNT_Boltorez - MIN_COUNT_Boltorez + 1);
 		for (int i = 0; i < MIN_COUNT_Boltorez + FMath::Rand() % (MAX_COUNT_Boltorez - MIN_COUNT_Boltorez + 1); ++i) {
-			int ArrayIndex = 0;
-			while (!CacheItems_Stuff_IsAvaliable[ArrayIndex])
-			{
-				ArrayIndex = FMath::Rand() % CacheItems_Stuff_IsAvaliable.Num();
-			}
-
-			AActor* NewItem = GetWorld()->SpawnActor<AActor>(Boltorez, CacheItems_Stuff_Transform[ArrayIndex]);
-
-			if (NewItem)
-				CacheItems_Stuff_IsAvaliable[ArrayIndex] = false;
+			GetWorld()->SpawnActor<AActor>(Boltorez, TargetPoints_Boltorez[i]->GetActorTransform());
 		}
+
+		TArray<AActor*>TargetPoints_Otvertka;
+		UGameplayStatics::GetAllActorsOfClassWithTag(GetWorld(), ATargetPoint::StaticClass(), FName("Otvertka"), TargetPoints_Otvertka);
 
 		CurrentOtvertka = MIN_COUNT_Otvertka + FMath::Rand() % (MAX_COUNT_Otvertka - MIN_COUNT_Otvertka + 1);
 		for (int i = 0; i < CurrentOtvertka; ++i) {
-			int ArrayIndex = 0;
-			while (!CacheItems_Stuff_IsAvaliable[ArrayIndex])
-			{
-				ArrayIndex = FMath::Rand() % CacheItems_Stuff_IsAvaliable.Num();
-			}
-
-			AActor* NewItem = GetWorld()->SpawnActor<AActor>(Otvertka, CacheItems_Stuff_Transform[ArrayIndex]);
-
-			if (NewItem)
-				CacheItems_Stuff_IsAvaliable[ArrayIndex] = false;
+			GetWorld()->SpawnActor<AActor>(Otvertka, TargetPoints_Otvertka[i]->GetActorTransform());
 		}
 
-
-		//------------------------------------Cache Keys
 		TArray<AActor*>TargetPoints_CacheKey;
 		UGameplayStatics::GetAllActorsOfClassWithTag(GetWorld(), ATargetPoint::StaticClass(), FName("SpawnStuff"), TargetPoints_CacheKey);
 
 		for (int i = 0; i < TargetPoints_CacheKey.Num(); ++i)
 		{
-			Keys_Transform.Add(TargetPoints_CacheKey[i]->GetActorTransform());
-			Keys_IsAvaliable.Add(true);
+			SpawnPoints_Stuff_Transform.Add(TargetPoints_CacheKey[i]->GetActorTransform());
+			SpawnPoints_Stuff_IsAvaliable.Add(true);
 		}
 
 		for (int Keys = 0; Keys < 3; ++Keys)
@@ -168,31 +120,33 @@ void AGS::BeginPlay()
 			for (int i = 0; i < COUNT_CacheKey; i++)
 			{
 				int ArrayIndex = 0;
-				while (!Keys_IsAvaliable[ArrayIndex])
+				while (!SpawnPoints_Stuff_IsAvaliable[ArrayIndex])
 				{
-					ArrayIndex = FMath::Rand() % Keys_IsAvaliable.Num();
+					ArrayIndex = FMath::Rand() % SpawnPoints_Stuff_IsAvaliable.Num();
 				}
 
 				AActor* NewItem = nullptr;
 				if (Keys == 0)
 				{
-					NewItem = GetWorld()->SpawnActor<AActor>(BronzeKey, Keys_Transform[ArrayIndex]);
+					NewItem = GetWorld()->SpawnActor<AActor>(BronzeKey, SpawnPoints_Stuff_Transform[ArrayIndex]);
 				}
 				else if (Keys == 1)
 				{
-					NewItem = GetWorld()->SpawnActor<AActor>(SilverKey, Keys_Transform[ArrayIndex]);
+					NewItem = GetWorld()->SpawnActor<AActor>(SilverKey, SpawnPoints_Stuff_Transform[ArrayIndex]);
 				}
 				else if (Keys == 2)
 				{
-					NewItem = GetWorld()->SpawnActor<AActor>(GoldKey, Keys_Transform[ArrayIndex]);
+					NewItem = GetWorld()->SpawnActor<AActor>(GoldKey, SpawnPoints_Stuff_Transform[ArrayIndex]);
 				}
 				if (NewItem) {
 					Cast<ACache_Key>(NewItem)->ArrayIndex = ArrayIndex;
-					Keys_IsAvaliable[ArrayIndex] = false;
+					SpawnPoints_Stuff_IsAvaliable[ArrayIndex] = false;
+
 				}
 			}
 		}
 	}
+
 }
 
 void AGS::GameBegin() {
