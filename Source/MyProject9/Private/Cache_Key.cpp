@@ -11,16 +11,16 @@ void ACache_Key::RemoveAndRefreshTimer()
 
 	int NewIndex = 0;
 	AGS* GS = GetWorld()->GetGameState<AGS>();
-	while (!GS->SpawnPoints_Stuff_IsAvaliable[NewIndex])
+	while (!GS->Keys_IsAvaliable[NewIndex])
 	{
-		NewIndex = FMath::Rand() % GS->SpawnPoints_Stuff_IsAvaliable.Num();
+		NewIndex = FMath::Rand() % GS->Keys_IsAvaliable.Num();
 	}
-	GS->SpawnPoints_Stuff_IsAvaliable[ArrayIndex] = true;
-	GS->SpawnPoints_Stuff_IsAvaliable[NewIndex] = false;
+	GS->Keys_IsAvaliable[ArrayIndex] = true;
+	GS->Keys_IsAvaliable[NewIndex] = false;
 
 	ArrayIndex = NewIndex;
 
-	SetActorTransform(GS->SpawnPoints_Stuff_Transform[NewIndex]);
+	SetActorTransform(GS->Keys_Transform[NewIndex]);
 
 	FTimerHandle FuzeTimerHandle;
 	GetWorld()->GetTimerManager().SetTimer(FuzeTimerHandle, this, &ACache_Key::Refresh, 20, false);
