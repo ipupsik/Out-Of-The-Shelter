@@ -26,6 +26,7 @@ enum PickUpType {
 	GeneratorArea,
 	CanalizationButton,
 	WebCamLocker,
+	InvisiblePotion,
 };
 
 enum CacheType {
@@ -238,6 +239,11 @@ void AChel::Tick(float DeltaTime)
 								break;
 							}
 							case CacheKey:
+							{
+								UserView->E_Mark->SetVisibility(ESlateVisibility::Visible);
+								break;
+							}
+							case InvisiblePotion:
 							{
 								UserView->E_Mark->SetVisibility(ESlateVisibility::Visible);
 								break;
@@ -794,6 +800,11 @@ void AChel::PickUp() {
 		case WebCamLocker:
 		{
 			LockWebCam_Server();
+			break;
+		}
+		case InvisiblePotion:
+		{
+			//Invisible Logic
 			break;
 		}
 		}

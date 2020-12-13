@@ -9,7 +9,6 @@
 #include "GM.h"
 #include "Cache_Key.h"
 #include "WebCamPoint.h"
-#include "InvisiblePotion.h"
 
 AGS::AGS() {
 	NickNames.Init(FText::FromString(TEXT(" ")), 4);
