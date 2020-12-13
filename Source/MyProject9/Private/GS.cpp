@@ -155,7 +155,7 @@ void AGS::BeginPlay()
 
 		//------------------------------------Cache Keys
 		TArray<AActor*>TargetPoints_CacheKey;
-		UGameplayStatics::GetAllActorsOfClassWithTag(GetWorld(), ATargetPoint::StaticClass(), FName("SpawnStuff"), TargetPoints_CacheKey);
+		UGameplayStatics::GetAllActorsOfClassWithTag(GetWorld(), ATargetPoint::StaticClass(), FName("CacheKeys"), TargetPoints_CacheKey);
 
 		for (int i = 0; i < TargetPoints_CacheKey.Num(); ++i)
 		{
