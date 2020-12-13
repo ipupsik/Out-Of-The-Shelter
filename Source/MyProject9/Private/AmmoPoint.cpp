@@ -15,7 +15,7 @@ AAmmoPoint::AAmmoPoint()
 	Collision->SetupAttachment(RootComponent);
 
 	Mesh = CreateDefaultSubobject<UStaticMeshComponent>("Mesh");
-	Mesh->SetupAttachment(Collision);
+	Mesh->SetupAttachment(RootComponent);
 
 	Collision->OnComponentBeginOverlap.AddDynamic(this, &AAmmoPoint::OnOverlapBegin);
 }
