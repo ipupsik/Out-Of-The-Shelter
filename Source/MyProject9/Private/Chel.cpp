@@ -221,34 +221,7 @@ void AChel::Tick(float DeltaTime)
 					APickableItem* TracedItem = Cast<APickableItem>(HittableActor);
 					if (TracedItem) { //Если мы стукнулись в нужный нам предмет
 						ItemCodePickUp = TracedItem->Type;
-						switch (ItemCodePickUp)
-						{
-							case Boltorez:
-							{
-								UserView->E_Mark->SetVisibility(ESlateVisibility::Visible);
-								break;
-							}
-							case KeyShelter:
-							{
-								UserView->E_Mark->SetVisibility(ESlateVisibility::Visible);
-								break;
-							}
-							case Otvertka:
-							{
-								UserView->E_Mark->SetVisibility(ESlateVisibility::Visible);
-								break;
-							}
-							case CacheKey:
-							{
-								UserView->E_Mark->SetVisibility(ESlateVisibility::Visible);
-								break;
-							}
-							case InvisiblePotion:
-							{
-								UserView->E_Mark->SetVisibility(ESlateVisibility::Visible);
-								break;
-							}
-						}
+						UserView->E_Mark->SetVisibility(ESlateVisibility::Visible);
 						isTracedBad = false;
 						bLineTrace_is_need_refresh = true;  //Говорим, что в текущем кадре мы ударились в нужный предмет
 						if (LastItem)
@@ -804,7 +777,7 @@ void AChel::PickUp() {
 		}
 		case InvisiblePotion:
 		{
-			//Invisible Logic
+			AddInvisibleServer();
 			break;
 		}
 		}
@@ -1446,6 +1419,16 @@ void AChel::LockWebCam_Server_Implementation()
 }
 
 bool AChel::LockWebCam_Server_Validate()
+{
+	return true;
+}
+
+void AChel::AddInvisibleServer_Implementation()
+{
+	InvisibleEverywhere();
+}
+
+bool AChel::AddInvisibleServer_Validate()
 {
 	return true;
 }

@@ -148,7 +148,11 @@ public:
 	UFUNCTION(Client, Reliable)
 		void ChangeCorretca_Client(int32 ValueV);
 
+	UFUNCTION(Server, Reliable, WithValidation)
+		void AddInvisibleServer();
 
+	UFUNCTION(BlueprintImplementableEvent)
+		void InvisibleEverywhere();
 
 	UFUNCTION(Server, Reliable, WithValidation)
 		void OutlineBad_Server();
