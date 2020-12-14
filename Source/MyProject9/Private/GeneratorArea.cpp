@@ -26,6 +26,19 @@ void AGeneratorArea::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLi
 	DOREPLIFETIME(AGeneratorArea, IsAvalible);
 }
 
+void AGeneratorArea::RefreshGenerator()
+{
+	IsAvalible = true;
+
+	TArray<AActor*>Chelix;
+	Collision->GetOverlappingActors(Chelix, AChel::StaticClass());
+	for (auto& it : Chelix)
+	{
+		Cast<AChel>(it)->RefreshGeneratorArea();
+	}
+
+}
+
 
 void AGeneratorArea::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult){
 	AChel* Player = Cast<AChel>(OtherActor);

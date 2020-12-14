@@ -14,5 +14,26 @@ ATerminalLight::ATerminalLight()
 	MaterialDefault = CreateDefaultSubobject<UMaterial>(TEXT("MaterialDefault"));
 
 	Lamp->SetMaterial(0, MaterialDefault);
+}
 
+void ATerminalLight::ChangeMaterialLamp_Implementation(int32 CodeColor)
+{
+	switch (CodeColor)
+	{
+	case 0:
+	{
+		Lamp->SetMaterial(0, MaterialDefault);
+		break;
+	}
+	case 1:
+	{
+		Lamp->SetMaterial(0, MaterialOff);
+		break;
+	}
+	case 2:
+	{
+		Lamp->SetMaterial(0, MaterialOn);
+		break;
+	}
+	}
 }

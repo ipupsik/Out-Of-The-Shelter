@@ -12,6 +12,7 @@
 #include "UI/GeneratorWidget.h"
 #include "CanalizationButton.h"
 #include "WebCamLocker.h"
+#include "ClickButton.h"
 
 #include "GI.h"
 #include "GS.h"
@@ -69,6 +70,9 @@ protected:
 public:
 	void SpawnPlayer();
 	void PossessedBy(AController* NewController) override;
+
+	UFUNCTION(Client, Reliable)
+		void RefreshGeneratorArea();
 
 	UFUNCTION(Client, Reliable)
 		void StoneCountUpdate();
@@ -349,5 +353,5 @@ public:
 
 	AWebCamLocker* LastWebCamLocker;
 
-	UNoteWidge* Widget_Note;
+	UNoteWidget* Widget_Note;
 };

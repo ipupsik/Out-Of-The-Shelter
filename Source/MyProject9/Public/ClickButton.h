@@ -3,24 +3,31 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/Actor.h"
+#include "PickableItem.h"
+#include "Components/DecalComponent.h"
+#include "Materials/Material.h"
+#include "Components/BoxComponent.h"
 #include "ClickButton.generated.h"
 
+/**
+ * 
+ */
 UCLASS()
-class MYPROJECT9_API AClickButton : public AActor
+class MYPROJECT9_API AClickButton : public APickableItem
 {
 	GENERATED_BODY()
-	
-public:	
-	// Sets default values for this actor's properties
-	AClickButton();
-
 protected:
-	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-public:	
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
+public:
+	AClickButton();
 
+	UPROPERTY(EditAnyWhere)
+		int32 ButtonType;
+
+	UPROPERTY(EditAnywhere)
+		TArray<UMaterial*> MaterialsNum;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Player")
+		UDecalComponent* Decal;
 };

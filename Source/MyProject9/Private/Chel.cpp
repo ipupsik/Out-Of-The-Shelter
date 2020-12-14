@@ -15,6 +15,7 @@
 #include "BP_PlayerController.h"
 #include "Cache_Key.h"
 #include "CanalizationDamageCollision.h"
+#include "Code_Note.h"
 
 enum PickUpType {
 	Boltorez,
@@ -27,6 +28,9 @@ enum PickUpType {
 	CanalizationButton,
 	WebCamLocker,
 	InvisiblePotion,
+	CodeNote,
+	ClickButton,
+
 };
 
 enum CacheType {
@@ -120,7 +124,7 @@ void AChel::MyBeginPlay()
 		UserView = Cast<UUserView>(CreateWidget(World, UserViewClass));
 		GeneratorView = Cast<UGeneratorWidget>(CreateWidget(World, GeneratorView_class));
 		KillFeed = CreateWidget(World, KillFeedClass);
-		Widget_Note = CreateWidget(World, NoteWidget_class);
+		Widget_Note = Cast<UNoteWidget>(CreateWidget(World, NoteWidget_class));
 		UserView->AddToViewport();
 		KillFeed->AddToViewport();
 		GeneratorView->AddToViewport();
@@ -784,6 +788,20 @@ void AChel::PickUp() {
 			AddInvisibleServer();
 			break;
 		}
+		case CodeNote:
+		{
+			if (Widget_Note->IsVisible())
+			{
+				Widget_Note->SetVisibility(ESlateVisibility::Hidden);
+				bCanWalkingAndWatching = true;
+			}
+			else
+			{
+				Widget_Note->ChangeText(GS->CodeGenerator);
+				bCanWalkingAndWatching = false;
+			}
+			break;
+		}
 		}
 	}
 }
@@ -1441,4 +1459,10 @@ void AChel::HideNoteWidget_Implementation()
 {
 	Widget_Note->SetVisibility(ESlateVisibility::Hidden);
 	bCanWalkingAndWatching = true;
+}
+
+void AChel::RefreshGeneratorArea_Implementation()
+{
+	UserView->AreaUsedText->SetVisibility(ESlateVisibility::Hidden);
+	UserView->HoldText->SetVisibility(ESlateVisibility::Visible);
 }

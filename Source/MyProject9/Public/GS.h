@@ -9,7 +9,7 @@
 #include "BP_PlayerController.h"
 #include "TerminalLight.h"
 #include "NumberTerminal.h"
-#include "CodeNote.h"
+#include "Code_Note.h"
 
 #include "GS.generated.h"
 
@@ -52,9 +52,12 @@ public:
 	void BeginPlay() override;
 
 	void EventSpawnNote();
+	void RefreshGenerator();
 	void AddNumToTerminal(int32 Number);
 	void DeleteLastNumber();
 	void CheckCode(int Index);
+
+	void ChangeLamp_Neutral();
 
 	UFUNCTION()
 		void SpawnPlayers();
@@ -141,11 +144,10 @@ public:
 	TArray<bool>CacheItems_Stuff_IsAvaliable;
 
 
-	UPROPERTY(EditAnywhere, BluprintReadWrite)
-	FTransform TransformOfFirstNum;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		FTransform TransformOfFirstNum;
 	int32 CurrentCode;
-	UPROPERTY(EditAnywhere, BluprintReadWrite)
-		ATerminalLight* LampObj;
+	ATerminalLight* LampObj;
 	TArray<ANumberTerminal*> NumbersOnPanel;
 	UPROPERTY(EditAnywhere)
 		FName CodeNoteTargetTag;

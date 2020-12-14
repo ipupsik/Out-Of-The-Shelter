@@ -28,4 +28,6 @@ public:
 	UPROPERTY(EditAnywhere)
 		UMaterial* MaterialDefault;
 
+	UFUNCTION(NetMulticast, Reliable)
+		void ChangeMaterialLamp(int32 CodeColor);
 };

@@ -31,10 +31,3 @@ void APickableItem::BeginPlay()
 {
 	Super::BeginPlay();
 }
-
-// Called every frame
-void APickableItem::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-
-}

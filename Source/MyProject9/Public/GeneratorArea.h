@@ -36,6 +36,8 @@ public:
 
 	void GetLifetimeReplicatedProps(TArray < FLifetimeProperty >& OutLifetimeProps) const override;
 
+	void RefreshGenerator();
+
 	UPROPERTY(Replicated)
 	int32 Stadiya;
 	UPROPERTY(Replicated)

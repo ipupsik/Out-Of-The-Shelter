@@ -200,6 +200,11 @@ void AGS::BeginPlay()
 				}
 			}
 		}
+
+		TArray<AActor*>TargetPoints_TerminalLamp;
+		UGameplayStatics::GetAllActorsOfClass(GetWorld(), ATerminalLight::StaticClass(), TargetPoints_TerminalLamp);
+		if (TargetPoints_TerminalLamp.Num() > 0)
+			LampObj = Cast<ATerminalLight>(TargetPoints_TerminalLamp[0]);
 	}
 }
 
@@ -283,12 +288,12 @@ void AGS::EventSpawnNote() {
 	CodeGenerator = (1 + FMath::Rand() % 9) * 10000 + FMath::Rand() % 10 * 1000 + FMath::Rand() % 10 * 100 + FMath::Rand() % 10 * 10 + FMath::Rand() % 10;
 	TArray<AActor*> GettingTagActors;
 	UGameplayStatics::GetAllActorsOfClassWithTag(GetWorld(), ATargetPoint::StaticClass(), CodeNoteTargetTag, GettingTagActors);
-	GetWorld()->SpawnActor(ACodeNote::StaticClass(), Cast<ATargetPoint>(GettingTagActors[FMath::Rand() % GettingTagActors.Num()])->GetTransform());
+	GetWorld()->SpawnActor<ACode_Note>(ACode_Note::StaticClass(), Cast<ATargetPoint>(GettingTagActors[FMath::Rand() % GettingTagActors.Num()])->GetTransform());
 	IsCodeTerminalAvaliable = true;
 }
 
 void AGS::AddNumToTerminal(int32 Number) {
-	ANumberTerminal* Num = Cast<ANumberTerminal>(GetWorld()->SpawnActorDeferred(ANumberTerminal::StaticClass(), TransformOfFirstNum)); 
+	ANumberTerminal* Num = Cast<ANumberTerminal>(GetWorld()->SpawnActorDeferred<ANumberTerminal>(ANumberTerminal::StaticClass(), TransformOfFirstNum));
 	Num->SetActorLocation(FVector(TransformOfFirstNum.GetLocation().X + 7 * NumbersOnPanel.Num(), TransformOfFirstNum.GetLocation().Y, TransformOfFirstNum.GetLocation().Z));
 	Num->NumberType = Number;
 	UGameplayStatics::FinishSpawningActor(Num, Num->GetTransform());
@@ -296,7 +301,7 @@ void AGS::AddNumToTerminal(int32 Number) {
 }
 
 void AGS::DeleteLastNumber() {
-	NumbersOnPanel[NumbersOnPanel.Num - 1].Destroy();
+	NumbersOnPanel[NumbersOnPanel.Num() - 1]->Destroy();
 	NumbersOnPanel.Pop();
 }
 
@@ -314,12 +319,75 @@ void AGS::CheckCode(int Index) {
 			
 
 			TArray<AActor*> GettingCodeNote;
-			UGameplayStatics::GetAllActorsOfClass(GetWorld(), ACodeNote::StaticClass(), GettingCodeNote);
+			UGameplayStatics::GetAllActorsOfClass(GetWorld(), ACode_Note::StaticClass(), GettingCodeNote);
 			for (auto& it : GettingCodeNote)
 			{
-				Cast<ACodeNote>(it)->Destroy();
+				Cast<ACode_Note>(it)->Destroy();
 			}
+
+			FTimerHandle FuzeTimerHandle;
+			GetWorld()->GetTimerManager().SetTimer(FuzeTimerHandle, this, &AGS::RefreshGenerator, 20, false);
+
+			for (auto& it : GettingChelix)
+			{
+				AChel* temp = Cast<AChel>(it);
+				if (temp->Index == Index)
+				{
+					temp->ShowRandomItem();
+					break;
+				}
+			}
+
+			IsCodeTerminalAvaliable = false;
+
+			LampObj->ChangeMaterialLamp(2);
+
+			for (auto& it : NumbersOnPanel)
+			{
+				it->Destroy();
+			}
+			NumbersOnPanel.Empty();
+
+			FTimerHandle FuzeTimerHandle2;
+			GetWorld()->GetTimerManager().SetTimer(FuzeTimerHandle2, this, &AGS::ChangeLamp_Neutral, 2, false);
+
+			return;
 		}
 	}
-	
+
+	for (auto& it : NumbersOnPanel)
+	{
+		it->Destroy();
+	}
+	NumbersOnPanel.Empty();
+
+	LampObj->ChangeMaterialLamp(1);
+
+	FTimerHandle FuzeTimerHandle;
+	GetWorld()->GetTimerManager().SetTimer(FuzeTimerHandle, this, &AGS::ChangeLamp_Neutral, 2, false);
+
+	TArray<AActor*> GettingChelix;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AChel::StaticClass(), GettingChelix);
+	for (auto& it : GettingChelix)
+	{
+		AChel* temp = Cast<AChel>(it);
+		if (temp->Index == Index) {
+			temp->OutlineBad_Server();
+			return;
+		}
+	}
+}
+
+void AGS::ChangeLamp_Neutral()
+{
+	LampObj->ChangeMaterialLamp(0);
+}
+
+void AGS::RefreshGenerator()
+{
+	TArray<AActor*> Generator;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AGeneratorArea::StaticClass(), Generator);
+
+	if (Generator[0])
+		Cast<AGeneratorArea>(Generator[0])->RefreshGenerator();
 }
