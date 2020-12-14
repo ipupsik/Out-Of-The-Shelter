@@ -3,3 +3,10 @@
 
 #include "UI\NoteWidget.h"
 
+void UNoteWidget::NativeConstruct() {
+	UUserWidget::NativeConstruct();
+}
+
+void UNoteWidget::ChangeText(int32 Code){
+	CodeText->SetText(FText::AsNumber(Code));
+}

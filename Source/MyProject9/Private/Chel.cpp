@@ -120,10 +120,14 @@ void AChel::MyBeginPlay()
 		UserView = Cast<UUserView>(CreateWidget(World, UserViewClass));
 		GeneratorView = Cast<UGeneratorWidget>(CreateWidget(World, GeneratorView_class));
 		KillFeed = CreateWidget(World, KillFeedClass);
+		Widget_Note = CreateWidget(World, NoteWidget_class);
 		UserView->AddToViewport();
 		KillFeed->AddToViewport();
 		GeneratorView->AddToViewport();
 		GeneratorView->SetVisibility(ESlateVisibility::Hidden);
+		Widget_Note->AddToViewport();
+		Widget_Note->SetVisibility(ESlateVisibility::Hidden);
+
 
 		UserView->Player = this;
 		UserView->AmmoLabel->SetText(FText::AsNumber((int32)Ammo));
@@ -1222,7 +1226,7 @@ void AChel::ChangeGeneratorStas_Implementation()
 			Cast<AChel>(it)->HideWidgetStas();
 			Cast<AChel>(it)->ChangeCorretca_Client(0);
 		}
-		GS->SpawnNote();
+		//GS->SpawnNote();
 	}
 	else {
 		TArray<AActor*> Players;
@@ -1431,4 +1435,10 @@ void AChel::AddInvisibleServer_Implementation()
 bool AChel::AddInvisibleServer_Validate()
 {
 	return true;
+}
+
+void AChel::HideNoteWidget_Implementation()
+{
+	Widget_Note->SetVisibility(ESlateVisibility::Hidden);
+	bCanWalkingAndWatching = true;
 }

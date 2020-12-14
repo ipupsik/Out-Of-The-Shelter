@@ -7,6 +7,9 @@
 #include "Net/UnrealNetwork.h"
 #include "PickableItem.h"
 #include "BP_PlayerController.h"
+#include "TerminalLight.h"
+#include "NumberTerminal.h"
+#include "CodeNote.h"
 
 #include "GS.generated.h"
 
@@ -47,6 +50,12 @@ public:
 
 	void Tick(float DeltaSeconds) override;
 	void BeginPlay() override;
+
+	void EventSpawnNote();
+	void AddNumToTerminal(int32 Number);
+	void DeleteLastNumber();
+	void CheckCode(int Index);
+
 	UFUNCTION()
 		void SpawnPlayers();
 	UFUNCTION(BlueprintCallable)
@@ -87,6 +96,14 @@ public:
 		TArray<FVector>WebCam_Location;
 	UPROPERTY(Replicated, BlueprintReadWrite)
 		TArray<bool>WebCam_IsEnabled;
+	UPROPERTY(Replicated)
+		int32 CodeGenerator;
+	UPROPERTY(Replicated)
+		bool IsCodeTerminalAvaliable;
+	UPROPERTY(Replicated)
+		bool ButtonPlayAnim;
+
+
 
 	UPROPERTY(EditAnywhere, Category = "ItemClasses")
 		TSubclassOf<APickableItem> KeyShelter;
@@ -122,4 +139,14 @@ public:
 
 	TArray<FTransform>CacheItems_Stuff_Transform;
 	TArray<bool>CacheItems_Stuff_IsAvaliable;
+
+
+	UPROPERTY(EditAnywhere, BluprintReadWrite)
+	FTransform TransformOfFirstNum;
+	int32 CurrentCode;
+	UPROPERTY(EditAnywhere, BluprintReadWrite)
+		ATerminalLight* LampObj;
+	TArray<ANumberTerminal*> NumbersOnPanel;
+	UPROPERTY(EditAnywhere)
+		FName CodeNoteTargetTag;
 };

@@ -35,6 +35,12 @@ AGS::AGS() {
 	IsGameStarted = false;
 
 	CurrentButtonCount = 0;
+
+	CodeGenerator = -1;
+	CurrentCode = 0;
+	IsCodeTerminalAvaliable = false;
+	ButtonPlayAnim = false;
+	NumbersOnPanel.Init(0, 0);
 }
 
 void AGS::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -50,6 +56,9 @@ void AGS::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps
 	DOREPLIFETIME(AGS, WebCam_Rotation);
 	DOREPLIFETIME(AGS, WebCam_Location);
 	DOREPLIFETIME(AGS, WebCam_IsEnabled);
+	DOREPLIFETIME(AGS, CodeGenerator);
+	DOREPLIFETIME(AGS, IsCodeTerminalAvaliable);
+	DOREPLIFETIME(AGS, ButtonPlayAnim);
 }
 
 void AGS::BeginPlay()
@@ -268,4 +277,49 @@ void AGS::ResetGame() {
 		Cast<ABP_PlayerController>(Chel)->RemoveFinalMenu();
 
 	Cast<AGM>(UGameplayStatics::GetGameMode(GetWorld()))->Respawn();
+}
+
+void AGS::EventSpawnNote() {
+	CodeGenerator = (1 + FMath::Rand() % 9) * 10000 + FMath::Rand() % 10 * 1000 + FMath::Rand() % 10 * 100 + FMath::Rand() % 10 * 10 + FMath::Rand() % 10;
+	TArray<AActor*> GettingTagActors;
+	UGameplayStatics::GetAllActorsOfClassWithTag(GetWorld(), ATargetPoint::StaticClass(), CodeNoteTargetTag, GettingTagActors);
+	GetWorld()->SpawnActor(ACodeNote::StaticClass(), Cast<ATargetPoint>(GettingTagActors[FMath::Rand() % GettingTagActors.Num()])->GetTransform());
+	IsCodeTerminalAvaliable = true;
+}
+
+void AGS::AddNumToTerminal(int32 Number) {
+	ANumberTerminal* Num = Cast<ANumberTerminal>(GetWorld()->SpawnActorDeferred(ANumberTerminal::StaticClass(), TransformOfFirstNum)); 
+	Num->SetActorLocation(FVector(TransformOfFirstNum.GetLocation().X + 7 * NumbersOnPanel.Num(), TransformOfFirstNum.GetLocation().Y, TransformOfFirstNum.GetLocation().Z));
+	Num->NumberType = Number;
+	UGameplayStatics::FinishSpawningActor(Num, Num->GetTransform());
+	NumbersOnPanel.Add(Num);
+}
+
+void AGS::DeleteLastNumber() {
+	NumbersOnPanel[NumbersOnPanel.Num - 1].Destroy();
+	NumbersOnPanel.Pop();
+}
+
+void AGS::CheckCode(int Index) {
+	CurrentCode = 0;
+	if (NumbersOnPanel.Num() == 5) {
+		CurrentCode = NumbersOnPanel[0]->NumberType * 10000 + NumbersOnPanel[1]->NumberType * 1000 + NumbersOnPanel[2]->NumberType * 100 + NumbersOnPanel[3]->NumberType * 10 + NumbersOnPanel[4]->NumberType;
+		if (CurrentCode == CodeGenerator) {
+			TArray<AActor*> GettingChelix;
+			UGameplayStatics::GetAllActorsOfClass(GetWorld(), AChel::StaticClass(), GettingChelix);
+			for (auto& it : GettingChelix) 
+			{
+				Cast<AChel>(it)->HideNoteWidget();
+			}
+			
+
+			TArray<AActor*> GettingCodeNote;
+			UGameplayStatics::GetAllActorsOfClass(GetWorld(), ACodeNote::StaticClass(), GettingCodeNote);
+			for (auto& it : GettingCodeNote)
+			{
+				Cast<ACodeNote>(it)->Destroy();
+			}
+		}
+	}
+	
 }

@@ -24,6 +24,7 @@
 #include "UI/PlayerSuicide.h"
 #include "UI/GeneratorWidget.h"
 #include "Components/TimelineComponent.h"
+#include "UI/NoteWidget.h"
 
 #include "Chel.generated.h"
 
@@ -166,6 +167,9 @@ public:
 		void LockWebCam_Server();
 
 	UFUNCTION(Client, Reliable)
+		void HideNoteWidget();
+
+	UFUNCTION(Client, Reliable)
 		void HideWidgetStas();
 
 	UFUNCTION(Client, Reliable)
@@ -250,6 +254,9 @@ public:
 		TSubclassOf<UPlayerLostItem> PlayerLostItem_class;
 	UPROPERTY(EditAnywhere, Category = "UI HUD")
 		TSubclassOf<UGeneratorWidget> GeneratorView_class;
+	UPROPERTY(EditAnywhere, Category = "UI HUD")
+		TSubclassOf<UNoteWidget> NoteWidget_class;
+
 	//HUD Variables
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite) //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 		UUserView* UserView;
@@ -341,4 +348,6 @@ public:
 	APickableItem* LastOutlineItem;
 
 	AWebCamLocker* LastWebCamLocker;
+
+	UNoteWidge* Widget_Note;
 };

@@ -7,24 +7,25 @@
 #include "Components/StaticMeshComponent.h"
 #include "Materials/Material.h"
 
-#include "GeneratorLampochka.generated.h"
+#include "TerminalLight.generated.h"
 
 UCLASS()
-class MYPROJECT9_API AGeneratorLampochka : public AActor
+class MYPROJECT9_API ATerminalLight : public AActor
 {
 	GENERATED_BODY()
 	
 public:	
 	// Sets default values for this actor's properties
-	AGeneratorLampochka();
+	ATerminalLight();
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Lampa")
-	UStaticMeshComponent* LampochkaModel;
+	UStaticMeshComponent* Lamp;
 
 	UPROPERTY(EditAnywhere)
-	UMaterial* MaterialOff;
+		UMaterial* MaterialOff;
 	UPROPERTY(EditAnywhere)
-	UMaterial* MaterialOn;
-
+		UMaterial* MaterialOn;
+	UPROPERTY(EditAnywhere)
+		UMaterial* MaterialDefault;
 
 };
