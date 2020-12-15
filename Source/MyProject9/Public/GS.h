@@ -64,9 +64,6 @@ public:
 	UFUNCTION(BlueprintCallable)
 		void ResetGame();
 
-	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable) //легендарна€ св€зќчка
-		void SpawnNote();
-
 public:
 	//For indexing
 	UPROPERTY(BlueprintReadWrite)
@@ -103,7 +100,7 @@ public:
 		int32 CodeGenerator;
 	UPROPERTY(Replicated)
 		bool IsCodeTerminalAvaliable;
-	UPROPERTY(Replicated)
+	UPROPERTY(Replicated, BlueprintReadWrite)
 		bool ButtonPlayAnim;
 
 
@@ -124,6 +121,11 @@ public:
 		TSubclassOf<APickableItem> SilverKey;
 	UPROPERTY(EditAnywhere, Category = "ItemClasses")
 		TSubclassOf<APickableItem> GoldKey;
+
+	UPROPERTY(EditAnywhere, Category = "ItemClasses")
+		TSubclassOf<APickableItem> CodeNoteClass;
+	UPROPERTY(EditAnywhere, Category = "ItemClasses")
+		TSubclassOf<ANumberTerminal> NumberTerminalClass;
 
 	int CurrentOtvertka;
 	int CurrentKeyShelter;

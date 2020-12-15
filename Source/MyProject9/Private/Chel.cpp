@@ -172,6 +172,8 @@ void AChel::PossessedBy(AController* NewController)
 	MyBeginPlay();
 }
 
+
+
 // Called every frame
 void AChel::Tick(float DeltaTime)
 {
@@ -235,7 +237,13 @@ void AChel::Tick(float DeltaTime)
 						if (LastItem)
 							LastItem->Item->SetCustomDepthStencilValue(0);
 						LastItem = TracedItem;
-						LastItem->Item->SetCustomDepthStencilValue(2);
+						if (Cast<AClickButton>(TracedItem))
+						{
+							if (GS->IsCodeTerminalAvaliable)
+								LastItem->Item->SetCustomDepthStencilValue(2);
+						}
+						else
+							LastItem->Item->SetCustomDepthStencilValue(2);
 					}
 					else
 					{
@@ -798,7 +806,35 @@ void AChel::PickUp() {
 			else
 			{
 				Widget_Note->ChangeText(GS->CodeGenerator);
+				Widget_Note->SetVisibility(ESlateVisibility::Visible);
 				bCanWalkingAndWatching = false;
+			}
+			break;
+		}
+		case ClickButton:
+		{
+			AClickButton* CurButton = Cast<AClickButton>(LastItem);
+			if (GS->IsCodeTerminalAvaliable && !GS->ButtonPlayAnim) 
+			{
+				if (CurButton->ButtonType <= 9) {
+					if (GS->NumbersOnPanel.Num() <= 4) {
+						AddNumToTerminalServer(CurButton->ButtonType);
+						ButtonPressAnimationServer();
+					}
+				}
+				else {
+					if (CurButton->ButtonType == 10) {
+						if (GS->NumbersOnPanel.Num() > 0) {
+							DeleteLAstNumServer();
+							ButtonPressAnimationServer();
+						}
+					}
+					else 
+					{
+						CheckCodeServer();
+						ButtonPressAnimationServer();
+					}
+				}
 			}
 			break;
 		}
@@ -1244,7 +1280,7 @@ void AChel::ChangeGeneratorStas_Implementation()
 			Cast<AChel>(it)->HideWidgetStas();
 			Cast<AChel>(it)->ChangeCorretca_Client(0);
 		}
-		//GS->SpawnNote();
+		GS->EventSpawnNote();
 	}
 	else {
 		TArray<AActor*> Players;
@@ -1465,4 +1501,43 @@ void AChel::RefreshGeneratorArea_Implementation()
 {
 	UserView->AreaUsedText->SetVisibility(ESlateVisibility::Hidden);
 	UserView->HoldText->SetVisibility(ESlateVisibility::Visible);
+}
+
+void AChel::AddNumToTerminalServer_Implementation(int32 ButtonType)
+{
+	GS->AddNumToTerminal(ButtonType);
+}
+
+bool AChel::AddNumToTerminalServer_Validate(int32 ButtonType)
+{
+	return true;
+}
+
+void AChel::DeleteLAstNumServer_Implementation()
+{
+	GS->DeleteLastNumber();
+}
+
+bool AChel::DeleteLAstNumServer_Validate()
+{
+	return true;
+}
+
+void AChel::CheckCodeServer_Implementation()
+{
+	GS->CheckCode(Index);
+}
+
+bool AChel::CheckCodeServer_Validate()
+{
+	return true;
+}
+
+void AChel::ButtonPressAnimationServer_Implementation() {
+	Cast<AClickButton>(LastItem)->ButtonPressAnimation();
+}
+
+bool AChel::ButtonPressAnimationServer_Validate()
+{
+	return true;
 }

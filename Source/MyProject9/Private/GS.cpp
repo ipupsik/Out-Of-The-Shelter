@@ -40,7 +40,7 @@ AGS::AGS() {
 	CurrentCode = 0;
 	IsCodeTerminalAvaliable = false;
 	ButtonPlayAnim = false;
-	NumbersOnPanel.Init(0, 0);
+	NumbersOnPanel.Init(nullptr, 0);
 }
 
 void AGS::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -287,17 +287,24 @@ void AGS::ResetGame() {
 void AGS::EventSpawnNote() {
 	CodeGenerator = (1 + FMath::Rand() % 9) * 10000 + FMath::Rand() % 10 * 1000 + FMath::Rand() % 10 * 100 + FMath::Rand() % 10 * 10 + FMath::Rand() % 10;
 	TArray<AActor*> GettingTagActors;
-	UGameplayStatics::GetAllActorsOfClassWithTag(GetWorld(), ATargetPoint::StaticClass(), CodeNoteTargetTag, GettingTagActors);
-	GetWorld()->SpawnActor<ACode_Note>(ACode_Note::StaticClass(), Cast<ATargetPoint>(GettingTagActors[FMath::Rand() % GettingTagActors.Num()])->GetTransform());
+	UGameplayStatics::GetAllActorsOfClassWithTag(GetWorld(), ATargetPoint::StaticClass(), "NoteSpawn", GettingTagActors);
+	GetWorld()->SpawnActor<ACode_Note>(CodeNoteClass, GettingTagActors[FMath::Rand() % GettingTagActors.Num()]->GetTransform());
 	IsCodeTerminalAvaliable = true;
 }
 
 void AGS::AddNumToTerminal(int32 Number) {
-	ANumberTerminal* Num = Cast<ANumberTerminal>(GetWorld()->SpawnActorDeferred<ANumberTerminal>(ANumberTerminal::StaticClass(), TransformOfFirstNum));
-	Num->SetActorLocation(FVector(TransformOfFirstNum.GetLocation().X + 7 * NumbersOnPanel.Num(), TransformOfFirstNum.GetLocation().Y, TransformOfFirstNum.GetLocation().Z));
-	Num->NumberType = Number;
-	UGameplayStatics::FinishSpawningActor(Num, Num->GetTransform());
-	NumbersOnPanel.Add(Num);
+	FTransform Trans;
+	Trans.SetLocation(FVector(TransformOfFirstNum.GetLocation().X + 7 * NumbersOnPanel.Num(), TransformOfFirstNum.GetLocation().Y, TransformOfFirstNum.GetLocation().Z));
+	Trans.SetRotation(TransformOfFirstNum.GetRotation());
+	Trans.SetScale3D(TransformOfFirstNum.GetScale3D());
+	ANumberTerminal* Num = GetWorld()->SpawnActorDeferred<ANumberTerminal>(NumberTerminalClass, Trans);
+	if (Num != nullptr) 
+	{
+		Num->NumberType = Number;
+		UGameplayStatics::FinishSpawningActor(Num, Trans);
+		if (Num != nullptr)
+			NumbersOnPanel.Add(Num);
+	}
 }
 
 void AGS::DeleteLastNumber() {

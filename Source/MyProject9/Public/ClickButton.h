@@ -22,6 +22,9 @@ protected:
 public:
 	AClickButton();
 
+	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
+		void ButtonPressAnimation();
+
 	UPROPERTY(EditAnyWhere)
 		int32 ButtonType;
 

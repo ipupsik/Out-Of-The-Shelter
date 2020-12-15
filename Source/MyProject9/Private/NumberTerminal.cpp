@@ -7,9 +7,14 @@
 ANumberTerminal::ANumberTerminal()
 {
 	MaterialsNum.Init(0, 0);
+
+	Decal = CreateDefaultSubobject<UDecalComponent>(TEXT("Decal"));
+	Decal->SetupAttachment(RootComponent);
 }
 
 void ANumberTerminal::BeginPlay() {
 	AActor::BeginPlay();
+
+
 	Decal->SetMaterial(0, MaterialsNum[NumberType]);
 }

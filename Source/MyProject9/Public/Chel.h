@@ -71,6 +71,16 @@ public:
 	void SpawnPlayer();
 	void PossessedBy(AController* NewController) override;
 
+	UFUNCTION(Server, Reliable, WithValidation)
+		void ButtonPressAnimationServer();
+
+	UFUNCTION(Server, Reliable, WithValidation)
+		void AddNumToTerminalServer(int32 ButtonType);
+	UFUNCTION(Server, Reliable, WithValidation)
+		void DeleteLAstNumServer();
+	UFUNCTION(Server, Reliable, WithValidation)
+		void CheckCodeServer();
+
 	UFUNCTION(Client, Reliable)
 		void RefreshGeneratorArea();
 

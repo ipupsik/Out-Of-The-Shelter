@@ -19,6 +19,7 @@ public:
 	ANumberTerminal();
 
 	int32 NumberType;
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Govno(Bagannoe)")
 	UDecalComponent* Decal;
 	
 	UPROPERTY(EditAnywhere)

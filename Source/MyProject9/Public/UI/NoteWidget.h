@@ -18,7 +18,7 @@ class MYPROJECT9_API UNoteWidget : public UUserWidget
 	GENERATED_BODY()
 
 public:
-	UPROPERTY(meta = (BindWidget))
+	UPROPERTY(meta = (BindWidget), BlueprintReadWrite)
 		UTextBlock* CodeText;
 
 	void ChangeText(int32 Code);
