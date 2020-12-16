@@ -26,6 +26,7 @@
 #include "UI/GeneratorWidget.h"
 #include "Components/TimelineComponent.h"
 #include "UI/NoteWidget.h"
+#include "Components/CapsuleComponent.h"
 
 #include "Chel.generated.h"
 
@@ -228,6 +229,9 @@ public:
 		void OnTimelineFinished_First();
 
 	UFUNCTION()
+		void OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+
+	UFUNCTION()
 		void TimelineFloatReturn(FVector value);
 
 	UFUNCTION()
@@ -251,6 +255,8 @@ public:
 		UPoseableMeshComponent* PoseableMeshComp;
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Player")
 		UStaticMeshComponent* Stone;
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Player")
+		UCapsuleComponent* DamageCollision;
 	
 	//TimeLine
 	UTimelineComponent* TimeLineFirst;

@@ -51,6 +51,9 @@ AChel::AChel()
 	CameraComp = CreateDefaultSubobject<UCameraComponent>(TEXT("CameraComp"));
 	CameraComp->SetupAttachment(PoseableMeshComp, TEXT("Bone_002_end"));
 
+	DamageCollision = CreateDefaultSubobject<UCapsuleComponent>(TEXT("DamageCollision"));
+	DamageCollision->SetupAttachment(RootComponent);
+
 	Stone = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Stone"));
 	Stone->SetupAttachment(CameraComp);
 
@@ -61,6 +64,8 @@ AChel::AChel()
 	InterpFunction.BindUFunction(this, FName("TimelineFloatReturn"));
 	TimelineFinishedFirst.BindUFunction(this, FName("OnTimelineFinished_First"));
 	TimelineFinishedSecond.BindUFunction(this, FName("OnTimelineFinished_Second"));
+
+	DamageCollision->OnComponentBeginOverlap.AddDynamic(this, &AChel::OnOverlapBegin);
 
 	Health = 0;
 	bIsAlreadyThrowing = false;
@@ -502,6 +507,30 @@ void AChel::OpenAreaReleased()
 void AChel::OnTimelineFinished_First() {
 	ThrowStoneServer(Stone->GetComponentTransform());
 	TimeLineSecond->ReverseFromEnd();
+}
+
+void AChel::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	if (GetLocalRole() == ROLE_Authority) {
+		AStone* OverStone = Cast<AStone>(OtherActor);
+		if (OverStone) {
+			if (OverStone->Index != Index)
+			{
+				StoneAttack(OverStone->Index);
+				TArray<AActor*>Players;
+				UGameplayStatics::GetAllActorsOfClass(GetWorld(), AChel::StaticClass(), Players);
+				for (int i = 0; i < Players.Num(); i++) {
+					AChel* Chel = Cast<AChel>(Players[i]);
+					if (Chel->Index == OverStone->Index)
+					{
+						Chel->AddHitMarker();
+						break;
+					}
+				}
+				OverStone->Destroy();
+			}
+		}
+	}
 }
 
 void AChel::StoneCountUpdate_Implementation(int32 Count)
