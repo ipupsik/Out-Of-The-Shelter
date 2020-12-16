@@ -869,7 +869,7 @@ void AChel::PickUp() {
 		case ClickButton:
 		{
 			AClickButton* CurButton = Cast<AClickButton>(LastItem);
-			if (GS->IsCodeTerminalAvaliable && !GS->ButtonPlayAnim) 
+			if (GS->IsCodeTerminalAvaliable && !GS->ButtonPlayAnim && CurButton) 
 			{
 				if (CurButton->ButtonType <= 9) {
 					if (GS->NumbersOnPanel.Num() <= 4) {
@@ -1560,6 +1560,7 @@ void AChel::RefreshGeneratorArea_Implementation()
 
 void AChel::AddNumToTerminalServer_Implementation(int32 ButtonType)
 {
+	UE_LOG(LogTemp, Warning, TEXT("%d"), ButtonType);
 	GS->AddNumToTerminal(ButtonType);
 }
 
@@ -1589,7 +1590,21 @@ bool AChel::CheckCodeServer_Validate()
 }
 
 void AChel::ButtonPressAnimationServer_Implementation() {
-	Cast<AClickButton>(LastItem)->ButtonPressAnimation();
+	FHitResult OutHit;
+
+	FVector StartLocation = CameraComp->GetComponentLocation();
+	FVector EndLocation = StartLocation + CameraComp->GetForwardVector() * 300;
+
+	FCollisionQueryParams CollisionParams;
+
+	//DrawDebugLine(World, StartLocation, EndLocation, FColor::Red, false, 1, 0, 1);
+
+	isTracedBad = false; //Предположим, что мы не нашли лайн трейсом нужные нам предметы
+	if (World->LineTraceSingleByChannel(OutHit, StartLocation, EndLocation, ECC_Visibility, CollisionParams))
+	{		
+		Cast<AClickButton>(OutHit.GetActor())->ButtonPressAnimation();
+	}
+	
 }
 
 bool AChel::ButtonPressAnimationServer_Validate()

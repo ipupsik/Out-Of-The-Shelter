@@ -100,7 +100,7 @@ public:
 		int32 CodeGenerator;
 	UPROPERTY(Replicated)
 		bool IsCodeTerminalAvaliable;
-	UPROPERTY(Replicated, BlueprintReadWrite)
+	UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite)
 		bool ButtonPlayAnim;
 
 
@@ -150,7 +150,8 @@ public:
 		FTransform TransformOfFirstNum;
 	int32 CurrentCode;
 	ATerminalLight* LampObj;
-	TArray<ANumberTerminal*> NumbersOnPanel;
+	UPROPERTY(Replicated)
+		TArray<ANumberTerminal*> NumbersOnPanel;
 	UPROPERTY(EditAnywhere)
 		FName CodeNoteTargetTag;
 };

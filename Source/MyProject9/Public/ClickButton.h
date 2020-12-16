@@ -25,7 +25,7 @@ public:
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
 		void ButtonPressAnimation();
 
-	UPROPERTY(EditAnyWhere)
+	UPROPERTY(EditAnywhere)
 		int32 ButtonType;
 
 	UPROPERTY(EditAnywhere)

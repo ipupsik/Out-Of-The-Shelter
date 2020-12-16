@@ -12,6 +12,13 @@ ANumberTerminal::ANumberTerminal()
 	Decal->SetupAttachment(RootComponent);
 }
 
+void ANumberTerminal::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(ANumberTerminal, NumberType);
+}
+
 void ANumberTerminal::BeginPlay() {
 	AActor::BeginPlay();
 

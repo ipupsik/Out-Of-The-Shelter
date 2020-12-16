@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "Components/DecalComponent.h"
+#include "Net/UnrealNetwork.h"
 #include "Materials/Material.h"
 
 #include "NumberTerminal.generated.h"
@@ -18,7 +19,9 @@ public:
 	// Sets default values for this actor's properties
 	ANumberTerminal();
 
-	int32 NumberType;
+	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+	UPROPERTY(Replicated)
+		int32 NumberType;
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Govno(Bagannoe)")
 	UDecalComponent* Decal;
 	
