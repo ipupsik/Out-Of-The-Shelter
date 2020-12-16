@@ -18,21 +18,8 @@ AAmmoPoint::AAmmoPoint()
 	Mesh->SetupAttachment(RootComponent);
 
 	Collision->OnComponentBeginOverlap.AddDynamic(this, &AAmmoPoint::OnOverlapBegin);
-}
 
-// Called when the game starts or when spawned
-void AAmmoPoint::BeginPlay()
-{
-	Super::BeginPlay();
-
-}
-
-// Called every frame
-void AAmmoPoint::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-
-	AddActorLocalRotation({ 0.0f, DeltaTime * 50, 0.0f });
+	Enable = true;
 }
 
 void AAmmoPoint::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
@@ -41,19 +28,17 @@ void AAmmoPoint::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* Oth
 {
 	AChel* Player = Cast<AChel>(OtherActor);
 	if (Player) {
-		if (Player->IsServerAuth)
+		if (Player->IsServerAuth && Enable)
 		{
-			Player->Health = 0;
-			Player->StoneCountUpdate();
-			Collision->SetCollisionEnabled(ECollisionEnabled::Type::NoCollision);
+			Player->Ammo = 10;
+			Player->StoneCountUpdate(10);
+			Player->ShowStoneMulticast();
+
+			Enable = false;
 
 			FTimerHandle FuzeTimerHandle;
 			GetWorld()->GetTimerManager().SetTimer(FuzeTimerHandle, this, &AAmmoPoint::AmmoUpdate, 10, false);
 		}
-	}
-	else
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Spectator Overlapp instead Chel"))
 	}
 }
 
@@ -62,21 +47,20 @@ void AAmmoPoint::AmmoUpdate()
 	TArray<AActor*>Players;
 	Collision->GetOverlappingActors(Players, AChel::StaticClass());
 
+	Enable = true;
+
 	if (Players.Num() != 0) {
 		AChel* Chel = Cast<AChel>(Players[0]);
-		Chel->Health = 0;
-		Chel->StoneCountUpdate();
-		Collision->SetCollisionEnabled(ECollisionEnabled::Type::NoCollision);
+		Chel->Ammo = 10;
+		Chel->StoneCountUpdate(10);
+		Chel->ShowStoneMulticast();
+
+		Enable = false;
 
 		FTimerHandle FuzeTimerHandle;
 		GetWorld()->GetTimerManager().SetTimer(FuzeTimerHandle, this, &AAmmoPoint::AmmoUpdate, 10, false);
 	}
-	else
-	{
-		SetActorHiddenInGame(false);
-		Collision->SetCollisionEnabled(ECollisionEnabled::Type::QueryOnly);
-	}
-	Players.Empty();
+
 }
 
 

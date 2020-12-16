@@ -504,9 +504,9 @@ void AChel::OnTimelineFinished_First() {
 	TimeLineSecond->ReverseFromEnd();
 }
 
-void AChel::StoneCountUpdate_Implementation()
+void AChel::StoneCountUpdate_Implementation(int32 Count)
 {
-	UserView->AmmoLabel->SetText(FText::AsNumber(Ammo));
+	UserView->AmmoLabel->SetText(FText::AsNumber(Count));
 }
 
 void AChel::TimelineFloatReturn(FVector value) {
@@ -533,8 +533,8 @@ void AChel::ThrowStone() {
 void AChel::ThrowStoneServer_Implementation(FTransform StoneTransform)
 {
 	--Ammo;
-	StoneCountUpdate();
-	AStone* NewStone = World->SpawnActorDeferred<AStone>(StoneClass, StoneTransform);
+	StoneCountUpdate(Ammo);
+	AStone* NewStone = World->SpawnActorDeferred<AStone>(StoneClass, StoneTransform, this, this, ESpawnActorCollisionHandlingMethod::AlwaysSpawn);
 	NewStone->Index = Index;
 	UGameplayStatics::FinishSpawningActor(NewStone, StoneTransform);
 	if (Ammo == 0) {
@@ -544,6 +544,10 @@ void AChel::ThrowStoneServer_Implementation(FTransform StoneTransform)
 
 void AChel::HideStoneMulticast_Implementation() {
 	Stone->SetHiddenInGame(true);
+}
+
+void AChel::ShowStoneMulticast_Implementation() {
+	Stone->SetHiddenInGame(false);
 }
 
 bool AChel::ThrowStoneServer_Validate(FTransform StoneTransform)
@@ -659,12 +663,34 @@ void AChel::MyJump()
 
 
 //Sprint-----------------------
+void AChel::StartSprint_Server_Implementation()
+{
+	GetCharacterMovement()->MaxWalkSpeed = 1200.f;
+}
+
+bool AChel::StartSprint_Server_Validate()
+{
+	return true;
+}
+
 void AChel::StartSprint() {
-		GetCharacterMovement()->MaxWalkSpeed = 1200.f;
+	GetCharacterMovement()->MaxWalkSpeed = 1200.f;
+	StartSprint_Server();
+}
+
+void AChel::StopSprint_Server_Implementation()
+{
+	GetCharacterMovement()->MaxWalkSpeed = 800.f;
+}
+
+bool AChel::StopSprint_Server_Validate()
+{
+	return true;
 }
 
 void AChel::StopSprint() {
 	GetCharacterMovement()->MaxWalkSpeed = 800.f;
+	StopSprint_Server();
 }
 //-----------------------------
 

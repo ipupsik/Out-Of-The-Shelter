@@ -75,6 +75,11 @@ public:
 		void ButtonPressAnimationServer();
 
 	UFUNCTION(Server, Reliable, WithValidation)
+		void StartSprint_Server();
+	UFUNCTION(Server, Reliable, WithValidation)
+		void StopSprint_Server();
+
+	UFUNCTION(Server, Reliable, WithValidation)
 		void AddNumToTerminalServer(int32 ButtonType);
 	UFUNCTION(Server, Reliable, WithValidation)
 		void DeleteLAstNumServer();
@@ -85,7 +90,7 @@ public:
 		void RefreshGeneratorArea();
 
 	UFUNCTION(Client, Reliable)
-		void StoneCountUpdate();
+		void StoneCountUpdate(int32 Count);
 
 	UFUNCTION(NetMulticast, Reliable)
 		void DisableCollisionEverywhere();
@@ -209,6 +214,9 @@ public:
 
 	UFUNCTION(NetMulticast, Reliable)
 		void HideStoneMulticast();
+
+	UFUNCTION(NetMulticast, Reliable)
+		void ShowStoneMulticast();
 
 	UFUNCTION(Client, Reliable)
 		void RefreshWidgets(const TArray<bool> &whatToUpdate, int KillerNickIndex, int VictimNickIndex, bool isSuicide);

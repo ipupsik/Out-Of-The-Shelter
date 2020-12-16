@@ -36,7 +36,7 @@ void AGeneratorArea::RefreshGenerator()
 	{
 		Cast<AChel>(it)->RefreshGeneratorArea();
 	}
-
+	ChangeLampochka(1);
 }
 
 
@@ -74,10 +74,21 @@ void AGeneratorArea::OnOverlapEnd(UPrimitiveComponent * OverlappedComp, AActor *
 void AGeneratorArea::DoSomethinkGen() {
 	IsAvalible = false;
 	Stadiya = 0;
-	ChangeLampochka();
+	ChangeLampochka(0);
 }
 
-void AGeneratorArea::ChangeLampochka_Implementation()
+void AGeneratorArea::ChangeLampochka_Implementation(int32 type)
 {
-	Lamp->LampochkaModel->SetMaterial(0, Lamp->MaterialOn);
+	switch (type) {
+	case 0: 
+	{
+		Lamp->LampochkaModel->SetMaterial(0, Lamp->MaterialOn);
+		break;
+	}
+	case 1:
+	{
+		Lamp->LampochkaModel->SetMaterial(0, Lamp->MaterialOff);
+		break;
+	}
+	}
 }
