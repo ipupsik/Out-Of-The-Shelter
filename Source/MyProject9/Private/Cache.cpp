@@ -10,11 +10,14 @@ ACache::ACache()
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-	Collision = CreateDefaultSubobject<UBoxComponent>("Collision");
-	Collision->SetupAttachment(RootComponent);
+	MainScene = CreateDefaultSubobject<USceneComponent>("MainScene");
+	MainScene->SetupAttachment(RootComponent);
 
 	Scene = CreateDefaultSubobject<USceneComponent>("Scene");
-	Scene->SetupAttachment(Collision);
+	Scene->SetupAttachment(MainScene);
+
+	Collision = CreateDefaultSubobject<UBoxComponent>("Collision");
+	Collision->SetupAttachment(Scene);
 
 	Mesh = CreateDefaultSubobject<UStaticMeshComponent>("Mesh");
 	Mesh->SetupAttachment(Scene);

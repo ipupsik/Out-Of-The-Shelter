@@ -13,6 +13,7 @@
 #include "CanalizationButton.h"
 #include "WebCamLocker.h"
 #include "ClickButton.h"
+#include "UI/KillFeed.h"
 
 #include "GI.h"
 #include "GS.h"
@@ -268,8 +269,6 @@ public:
 	//HUD Class Variables
 	UPROPERTY(EditAnywhere, Category = "UI HUD")
 		TSubclassOf<UUserView> UserViewClass;
-	UPROPERTY(EditAnywhere, Category = "UI HUD")
-		TSubclassOf<UUserWidget> KillFeedClass;
 
 	UPROPERTY(EditAnywhere, Category = "Spectator")
 		TSubclassOf<ASpectator> SpectatorClass;
@@ -284,11 +283,13 @@ public:
 		TSubclassOf<UGeneratorWidget> GeneratorView_class;
 	UPROPERTY(EditAnywhere, Category = "UI HUD")
 		TSubclassOf<UNoteWidget> NoteWidget_class;
+	UPROPERTY(EditAnywhere, Category = "UI HUD")
+		TSubclassOf<UKillFeed> KillFeed_class;
 
 	//HUD Variables
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite) //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 		UUserView* UserView;
-	UUserWidget* KillFeed;
+	UKillFeed* KillFeed;
 	//GameInstance + GameState
 	AGS* GS;
 	UGI* GI;

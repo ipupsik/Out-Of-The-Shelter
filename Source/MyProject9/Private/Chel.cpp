@@ -128,7 +128,7 @@ void AChel::MyBeginPlay()
 	if (IsPlayerOwner) {
 		UserView = Cast<UUserView>(CreateWidget(World, UserViewClass));
 		GeneratorView = Cast<UGeneratorWidget>(CreateWidget(World, GeneratorView_class));
-		KillFeed = CreateWidget(World, KillFeedClass);
+		KillFeed = Cast<UKillFeed>(CreateWidget(World, KillFeed_class));
 		Widget_Note = Cast<UNoteWidget>(CreateWidget(World, NoteWidget_class));
 		UserView->AddToViewport();
 		KillFeed->AddToViewport();
@@ -136,7 +136,7 @@ void AChel::MyBeginPlay()
 		GeneratorView->SetVisibility(ESlateVisibility::Hidden);
 		Widget_Note->AddToViewport();
 		Widget_Note->SetVisibility(ESlateVisibility::Hidden);
-
+		KillFeed->AddToViewport();
 
 		UserView->Player = this;
 		UserView->AmmoLabel->SetText(FText::AsNumber((int32)Ammo));
@@ -198,11 +198,9 @@ void AChel::Tick(float DeltaTime)
 
 				TArray<AActor*>Players;
 				UGameplayStatics::GetAllActorsOfClass(World, StaticClass(), Players);
-				for (auto& Player : Players)
-					if (KillerIndex != -1)
-						Cast<AChel>(Player)->RefreshWidgets(DoesHave, KillerIndex, Index, false);
-					else
-						Cast<AChel>(Player)->RefreshWidgets(DoesHave, -1, Index, true);
+				for (auto& Player : Players) {
+					Cast<AChel>(Player)->RefreshWidgets(DoesHave, KillerIndex, Index, false);
+				}
 				DoesHave.Init(false, 3);
 				KillerIndex = -1;
 				bCanWalkingAndWatching = true;
@@ -214,9 +212,7 @@ void AChel::Tick(float DeltaTime)
 	if (IsPlayerOwner) {
 		UserView->RadiationPoints->SetPercent(Health);
 		UserView->DarkScreen->SetRenderOpacity(Health);
-	}
 
-	if (IsPlayerOwner) {
 		FHitResult OutHit;
 
 		FVector StartLocation = CameraComp->GetComponentLocation();
@@ -1024,7 +1020,7 @@ void AChel::StoneAttack(int StoneIndex)
 
 			TArray<AActor*>Players;
 			UGameplayStatics::GetAllActorsOfClass(World, StaticClass(), Players);
-			for (auto Player : Players)
+			for (auto& Player : Players)
 					Cast<AChel>(Player)->RefreshWidgets(DoesHave, KillerIndex, Index, false);
 			DoesHave.Init(false, 3);
 			bCanWalkingAndWatching = true;
@@ -1035,6 +1031,7 @@ void AChel::StoneAttack(int StoneIndex)
 
 void AChel::RefreshWidgets_Implementation(const TArray<bool>& whatToUpdate, int KillerNickIndex, int VictimNickIndex, bool isSuicide)
 {
+	UE_LOG(LogTemp, Warning, TEXT("WidgetUpdates"))
 	if (whatToUpdate[Boltorez])
 	{
 		UserView->WS_Boltorez->SetActiveWidgetIndex(0);
@@ -1054,14 +1051,14 @@ void AChel::RefreshWidgets_Implementation(const TArray<bool>& whatToUpdate, int 
 	if (isSuicide) {
 		UPlayerSuicide* PS_Widget = Cast<UPlayerSuicide>(CreateWidget(World, PlayerSuicide_class));
 		PS_Widget->Player->SetText(GS->NickNames[VictimNickIndex]);
-		UserView->VB_KillFeed->AddChild(PS_Widget);
+		KillFeed->VB_KillFeed->AddChild(PS_Widget);
 	}
 	else
 	{
 		UPlayerKillPlayer* PKP_Widget = Cast<UPlayerKillPlayer>(CreateWidget(World, PlayerKillPlayer_class));
 		PKP_Widget->Killer->SetText(GS->NickNames[KillerNickIndex]);
 		PKP_Widget->Victim->SetText(GS->NickNames[VictimNickIndex]);
-		UserView->VB_KillFeed->AddChild(PKP_Widget);
+		KillFeed->VB_KillFeed->AddChild(PKP_Widget);
 	}
 
 	if (whatToUpdate[Boltorez] || whatToUpdate[Otvertka] || whatToUpdate[KeyShelter])
@@ -1075,7 +1072,7 @@ void AChel::RefreshWidgets_Implementation(const TArray<bool>& whatToUpdate, int 
 		if (whatToUpdate[KeyShelter])
 			PLI_Widget->IMG_KeyShelter->SetVisibility(ESlateVisibility::Visible);
 
-		UserView->VB_KillFeed->AddChild(PLI_Widget);
+		KillFeed->VB_KillFeed->AddChild(PLI_Widget);
 	}
 
 }

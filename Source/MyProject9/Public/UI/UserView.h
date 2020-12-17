@@ -89,9 +89,6 @@ public:
 	UPROPERTY(meta = (BindWidget))
 		UWidgetSwitcher* WS_Otvertka;
 	//---------------------------
-	UPROPERTY(meta = (BindWidget))
-		UVerticalBox* VB_KillFeed;
-	//---------------------------
 
 	UPROPERTY(meta = (BindWidgetAnim))
 		UWidgetAnimation* Shading;

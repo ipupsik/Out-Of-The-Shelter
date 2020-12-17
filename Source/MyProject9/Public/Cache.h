@@ -40,6 +40,9 @@ public:
 		UBoxComponent* Collision;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Player")
+		USceneComponent* MainScene;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Player")
 		USceneComponent* Scene;
 
 	UPROPERTY(BlueprintReadWrite, Replicated)
