@@ -107,6 +107,7 @@ void AChel::MyBeginPlay()
 	IsServerAuth = GetLocalRole() == ROLE_Authority;
 	World = GetWorld();
 	IsPlayerOwner = UGameplayStatics::GetPlayerController(GetWorld(), 0) == GetController();
+	StonePosition = Stone->GetRelativeLocation();
 
 	GI = World->GetGameInstance<UGI>();
 
@@ -177,8 +178,6 @@ void AChel::PossessedBy(AController* NewController)
 	MyBeginPlay();
 }
 
-
-
 // Called every frame
 void AChel::Tick(float DeltaTime)
 {
@@ -199,7 +198,7 @@ void AChel::Tick(float DeltaTime)
 				TArray<AActor*>Players;
 				UGameplayStatics::GetAllActorsOfClass(World, StaticClass(), Players);
 				for (auto& Player : Players) {
-					Cast<AChel>(Player)->RefreshWidgets(DoesHave, KillerIndex, Index, false);
+					Cast<AChel>(Player)->RefreshWidgets(DoesHave, KillerIndex, Index);
 				}
 				DoesHave.Init(false, 3);
 				KillerIndex = -1;
@@ -501,8 +500,23 @@ void AChel::OpenAreaReleased()
 
 //TimelineAnimation
 void AChel::OnTimelineFinished_First() {
-	ThrowStoneServer(Stone->GetComponentTransform());
 	TimeLineSecond->ReverseFromEnd();
+
+	if (IsServerAuth) {
+		--Ammo;
+		StoneCountUpdate(Ammo);
+
+		FTransform trans;
+		trans.SetLocation(FVector(GetActorLocation().X, GetActorLocation().Y, Stone->GetComponentLocation().Z));
+		trans.SetRotation(FQuat(Stone->GetComponentRotation()));
+
+		AStone* NewStone = World->SpawnActorDeferred<AStone>(StoneClass, trans, this, this, ESpawnActorCollisionHandlingMethod::AlwaysSpawn);
+		NewStone->Index = Index;
+		UGameplayStatics::FinishSpawningActor(NewStone, trans);
+		if (Ammo == 0) {
+			HideStoneMulticast();
+		}
+	}
 }
 
 void AChel::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
@@ -548,23 +562,25 @@ void AChel::ThrowStone() {
 	if (Ammo > 0 && IsEnableInput) {
 		if (!bIsAlreadyThrowing) {
 			bIsAlreadyThrowing = true;
-			StonePosition = Stone->GetRelativeLocation();
 
-			TimeLineFirst->PlayFromStart();
+			ThrowStoneServer();
 		}
 	}
 }
 
-void AChel::ThrowStoneServer_Implementation(FTransform StoneTransform)
+void AChel::ThrowStoneMulticast_Implementation()
 {
-	--Ammo;
-	StoneCountUpdate(Ammo);
-	AStone* NewStone = World->SpawnActorDeferred<AStone>(StoneClass, StoneTransform, this, this, ESpawnActorCollisionHandlingMethod::AlwaysSpawn);
-	NewStone->Index = Index;
-	UGameplayStatics::FinishSpawningActor(NewStone, StoneTransform);
-	if (Ammo == 0) {
-		HideStoneMulticast();
-	}
+	TimeLineFirst->PlayFromStart();
+}
+
+void AChel::ThrowStoneServer_Implementation()
+{
+	ThrowStoneMulticast();
+}
+
+bool AChel::ThrowStoneServer_Validate()
+{
+	return true;
 }
 
 void AChel::HideStoneMulticast_Implementation() {
@@ -573,11 +589,6 @@ void AChel::HideStoneMulticast_Implementation() {
 
 void AChel::ShowStoneMulticast_Implementation() {
 	Stone->SetHiddenInGame(false);
-}
-
-bool AChel::ThrowStoneServer_Validate(FTransform StoneTransform)
-{
-	return true;
 }
 //----------------------------
 
@@ -1021,7 +1032,7 @@ void AChel::StoneAttack(int StoneIndex)
 			TArray<AActor*>Players;
 			UGameplayStatics::GetAllActorsOfClass(World, StaticClass(), Players);
 			for (auto& Player : Players)
-					Cast<AChel>(Player)->RefreshWidgets(DoesHave, KillerIndex, Index, false);
+					Cast<AChel>(Player)->RefreshWidgets(DoesHave, KillerIndex, Index);
 			DoesHave.Init(false, 3);
 			bCanWalkingAndWatching = true;
 			KillPlayer();
@@ -1029,7 +1040,7 @@ void AChel::StoneAttack(int StoneIndex)
 	}
 }
 
-void AChel::RefreshWidgets_Implementation(const TArray<bool>& whatToUpdate, int KillerNickIndex, int VictimNickIndex, bool isSuicide)
+void AChel::RefreshWidgets_Implementation(const TArray<bool>& whatToUpdate, int KillerNickIndex, int VictimNickIndex)
 {
 	UE_LOG(LogTemp, Warning, TEXT("WidgetUpdates"))
 	if (whatToUpdate[Boltorez])
@@ -1048,7 +1059,7 @@ void AChel::RefreshWidgets_Implementation(const TArray<bool>& whatToUpdate, int 
 		UserView->WS_KeyShelter->SetRenderOpacity(1.f);
 	}
 
-	if (isSuicide) {
+	if (KillerNickIndex == -1) {
 		UPlayerSuicide* PS_Widget = Cast<UPlayerSuicide>(CreateWidget(World, PlayerSuicide_class));
 		PS_Widget->Player->SetText(GS->NickNames[VictimNickIndex]);
 		KillFeed->VB_KillFeed->AddChild(PS_Widget);

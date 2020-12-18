@@ -120,7 +120,11 @@ public:
 		void DeliverNicknameToServer(const FText& newNickName);
 	//StoneThrowReplication
 	UFUNCTION(Server, Reliable, WithValidation)
-		void ThrowStoneServer(FTransform StoneTransform);
+		void ThrowStoneServer();
+
+
+	UFUNCTION(NetMulticast, Reliable)
+		void ThrowStoneMulticast();
 
 	UFUNCTION(Server, Reliable, WithValidation)
 		void NewHaveItemServer(int32 ItemType);
@@ -221,7 +225,7 @@ public:
 		void ShowStoneMulticast();
 
 	UFUNCTION(Client, Reliable)
-		void RefreshWidgets(const TArray<bool> &whatToUpdate, int KillerNickIndex, int VictimNickIndex, bool isSuicide);
+		void RefreshWidgets(const TArray<bool> &whatToUpdate, int KillerNickIndex, int VictimNickIndex);
 	//ThrowStoneFunctions
 	FOnTimelineVector InterpFunction;
 	FOnTimelineEvent TimelineFinishedFirst;
