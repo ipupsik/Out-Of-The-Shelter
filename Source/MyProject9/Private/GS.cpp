@@ -213,7 +213,7 @@ void AGS::GameBegin() {
 	IsGameStarted = true;
 	TArray<AActor*> Players;
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AChel::StaticClass(), Players);
-	for (auto Player : Players) {
+	for (auto& Player : Players) {
 		UE_LOG(LogTemp, Warning, TEXT("SpawnAnimationGS"));
 		AChel* Chel = Cast<AChel>(Player);
 		Chel->PlaySpawnAnimationSleep();
