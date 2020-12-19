@@ -24,6 +24,8 @@ public:
 
 	void GetLifetimeReplicatedProps(TArray < FLifetimeProperty >& OutLifetimeProps) const override;
 
+	UFUNCTION(BlueprintImplementableEvent)
+		void RotateVentilServer();
 	
 
 	UPROPERTY(EditAnywhere)
