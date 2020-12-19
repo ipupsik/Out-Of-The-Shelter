@@ -198,7 +198,7 @@ void AChel::Tick(float DeltaTime)
 
 	if (IsInGame == true) {
 		if (IsServerAuth) {
-			DeltaTime *= 1 * 0.01f * RadCoeff * CanalizationDamage;
+			DeltaTime *= 2 * 0.01f * RadCoeff * CanalizationDamage;
 			Health += DeltaTime;
 			if (Health > 1.0f) {
 				if (DoesHave[Boltorez])
