@@ -28,7 +28,7 @@ class ASpectator;
 #define STONE_DAMAGE 0.15f
 #define DeltaRadiation 0.0f
 
-#define SPAWN_TIME 10.f
+#define SPAWN_TIME 40.f
 
 #define COUNT_CacheKey 3
 /**

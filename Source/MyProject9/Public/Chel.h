@@ -14,6 +14,7 @@
 #include "WebCamLocker.h"
 #include "ClickButton.h"
 #include "UI/KillFeed.h"
+#include "Components/SceneComponent.h"
 
 #include "GI.h"
 #include "GS.h"
@@ -262,6 +263,8 @@ public:
 		UStaticMeshComponent* Stone;
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Player")
 		UCapsuleComponent* DamageCollision;
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Player")
+		USceneComponent* Scene;
 	
 	//TimeLine
 	UTimelineComponent* TimeLineFirst;
@@ -349,7 +352,9 @@ public:
 	int KillerIndex;
 
 	int32 WebCamIterator;
-	
+	UPROPERTY(BlueprintReadWrite)
+	FRotator BaseWebCamRotation;
+
 public:
 	//Logic Boolean Variables
 	bool bLineTrace_is_need_refresh;

@@ -48,8 +48,11 @@ AChel::AChel()
 	PoseableMeshComp = CreateDefaultSubobject<UPoseableMeshComponent>(TEXT("PoseableMeshComp"));
 	PoseableMeshComp->SetupAttachment(RootComponent);
 
+	Scene = CreateDefaultSubobject<USceneComponent>(TEXT("Scene"));
+	Scene->SetupAttachment(PoseableMeshComp, TEXT("Bone_002_end"));
+
 	CameraComp = CreateDefaultSubobject<UCameraComponent>(TEXT("CameraComp"));
-	CameraComp->SetupAttachment(PoseableMeshComp, TEXT("Bone_002_end"));
+	CameraComp->SetupAttachment(Scene);
 
 	DamageCollision = CreateDefaultSubobject<UCapsuleComponent>(TEXT("DamageCollision"));
 	DamageCollision->SetupAttachment(RootComponent);
@@ -185,7 +188,7 @@ void AChel::Tick(float DeltaTime)
 
 	if (IsInGame == true) {
 		if (IsServerAuth) {
-			DeltaTime *= 2 * 0.01f * RadCoeff * CanalizationDamage;
+			DeltaTime *= 4 * 0.01f * RadCoeff * CanalizationDamage;
 			Health += DeltaTime;
 			if (Health > 1.0f) {
 				if (DoesHave[Boltorez])
@@ -372,6 +375,7 @@ void AChel::UpdateSpectating_Right()
 		} while (!GS->WebCam_IsEnabled[WebCamIterator]);
 		PoseableMeshComp->SetWorldRotation(GS->WebCam_Rotation[WebCamIterator]);
 		PoseableMeshComp->SetWorldLocation(GS->WebCam_Location[WebCamIterator]);
+		PoseableMeshComp->SetBoneRotationByName(TEXT("Bone_002"), { 0, 0, 0 }, EBoneSpaces::ComponentSpace);
 		GoToWebCamServer(WebCamIterator);
 	}
 }
@@ -392,6 +396,7 @@ void AChel::UpdateSpectating_Left()
 		} while (!GS->WebCam_IsEnabled[WebCamIterator]);
 		PoseableMeshComp->SetWorldRotation(GS->WebCam_Rotation[WebCamIterator]);
 		PoseableMeshComp->SetWorldLocation(GS->WebCam_Location[WebCamIterator]);
+		PoseableMeshComp->SetBoneRotationByName(TEXT("Bone_002"), { 0, 0, 0 }, EBoneSpaces::ComponentSpace);
 		GoToWebCamServer(WebCamIterator);
 	}
 }
@@ -652,11 +657,12 @@ void AChel::LookUp(float input)
 		{
 			if (input != 0.0f) {
 				input *= Sensetivity * WebCamSensetivity;
-				float NewPitchRot = PoseableMeshComp->GetRelativeRotation().Roll;
+				float NewPitchRot = CameraComp->GetRelativeRotation().Pitch;
 
 				NewPitchRot = FMath::Clamp<float>(NewPitchRot + input, -MaxPitchAngle, MaxPitchAngle);
 
-				PoseableMeshComp->SetRelativeRotation(FRotator(PoseableMeshComp->GetRelativeRotation().Pitch, PoseableMeshComp->GetRelativeRotation().Yaw, NewPitchRot));
+				CameraComp->SetRelativeRotation(FRotator(NewPitchRot,
+					CameraComp->GetRelativeRotation().Yaw, CameraComp->GetRelativeRotation().Roll));
 			}
 		}
 	}
@@ -676,11 +682,12 @@ void AChel::LookRight(float input)
 		{
 			if (input != 0.0f) {
 				input *= Sensetivity * WebCamSensetivity;
-				float NewYawRot = PoseableMeshComp->GetRelativeRotation().Yaw;
+				float NewYawRot = CameraComp->GetRelativeRotation().Yaw;
 
 				NewYawRot = FMath::Clamp<float>(NewYawRot + input, -MaxYawAngle, MaxYawAngle);
 
-				PoseableMeshComp->SetRelativeRotation(FRotator(PoseableMeshComp->GetRelativeRotation().Pitch, NewYawRot, PoseableMeshComp->GetRelativeRotation().Roll));
+				CameraComp->SetRelativeRotation(FRotator(CameraComp->GetRelativeRotation().Pitch, NewYawRot,
+					CameraComp->GetRelativeRotation().Roll));
 			}
 		}
 	}
@@ -1104,6 +1111,7 @@ void AChel::KillPlayer()
 	}
 	DisableCollisionEverywhere();
 	SetActorHiddenInGame(true);
+	Cast<UCapsuleComponent>(RootComponent)->SetEnableGravity(false);
 	IsInGame = false;
 	PlaySpawnAnimationSleep();
 	IsEnableInput = false;
@@ -1127,6 +1135,7 @@ void AChel::GoToWebCam()
 	}
 	PoseableMeshComp->SetWorldRotation(GS->WebCam_Rotation[Iterator]);
 	PoseableMeshComp->SetWorldLocation(GS->WebCam_Location[Iterator]);
+	PoseableMeshComp->SetBoneRotationByName(TEXT("Bone_002"), { 0, 0, 0 }, EBoneSpaces::ComponentSpace);
 	WebCamIterator = Iterator;
 	GoToWebCamServer(Iterator);
 }
@@ -1135,7 +1144,7 @@ void AChel::GoToWebCamServer_Implementation(int32 Iterator)
 {
 	PoseableMeshComp->SetWorldRotation(GS->WebCam_Rotation[Iterator]);
 	PoseableMeshComp->SetWorldLocation(GS->WebCam_Location[Iterator]);
-
+	PoseableMeshComp->SetBoneRotationByName(TEXT("Bone_002"), { 0, 0, 0 }, EBoneSpaces::ComponentSpace);
 	UE_LOG(LogTemp, Warning, TEXT("Staying on webcam"));
 }
 
@@ -1171,11 +1180,15 @@ void AChel::SpawnPlayer()
 void AChel::DisableCollisionEverywhere_Implementation()
 {
 	SetActorEnableCollision(false);
+	GetCharacterMovement()->GravityScale = 0;
+	GetCharacterMovement()->StopMovementImmediately();
 }
 
 void AChel::EnableCollisionEverywhere_Implementation()
 {
 	SetActorEnableCollision(true);
+	GetCharacterMovement()->GravityScale = 1.2f;
+	GetCharacterMovement()->StopMovementImmediately();
 }
 
 void AChel::PlayerOpenAreaUpdate_Implementation(int32 EscapeWay)
