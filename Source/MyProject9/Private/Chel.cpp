@@ -354,6 +354,7 @@ void AChel::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimePro
 	DOREPLIFETIME(AChel, IsEnableInput);
 	DOREPLIFETIME(AChel, DoesHave);
 	DOREPLIFETIME(AChel, KeysCount);
+	DOREPLIFETIME(AChel, bCanWalkingAndWatching);
 }
 //-----------------------------
 
