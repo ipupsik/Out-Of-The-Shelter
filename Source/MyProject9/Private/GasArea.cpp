@@ -72,6 +72,6 @@ void AGasArea::DeleteAllObjects()
 
 	for (auto& it : Players)
 	{
-		Cast<AChel>(it)->ShowHudArea();
+//		Cast<AChel>(it)->ShowHudArea();
 	}
 }
