@@ -259,7 +259,6 @@ void AChel::Tick(float DeltaTime)
 							AOpenArea* MyOpenArea = Cast<AOpenArea>(TracedItem);
 							if (!MyOpenArea->bIsAvaliable) {
 								UserView->E_Mark->SetVisibility(ESlateVisibility::Hidden);
-								UserView->AreaUsedText->SetVisibility(ESlateVisibility::Visible);
 							}
 							else {
 								LastItem->Item->SetCustomDepthStencilValue(2);
@@ -335,7 +334,6 @@ void AChel::Tick(float DeltaTime)
 				PickUp_Released();
 			}
 			UserView->StopAllAnimations();
-			UserView->AreaUsedText->SetVisibility(ESlateVisibility::Hidden);
 			UserView->E_Mark->SetVisibility(ESlateVisibility::Hidden);
 
 		}
@@ -383,7 +381,7 @@ void AChel::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 	PlayerInputComponent->BindAction("KillFeed", IE_Released, this, &AChel::UnShowKillFeed);
 	PlayerInputComponent->BindAction("ThrowStone", IE_Pressed, this, &AChel::ThrowStone);
 	PlayerInputComponent->BindAction("PickUp", IE_Pressed, this, &AChel::PickUp);
-	PlayerInputComponent->BindAction("PickUp_Released", IE_Released, this, &AChel::PickUp_Released);
+	PlayerInputComponent->BindAction("PickUp", IE_Released, this, &AChel::PickUp_Released);
 	PlayerInputComponent->BindAction("Opening", IE_Pressed, this, &AChel::OpenAreaPressed);
 	PlayerInputComponent->BindAction("Opening", IE_Released, this, &AChel::OpenAreaReleased);
 	PlayerInputComponent->BindAction("UpdateSpectating_Left", IE_Released, this, &AChel::UpdateSpectating_Left);
