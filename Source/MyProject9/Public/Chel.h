@@ -114,6 +114,12 @@ public:
 		void MeshCompRepServer(float RotationRoll);
 
 	UFUNCTION(Server, Reliable, WithValidation)
+		void GoToServerOpenArea(bool IsStart);
+
+	void ChangeUsedArea();
+
+
+	UFUNCTION(Server, Reliable, WithValidation)
 		void GoToWebCamServer(int32 Iterator);
 
 	void GoToWebCam();
@@ -185,8 +191,7 @@ public:
 	UFUNCTION(Server, Reliable, WithValidation)
 		void OutlineBad_Server();
 
-	UFUNCTION(Server, Reliable, WithValidation)
-		void DoTraceOpenArea();
+	void DoTraceOpenArea();
 
 	UFUNCTION(NetMulticast, Reliable) //легендарна€ св€зќчка
 		void OutlineBad_Multicast();
