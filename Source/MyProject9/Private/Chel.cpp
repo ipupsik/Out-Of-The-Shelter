@@ -930,7 +930,7 @@ void AChel::PickUp() {
 				}
 				case OpenArea:
 				{
-
+					DoTraceOpenArea();
 					AOpenArea* CurOpArea = Cast<AOpenArea>(LastItem);
 					if (CurOpArea != nullptr && CurOpArea->bIsAvaliable) {
 						UserView->PB_Opening->SetVisibility(ESlateVisibility::Visible);
@@ -1678,7 +1678,7 @@ void AChel::DoTraceOpenArea_Implementation()
 
 	if (World->LineTraceSingleByChannel(OutHit, StartLocation, EndLocation, ECC_Visibility, CollisionParams))
 	{
-		LastItem = Cast<APickableItem>(OutHit.GetActor());
+		LastItem = Cast<AOpenArea>(OutHit.GetActor());
 	}
 
 }
