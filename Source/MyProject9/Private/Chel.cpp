@@ -59,13 +59,15 @@ AChel::AChel()
 	Stone = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Stone"));
 	Stone->SetupAttachment(CameraComp);
 
-	TimeLineFirst = CreateDefaultSubobject<UTimelineComponent>(TEXT("ThrowStoneFirst"));
-	TimeLineSecond = CreateDefaultSubobject<UTimelineComponent>(TEXT("ThrowStoneSecond"));
+	TimeLine_Stone_First = CreateDefaultSubobject<UTimelineComponent>(TEXT("ThrowStoneFirst"));
+	TimeLine_Stone_Second = CreateDefaultSubobject<UTimelineComponent>(TEXT("ThrowStoneSecond"));
+	TimeLine_FOV_WebCam = CreateDefaultSubobject<UTimelineComponent>(TEXT("FOV_WebCam"));
 
 	//Говорим делегатам, какую функцию подцепить для Update и для OnFinished
-	InterpFunction.BindUFunction(this, FName("TimelineFloatReturn"));
-	TimelineFinishedFirst.BindUFunction(this, FName("OnTimelineFinished_First"));
-	TimelineFinishedSecond.BindUFunction(this, FName("OnTimelineFinished_Second"));
+	InterpFunction_Stone.BindUFunction(this, FName("TimelineVectorReturn_Stone"));
+	InterpFunction_FOV_WebCam.BindUFunction(this, FName("TimelineFloatReturn_FOV_WebCam"));
+	TimelineFinished_Stone_First.BindUFunction(this, FName("OnTimelineFinished_Stone_First"));
+	TimelineFinished_Stone_Second.BindUFunction(this, FName("OnTimelineFinished_Stone_Second"));
 
 	DamageCollision->OnComponentBeginOverlap.AddDynamic(this, &AChel::OnOverlapBegin);
 
@@ -113,19 +115,28 @@ void AChel::MyBeginPlay()
 
 	GI = World->GetGameInstance<UGI>();
 
-	if (vCurve) {
+	if (vCurveStone) {
 		//Подцепляем эти функции для TimeLine
-		TimeLineFirst->AddInterpVector(vCurve, InterpFunction);
-		TimeLineFirst->SetTimelineFinishedFunc(TimelineFinishedFirst);
+		TimeLine_Stone_First->AddInterpVector(vCurveStone, InterpFunction_Stone);
+		TimeLine_Stone_First->SetTimelineFinishedFunc(TimelineFinished_Stone_First);
 
-		TimeLineFirst->SetLooping(false);
-		TimeLineFirst->SetIgnoreTimeDilation(true);
+		TimeLine_Stone_First->SetLooping(false);
+		TimeLine_Stone_First->SetIgnoreTimeDilation(true);
 
-		TimeLineSecond->AddInterpVector(vCurve, InterpFunction);
-		TimeLineSecond->SetTimelineFinishedFunc(TimelineFinishedSecond);
+		TimeLine_Stone_Second->AddInterpVector(vCurveStone, InterpFunction_Stone);
+		TimeLine_Stone_Second->SetTimelineFinishedFunc(TimelineFinished_Stone_Second);
 
-		TimeLineSecond->SetLooping(false);
-		TimeLineSecond->SetIgnoreTimeDilation(true);
+		TimeLine_Stone_Second->SetLooping(false);
+		TimeLine_Stone_Second->SetIgnoreTimeDilation(true);
+
+		TimeLine_FOV_WebCam->AddInterpFloat(vCurveFOV_WebCam, InterpFunction_FOV_WebCam);
+
+		TimeLine_FOV_WebCam->SetLooping(false);
+		TimeLine_FOV_WebCam->SetIgnoreTimeDilation(true);
+	}
+
+	if (vCurveFOV_WebCam)
+	{
 	}
 
 	if (IsPlayerOwner) {
@@ -372,6 +383,7 @@ void AChel::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 	PlayerInputComponent->BindAction("KillFeed", IE_Released, this, &AChel::UnShowKillFeed);
 	PlayerInputComponent->BindAction("ThrowStone", IE_Pressed, this, &AChel::ThrowStone);
 	PlayerInputComponent->BindAction("PickUp", IE_Pressed, this, &AChel::PickUp);
+	PlayerInputComponent->BindAction("PickUp_Released", IE_Released, this, &AChel::PickUp);
 	PlayerInputComponent->BindAction("Opening", IE_Pressed, this, &AChel::OpenAreaPressed);
 	PlayerInputComponent->BindAction("Opening", IE_Released, this, &AChel::OpenAreaReleased);
 	PlayerInputComponent->BindAction("UpdateSpectating_Left", IE_Released, this, &AChel::UpdateSpectating_Left);
@@ -509,8 +521,8 @@ void AChel::OpenAreaReleased()
 }
 
 //TimelineAnimation
-void AChel::OnTimelineFinished_First() {
-	TimeLineSecond->ReverseFromEnd();
+void AChel::OnTimelineFinished_Stone_First() {
+	TimeLine_Stone_Second->ReverseFromEnd();
 
 	if (IsServerAuth) {
 		--Ammo;
@@ -558,11 +570,16 @@ void AChel::StoneCountUpdate_Implementation(int32 Count)
 	UserView->AmmoLabel->SetText(FText::AsNumber(Count));
 }
 
-void AChel::TimelineFloatReturn(FVector value) {
+void AChel::TimelineVectorReturn_Stone(FVector value) {
 	Stone->SetRelativeLocation(StonePosition + value);
 }
 
-void AChel::OnTimelineFinished_Second() {
+void AChel::TimelineFloatReturn_FOV_WebCam(float value)
+{
+	CameraComp->SetFieldOfView(value);
+}
+
+void AChel::OnTimelineFinished_Stone_Second() {
 	bIsAlreadyThrowing = false;
 }
 //-----------------------------
@@ -580,7 +597,7 @@ void AChel::ThrowStone() {
 
 void AChel::ThrowStoneMulticast_Implementation()
 {
-	TimeLineFirst->PlayFromStart();
+	TimeLine_Stone_First->PlayFromStart();
 }
 
 void AChel::ThrowStoneServer_Implementation()
@@ -925,6 +942,11 @@ void AChel::PickUp() {
 		}
 		}
 	}
+}
+
+void AChel::PickUp_Released()
+{
+
 }
 
 void AChel::ChangeIsAvaliableCache_Implementation()

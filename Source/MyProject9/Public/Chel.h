@@ -65,6 +65,7 @@ protected:
 
 	void ThrowStone();
 	void PickUp();
+	void PickUp_Released();
 	void OpenAreaPressed();
 	void OpenAreaReleased();
 
@@ -224,21 +225,19 @@ public:
 
 	UFUNCTION(Client, Reliable)
 		void RefreshWidgets(const TArray<bool> &whatToUpdate, int KillerNickIndex, int VictimNickIndex);
-	//ThrowStoneFunctions
-	FOnTimelineVector InterpFunction;
-	FOnTimelineEvent TimelineFinishedFirst;
-	FOnTimelineEvent TimelineFinishedSecond;
 	UFUNCTION()
-		void OnTimelineFinished_First();
+		void OnTimelineFinished_Stone_First();
 
 	UFUNCTION()
 		void OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
 	UFUNCTION()
-		void TimelineFloatReturn(FVector value);
+		void TimelineVectorReturn_Stone(FVector value);
+	UFUNCTION()
+		void TimelineFloatReturn_FOV_WebCam(float value);
 
 	UFUNCTION()
-		void OnTimelineFinished_Second();
+		void OnTimelineFinished_Stone_Second();
 
 	void StoneAttack(int StoneIndex);
 	void KillPlayer();
@@ -262,10 +261,6 @@ public:
 		UCapsuleComponent* DamageCollision;
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Player")
 		USceneComponent* Scene;
-	
-	//TimeLine
-	UTimelineComponent* TimeLineFirst;
-	UTimelineComponent* TimeLineSecond;
 
 	UPROPERTY(EditAnywhere, Category = "Projectile")
 		TSubclassOf<AStone> StoneClass;
@@ -338,11 +333,26 @@ public:
 	UPROPERTY(EditAnywhere, Replicated, Category = "Settings")
 		FText NickName;
 
+
+	//TimeLine
+	UTimelineComponent* TimeLine_Stone_First;
+	UTimelineComponent* TimeLine_Stone_Second;
+
+	UTimelineComponent* TimeLine_FOV_WebCam;
+	//ThrowStoneFunctions
+	FOnTimelineVector InterpFunction_Stone;
+	FOnTimelineEvent TimelineFinished_Stone_First;
+	FOnTimelineEvent TimelineFinished_Stone_Second;
+
+	FOnTimelineFloat InterpFunction_FOV_WebCam;
+
+
 	//StoneAttackVars
 	bool bIsAlreadyThrowing;
 	UPROPERTY(EditAnywhere, Category = "Timeline")
-		UCurveVector*  vCurve;
-
+		UCurveVector*  vCurveStone;
+	UPROPERTY(EditAnywhere, Category = "Timeline")
+		UCurveFloat* vCurveFOV_WebCam;
 	FVector StonePosition;
 
 	//KillFeed Vars
