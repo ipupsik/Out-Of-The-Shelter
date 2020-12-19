@@ -930,14 +930,17 @@ void AChel::PickUp() {
 				}
 				case OpenArea:
 				{
-					DoTraceOpenArea();
 					AOpenArea* CurOpArea = Cast<AOpenArea>(LastItem);
-					if (CurOpArea != nullptr && CurOpArea->bIsAvaliable) {
-						UserView->PB_Opening->SetVisibility(ESlateVisibility::Visible);
-						UserView->TimeLeft->SetVisibility(ESlateVisibility::Visible);
+					if (!CurOpArea->bIsUsed) 
+					{
+						if (CurOpArea != nullptr && CurOpArea->bIsAvaliable) {
+							UserView->PB_Opening->SetVisibility(ESlateVisibility::Visible);
+							UserView->TimeLeft->SetVisibility(ESlateVisibility::Visible);
+						}
+						UserView->PlayAnimation(UserView->OpenAreaAnim, CurOpArea->CurTimeVentil);
+						GoToServerOpenArea(true);
+						break;
 					}
-					UserView->PlayAnimation(UserView->OpenAreaAnim);
-					break;
 				}
 				}
 			}
@@ -954,6 +957,10 @@ void AChel::PickUp_Released()
 	if (bCanWalkingAndWatching) {
 		if (IsEnableInput) {
 			IsSuccessOpening = false;
+			if (Cast<AOpenArea>(LastItem)) 
+			{
+				GoToServerOpenArea(false);
+			}
 			UserView->StopAllAnimations();
 		}
 		else
@@ -1667,7 +1674,7 @@ bool AChel::ButtonPressAnimationServer_Validate()
 	return true;
 }
 
-void AChel::DoTraceOpenArea_Implementation() 
+void AChel::DoTraceOpenArea() 
 {
 	FHitResult OutHit;
 
@@ -1683,7 +1690,27 @@ void AChel::DoTraceOpenArea_Implementation()
 
 }
 
-bool AChel::DoTraceOpenArea_Validate() 
+void AChel::ChangeUsedArea() {
+	AOpenArea* CurArea = Cast<AOpenArea>(LastItem);
+	CurArea->bIsUsed = !CurArea->bIsUsed;
+}
+
+void AChel::GoToServerOpenArea_Implementation(bool IsStart) 
+{
+	if (IsStart) 
+	{
+		DoTraceOpenArea();
+		ChangeUsedArea();
+		Cast<AOpenArea>(LastItem)->RotateVentilServer();
+	}
+	else 
+	{
+		ChangeUsedArea();
+		Cast<AOpenArea>(LastItem)->RotateVentilServerReverse();
+	}
+}
+
+bool AChel::GoToServerOpenArea_Validate(bool IsStart)
 {
 	return true;
 }
