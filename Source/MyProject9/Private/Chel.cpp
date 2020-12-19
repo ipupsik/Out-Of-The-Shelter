@@ -250,6 +250,9 @@ void AChel::Tick(float DeltaTime)
 								UserView->E_Mark->SetVisibility(ESlateVisibility::Hidden);
 								UserView->AreaUsedText->SetVisibility(ESlateVisibility::Visible);
 							}
+							else {
+								LastItem->Item->SetCustomDepthStencilValue(2);
+							}
 						}
 						else
 							LastItem->Item->SetCustomDepthStencilValue(2);

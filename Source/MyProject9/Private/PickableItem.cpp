@@ -14,11 +14,12 @@ APickableItem::APickableItem()
 	Scene = CreateDefaultSubobject<USceneComponent>("Scene");
 	Scene->SetupAttachment(RootComponent);
 
+	Collision = CreateDefaultSubobject<UBoxComponent>("Collision");
+	Collision->SetupAttachment(Scene);
+
 	Item = CreateDefaultSubobject<UStaticMeshComponent>("Item");
 	Item->SetupAttachment(Scene);
-
-	Collision = CreateDefaultSubobject<UBoxComponent>("Collision");
-	Collision->SetupAttachment(Item);
+	
 }
 
 void APickableItem::GetLifetimeReplicatedProps(TArray < FLifetimeProperty >& OutLifetimeProps) const
