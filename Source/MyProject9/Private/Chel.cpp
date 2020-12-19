@@ -59,13 +59,13 @@ AChel::AChel()
 	Stone = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Stone"));
 	Stone->SetupAttachment(CameraComp);
 
-	TimeLineFirst = CreateDefaultSubobject<UTimelineComponent>(TEXT("ThrowStoneFirst"));
-	TimeLineSecond = CreateDefaultSubobject<UTimelineComponent>(TEXT("ThrowStoneSecond"));
+	TimeLine_Stone_First = CreateDefaultSubobject<UTimelineComponent>(TEXT("ThrowStoneFirst"));
+	TimeLine_Stone_Second = CreateDefaultSubobject<UTimelineComponent>(TEXT("ThrowStoneSecond"));
 
 	//Говорим делегатам, какую функцию подцепить для Update и для OnFinished
-	InterpFunction.BindUFunction(this, FName("TimelineFloatReturn"));
-	TimelineFinishedFirst.BindUFunction(this, FName("OnTimelineFinished_First"));
-	TimelineFinishedSecond.BindUFunction(this, FName("OnTimelineFinished_Second"));
+	InterpFunction_Stone.BindUFunction(this, FName("TimelineVectorReturn_Stone"));
+	TimelineFinished_Stone_First.BindUFunction(this, FName("OnTimelineFinished_Stone_First"));
+	TimelineFinished_Stone_Second.BindUFunction(this, FName("OnTimelineFinished_Stone_Second"));
 
 	DamageCollision->OnComponentBeginOverlap.AddDynamic(this, &AChel::OnOverlapBegin);
 
@@ -113,19 +113,23 @@ void AChel::MyBeginPlay()
 
 	GI = World->GetGameInstance<UGI>();
 
-	if (vCurve) {
+	if (vCurveStone) {
 		//Подцепляем эти функции для TimeLine
-		TimeLineFirst->AddInterpVector(vCurve, InterpFunction);
-		TimeLineFirst->SetTimelineFinishedFunc(TimelineFinishedFirst);
+		TimeLine_Stone_First->AddInterpVector(vCurveStone, InterpFunction_Stone);
+		TimeLine_Stone_First->SetTimelineFinishedFunc(TimelineFinished_Stone_First);
 
-		TimeLineFirst->SetLooping(false);
-		TimeLineFirst->SetIgnoreTimeDilation(true);
+		TimeLine_Stone_First->SetLooping(false);
+		TimeLine_Stone_First->SetIgnoreTimeDilation(true);
 
-		TimeLineSecond->AddInterpVector(vCurve, InterpFunction);
-		TimeLineSecond->SetTimelineFinishedFunc(TimelineFinishedSecond);
+		TimeLine_Stone_Second->AddInterpVector(vCurveStone, InterpFunction_Stone);
+		TimeLine_Stone_Second->SetTimelineFinishedFunc(TimelineFinished_Stone_Second);
 
-		TimeLineSecond->SetLooping(false);
-		TimeLineSecond->SetIgnoreTimeDilation(true);
+		TimeLine_Stone_Second->SetLooping(false);
+		TimeLine_Stone_Second->SetIgnoreTimeDilation(true);
+	}
+
+	if (vCurveFOV_WebCam)
+	{
 	}
 
 	if (IsPlayerOwner) {
@@ -520,8 +524,8 @@ void AChel::OpenAreaReleased()
 }
 
 //TimelineAnimation
-void AChel::OnTimelineFinished_First() {
-	TimeLineSecond->ReverseFromEnd();
+void AChel::OnTimelineFinished_Stone_First() {
+	TimeLine_Stone_Second->ReverseFromEnd();
 
 	if (IsServerAuth) {
 		--Ammo;
@@ -569,11 +573,11 @@ void AChel::StoneCountUpdate_Implementation(int32 Count)
 	UserView->AmmoLabel->SetText(FText::AsNumber(Count));
 }
 
-void AChel::TimelineFloatReturn(FVector value) {
+void AChel::TimelineVectorReturn_Stone(FVector value) {
 	Stone->SetRelativeLocation(StonePosition + value);
 }
 
-void AChel::OnTimelineFinished_Second() {
+void AChel::OnTimelineFinished_Stone_Second() {
 	bIsAlreadyThrowing = false;
 }
 //-----------------------------
@@ -591,7 +595,7 @@ void AChel::ThrowStone() {
 
 void AChel::ThrowStoneMulticast_Implementation()
 {
-	TimeLineFirst->PlayFromStart();
+	TimeLine_Stone_First->PlayFromStart();
 }
 
 void AChel::ThrowStoneServer_Implementation()
