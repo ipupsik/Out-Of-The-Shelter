@@ -1162,6 +1162,8 @@ void AChel::SpawnPlayer()
 {
 	UE_LOG(LogTemp, Warning, TEXT("Setting camera from webcam to player"));
 	PoseableMeshComp->SetRelativeTransform(MeshTrans);
+	CameraComp->SetRelativeLocation( { 0,0,0 } );
+	CameraComp->SetRelativeRotation( { 0,0,0 } );
 
 	EnableCollisionEverywhere();
 	SetActorHiddenInGame(false);
