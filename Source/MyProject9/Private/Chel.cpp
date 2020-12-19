@@ -61,9 +61,11 @@ AChel::AChel()
 
 	TimeLine_Stone_First = CreateDefaultSubobject<UTimelineComponent>(TEXT("ThrowStoneFirst"));
 	TimeLine_Stone_Second = CreateDefaultSubobject<UTimelineComponent>(TEXT("ThrowStoneSecond"));
+	TimeLine_FOV_WebCam = CreateDefaultSubobject<UTimelineComponent>(TEXT("FOV_WebCam"));
 
 	//Говорим делегатам, какую функцию подцепить для Update и для OnFinished
 	InterpFunction_Stone.BindUFunction(this, FName("TimelineVectorReturn_Stone"));
+	InterpFunction_FOV_WebCam.BindUFunction(this, FName("TimelineFloatReturn_FOV_WebCam"));
 	TimelineFinished_Stone_First.BindUFunction(this, FName("OnTimelineFinished_Stone_First"));
 	TimelineFinished_Stone_Second.BindUFunction(this, FName("OnTimelineFinished_Stone_Second"));
 
@@ -126,6 +128,11 @@ void AChel::MyBeginPlay()
 
 		TimeLine_Stone_Second->SetLooping(false);
 		TimeLine_Stone_Second->SetIgnoreTimeDilation(true);
+
+		TimeLine_FOV_WebCam->AddInterpFloat(vCurveFOV_WebCam, InterpFunction_FOV_WebCam);
+
+		TimeLine_FOV_WebCam->SetLooping(false);
+		TimeLine_FOV_WebCam->SetIgnoreTimeDilation(true);
 	}
 
 	if (vCurveFOV_WebCam)
@@ -373,6 +380,7 @@ void AChel::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 	PlayerInputComponent->BindAction("KillFeed", IE_Released, this, &AChel::UnShowKillFeed);
 	PlayerInputComponent->BindAction("ThrowStone", IE_Pressed, this, &AChel::ThrowStone);
 	PlayerInputComponent->BindAction("PickUp", IE_Pressed, this, &AChel::PickUp);
+	PlayerInputComponent->BindAction("PickUp_Released", IE_Released, this, &AChel::PickUp);
 	PlayerInputComponent->BindAction("Opening", IE_Pressed, this, &AChel::OpenAreaPressed);
 	PlayerInputComponent->BindAction("Opening", IE_Released, this, &AChel::OpenAreaReleased);
 	PlayerInputComponent->BindAction("UpdateSpectating_Left", IE_Released, this, &AChel::UpdateSpectating_Left);
@@ -561,6 +569,11 @@ void AChel::StoneCountUpdate_Implementation(int32 Count)
 
 void AChel::TimelineVectorReturn_Stone(FVector value) {
 	Stone->SetRelativeLocation(StonePosition + value);
+}
+
+void AChel::TimelineFloatReturn_FOV_WebCam(float value)
+{
+	CameraComp->SetFieldOfView(value);
 }
 
 void AChel::OnTimelineFinished_Stone_Second() {
@@ -926,6 +939,11 @@ void AChel::PickUp() {
 		}
 		}
 	}
+}
+
+void AChel::PickUp_Released()
+{
+
 }
 
 void AChel::ChangeIsAvaliableCache_Implementation()

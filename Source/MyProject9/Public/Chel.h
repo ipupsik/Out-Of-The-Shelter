@@ -65,6 +65,7 @@ protected:
 
 	void ThrowStone();
 	void PickUp();
+	void PickUp_Released();
 	void OpenAreaPressed();
 	void OpenAreaReleased();
 
@@ -224,10 +225,6 @@ public:
 
 	UFUNCTION(Client, Reliable)
 		void RefreshWidgets(const TArray<bool> &whatToUpdate, int KillerNickIndex, int VictimNickIndex);
-	//ThrowStoneFunctions
-	FOnTimelineVector InterpFunction_Stone;
-	FOnTimelineEvent TimelineFinished_Stone_First;
-	FOnTimelineEvent TimelineFinished_Stone_Second;
 	UFUNCTION()
 		void OnTimelineFinished_Stone_First();
 
@@ -236,6 +233,8 @@ public:
 
 	UFUNCTION()
 		void TimelineVectorReturn_Stone(FVector value);
+	UFUNCTION()
+		void TimelineFloatReturn_FOV_WebCam(float value);
 
 	UFUNCTION()
 		void OnTimelineFinished_Stone_Second();
@@ -262,10 +261,6 @@ public:
 		UCapsuleComponent* DamageCollision;
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Player")
 		USceneComponent* Scene;
-	
-	//TimeLine
-	UTimelineComponent* TimeLine_Stone_First;
-	UTimelineComponent* TimeLine_Stone_Second;
 
 	UPROPERTY(EditAnywhere, Category = "Projectile")
 		TSubclassOf<AStone> StoneClass;
@@ -337,6 +332,20 @@ public:
 		float MaxPitchAngle;
 	UPROPERTY(EditAnywhere, Replicated, Category = "Settings")
 		FText NickName;
+
+
+	//TimeLine
+	UTimelineComponent* TimeLine_Stone_First;
+	UTimelineComponent* TimeLine_Stone_Second;
+
+	UTimelineComponent* TimeLine_FOV_WebCam;
+	//ThrowStoneFunctions
+	FOnTimelineVector InterpFunction_Stone;
+	FOnTimelineEvent TimelineFinished_Stone_First;
+	FOnTimelineEvent TimelineFinished_Stone_Second;
+
+	FOnTimelineFloat InterpFunction_FOV_WebCam;
+
 
 	//StoneAttackVars
 	bool bIsAlreadyThrowing;
