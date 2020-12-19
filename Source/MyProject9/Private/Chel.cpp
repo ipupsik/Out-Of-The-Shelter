@@ -327,7 +327,6 @@ void AChel::Tick(float DeltaTime)
 				LastItem->Item->SetCustomDepthStencilValue(0);
 			}
 
-
 			if (LastItem && Cast<AOpenArea>(LastItem)) 
 			{
 				PickUp_Released();
@@ -1692,7 +1691,10 @@ void AChel::DoTraceOpenArea()
 
 void AChel::ChangeUsedArea() {
 	AOpenArea* CurArea = Cast<AOpenArea>(LastItem);
-	CurArea->bIsUsed = !CurArea->bIsUsed;
+	if (CurArea)
+	{
+		CurArea->bIsUsed = !CurArea->bIsUsed;
+	}
 }
 
 void AChel::GoToServerOpenArea_Implementation(bool IsStart) 
@@ -1703,10 +1705,13 @@ void AChel::GoToServerOpenArea_Implementation(bool IsStart)
 		ChangeUsedArea();
 		Cast<AOpenArea>(LastItem)->RotateVentilServer();
 	}
-	else 
+	else
 	{
 		ChangeUsedArea();
-		Cast<AOpenArea>(LastItem)->RotateVentilServerReverse();
+		if (Cast<AOpenArea>(LastItem)->CurTimeVentil != 10.f)
+		{
+			Cast<AOpenArea>(LastItem)->RotateVentilServerReverse();
+		}
 	}
 }
 

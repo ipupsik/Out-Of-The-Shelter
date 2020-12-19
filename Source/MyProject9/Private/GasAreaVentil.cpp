@@ -38,8 +38,11 @@ void AGasAreaVentil::DoSomethink()
 		}
 	}
 
-	FTimerHandle FuzeTimerHandle;
-	GetWorld()->GetTimerManager().SetTimer(FuzeTimerHandle, this, &AGasAreaVentil::DeleteAllObjects, 20, false);
+	FTimerHandle FuzeTimerHandle1;
+	GetWorld()->GetTimerManager().SetTimer(FuzeTimerHandle1, this, &AOpenArea::RotateVentilServerReverse, 10, false);
+
+	FTimerHandle FuzeTimerHandle2;
+	GetWorld()->GetTimerManager().SetTimer(FuzeTimerHandle2, this, &AGasAreaVentil::DeleteAllObjects, 21, false);
 }
 
 void AGasAreaVentil::DeleteAllObjects()
