@@ -128,15 +128,14 @@ void AChel::MyBeginPlay()
 
 		TimeLine_Stone_Second->SetLooping(false);
 		TimeLine_Stone_Second->SetIgnoreTimeDilation(true);
-
-		TimeLine_FOV_WebCam->AddInterpFloat(vCurveFOV_WebCam, InterpFunction_FOV_WebCam);
-
-		TimeLine_FOV_WebCam->SetLooping(false);
-		TimeLine_FOV_WebCam->SetIgnoreTimeDilation(true);
 	}
 
 	if (vCurveFOV_WebCam)
 	{
+		TimeLine_FOV_WebCam->AddInterpFloat(vCurveFOV_WebCam, InterpFunction_FOV_WebCam);
+
+		TimeLine_FOV_WebCam->SetLooping(false);
+		TimeLine_FOV_WebCam->SetIgnoreTimeDilation(true);
 	}
 
 	if (IsPlayerOwner) {
