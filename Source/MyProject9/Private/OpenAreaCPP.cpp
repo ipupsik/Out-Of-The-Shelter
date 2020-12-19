@@ -22,7 +22,7 @@ void AOpenAreaCPP::OnOverlapBegin(UPrimitiveComponent * OverlappedComp, AActor *
 {
 	AChel* Player = Cast<AChel>(OtherActor);
 	if (Player != nullptr) {	
-		Player->OpenAreaObj = this;
+//		Player->OpenAreaObj = this;
 		UUserView* PlayerView = Player->UserView;
 		if (PlayerView != nullptr) {
 			Player->AreaCode = 3;
@@ -40,7 +40,7 @@ void AOpenAreaCPP::OnOverlapEnd(UPrimitiveComponent* OverlappedComp, AActor* Oth
 {
 	AChel* Player = Cast<AChel>(OtherActor);
 	if (Player != nullptr) {
-		Player->OpenAreaObj = nullptr;
+//		Player->OpenAreaObj = nullptr;
 		UUserView* PlayerView = Player->UserView;
 		if (PlayerView != nullptr) {
 			Player->AreaCode = -1;

@@ -30,7 +30,6 @@ enum PickUpType {
 	InvisiblePotion,
 	CodeNote,
 	ClickButton,
-
 };
 
 enum CacheType {
@@ -87,7 +86,7 @@ AChel::AChel()
 	bCanPossessWebCam = true;
 	bCanWalkingAndWatching = true;
 
-	OpenAreaObj = nullptr;
+//	OpenAreaObj = nullptr;
 
 	KeysCount.Init(0, 3);
 }
@@ -240,10 +239,17 @@ void AChel::Tick(float DeltaTime)
 						if (LastItem)
 							LastItem->Item->SetCustomDepthStencilValue(0);
 						LastItem = TracedItem;
-						if (Cast<AClickButton>(TracedItem))
+						if (TracedItem->Type == ClickButton)
 						{
 							if (GS->IsCodeTerminalAvaliable)
 								LastItem->Item->SetCustomDepthStencilValue(2);
+						}
+						else if (TracedItem->Type == OpenArea) {
+							AOpenArea* MyOpenArea = Cast<AOpenArea>(TracedItem);
+							if (!MyOpenArea->bIsAvaliable) {
+								UserView->E_Mark->SetVisibility(ESlateVisibility::Hidden);
+								UserView->AreaUsedText->SetVisibility(ESlateVisibility::Visible);
+							}
 						}
 						else
 							LastItem->Item->SetCustomDepthStencilValue(2);
@@ -305,9 +311,19 @@ void AChel::Tick(float DeltaTime)
 
 			ItemCodePickUp = -1;
 			if (LastItem)
+			{
 				LastItem->Item->SetCustomDepthStencilValue(0);
+			}
 
+
+			if (LastItem && Cast<AOpenArea>(LastItem)) 
+			{
+				UserView->StopAllAnimations();
+			}
+			UserView->StopAllAnimations();
+			UserView->AreaUsedText->SetVisibility(ESlateVisibility::Hidden);
 			UserView->E_Mark->SetVisibility(ESlateVisibility::Hidden);
+
 		}
 	}
 }
@@ -413,11 +429,11 @@ void AChel::OpenAreaPressed()
 			}
 		}
 		else if (AreaCode >= 3) {
-			if (OpenAreaObj != nullptr &&  OpenAreaObj->bIsAvaliable) {
-				UserView->PB_Opening->SetVisibility(ESlateVisibility::Visible);
-				UserView->TimeLeft->SetVisibility(ESlateVisibility::Visible);
-			
-			}
+//			if (OpenAreaObj != nullptr &&  OpenAreaObj->bIsAvaliable) {
+//				UserView->PB_Opening->SetVisibility(ESlateVisibility::Visible);
+//				UserView->TimeLeft->SetVisibility(ESlateVisibility::Visible);
+//			
+//			}
 		}
 		switch (AreaCode)
 		{
@@ -462,9 +478,9 @@ void AChel::OpenAreaPressed()
 		}
 		case OpenArea:
 		{
-			if (OpenAreaObj->bIsAvaliable) {
-				UserView->PlayAnimation(UserView->OpenAreaAnim);
-			}
+//			if (OpenAreaObj->bIsAvaliable) {
+//				UserView->PlayAnimation(UserView->OpenAreaAnim);
+//			}
 			break;
 		}
 		case GeneratorArea:
@@ -905,6 +921,11 @@ void AChel::PickUp() {
 					}
 				}
 			}
+			break;
+		}
+		case OpenArea:
+		{
+
 			break;
 		}
 		}
@@ -1375,13 +1396,13 @@ bool AChel::ChangeGeneratorStas_Validate()
 void AChel::CallDoThomethinkArea_Implementation()
 {
 	TArray<AActor*> Players;
-	OpenAreaObj->Collision->GetOverlappingActors(Players, AChel::StaticClass());
+	//OpenAreaObj->Collision->GetOverlappingActors(Players, AChel::StaticClass());
 	for (auto& it : Players) {
 		AChel* MyCharacter = Cast<AChel>(it);
 		MyCharacter->HideHudArea();
 	}
 
-	OpenAreaObj->DoSomethink();
+	//OpenAreaObj->DoSomethink();
 }
 bool AChel::CallDoThomethinkArea_Validate()
 {

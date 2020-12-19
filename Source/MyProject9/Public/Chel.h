@@ -20,7 +20,7 @@
 #include "GS.h"
 #include "Stone.h"
 #include "PickableItem.h"
-#include "OpenAreaCPP.h"
+#include "OpenArea.h"
 #include "UI/UserView.h"
 #include "UI/PlayerKillPlayer.h"
 #include "UI/PlayerLostItem.h"
@@ -377,8 +377,6 @@ public:
 	float CanalizationDamage;
 
 	FTransform MeshTrans;
-
-	AOpenAreaCPP* OpenAreaObj;
 
 	AGeneratorArea* GenAreaObj;
 	UGeneratorWidget* GeneratorView;
