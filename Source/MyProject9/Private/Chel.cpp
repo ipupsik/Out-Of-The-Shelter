@@ -261,6 +261,9 @@ void AChel::Tick(float DeltaTime)
 								UserView->E_Mark->SetVisibility(ESlateVisibility::Hidden);
 								UserView->AreaUsedText->SetVisibility(ESlateVisibility::Visible);
 							}
+							else {
+								LastItem->Item->SetCustomDepthStencilValue(2);
+							}
 						}
 						else
 							LastItem->Item->SetCustomDepthStencilValue(2);
@@ -786,6 +789,7 @@ void AChel::PlaySpawnAnimationAwake_Implementation() {
 //-----------------------------
 void AChel::PickUp() {
 	if (ItemCodePickUp != -1) {
+		IsSuccessOpening = true;
 		switch (ItemCodePickUp) {
 		case Boltorez:
 		{
@@ -944,7 +948,8 @@ void AChel::PickUp() {
 
 void AChel::PickUp_Released()
 {
-
+	IsSuccessOpening = false;
+	UserView->StopAllAnimations();	
 }
 
 void AChel::ChangeIsAvaliableCache_Implementation()
