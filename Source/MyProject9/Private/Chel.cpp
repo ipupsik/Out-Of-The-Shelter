@@ -788,6 +788,7 @@ void AChel::PlaySpawnAnimationAwake_Implementation() {
 //-----------------------------
 void AChel::PickUp() {
 	if (ItemCodePickUp != -1) {
+		IsSuccessOpening = true;
 		switch (ItemCodePickUp) {
 		case Boltorez:
 		{
@@ -946,7 +947,8 @@ void AChel::PickUp() {
 
 void AChel::PickUp_Released()
 {
-
+	IsSuccessOpening = false;
+	UserView->StopAllAnimations();	
 }
 
 void AChel::ChangeIsAvaliableCache_Implementation()
