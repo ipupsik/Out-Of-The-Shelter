@@ -428,13 +428,6 @@ void AChel::OpenAreaPressed()
 				UserView->TimeLeft->SetVisibility(ESlateVisibility::Visible);
 			}
 		}
-		else if (AreaCode >= 3) {
-//			if (OpenAreaObj != nullptr &&  OpenAreaObj->bIsAvaliable) {
-//				UserView->PB_Opening->SetVisibility(ESlateVisibility::Visible);
-//				UserView->TimeLeft->SetVisibility(ESlateVisibility::Visible);
-//			
-//			}
-		}
 		switch (AreaCode)
 		{
 		case Boltorez:
@@ -474,13 +467,6 @@ void AChel::OpenAreaPressed()
 			{
 				UserView->PlayAnimation(UserView->VentilaciaAnim);
 			}
-			break;
-		}
-		case OpenArea:
-		{
-//			if (OpenAreaObj->bIsAvaliable) {
-//				UserView->PlayAnimation(UserView->OpenAreaAnim);
-//			}
 			break;
 		}
 		case GeneratorArea:
@@ -926,6 +912,12 @@ void AChel::PickUp() {
 		case OpenArea:
 		{
 
+			AOpenArea* CurOpArea = Cast<AOpenArea>(LastItem);
+			if (CurOpArea != nullptr &&  CurOpArea->bIsAvaliable) {
+					UserView->PB_Opening->SetVisibility(ESlateVisibility::Visible);
+					UserView->TimeLeft->SetVisibility(ESlateVisibility::Visible);
+			}
+			UserView->PlayAnimation(UserView->OpenAreaAnim);
 			break;
 		}
 		}
@@ -1397,14 +1389,7 @@ bool AChel::ChangeGeneratorStas_Validate()
 
 void AChel::CallDoThomethinkArea_Implementation()
 {
-	TArray<AActor*> Players;
-	//OpenAreaObj->Collision->GetOverlappingActors(Players, AChel::StaticClass());
-	for (auto& it : Players) {
-		AChel* MyCharacter = Cast<AChel>(it);
-		MyCharacter->HideHudArea();
-	}
-
-	//OpenAreaObj->DoSomethink();
+	Cast<AOpenArea>(LastItem)->DoSomethink();
 }
 bool AChel::CallDoThomethinkArea_Validate()
 {
@@ -1419,17 +1404,6 @@ void AChel::DeleteGameHUD_Implementation()
 	KillFeed->Destruct();
 	
 	Destroy();
-}
-
-void AChel::HideHudArea_Implementation()
-{
-	UserView->HoldText->SetVisibility(ESlateVisibility::Hidden);
-	UserView->AreaUsedText->SetVisibility(ESlateVisibility::Visible);
-}
-
-void AChel::ShowHudArea_Implementation() {
-	UserView->HoldText->SetVisibility(ESlateVisibility::Visible);
-	UserView->AreaUsedText->SetVisibility(ESlateVisibility::Hidden);
 }
 
 void AChel::AddDoubleRadiationWidget_Implementation()
@@ -1641,9 +1615,6 @@ void AChel::ButtonPressAnimationServer_Implementation() {
 
 	FCollisionQueryParams CollisionParams;
 
-	//DrawDebugLine(World, StartLocation, EndLocation, FColor::Red, false, 1, 0, 1);
-
-	isTracedBad = false; //Предположим, что мы не нашли лайн трейсом нужные нам предметы
 	if (World->LineTraceSingleByChannel(OutHit, StartLocation, EndLocation, ECC_Visibility, CollisionParams))
 	{		
 		Cast<AClickButton>(OutHit.GetActor())->ButtonPressAnimation();
@@ -1652,6 +1623,27 @@ void AChel::ButtonPressAnimationServer_Implementation() {
 }
 
 bool AChel::ButtonPressAnimationServer_Validate()
+{
+	return true;
+}
+
+void AChel::DoTraceOpenArea_Implementation() 
+{
+	FHitResult OutHit;
+
+	FVector StartLocation = CameraComp->GetComponentLocation();
+	FVector EndLocation = StartLocation + CameraComp->GetForwardVector() * 300;
+
+	FCollisionQueryParams CollisionParams;
+
+	if (World->LineTraceSingleByChannel(OutHit, StartLocation, EndLocation, ECC_Visibility, CollisionParams))
+	{
+		LastItem = Cast<APickableItem>(OutHit.GetActor());
+	}
+
+}
+
+bool AChel::DoTraceOpenArea_Validate() 
 {
 	return true;
 }

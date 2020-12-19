@@ -184,6 +184,9 @@ public:
 	UFUNCTION(Server, Reliable, WithValidation)
 		void OutlineBad_Server();
 
+	UFUNCTION(Server, Reliable, WithValidation)
+		void DoTraceOpenArea();
+
 	UFUNCTION(NetMulticast, Reliable) //легендарна€ св€зќчка
 		void OutlineBad_Multicast();
 
@@ -208,16 +211,10 @@ public:
 		void UpdatePositionClient(FTransform NewTrans);
 
 	UFUNCTION(Client, Reliable)
-		void HideHudArea();
-
-	UFUNCTION(Client, Reliable)
 		void AddDoubleRadiationWidget();
 
 	UFUNCTION(Client, Reliable)
 		void DisableDoubleRadiationWidget();
-
-	UFUNCTION(Client, Reliable)
-		void ShowHudArea();
 
 	UFUNCTION(NetMulticast, Reliable)
 		void HideStoneMulticast();

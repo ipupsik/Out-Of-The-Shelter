@@ -4,8 +4,6 @@
 #include "OpenArea.h"
 
 AOpenArea::AOpenArea() {
-	Collision = CreateDefaultSubobject<UBoxComponent>("Collision");
-	Collision->SetupAttachment(RootComponent);
 	Type = 3;
 	bIsAvaliable = true;
 }
