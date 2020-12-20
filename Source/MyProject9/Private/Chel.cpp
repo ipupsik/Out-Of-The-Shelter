@@ -1690,28 +1690,25 @@ void AChel::DoTraceOpenArea()
 
 }
 
-void AChel::ChangeUsedArea() {
-	AOpenArea* CurArea = Cast<AOpenArea>(LastItem);
-	if (CurArea)
-	{
-		CurArea->bIsUsed = !CurArea->bIsUsed;
-	}
-}
-
 void AChel::GoToServerOpenArea_Implementation(bool IsStart) 
 {
 	if (IsStart) 
 	{
 		DoTraceOpenArea();
-		ChangeUsedArea();
-		Cast<AOpenArea>(LastItem)->RotateVentilServer();
+		AOpenArea* CurArea = Cast<AOpenArea>(LastItem);
+		CurArea->bIsUsed = true;
+		CurArea->RotateVentilServer();
 	}
 	else
 	{
-		ChangeUsedArea();
-		if (Cast<AOpenArea>(LastItem)->CurTimeVentil != 10.f)
-		{
-			Cast<AOpenArea>(LastItem)->RotateVentilServerReverse();
+		AOpenArea* CurArea = Cast<AOpenArea>(LastItem);
+		if (CurArea) {
+			CurArea->bIsUsed = false;
+			if (Cast<AOpenArea>(LastItem)->CurTimeVentil != 10.f)
+			{
+				Cast<AOpenArea>(LastItem)->RotateVentilServerReverse();
+			}
+			LastItem = nullptr;
 		}
 	}
 }
