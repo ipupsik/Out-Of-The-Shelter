@@ -116,8 +116,6 @@ public:
 	UFUNCTION(Server, Reliable, WithValidation)
 		void GoToServerOpenArea(bool IsStart);
 
-	void ChangeUsedArea();
-
 
 	UFUNCTION(Server, Reliable, WithValidation)
 		void GoToWebCamServer(int32 Iterator);
