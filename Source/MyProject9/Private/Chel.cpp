@@ -199,6 +199,7 @@ void AChel::Tick(float DeltaTime)
 		if (IsServerAuth) {
 			DeltaTime *= 2 * 0.01f * RadCoeff * CanalizationDamage;
 			Health += DeltaTime;
+			UE_LOG(LogTemp, Warning, TEXT("Health - %f"), Health);
 			if (Health > 1.0f) {
 				if (DoesHave[Boltorez])
 					GS->CurrentBoltorez--;
