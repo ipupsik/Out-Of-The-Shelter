@@ -521,7 +521,6 @@ void AChel::OpenAreaReleased()
 //TimelineAnimation
 void AChel::OnTimelineFinished_Stone_First() {
 	TimeLine_Stone_Second->ReverseFromEnd();
-
 	if (IsServerAuth) {
 		--Ammo;
 		StoneCountUpdate(Ammo);
