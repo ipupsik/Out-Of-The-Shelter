@@ -85,8 +85,9 @@ AChel::AChel()
 	KillerIndex = -1;
 	IsSuccessOpening = false;
 	AreaCode = -1;
-	bCanPossessWebCam = true;
+	bCanPossessWebCam = false;
 	bCanWalkingAndWatching = true;
+	IsAwake = true;
 
 //	OpenAreaObj = nullptr;
 
@@ -100,8 +101,6 @@ void AChel::BeginPlay()
 
 	if (GetLocalRole() != ROLE_Authority)
 		MyBeginPlay();
-
-	MeshTrans = PoseableMeshComp->GetRelativeTransform();
 }
 
 void AChel::MyBeginPlay()
@@ -199,7 +198,6 @@ void AChel::Tick(float DeltaTime)
 		if (IsServerAuth) {
 			DeltaTime *= 2 * 0.01f * RadCoeff * CanalizationDamage;
 			Health += DeltaTime;
-			UE_LOG(LogTemp, Warning, TEXT("Health - %f"), Health);
 			if (Health > 1.0f) {
 				if (DoesHave[Boltorez])
 					GS->CurrentBoltorez--;
@@ -402,9 +400,8 @@ void AChel::UpdateSpectating_Right()
 			UE_LOG(LogTemp, Warning, TEXT("WebCamIterator - %d"), WebCamIterator);
 			UE_LOG(LogTemp, Warning, TEXT("Count - %d"), GS->WebCam_IsEnabled.Num());
 		} while (!GS->WebCam_IsEnabled[WebCamIterator]);
-		PoseableMeshComp->SetWorldRotation(GS->WebCam_Rotation[WebCamIterator]);
-		PoseableMeshComp->SetWorldLocation(GS->WebCam_Location[WebCamIterator]);
-		PoseableMeshComp->SetBoneRotationByName(TEXT("Bone_002"), { 0, 0, 0 }, EBoneSpaces::ComponentSpace);
+		BaseRotation = GS->WebCam_Rotation[WebCamIterator];
+		CameraComp->SetWorldRotation(BaseRotation);
 		GoToWebCamServer(WebCamIterator);
 	}
 }
@@ -423,9 +420,8 @@ void AChel::UpdateSpectating_Left()
 			UE_LOG(LogTemp, Warning, TEXT("WebCamIterator - %d"), WebCamIterator);
 			UE_LOG(LogTemp, Warning, TEXT("Count - %d"), GS->WebCam_IsEnabled.Num());
 		} while (!GS->WebCam_IsEnabled[WebCamIterator]);
-		PoseableMeshComp->SetWorldRotation(GS->WebCam_Rotation[WebCamIterator]);
-		PoseableMeshComp->SetWorldLocation(GS->WebCam_Location[WebCamIterator]);
-		PoseableMeshComp->SetBoneRotationByName(TEXT("Bone_002"), { 0, 0, 0 }, EBoneSpaces::ComponentSpace);
+		BaseRotation = GS->WebCam_Rotation[WebCamIterator];
+		CameraComp->SetWorldRotation(BaseRotation);
 		GoToWebCamServer(WebCamIterator);
 	}
 }
@@ -676,12 +672,17 @@ void AChel::LookUp(float input)
 		{
 			if (input != 0.0f) {
 				input *= Sensetivity * WebCamSensetivity;
-				float NewPitchRot = CameraComp->GetRelativeRotation().Pitch;
+				float NewPitchRot = CameraComp->GetComponentRotation().Pitch - BaseRotation.Pitch;
+
+				if (NewPitchRot + BaseRotation.Pitch >= 180.f)
+					NewPitchRot -= 360;
+				else if (NewPitchRot + BaseRotation.Pitch <= -180.f)
+					NewPitchRot += 360;
 
 				NewPitchRot = FMath::Clamp<float>(NewPitchRot + input, -MaxPitchAngle, MaxPitchAngle);
-
-				CameraComp->SetRelativeRotation(FRotator(NewPitchRot,
-					CameraComp->GetRelativeRotation().Yaw, CameraComp->GetRelativeRotation().Roll));
+				UE_LOG(LogTemp, Warning, TEXT("Rotation - %f"), NewPitchRot + BaseRotation.Pitch);
+				CameraComp->SetWorldRotation(FRotator(NewPitchRot + BaseRotation.Pitch,
+					CameraComp->GetComponentRotation().Yaw, CameraComp->GetComponentRotation().Roll));
 			}
 		}
 	}
@@ -701,12 +702,12 @@ void AChel::LookRight(float input)
 		{
 			if (input != 0.0f) {
 				input *= Sensetivity * WebCamSensetivity;
-				float NewYawRot = CameraComp->GetRelativeRotation().Yaw;
+				float NewYawRot = CameraComp->GetComponentRotation().Yaw - BaseRotation.Yaw;
 
 				NewYawRot = FMath::Clamp<float>(NewYawRot + input, -MaxYawAngle, MaxYawAngle);
 
-				CameraComp->SetRelativeRotation(FRotator(CameraComp->GetRelativeRotation().Pitch, NewYawRot,
-					CameraComp->GetRelativeRotation().Roll));
+				CameraComp->SetWorldRotation(FRotator(CameraComp->GetComponentRotation().Pitch, NewYawRot + BaseRotation.Yaw,
+					CameraComp->GetComponentRotation().Roll));
 			}
 		}
 	}
@@ -770,12 +771,44 @@ void AChel::UnShowKillFeed()
 
 //PlayStartingAnimation---------------------
 void AChel::PlaySpawnAnimationSleep_Implementation() {
+	FTimerHandle FuzeTimerHandle;
+	World->GetTimerManager().SetTimer(FuzeTimerHandle, this, &AChel::SleepAnimation_End, 2, false);
 	UserView->PlayAnimation(UserView->Shading);
+}
+
+void AChel::SleepAnimation_End()
+{
+	if (bCanPossessWebCam) {
+		UserView->SetVisibility(ESlateVisibility::Hidden);
+		GoToWebCam();
+		IsAwake = false;
+	}
+	else
+		IsAwake = false;
+}
+
+void AChel::AwakeAnimation_End()
+{
+	if (bCanPossessWebCam) {
+		IsAwake = true;
+	}
+	else
+	{
+		bCanPossessWebCam = true;
+		IsAwake = true;
+	}
 }
 
 //PlayStartingAnimation---------------------
 void AChel::PlaySpawnAnimationAwake_Implementation() {
-	PoseableMeshComp->SetRelativeTransform(MeshTrans);
+	FTimerHandle FuzeTimerHandle;
+	World->GetTimerManager().SetTimer(FuzeTimerHandle, this, &AChel::AwakeAnimation_End, 2, false);
+
+	CameraComp->SetRelativeLocation({ 0,0,0 });
+	CameraComp->SetRelativeRotation({ 0,0,0 });
+
+	CameraComp->SetFieldOfView(90.0f);
+	StoneCountUpdate(10);
 	UserView->SetVisibility(ESlateVisibility::Visible);
 	UserView->PlayAnimation(UserView->Shading, 0, 1, EUMGSequencePlayMode::Type::Reverse);
 }
@@ -1190,18 +1223,15 @@ void AChel::GoToWebCam()
 			Iterator -= GS->WebCam_IsEnabled.Num();
 		}
 	}
-	PoseableMeshComp->SetWorldRotation(GS->WebCam_Rotation[Iterator]);
-	PoseableMeshComp->SetWorldLocation(GS->WebCam_Location[Iterator]);
-	PoseableMeshComp->SetBoneRotationByName(TEXT("Bone_002"), { 0, 0, 0 }, EBoneSpaces::ComponentSpace);
+	BaseRotation = GS->WebCam_Rotation[WebCamIterator];
+	CameraComp->SetWorldRotation(BaseRotation);
 	WebCamIterator = Iterator;
 	GoToWebCamServer(Iterator);
 }
 
 void AChel::GoToWebCamServer_Implementation(int32 Iterator)
 {
-	PoseableMeshComp->SetWorldRotation(GS->WebCam_Rotation[Iterator]);
-	PoseableMeshComp->SetWorldLocation(GS->WebCam_Location[Iterator]);
-	PoseableMeshComp->SetBoneRotationByName(TEXT("Bone_002"), { 0, 0, 0 }, EBoneSpaces::ComponentSpace);
+	SetActorLocation(GS->WebCam_Location[Iterator]);
 	UE_LOG(LogTemp, Warning, TEXT("Staying on webcam"));
 }
 
@@ -1218,7 +1248,6 @@ void AChel::UpdatePositionClient_Implementation(FTransform NewTrans)
 void AChel::SpawnPlayer()
 {
 	UE_LOG(LogTemp, Warning, TEXT("Setting camera from webcam to player"));
-	PoseableMeshComp->SetRelativeTransform(MeshTrans);
 	CameraComp->SetRelativeLocation( { 0,0,0 } );
 	CameraComp->SetRelativeRotation( { 0,0,0 } );
 

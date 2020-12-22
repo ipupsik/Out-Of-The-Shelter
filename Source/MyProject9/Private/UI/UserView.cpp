@@ -8,11 +8,12 @@
 
 void UUserView::NativeConstruct() {
 	Super::NativeConstruct();
-	IsAwake = false;
+	IsAwake = true;
 }
 
 void UUserView::OnAnimationFinished_Implementation(const UWidgetAnimation* Animation)
 {
+	UE_LOG(LogTemp, Warning, TEXT("Ya v Animacii"))
 	if (Animation == CanalizaciaAnim)
 	{
 		if (Player->IsSuccessOpening) {
@@ -41,31 +42,6 @@ void UUserView::OnAnimationFinished_Implementation(const UWidgetAnimation* Anima
 			EscapeText->SetVisibility(ESlateVisibility::Visible);
 			Player->PlayerOpenAreaUpdate(2);
 		}
-	}
-	else if (Animation == Shading)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("bCanPossessWebCam - %d"), (int)Player->bCanPossessWebCam);
-		UE_LOG(LogTemp, Warning, TEXT("bIsAwake - %d"), (int)IsAwake);
-		if (Player->bCanPossessWebCam) {
-			if (!IsAwake)
-			{
-				IsAwake = true;
-				SetVisibility(ESlateVisibility::Hidden);
-				UE_LOG(LogTemp, Warning, TEXT("Hide UserView. Ready go to Webcam"));
-				Player->GoToWebCam();
-			}
-			else
-			{
-				IsAwake = false;
-			}
-		}
-		else {
-			Player->bCanPossessWebCam = true;
-			IsAwake = true;
-		}
-		UE_LOG(LogTemp, Warning, TEXT("bCanPossessWebCam - %d"), (int)Player->bCanPossessWebCam);
-		UE_LOG(LogTemp, Warning, TEXT("bIsAwake - %d"), (int)IsAwake);
-		UE_LOG(LogTemp, Warning, TEXT("------------------------"));
 	}
 	else if (Animation == OpenAreaAnim) {
 		PB_Opening->SetPercent(0);

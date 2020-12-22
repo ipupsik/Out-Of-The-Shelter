@@ -33,6 +33,7 @@ public:
 	void DisableDoubleRadiationEffect();
 	void AddFreezeEffect();
 	void DisableFreezeEffect();
+
 	//void Construct() override;
 public:
 	AChel* Player;
@@ -113,5 +114,5 @@ public:
 
 	void NativeConstruct() override;
 
-	bool IsAwake;
+	bool IsAwake = true;
 };

@@ -242,6 +242,12 @@ public:
 	UFUNCTION()
 		void OnTimelineFinished_Stone_Second();
 
+	UFUNCTION()
+		void SleepAnimation_End();
+
+	UFUNCTION()
+		void AwakeAnimation_End();
+
 	void StoneAttack(int StoneIndex);
 	void KillPlayer();
 public:	
@@ -368,7 +374,7 @@ public:
 public:
 	//Logic Boolean Variables
 	bool bLineTrace_is_need_refresh;
-	bool bCanPossessWebCam;
+		bool bCanPossessWebCam;
 	bool isTracedBad;
 	UPROPERTY(Replicated)
 		bool bCanWalkingAndWatching;
@@ -386,7 +392,10 @@ public:
 
 	float CanalizationDamage;
 
+	bool IsAwake;
+
 	FTransform MeshTrans;
+	FRotator BaseRotation;
 
 	AGeneratorArea* GenAreaObj;
 	UGeneratorWidget* GeneratorView;
