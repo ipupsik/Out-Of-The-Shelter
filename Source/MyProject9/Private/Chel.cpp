@@ -633,7 +633,8 @@ void AChel::GoRight(float input) {
 //ReplicationMouseInput--------
 void AChel::MeshCompRepMulticast_Implementation(float RotationRoll)
 {
-	PoseableMeshComp->SetBoneRotationByName(TEXT("Bone_002"), { 0, 0, RotationRoll }, EBoneSpaces::ComponentSpace);
+	if (!IsPlayerOwner)
+		PoseableMeshComp->SetBoneRotationByName(TEXT("Bone_002"), { 0, 0, RotationRoll }, EBoneSpaces::ComponentSpace);
 }
 
 
@@ -665,6 +666,7 @@ void AChel::LookUp(float input)
 				}
 				else
 					RotationRoll = 0;
+				PoseableMeshComp->SetBoneRotationByName(TEXT("Bone_002"), { 0, 0, RotationRoll }, EBoneSpaces::ComponentSpace);
 				MeshCompRepServer(RotationRoll);
 			}
 		}
