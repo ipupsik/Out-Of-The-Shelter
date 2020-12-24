@@ -24,26 +24,6 @@ public:
 	UFUNCTION()
 		void PlayMore();
 public:
-	UPROPERTY(meta = (BindWidget))
-		UTextBlock* Ventilacia_Nickname;
-
-	UPROPERTY(meta = (BindWidget))
-		UTextBlock* Canalizacia_Nickname;
-
-	UPROPERTY(meta = (BindWidget))
-		UTextBlock* Shelter_Nickname;
-
-	UPROPERTY(meta = (BindWidget))
-		UTextBlock* Ventilacia_Time;
-
-	UPROPERTY(meta = (BindWidget))
-		UTextBlock* Canalizacia_Time;
-
-	UPROPERTY(meta = (BindWidget))
-		UTextBlock* NickName;
-
-	UPROPERTY(meta = (BindWidget))
-		UTextBlock* Shelter_Time;
 
 	UPROPERTY(meta = (BindWidget))
 		UButton* BTN_PlayMore;

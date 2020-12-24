@@ -10,6 +10,7 @@
 #include "TerminalLight.h"
 #include "NumberTerminal.h"
 #include "Code_Note.h"
+#include "FinalMenuPawn.h"
 
 #include "GS.generated.h"
 
@@ -103,7 +104,11 @@ public:
 	UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite)
 		bool ButtonPlayAnim;
 
-
+	UPROPERTY(EditAnywhere, Category = "FinalMenuP")
+		TSubclassOf<AFinalMenuPawn> FMP;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		FTransform TransFMP;
+		
 
 	UPROPERTY(EditAnywhere, Category = "ItemClasses")
 		TSubclassOf<APickableItem> KeyShelter;

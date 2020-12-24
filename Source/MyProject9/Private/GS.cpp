@@ -67,6 +67,11 @@ void AGS::BeginPlay()
 	Super::BeginPlay();
 
 	if (GetLocalRole() == ROLE_Authority) {
+		//Спавним FinalMenuPawn
+		for (int i = 0; i < 4; ++i) {
+			GetWorld()->SpawnActor<AFinalMenuPawn>(FMP, TransFMP);
+		}
+
 		TArray<AActor*>FindAreas;
 		UGameplayStatics::GetAllActorsOfClass(GetWorld(), AAreaCollision::StaticClass(), FindAreas);
 		for (auto FindArea : FindAreas) {

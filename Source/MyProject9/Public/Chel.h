@@ -7,6 +7,7 @@
 #include "Net/UnrealNetwork.h"
 
 #include "Spectator.h"
+#include "FinalMenuPawn.h"
 #include "Cache.h"
 #include "GeneratorArea.h"
 #include "UI/GeneratorWidget.h"

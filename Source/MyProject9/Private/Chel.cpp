@@ -1349,26 +1349,31 @@ void AChel::PlayerEscape_Implementation(int32 EscapeWay)
 	GS->EscapeTime[EscapeWay] = GS->CurrentTime;
 
 	if (GS->GeneralLayer == 2) {
-		TArray<AActor*>PlayerControllers;
+
 		TArray<AActor*>Players;
+		UGameplayStatics::GetAllActorsOfClass(World, AChel::StaticClass(), Players);
+		for (auto& Player : Players) {
+			Cast<AChel>(Player)->DeleteGameHUD();
+		}
+
 		TArray<AActor*>Spectators;
+		UGameplayStatics::GetAllActorsOfClass(World, ASpectator::StaticClass(), Spectators);
+		for (auto& Spec : Spectators) {
+			Spec->Destroy();
+		}
+
+		TArray<AActor*>PlayerControllers;
+		TArray<AActor*>FinalMenuPlayers;
 
 		UGameplayStatics::GetAllActorsOfClass(World, ABP_PlayerController::StaticClass(), PlayerControllers);
-		UGameplayStatics::GetAllActorsOfClass(World, AChel::StaticClass(), Players);
-		UGameplayStatics::GetAllActorsOfClass(World, ASpectator::StaticClass(), Spectators);
+		UGameplayStatics::GetAllActorsOfClass(World, ASpectator::StaticClass(), FinalMenuPlayers);
 
-		for (auto PlController : PlayerControllers)
+		for (int i = 0; i < 4; ++i)
 		{
-			Cast<ABP_PlayerController>(PlController)->AddFinalMenu();
-		}
+			ABP_PlayerController* PC = Cast<ABP_PlayerController>(PlayerControllers[i]);
 
-		for (auto Player : Players) {
-			Cast<AChel>(Player)->DeleteGameHUD();
-			Player->Destroy();
-		}
-
-		for (auto Spec : Spectators) {
-			Spec->Destroy();
+			PC->Possess(Cast<APawn>(FinalMenuPlayers[i]));
+			PC->AddFinalMenu();
 		}
 	}
 	else
