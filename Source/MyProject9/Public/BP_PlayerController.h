@@ -24,6 +24,9 @@ public:
 	UFUNCTION(Client, Reliable)
 		void AddFinalMenu();
 
+	UFUNCTION(BlueprintImplementableEvent)
+		void ToDoBlueprint();
+
 	void PlayMore();
 
 	void BeginPlay() override;
@@ -48,4 +51,5 @@ public:
 	UPROPERTY(BlueprintReadOnly)
 		AGS* GS;
 	UFinalMenu* FinalMenu;
+	int32 Index;
 };

@@ -74,7 +74,11 @@ public:
 	UPROPERTY(BlueprintReadWrite)
 		int AgreedPlayers;
 
+	UPROPERTY(BlueprintReadWrite)
 	TArray<FText> Winners;
+
+	UPROPERTY(BlueprintReadWrite)
+		TArray<FText> WinnersIndex;
 
 	UPROPERTY(Replicated)
 		TArray<FText> NickNames;
@@ -82,7 +86,7 @@ public:
 		TArray<FText> Kills;
 	UPROPERTY(Replicated)
 		TArray<FText> Deaths;
-	UPROPERTY(Replicated)
+	UPROPERTY(Replicated, BlueprintReadWrite)
 		TArray<int32> EscapeTime;
 	
 	TArray<ASpectator*> Spectators;

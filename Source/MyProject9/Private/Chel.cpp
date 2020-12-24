@@ -1356,24 +1356,24 @@ void AChel::PlayerEscape_Implementation(int32 EscapeWay)
 			Cast<AChel>(Player)->DeleteGameHUD();
 		}
 
-		TArray<AActor*>Spectators;
-		UGameplayStatics::GetAllActorsOfClass(World, ASpectator::StaticClass(), Spectators);
-		for (auto& Spec : Spectators) {
-			Spec->Destroy();
-		}
-
 		TArray<AActor*>PlayerControllers;
 		TArray<AActor*>FinalMenuPlayers;
 
 		UGameplayStatics::GetAllActorsOfClass(World, ABP_PlayerController::StaticClass(), PlayerControllers);
-		UGameplayStatics::GetAllActorsOfClass(World, ASpectator::StaticClass(), FinalMenuPlayers);
+		UGameplayStatics::GetAllActorsOfClass(World, AFinalMenuPawn::StaticClass(), FinalMenuPlayers);
 
 		for (int i = 0; i < 4; ++i)
 		{
 			ABP_PlayerController* PC = Cast<ABP_PlayerController>(PlayerControllers[i]);
-
+			PC->ToDoBlueprint();//Изменить на плюсы с нормальный названием
 			PC->Possess(Cast<APawn>(FinalMenuPlayers[i]));
 			PC->AddFinalMenu();
+		}
+
+		TArray<AActor*>Spectators;
+		UGameplayStatics::GetAllActorsOfClass(World, ASpectator::StaticClass(), Spectators);
+		for (auto& Spec : Spectators) {
+			Spec->Destroy();
 		}
 	}
 	else
