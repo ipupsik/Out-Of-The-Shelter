@@ -20,7 +20,7 @@ void AAreaCollision::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor*
 	bool bFromSweep, const FHitResult& SweepResult)
 {
 	AChel* Player = Cast<AChel>(OtherActor);
-	if (AreaType != 12) { //Не в двери выхода шелтора
+	if (AreaType != 3) { //Не в двери выхода шелтора
 		if (Player->IsPlayerOwner && !Player->GS->AreaClosed[AreaType]) {
 			Player->AreaCode = AreaType;
 			if (!Player->GS->AreaAvaliables[AreaType])
@@ -39,7 +39,7 @@ void AAreaCollision::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor*
 	else {
 		if (Player->IsPlayerOwner && !Player->GS->AreaClosed[1]) {
 			Player->AreaCode = AreaType;
-			if (AreaType != 1 && Player->GS->AreaAvaliables[AreaType]) {
+			if (AreaType != 1 && Player->GS->AreaAvaliables[1]) {
 				Player->UserView->EscapeText->SetVisibility(ESlateVisibility::Visible);
 			}
 		}
@@ -50,7 +50,7 @@ void AAreaCollision::OnOverlapEnd(UPrimitiveComponent* OverlappedComp, AActor* O
 	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
 	AChel* Player = Cast<AChel>(OtherActor);
-	if (AreaType != 12) { //Не в двери выхода шелтора
+	if (AreaType != 3) { //Не в двери выхода шелтора
 		if (Player->IsPlayerOwner && !Player->GS->AreaClosed[AreaType]) {
 			Player->AreaCode = -1;
 			if (!Player->GS->AreaAvaliables[AreaType])

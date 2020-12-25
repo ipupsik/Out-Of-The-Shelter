@@ -32,7 +32,7 @@ AGS::AGS() {
 	GeneralLayer = 0;
 	AreaAvaliables.Init(false, 3);
 	AreaClosed.Init(false, 3);
-	Areas.Init(nullptr, 3);
+	Areas.Init(nullptr, 4);
 
 	IsGameStarted = false;
 
@@ -76,8 +76,9 @@ void AGS::BeginPlay()
 
 		TArray<AActor*>FindAreas;
 		UGameplayStatics::GetAllActorsOfClass(GetWorld(), AAreaCollision::StaticClass(), FindAreas);
-		for (auto FindArea : FindAreas) {
-			Areas[Cast<AAreaCollision>(FindArea)->AreaType] = Cast<AAreaCollision>(FindArea);
+		for (auto& FindArea : FindAreas) {
+			AAreaCollision* TmpArea = Cast<AAreaCollision>(FindArea);
+			Areas[TmpArea->AreaType] = TmpArea;
 		}
 		UE_LOG(LogTemp, Warning, TEXT("%d"), Areas.Num());
 

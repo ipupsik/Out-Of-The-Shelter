@@ -29,8 +29,6 @@ void UUserView::OnAnimationFinished_Implementation(const UWidgetAnimation* Anima
 		if (Player->IsSuccessOpening) {
 			Player->StuffAvaliableUpdate(1);
 			HoldText->SetVisibility(ESlateVisibility::Hidden);
-			EscapeText->SetVisibility(ESlateVisibility::Visible);
-			Player->Stone->SetHiddenInGame(true);
 			Player->PlayerOpenAreaUpdate(1);
 		}
 	}
