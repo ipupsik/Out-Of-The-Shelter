@@ -30,6 +30,7 @@ enum PickUpType {
 	InvisiblePotion,
 	CodeNote,
 	ClickButton,
+	ShelterEscape,
 };
 
 enum CacheType {
@@ -93,6 +94,24 @@ AChel::AChel()
 
 	KeysCount.Init(0, 3);
 }
+
+//SetupReplicationVariables----
+void AChel::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(AChel, Index);
+	DOREPLIFETIME(AChel, Health);
+	DOREPLIFETIME(AChel, NickName);
+	DOREPLIFETIME(AChel, Ammo);
+	DOREPLIFETIME(AChel, Death);
+	DOREPLIFETIME(AChel, Kills);
+	DOREPLIFETIME(AChel, IsEnableInput);
+	DOREPLIFETIME(AChel, DoesHave);
+	DOREPLIFETIME(AChel, KeysCount);
+	DOREPLIFETIME(AChel, bCanWalkingAndWatching);
+}
+//-----------------------------
 
 // Called when the game starts or when spawned
 void AChel::BeginPlay()
@@ -338,24 +357,6 @@ void AChel::Tick(float DeltaTime)
 	}
 }
 
-//SetupReplicationVariables----
-void AChel::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
-{
-	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
-
-	DOREPLIFETIME(AChel, Index);
-	DOREPLIFETIME(AChel, Health);
-	DOREPLIFETIME(AChel, NickName);
-	DOREPLIFETIME(AChel, Ammo);
-	DOREPLIFETIME(AChel, Death);
-	DOREPLIFETIME(AChel, Kills);
-	DOREPLIFETIME(AChel, IsEnableInput);
-	DOREPLIFETIME(AChel, DoesHave);
-	DOREPLIFETIME(AChel, KeysCount);
-	DOREPLIFETIME(AChel, bCanWalkingAndWatching);
-}
-//-----------------------------
-
 //NicknameSetup----------------
 void AChel::DeliverNicknameToServer_Implementation(const FText& newNickName) {
 	GS->NickNames[Index] = newNickName;
@@ -455,12 +456,7 @@ void AChel::OpenAreaPressed()
 		}
 		case KeyShelter:
 		{
-			if (GS->AreaAvaliables[AreaCode])
-			{
-				PlayerEscape(AreaCode);
-				UserView->RemoveFromParent();
-			}
-			else if (DoesHave[AreaCode])
+			if (DoesHave[AreaCode] && !GS->AreaAvaliables[AreaCode])
 			{
 				UserView->PlayAnimation(UserView->ShelterAnim);
 			}
@@ -500,6 +496,13 @@ void AChel::OpenAreaPressed()
 				}
 			}
 			break;
+		}
+		case ShelterEscape:
+		{
+			if(GS->AreaAvaliables[1]) {
+			PlayerEscape(AreaCode);
+			UserView->RemoveFromParent();
+			}
 		}
 		}
 	}
@@ -1294,10 +1297,19 @@ void AChel::PlayerOpenAreaUpdate_Implementation(int32 EscapeWay)
 	}
 
 	TArray<AActor*>Chels;
-	GS->Areas[EscapeWay]->GetOverlappingActors(Chels);
-	for (auto Player : Chels)
-	{
-		Cast<AChel>(Player)->ExitAvaliableUpdate(EscapeWay);
+	if (EscapeWay != 1) {
+		GS->Areas[EscapeWay]->GetOverlappingActors(Chels);
+		for (auto Player : Chels)
+		{
+			Cast<AChel>(Player)->ExitAvaliableUpdate(EscapeWay);
+		}
+	}
+	else {
+		GS->Areas[ShelterEscape]->GetOverlappingActors(Chels);
+		for (auto Player : Chels)
+		{
+			Cast<AChel>(Player)->ExitAvaliableUpdate(ShelterEscape);
+		}
 	}
 }
 
