@@ -154,13 +154,14 @@ void AChel::MyBeginPlay()
 		UserView->AmmoLabel->SetText(FText::AsNumber((int32)Ammo));
 
 		if (GI != nullptr) {
-			//Sensetivity = GI->SGF->Sensetivity;
-			//DeliverNicknameToServer(GI->SGF->NickName);
+			Sensetivity = 1.0f /*GI->Sensetivity*/;
+			DeliverNicknameToServer(FText::FromString("NickName"));
 		}
 	}
 
 	if (IsServerAuth) {
 		Index = GS->AmountOfPlayers++;
+		Cast<ABP_PlayerController>(GetController())->Index = Index;
 		UE_LOG(LogTemp, Warning, TEXT("AmountOfPlayers increase Chel"))
 		for (int i = 0; i < 2; ++i)
 		{
@@ -1190,7 +1191,7 @@ void AChel::RefreshWidgets_Implementation(const TArray<bool>& whatToUpdate, int 
 
 void AChel::KillPlayer()
 {
-	GS->Deaths[Index] = FText::AsNumber(++Death);
+	//GS->Deaths[Index] = FText::AsNumber(++Death);
 	TArray<AActor*>Players;
 	UGameplayStatics::GetAllActorsOfClass(World, AChel::StaticClass(), Players);
 	for (auto Player : Players)
@@ -1198,7 +1199,7 @@ void AChel::KillPlayer()
 		AChel* Chel = Cast<AChel>(Player);
 		if (Chel->Index == KillerIndex)
 		{
-			GS->Kills[KillerIndex] = FText::AsNumber(++(Chel->Kills));
+			//GS->Kills[KillerIndex] = FText::AsNumber(++(Chel->Kills));
 			break;
 		}
 	}
@@ -1345,10 +1346,18 @@ void AChel::ExitAvaliableUpdate_Implementation(int32 EscapeWay)
 void AChel::PlayerEscape_Implementation(int32 EscapeWay)
 {
 	GS->AreaClosed[EscapeWay] = true;
-	GS->Winners[EscapeWay] = GS->NickNames[Index];
-	GS->EscapeTime[EscapeWay] = GS->CurrentTime;
+	GS->WinnersNickNames.Add(GS->NickNames[Index]);
+	GS->WinnersIndex.Add(Index);
+	GS->EscapeTime.Add(GS->CurrentTime);
+	
+	for (int i = 0; i < CustomizationChilds.Num(); ++i)
+	{
+		if (CustomizationChilds[i])
+			CustomizationChilds[i]->Destroy();
+	}
 
 	if (GS->GeneralLayer == 2) {
+		GS->SpawnCustomizationChels();
 
 		TArray<AActor*>Players;
 		UGameplayStatics::GetAllActorsOfClass(World, AChel::StaticClass(), Players);
@@ -1365,7 +1374,6 @@ void AChel::PlayerEscape_Implementation(int32 EscapeWay)
 		for (int i = 0; i < 4; ++i)
 		{
 			ABP_PlayerController* PC = Cast<ABP_PlayerController>(PlayerControllers[i]);
-			PC->ToDoBlueprint();//Изменить на плюсы с нормальный названием
 			PC->Possess(Cast<APawn>(FinalMenuPlayers[i]));
 			PC->AddFinalMenu();
 		}
@@ -1375,12 +1383,15 @@ void AChel::PlayerEscape_Implementation(int32 EscapeWay)
 		for (auto& Spec : Spectators) {
 			Spec->Destroy();
 		}
+		for (auto& Player : Players) {
+			Destroy();
+		}
 	}
 	else
 	{
 		TArray<AActor*>Chels;
 		GS->Areas[EscapeWay]->GetOverlappingActors(Chels);
-		for (auto Player : Chels)
+		for (auto& Player : Chels)
 		{
 			Cast<AChel>(Player)->AreaClosedUpdate(EscapeWay);
 		}

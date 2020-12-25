@@ -395,6 +395,9 @@ public:
 
 	bool IsAwake;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite) //!!!!!!!!!!!!!!
+	TArray<AActor*>CustomizationChilds;
+
 	FTransform MeshTrans;
 	FRotator BaseRotation;
 

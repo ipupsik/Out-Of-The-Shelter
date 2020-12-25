@@ -21,4 +21,6 @@ public:
 
 	UPROPERTY(EditAnywhere, Category = "UI HUD")
 		TSubclassOf<UFinalMenu> FinalMenuClass;
+	float Sensetivity;
+	FText NickName;
 };

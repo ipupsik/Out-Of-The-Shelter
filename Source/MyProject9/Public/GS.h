@@ -60,6 +60,9 @@ public:
 
 	void ChangeLamp_Neutral();
 
+	UFUNCTION(BlueprintImplementableEvent)
+		void SpawnCustomizationChels();
+
 	UFUNCTION()
 		void SpawnPlayers();
 	UFUNCTION(BlueprintCallable)
@@ -75,19 +78,16 @@ public:
 		int AgreedPlayers;
 
 	UPROPERTY(BlueprintReadWrite)
-	TArray<FText> Winners;
-
+		TArray<FText> WinnersNickNames;
 	UPROPERTY(BlueprintReadWrite)
-		TArray<FText> WinnersIndex;
-
-	UPROPERTY(Replicated)
-		TArray<FText> NickNames;
-	UPROPERTY(Replicated)
-		TArray<FText> Kills;
-	UPROPERTY(Replicated)
-		TArray<FText> Deaths;
-	UPROPERTY(Replicated, BlueprintReadWrite)
+		TArray<int32> WinnersIndex;
+	UPROPERTY(BlueprintReadWrite)
 		TArray<int32> EscapeTime;
+	TArray<FText> NickNames;
+	//UPROPERTY(Replicated)
+		//TArray<FText> Kills;
+	//UPROPERTY(Replicated)
+		//TArray<FText> Deaths;
 	
 	TArray<ASpectator*> Spectators;
 	UPROPERTY(Replicated)

@@ -12,9 +12,11 @@
 
 AGS::AGS() {
 	NickNames.Init(FText::FromString(TEXT(" ")), 4);
-	Kills.Init(FText::FromString(TEXT("0")), 4);
-	Deaths.Init(FText::FromString(TEXT("1")), 4);
-	Winners.Init(FText::FromString(TEXT("")), 3);
+	//Kills.Init(FText::FromString(TEXT("0")), 4);
+	//Deaths.Init(FText::FromString(TEXT("1")), 4);
+	//Winners.Init(FText::FromString(TEXT("")), 3);
+	WinnersIndex.Init(0, 0);
+	WinnersNickNames.Init(FText::FromString(TEXT("")), 0);
 	WebCam_Rotation.Init({}, 0);
 	WebCam_Location.Init({}, 0);
 	WebCam_IsEnabled.Init(true, 0);
@@ -22,7 +24,7 @@ AGS::AGS() {
 	Keys_IsAvaliable.Init(true, 0);
 	CacheItems_Stuff_Transform.Init({}, 0);
 	CacheItems_Stuff_IsAvaliable.Init(true, 0);
-	EscapeTime.Init(0, 4);
+	EscapeTime.Init(0, 0);
 	AcceptPiedistalAmount = 0;
 	AmountOfPlayers = 0;
 	AgreedPlayers = 0;
@@ -47,10 +49,10 @@ void AGS::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
-	DOREPLIFETIME(AGS, NickNames);
-	DOREPLIFETIME(AGS, Kills);
-	DOREPLIFETIME(AGS, Deaths);
-	DOREPLIFETIME(AGS, EscapeTime);
+	//DOREPLIFETIME(AGS, NickNames);
+	//DOREPLIFETIME(AGS, Kills);
+	//DOREPLIFETIME(AGS, Deaths);
+	//DOREPLIFETIME(AGS, EscapeTime);
 	DOREPLIFETIME(AGS, AreaAvaliables);
 	DOREPLIFETIME(AGS, AreaClosed);
 	DOREPLIFETIME(AGS, WebCam_Rotation);
@@ -231,7 +233,7 @@ void AGS::GameBegin() {
 void AGS::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
-	CurrentTime += DeltaSeconds; 
+	CurrentTime += DeltaSeconds;
 }
 
 void AGS::SpawnPlayers()
@@ -265,10 +267,11 @@ void AGS::ResetGame() {
 		Obj->Destroy();
 
 	NickNames.Init(FText::FromString(TEXT(" ")), 4);
-	Kills.Init(FText::FromString(TEXT("0")), 4);
-	Deaths.Init(FText::FromString(TEXT("1")), 4);
-	Winners.Init(FText::FromString(TEXT("")), 3);
-	EscapeTime.Init(0, 4);
+	//Kills.Init(FText::FromString(TEXT("0")), 4);
+	//Deaths.Init(FText::FromString(TEXT("1")), 4);
+	//Winners.Init(FText::FromString(TEXT("")), 3);
+
+	EscapeTime.Init(0, 0);
 	AcceptPiedistalAmount = 0;
 	AmountOfPlayers = 0;
 	AgreedPlayers = 0;

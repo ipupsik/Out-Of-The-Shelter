@@ -51,5 +51,6 @@ public:
 	UPROPERTY(BlueprintReadOnly)
 		AGS* GS;
 	UFinalMenu* FinalMenu;
-	int32 Index;
+	UPROPERTY(BlueprintReadOnly)
+		int32 Index;
 };
