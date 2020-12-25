@@ -17,6 +17,14 @@
 #include "CanalizationDamageCollision.h"
 #include "Code_Note.h"
 
+enum AreaType
+{
+	Canalizacia,
+	Shelter,
+	Ventilacia,
+	ShelterOpener
+};
+
 enum PickUpType {
 	Boltorez,
 	KeyShelter,
@@ -30,7 +38,6 @@ enum PickUpType {
 	InvisiblePotion,
 	CodeNote,
 	ClickButton,
-	ShelterEscape,
 };
 
 enum CacheType {
@@ -497,11 +504,11 @@ void AChel::OpenAreaPressed()
 			}
 			break;
 		}
-		case ShelterEscape:
+		case ShelterOpener:
 		{
 			if(GS->AreaAvaliables[1]) {
-			PlayerEscape(AreaCode);
-			UserView->RemoveFromParent();
+				PlayerEscape(1);
+				UserView->RemoveFromParent();
 			}
 		}
 		}
@@ -1291,7 +1298,7 @@ void AChel::PlayerOpenAreaUpdate_Implementation(int32 EscapeWay)
 {
 	TArray<AActor*>Players;
 	UGameplayStatics::GetAllActorsOfClass(World, AChel::StaticClass(), Players);
-	for (auto Player : Players) {
+	for (auto& Player : Players) {
 		AChel* Chel = Cast<AChel>(Player);
 		Chel->RefreshWidgets_Winner(EscapeWay);
 	}
@@ -1299,16 +1306,16 @@ void AChel::PlayerOpenAreaUpdate_Implementation(int32 EscapeWay)
 	TArray<AActor*>Chels;
 	if (EscapeWay != 1) {
 		GS->Areas[EscapeWay]->GetOverlappingActors(Chels);
-		for (auto Player : Chels)
+		for (auto& Player : Chels)
 		{
 			Cast<AChel>(Player)->ExitAvaliableUpdate(EscapeWay);
 		}
 	}
 	else {
-		GS->Areas[ShelterEscape]->GetOverlappingActors(Chels);
-		for (auto Player : Chels)
+		GS->Areas[3]->GetOverlappingActors(Chels);
+		for (auto& Player : Chels)
 		{
-			Cast<AChel>(Player)->ExitAvaliableUpdate(ShelterEscape);
+			Cast<AChel>(Player)->ExitAvaliableUpdate(ShelterOpener);
 		}
 	}
 }
@@ -1352,6 +1359,7 @@ bool AChel::StuffAvaliableUpdate_Validate(int32 EscapeWay)
 
 void AChel::ExitAvaliableUpdate_Implementation(int32 EscapeWay)
 {
+	AreaCode = EscapeWay;
 	UserView->EscapeText->SetVisibility(ESlateVisibility::Visible);
 }
 
