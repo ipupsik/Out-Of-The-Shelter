@@ -323,7 +323,7 @@ void AChel::Tick(float DeltaTime)
 									bLineTrace_is_need_refresh = true;
 									ItemCodePickUp = WebCamLocker;
 									UserView->E_Mark->SetVisibility(ESlateVisibility::Visible);
-
+									TracedWebCamLocker->Mesh->SetCustomDepthStencilValue(2);
 									LastWebCamLocker = TracedWebCamLocker;
 								}
 								else
@@ -351,6 +351,11 @@ void AChel::Tick(float DeltaTime)
 			if (LastItem)
 			{
 				LastItem->Item->SetCustomDepthStencilValue(0);
+			}
+
+			if (LastWebCamLocker)
+			{
+				LastWebCamLocker->Mesh->SetCustomDepthStencilValue(0);
 			}
 
 			if (LastItem && Cast<AOpenArea>(LastItem)) 
@@ -528,6 +533,11 @@ void AChel::OpenAreaReleased()
 //TimelineAnimation
 void AChel::OnTimelineFinished_Stone_First() {
 	TimeLine_Stone_Second->ReverseFromEnd();
+	if (IsPlayerOwner)
+	{
+		PlayStoneThrowSound();
+	}
+
 	if (IsServerAuth) {
 		--Ammo;
 		StoneCountUpdate(Ammo);
@@ -593,7 +603,7 @@ void AChel::ThrowStone() {
 	if (Ammo > 0 && IsEnableInput) {
 		if (!bIsAlreadyThrowing) {
 			bIsAlreadyThrowing = true;
-
+			TimeLine_Stone_First->PlayFromStart();
 			ThrowStoneServer();
 		}
 	}
@@ -601,7 +611,8 @@ void AChel::ThrowStone() {
 
 void AChel::ThrowStoneMulticast_Implementation()
 {
-	TimeLine_Stone_First->PlayFromStart();
+	if (!IsPlayerOwner)
+		TimeLine_Stone_First->PlayFromStart();
 }
 
 void AChel::ThrowStoneServer_Implementation()
@@ -784,9 +795,9 @@ void AChel::UnShowKillFeed()
 
 //PlayStartingAnimation---------------------
 void AChel::PlaySpawnAnimationSleep_Implementation() {
+	UserView->PlayAnimation(UserView->Shading);
 	FTimerHandle FuzeTimerHandle;
 	World->GetTimerManager().SetTimer(FuzeTimerHandle, this, &AChel::SleepAnimation_End, 2, false);
-	UserView->PlayAnimation(UserView->Shading);
 }
 
 void AChel::SleepAnimation_End()

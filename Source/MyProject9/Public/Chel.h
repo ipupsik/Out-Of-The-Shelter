@@ -187,6 +187,9 @@ public:
 	UFUNCTION(BlueprintImplementableEvent)
 		void InvisibleEverywhere();
 
+	UFUNCTION(BlueprintImplementableEvent)
+		void PlayStoneThrowSound();
+
 	UFUNCTION(Server, Reliable, WithValidation)
 		void OutlineBad_Server();
 

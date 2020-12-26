@@ -30,8 +30,8 @@ void AAmmoPoint::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* Oth
 	if (Player) {
 		if (Player->IsServerAuth && Enable)
 		{
-			Player->Ammo = 10;
-			Player->StoneCountUpdate(10);
+			Player->Ammo = 15;
+			Player->StoneCountUpdate(15);
 			Player->ShowStoneMulticast();
 
 			Enable = false;
@@ -51,8 +51,8 @@ void AAmmoPoint::AmmoUpdate()
 
 	if (Players.Num() != 0) {
 		AChel* Chel = Cast<AChel>(Players[0]);
-		Chel->Ammo = 10;
-		Chel->StoneCountUpdate(10);
+		Chel->Ammo = 15;
+		Chel->StoneCountUpdate(15);
 		Chel->ShowStoneMulticast();
 
 		Enable = false;
