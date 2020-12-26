@@ -31,7 +31,7 @@ class ASpectator;
 
 #define SPAWN_TIME 10.f
 
-#define COUNT_CacheKey 3
+#define COUNT_CacheKey 6
 /**
  * 
  */

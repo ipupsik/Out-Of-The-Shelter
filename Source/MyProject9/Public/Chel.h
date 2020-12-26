@@ -227,6 +227,8 @@ public:
 	UFUNCTION(NetMulticast, Reliable)
 		void ShowStoneMulticast();
 
+	void HideCustomItems(bool NewHide);
+
 	UFUNCTION(Client, Reliable)
 		void RefreshWidgets(const TArray<bool> &whatToUpdate, int KillerNickIndex, int VictimNickIndex);
 	UFUNCTION()

@@ -82,7 +82,7 @@ AChel::AChel()
 	Health = 0;
 	bIsAlreadyThrowing = false;
 	IsInGame = false;
-	Ammo = 10;
+	Ammo = 15;
 	bLineTrace_is_need_refresh = false;
 	DoesHave_Owner = false;
 	ItemCodePickUp = -1;
@@ -821,7 +821,7 @@ void AChel::PlaySpawnAnimationAwake_Implementation() {
 	CameraComp->SetRelativeRotation({ 0,0,0 });
 
 	CameraComp->SetFieldOfView(90.0f);
-	StoneCountUpdate(10);
+	StoneCountUpdate(15);
 	UserView->SetVisibility(ESlateVisibility::Visible);
 	UserView->PlayAnimation(UserView->Shading, 0, 1, EUMGSequencePlayMode::Type::Reverse);
 }
@@ -1242,9 +1242,19 @@ void AChel::GoToWebCam()
 	GoToWebCamServer(Iterator);
 }
 
+void AChel::HideCustomItems(bool NewHide)
+{
+	for (auto& CustomItem : CustomizationChilds)
+	{
+		if (CustomItem)
+			CustomItem->SetActorHiddenInGame(NewHide);
+	}
+}
+
 void AChel::GoToWebCamServer_Implementation(int32 Iterator)
 {
 	SetActorLocation(GS->WebCam_Location[Iterator]);
+	HideCustomItems(true);
 	UE_LOG(LogTemp, Warning, TEXT("Staying on webcam"));
 }
 
@@ -1266,12 +1276,13 @@ void AChel::SpawnPlayer()
 
 	CameraComp->SetFieldOfView(90.0f);
 
+	HideCustomItems(false);
 	EnableCollisionEverywhere();
 	SetActorHiddenInGame(false);
 	IsEnableInput = true;
 	IsInGame = true;
 	Health = 0;
-	Ammo = 10;
+	Ammo = 15;
 
 	TArray<AActor*> TargetPoints;
 	UGameplayStatics::GetAllActorsOfClassWithTag(World, ATargetPoint::StaticClass(), TEXT("spawn"), TargetPoints);
