@@ -32,17 +32,4 @@ void ACache::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimePr
 	DOREPLIFETIME(ACache, IsEnabled);
 }
 
-// Called when the game starts or when spawned
-void ACache::BeginPlay()
-{
-	Super::BeginPlay();
-	
-}
-
-// Called every frame
-void ACache::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-}
-
 

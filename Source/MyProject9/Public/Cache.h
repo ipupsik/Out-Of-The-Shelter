@@ -22,16 +22,17 @@ public:
 protected:
 public:
 	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
 		void Opening();
 public:	
 	void GetLifetimeReplicatedProps(TArray < FLifetimeProperty >& OutLifetimeProps) const override;
 	// Called every frame
-	virtual void Tick(float DeltaTime) override;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 		int32 CacheType;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+		int32 CacheIndex;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Player")
 		UStaticMeshComponent* Mesh;

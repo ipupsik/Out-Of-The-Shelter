@@ -20,11 +20,6 @@ void ABP_PlayerController::BeginPlay()
 	GS = GetWorld()->GetGameState<AGS>();
 }
 
-void ABP_PlayerController::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-}
-
 void ABP_PlayerController::RefreshPlayersVoteCount_Implementation(int32 Agreed, int32 Amount)
 {
 	FText NewText = FText::Format(FText::FromString(TEXT("Play More {0}/{1}")), Agreed, Amount);

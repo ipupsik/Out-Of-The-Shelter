@@ -153,6 +153,8 @@ public:
 
 	TArray<FTransform>CacheItems_Stuff_Transform;
 	TArray<bool>CacheItems_Stuff_IsAvaliable;
+	TArray<int32>CacheItems_Stuff_Type;
+
 
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
@@ -163,4 +165,14 @@ public:
 		TArray<ANumberTerminal*> NumbersOnPanel;
 	UPROPERTY(EditAnywhere)
 		FName CodeNoteTargetTag;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		TArray<FTransform> KeyShelterTransform;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		TArray<FTransform> BoltorezTransform;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		TArray<FTransform> OtvertkaTransform;
+
 };

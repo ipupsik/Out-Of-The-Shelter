@@ -31,8 +31,6 @@ public:
 
 	void BeginPlay() override;
 
-	void Tick(float DeltaTime) override;
-
 	UFUNCTION(Server, Reliable, WithValidation)
 		void ChangePlayersVoteCount();
 

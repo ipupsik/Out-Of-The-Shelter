@@ -18,20 +18,6 @@ ACanalizationButton::ACanalizationButton()
 	DoesRefresh = false;
 }
 
-// Called when the game starts or when spawned
-void ACanalizationButton::BeginPlay()
-{
-	Super::BeginPlay();
-	
-}
-
-// Called every frame
-void ACanalizationButton::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-
-}
-
 void ACanalizationButton::Open()
 {
 	DoesRefresh = true;
