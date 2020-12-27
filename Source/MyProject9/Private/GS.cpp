@@ -116,7 +116,7 @@ void AGS::BeginPlay()
 
 		for (int i = 0; i < 4; i++)
 		{
-			int ArrayIndex = 0;
+			int ArrayIndex = FMath::Rand() % CacheItems_Stuff_IsAvaliable.Num();
 			while (!CacheItems_Stuff_IsAvaliable[ArrayIndex])
 			{
 				ArrayIndex = FMath::Rand() % CacheItems_Stuff_IsAvaliable.Num();
@@ -130,17 +130,17 @@ void AGS::BeginPlay()
 
 		CurrentKeyShelter = MIN_COUNT_KeyShelter + FMath::Rand() % (MAX_COUNT_Boltorez - MIN_COUNT_KeyShelter + 1);
 		for (int i = 0; i < CurrentKeyShelter; ++i) {
-			int ArrayIndex = 0;
+			int ArrayIndex = FMath::Rand() % CacheItems_Stuff_IsAvaliable.Num();
 			while (!CacheItems_Stuff_IsAvaliable[ArrayIndex])
 			{
 				ArrayIndex = FMath::Rand() % CacheItems_Stuff_IsAvaliable.Num();
 			}
 			FTransform NewTrans = CacheItems_Stuff_Transform[ArrayIndex];
 			NewTrans.SetScale3D(KeyShelterTransform[CacheItems_Stuff_Type[ArrayIndex]].GetScale3D());
-			NewTrans.SetLocation(NewTrans.GetLocation() + KeyShelterTransform[CacheItems_Stuff_Type[ArrayIndex]].GetLocation());
-			NewTrans.SetRotation(NewTrans.GetRotation() + KeyShelterTransform[CacheItems_Stuff_Type[ArrayIndex]].GetRotation());
 
 			AActor* NewItem = GetWorld()->SpawnActor<AActor>(KeyShelter, NewTrans);
+			NewItem->AddActorLocalOffset(KeyShelterTransform[CacheItems_Stuff_Type[ArrayIndex]].GetLocation());
+			NewItem->AddActorLocalRotation(KeyShelterTransform[CacheItems_Stuff_Type[ArrayIndex]].GetRotation());
 
 			if (NewItem)
 				CacheItems_Stuff_IsAvaliable[ArrayIndex] = false;
@@ -148,19 +148,18 @@ void AGS::BeginPlay()
 		
 		CurrentBoltorez = MIN_COUNT_Boltorez + FMath::Rand() % (MAX_COUNT_Boltorez - MIN_COUNT_Boltorez + 1);
 		for (int i = 0; i < MIN_COUNT_Boltorez + FMath::Rand() % (MAX_COUNT_Boltorez - MIN_COUNT_Boltorez + 1); ++i) {
-			int ArrayIndex = 0;
+			int ArrayIndex = FMath::Rand() % CacheItems_Stuff_IsAvaliable.Num();
 			while (!CacheItems_Stuff_IsAvaliable[ArrayIndex])
 			{
 				ArrayIndex = FMath::Rand() % CacheItems_Stuff_IsAvaliable.Num();
 			}
 			FTransform NewTrans = CacheItems_Stuff_Transform[ArrayIndex];
+	
 			NewTrans.SetScale3D(BoltorezTransform[CacheItems_Stuff_Type[ArrayIndex]].GetScale3D());
-			NewTrans.SetLocation(NewTrans.GetLocation() + BoltorezTransform[CacheItems_Stuff_Type[ArrayIndex]].GetLocation());
-			NewTrans.SetRotation(NewTrans.GetRotation() + BoltorezTransform[CacheItems_Stuff_Type[ArrayIndex]].GetRotation());
-
 
 			AActor* NewItem = GetWorld()->SpawnActor<AActor>(Boltorez, NewTrans);
-
+			NewItem->AddActorLocalOffset(BoltorezTransform[CacheItems_Stuff_Type[ArrayIndex]].GetLocation());
+			NewItem->AddActorLocalRotation(BoltorezTransform[CacheItems_Stuff_Type[ArrayIndex]].GetRotation());
 			if (NewItem)
 				CacheItems_Stuff_IsAvaliable[ArrayIndex] = false;
 		}
@@ -175,11 +174,10 @@ void AGS::BeginPlay()
 
 			FTransform NewTrans = CacheItems_Stuff_Transform[ArrayIndex];
 			NewTrans.SetScale3D(OtvertkaTransform[CacheItems_Stuff_Type[ArrayIndex]].GetScale3D());
-			NewTrans.SetLocation(NewTrans.GetLocation() + OtvertkaTransform[CacheItems_Stuff_Type[ArrayIndex]].GetLocation());
-			NewTrans.SetRotation(NewTrans.GetRotation() + OtvertkaTransform[CacheItems_Stuff_Type[ArrayIndex]].GetRotation());
 
 			AActor* NewItem = GetWorld()->SpawnActor<AActor>(Otvertka, NewTrans);
-
+			NewItem->AddActorLocalOffset(OtvertkaTransform[CacheItems_Stuff_Type[ArrayIndex]].GetLocation());
+			NewItem->AddActorLocalRotation(OtvertkaTransform[CacheItems_Stuff_Type[ArrayIndex]].GetRotation());
 			if (NewItem)
 				CacheItems_Stuff_IsAvaliable[ArrayIndex] = false;
 		}

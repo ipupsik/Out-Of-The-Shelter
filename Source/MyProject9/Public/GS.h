@@ -18,13 +18,13 @@ class ASpectator;
 
 #define MAX_PLAYER_COUNT 1
 
-#define MIN_COUNT_KeyShelter 3
-#define MIN_COUNT_Boltorez 3
-#define MIN_COUNT_Otvertka 3
+#define MIN_COUNT_KeyShelter 10
+#define MIN_COUNT_Boltorez 10
+#define MIN_COUNT_Otvertka 10
 
-#define MAX_COUNT_KeySHelter 3
-#define MAX_COUNT_Boltorez 3
-#define MAX_COUNT_Otvertka 3
+#define MAX_COUNT_KeySHelter 10
+#define MAX_COUNT_Boltorez 10
+#define MAX_COUNT_Otvertka 10
 
 #define STONE_DAMAGE 0.15f
 #define DeltaRadiation 0.0f
