@@ -109,9 +109,8 @@ void AGS::BeginPlay()
 		
 		for (int i = 0; i < TargetPoints_CacheItems.Num(); ++i)
 		{
-			CacheItems_Stuff_Transform.Add(TargetPoints_CacheItems[i]->GetActorTransform());
 			CacheItems_Stuff_IsAvaliable.Add(true);
-			CacheItems_Stuff_Type.Add(Cast<ACache>(TargetPoints_CacheItems[i])->CacheIndex);
+			Caches.Add(Cast<ACache>(TargetPoints_CacheItems[i]));
 		}
 
 		for (int i = 0; i < 4; i++)
@@ -122,7 +121,7 @@ void AGS::BeginPlay()
 				ArrayIndex = FMath::Rand() % CacheItems_Stuff_IsAvaliable.Num();
 			}
 
-			AActor* NewItem = GetWorld()->SpawnActor<AActor>(InvisiblePotion, CacheItems_Stuff_Transform[ArrayIndex]);
+			AActor* NewItem = GetWorld()->SpawnActor<AActor>(InvisiblePotion, Caches[ArrayIndex]->GetActorTransform());
 
 			if (NewItem)
 				CacheItems_Stuff_IsAvaliable[ArrayIndex] = false;
@@ -135,12 +134,13 @@ void AGS::BeginPlay()
 			{
 				ArrayIndex = FMath::Rand() % CacheItems_Stuff_IsAvaliable.Num();
 			}
-			FTransform NewTrans = CacheItems_Stuff_Transform[ArrayIndex];
-			NewTrans.SetScale3D(KeyShelterTransform[CacheItems_Stuff_Type[ArrayIndex]].GetScale3D());
 
-			AActor* NewItem = GetWorld()->SpawnActor<AActor>(KeyShelter, NewTrans);
-			NewItem->AddActorLocalOffset(KeyShelterTransform[CacheItems_Stuff_Type[ArrayIndex]].GetLocation());
-			NewItem->AddActorLocalRotation(KeyShelterTransform[CacheItems_Stuff_Type[ArrayIndex]].GetRotation());
+			AActor* NewItem = GetWorld()->SpawnActor<AActor>(KeyShelter, Caches[ArrayIndex]->GetActorTransform());
+			FAttachmentTransformRules AttachmentRules = FAttachmentTransformRules(EAttachmentRule::KeepRelative, true);
+			NewItem->AttachToActor(Caches[ArrayIndex], AttachmentRules);
+			NewItem->AddActorLocalOffset(KeyShelterTransform[Caches[ArrayIndex]->CacheIndex].GetLocation());
+			NewItem->AddActorLocalRotation(KeyShelterTransform[Caches[ArrayIndex]->CacheIndex].GetRotation());
+			NewItem->SetActorScale3D(KeyShelterTransform[Caches[ArrayIndex]->CacheIndex].GetScale3D());
 
 			if (NewItem)
 				CacheItems_Stuff_IsAvaliable[ArrayIndex] = false;
@@ -153,13 +153,13 @@ void AGS::BeginPlay()
 			{
 				ArrayIndex = FMath::Rand() % CacheItems_Stuff_IsAvaliable.Num();
 			}
-			FTransform NewTrans = CacheItems_Stuff_Transform[ArrayIndex];
-	
-			NewTrans.SetScale3D(BoltorezTransform[CacheItems_Stuff_Type[ArrayIndex]].GetScale3D());
+			AActor* NewItem = GetWorld()->SpawnActor<AActor>(Boltorez, Caches[ArrayIndex]->GetActorTransform());
+			FAttachmentTransformRules AttachmentRules = FAttachmentTransformRules(EAttachmentRule::KeepRelative, true);
+			NewItem->AttachToActor(Caches[ArrayIndex], AttachmentRules);
+			NewItem->AddActorLocalOffset(KeyShelterTransform[Caches[ArrayIndex]->CacheIndex].GetLocation());
+			NewItem->AddActorLocalRotation(KeyShelterTransform[Caches[ArrayIndex]->CacheIndex].GetRotation());
+			NewItem->SetActorScale3D(KeyShelterTransform[Caches[ArrayIndex]->CacheIndex].GetScale3D());
 
-			AActor* NewItem = GetWorld()->SpawnActor<AActor>(Boltorez, NewTrans);
-			NewItem->AddActorLocalOffset(BoltorezTransform[CacheItems_Stuff_Type[ArrayIndex]].GetLocation());
-			NewItem->AddActorLocalRotation(BoltorezTransform[CacheItems_Stuff_Type[ArrayIndex]].GetRotation());
 			if (NewItem)
 				CacheItems_Stuff_IsAvaliable[ArrayIndex] = false;
 		}
@@ -172,12 +172,13 @@ void AGS::BeginPlay()
 				ArrayIndex = FMath::Rand() % CacheItems_Stuff_IsAvaliable.Num();
 			}
 
-			FTransform NewTrans = CacheItems_Stuff_Transform[ArrayIndex];
-			NewTrans.SetScale3D(OtvertkaTransform[CacheItems_Stuff_Type[ArrayIndex]].GetScale3D());
+			AActor* NewItem = GetWorld()->SpawnActor<AActor>(Otvertka, Caches[ArrayIndex]->GetActorTransform());
+			FAttachmentTransformRules AttachmentRules = FAttachmentTransformRules(EAttachmentRule::KeepRelative, true);
+			NewItem->AttachToActor(Caches[ArrayIndex], AttachmentRules);
+			NewItem->AddActorLocalOffset(KeyShelterTransform[Caches[ArrayIndex]->CacheIndex].GetLocation());
+			NewItem->AddActorLocalRotation(KeyShelterTransform[Caches[ArrayIndex]->CacheIndex].GetRotation());
+			NewItem->SetActorScale3D(KeyShelterTransform[Caches[ArrayIndex]->CacheIndex].GetScale3D());
 
-			AActor* NewItem = GetWorld()->SpawnActor<AActor>(Otvertka, NewTrans);
-			NewItem->AddActorLocalOffset(OtvertkaTransform[CacheItems_Stuff_Type[ArrayIndex]].GetLocation());
-			NewItem->AddActorLocalRotation(OtvertkaTransform[CacheItems_Stuff_Type[ArrayIndex]].GetRotation());
 			if (NewItem)
 				CacheItems_Stuff_IsAvaliable[ArrayIndex] = false;
 		}

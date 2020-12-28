@@ -7,6 +7,7 @@
 #include "Components/StaticMeshComponent.h"
 #include "Components/BoxComponent.h"
 #include "Components/SceneComponent.h"
+#include "Components/ChildActorComponent.h"
 
 #include "Cache.generated.h"
 
@@ -45,6 +46,9 @@ public:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Player")
 		USceneComponent* Scene;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Player")
+		UChildActorComponent* ChildActor;
 
 	UPROPERTY(BlueprintReadWrite, Replicated)
 		bool IsEnabled;

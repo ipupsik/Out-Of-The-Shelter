@@ -151,11 +151,8 @@ public:
 	TArray<FTransform>Keys_Transform;
 	TArray<bool>Keys_IsAvaliable;
 
-	TArray<FTransform>CacheItems_Stuff_Transform;
+	TArray<ACache*>Caches;
 	TArray<bool>CacheItems_Stuff_IsAvaliable;
-	TArray<int32>CacheItems_Stuff_Type;
-
-
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		FTransform TransformOfFirstNum;
