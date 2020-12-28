@@ -11,6 +11,7 @@
 #include "NumberTerminal.h"
 #include "Code_Note.h"
 #include "FinalMenuPawn.h"
+#include "Cache.h"
 
 #include "GS.generated.h"
 

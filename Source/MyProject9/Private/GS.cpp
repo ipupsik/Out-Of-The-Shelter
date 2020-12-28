@@ -22,7 +22,6 @@ AGS::AGS() {
 	WebCam_IsEnabled.Init(true, 0);
 	Keys_Transform.Init({}, 0);
 	Keys_IsAvaliable.Init(true, 0);
-	CacheItems_Stuff_Transform.Init({}, 0);
 	CacheItems_Stuff_IsAvaliable.Init(true, 0);
 	EscapeTime.Init(0, 0);
 	AcceptPiedistalAmount = 0;
