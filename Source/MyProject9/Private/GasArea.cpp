@@ -29,13 +29,13 @@ void AGasArea::DoSomethink()
 
 	for (auto& it : DamageArea_Targets)
 	{
-		ADamageAreaCPP* DamageActor = GetWorld()->SpawnActor<ADamageAreaCPP>(DamageAreaClass, it->GetActorTransform());
-		if(DamageActor){
-			DamageActor->areaType = areaType;
-		}
-		else {
+		//ADamageAreaCPP* DamageActor = GetWorld()->SpawnActor<ADamageAreaCPP>(DamageAreaClass, it->GetActorTransform());
+		//if(DamageActor){
+			//DamageActor->areaType = areaType;
+		//}
+		//else {
 		
-		}
+		//}
 	}
 
 	FTimerHandle FuzeTimerHandle;
