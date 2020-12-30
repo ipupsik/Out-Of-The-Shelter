@@ -13,7 +13,7 @@
 #include "Cache.h"
 #include "GeneratorArea.h"
 #include "UI/GeneratorWidget.h"
-#include "CanalizationButton.h"
+#include "ButtonCanalization.h"
 #include "WebCamLocker.h"
 #include "ClickButton.h"
 #include "UI/KillFeed.h"
@@ -346,7 +346,7 @@ public:
 	bool DoesHave_Owner;
 	APickableItem* LastItem;
 	ACache* LastCache;
-	ACanalizationButton* LastButton;
+	AButtonCanalization* LastButton;
 	//GlobalSettings
 	bool IsServerAuth;
 	bool IsPlayerOwner;

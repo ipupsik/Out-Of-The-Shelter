@@ -16,8 +16,8 @@ UCLASS()
 class MYPROJECT9_API APromptCollisionArea : public AActor
 {
 	GENERATED_BODY()
-	
-public:	
+
+public:
 
 	void GetLifetimeReplicatedProps(TArray < FLifetimeProperty >& OutLifetimeProps) const override;
 
@@ -28,7 +28,7 @@ public:
 
 	UFUNCTION()
 		void OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
-	
+
 	UFUNCTION()
 		void OnOverlapEnd(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 
@@ -46,7 +46,7 @@ public:
 
 	UPROPERTY(Replicated)
 		bool bISAvaliable;
-	
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		int32 TypePromptCollision;
 

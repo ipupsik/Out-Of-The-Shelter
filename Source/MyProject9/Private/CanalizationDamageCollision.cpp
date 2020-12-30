@@ -4,7 +4,7 @@
 #include "CanalizationDamageCollision.h"
 #include "Kismet/GameplayStatics.h"
 #include "Chel.h"
-#include "CanalizationButton.h"
+#include "ButtonCanalization.h"
 // Sets default values
 ACanalizationDamageCollision::ACanalizationDamageCollision()
 {
@@ -68,11 +68,11 @@ void ACanalizationDamageCollision::StopRadiation()
 	GetWorld()->GetTimerManager().SetTimer(FuzeTimerHandle, this, &ACanalizationDamageCollision::RefreshRadiation, 15.0f, false);
 
 	TArray<AActor*>Buttons;
-	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ACanalizationButton::StaticClass(), Buttons);
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AButtonCanalization::StaticClass(), Buttons);
 
 	for (auto& it : Buttons)
 	{
-		Cast<ACanalizationButton>(it)->DoesRefresh = false;
+		Cast<AButtonCanalization>(it)->DoesRefresh = false;
 	}
 }
 
@@ -100,11 +100,11 @@ void ACanalizationDamageCollision::RefreshRadiation()
 	}
 
 	TArray<AActor*>Buttons;
-	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ACanalizationButton::StaticClass(), Buttons);
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AButtonCanalization::StaticClass(), Buttons);
 
 	for (auto& it : Buttons)
 	{
-		ACanalizationButton* Button = Cast<ACanalizationButton>(it);
+		AButtonCanalization* Button = Cast<AButtonCanalization>(it);
 		Button->DoesRefresh = true;
 		Button->Close();
 	}
