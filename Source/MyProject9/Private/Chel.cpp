@@ -1811,41 +1811,45 @@ void AChel::UpdateTargetArrowPosition(AActor* TargetObj, UTargetArrow* ArrowWidg
 
 		FVector temp = UKismetMathLibrary::InverseTransformLocation(CameraComp->GetComponentTransform(), TargetObj->GetActorLocation());
 		FRotator CurRotation = UKismetMathLibrary::MakeRotFromX(temp);
-		UE_LOG(LogTemp, Warning, TEXT("ScreenWidth  %d"), ScreenWidth);
-		UE_LOG(LogTemp, Warning, TEXT("ScreenHeight  %d"), ScreenHeight);
-		UE_LOG(LogTemp, Warning, TEXT("ScreenPosObj.X  %d"), int32(ScreenPosObj.X));
-		UE_LOG(LogTemp, Warning, TEXT("ScreenPosObj.Y  %d"), int32(ScreenPosObj.Y));
-		if (0 <= int32(ScreenPosObj.X) && int32(ScreenPosObj.X) <= ScreenWidth && 0 <= int32(ScreenPosObj.Y) && int32(ScreenPosObj.Y) <= ScreenHeight) { //в экране
+		if (0 <= int32(ScreenPosObj.X) && int32(ScreenPosObj.X) <= ScreenWidth && 0 <= int32(ScreenPosObj.Y) && int32(ScreenPosObj.Y) <= ScreenHeight) 
+		{ //в экране
 			
 			ArrowWidget->SetVisibility(ESlateVisibility::Hidden);
 		}
-		else { //не в экране
+		else 
+		{ //не в экране
 			ArrowWidget->SetVisibility(ESlateVisibility::Visible);
 			ArrowWidget->SetRenderTransformAngle(0);
 			FVector2D NewPos; //новая позиция стрелки на экране
-			if (0 <= int32(ScreenPosObj.X) && int32(ScreenPosObj.X) <= ScreenWidth) { //сверху или снизу
+			if (0 <= int32(ScreenPosObj.X) && int32(ScreenPosObj.X) <= ScreenWidth) 
+			{ //сверху или снизу
 				float ArrowNewPosX = UKismetMathLibrary::FClamp((CurRotation.Yaw + 45.f) * ScreenWidth / 90.f, ScreenWidth * 0.05, ScreenWidth * 0.95 - 80.f);
 				NewPos.X = ArrowNewPosX;
-				if (CurRotation.Pitch < 0) { //снизу
+				if (CurRotation.Pitch < 0) 
+				{ //снизу
 					NewPos.Y = ScreenHeight * 0.95 - 80;
 					ArrowWidget->SetPositionInViewport(NewPos);
 					ArrowWidget->SetRenderTransformAngle((CurRotation.Yaw * -1.f) + 180.f);
 				}
-				else { //сверху
+				else 
+				{ //сверху
 					NewPos.Y = ScreenHeight * 0.05;
 					ArrowWidget->SetPositionInViewport(NewPos);
 					ArrowWidget->SetRenderTransformAngle(CurRotation.Yaw);
 				}
 			}
-			else { //слева или справа
+			else 
+			{ //слева или справа
 				float ArrowNewPosY = UKismetMathLibrary::FClamp((ScreenHeight / 2) -(((CurRotation.Pitch + 20.f) * ScreenHeight / 40.f) - (ScreenHeight/2)), ScreenHeight * 0.05, ScreenHeight * 0.95 - 80.f);
 				NewPos.Y = ArrowNewPosY;
-				if (CurRotation.Yaw > 0) { //справа
+				if (CurRotation.Yaw > 0) 
+				{ //справа
 					NewPos.X = ScreenWidth * 0.95 - 80.f;
 					ArrowWidget->SetPositionInViewport(NewPos);
 					ArrowWidget->SetRenderTransformAngle((CurRotation.Pitch * -1.f) + 90.f);
 				}
-				else { //слева
+				else 
+				{ //слева
 					NewPos.X = ScreenWidth * 0.05;
 					ArrowWidget->SetPositionInViewport(NewPos);
 					ArrowWidget->SetRenderTransformAngle(CurRotation.Pitch - 90.f);
@@ -1859,7 +1863,8 @@ void AChel::UpdateTargetArrowPosition(AActor* TargetObj, UTargetArrow* ArrowWidg
 void AChel::AddTargetArrow(AActor * TargetObj)
 {
 	UTargetArrow* Arrow = Cast<UTargetArrow>(CreateWidget(World, TargetArrowClass));
-	if (Arrow) {
+	if (Arrow) 
+	{
 		Arrow->AddToViewport();
 		TargetItems.Add(TargetObj);
 		TargetArrows.Add(Arrow);
@@ -1868,7 +1873,8 @@ void AChel::AddTargetArrow(AActor * TargetObj)
 
 void AChel::RemoveTargetArrow(AActor * TargetObj)
 {
-	for (int i = 0; i < TargetItems.Num(); ++i) {
+	for (int i = 0; i < TargetItems.Num(); ++i) 
+	{
 		if (TargetItems[i] == TargetObj) 
 		{
 			TargetItems.RemoveAt(i);

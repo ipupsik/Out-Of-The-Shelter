@@ -13,11 +13,21 @@ APromptCollisionArea::APromptCollisionArea()
 	Collision->OnComponentEndOverlap.AddDynamic(this, &APromptCollisionArea::OnOverlapEnd);
 
 	PromptedItems.Init(nullptr,0);
+
+	bISAvaliable = true;
+}
+
+void APromptCollisionArea::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(APromptCollisionArea, bISAvaliable);
 }
 
 void APromptCollisionArea::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
 	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex,
-	bool bFromSweep, const FHitResult& SweepResult) {
+	bool bFromSweep, const FHitResult& SweepResult) 
+{
 	UE_LOG(LogTemp, Warning, TEXT("SomebodyBeginOverlap"));
 	AChel* Player = Cast<AChel>(OtherActor);
 	if (Player) {

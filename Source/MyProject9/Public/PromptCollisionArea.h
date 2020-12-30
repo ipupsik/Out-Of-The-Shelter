@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "Net/UnrealNetwork.h"
 #include "ItemPromtArrow.h"
 #include "Components/BoxComponent.h"
 #include "Kismet/GameplayStatics.h"
@@ -17,6 +18,9 @@ class MYPROJECT9_API APromptCollisionArea : public AActor
 	GENERATED_BODY()
 	
 public:	
+
+	void GetLifetimeReplicatedProps(TArray < FLifetimeProperty >& OutLifetimeProps) const override;
+
 	// Sets default values for this actor's properties
 	APromptCollisionArea();
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
@@ -30,5 +34,11 @@ public:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Player")
 		UBoxComponent* Collision;
+
+	UPROPERTY(Replicated)
+		bool bISAvaliable;
+	
+	UPROPERTY(EditAnywhere)
+		int32 TypePromptCollision;
 
 };
