@@ -52,6 +52,18 @@ void ACanalizationDamageCollision::StopRadiation()
 		Cast<AChel>(it)->CanalizationDamage = RadiationDamageCoef;
 	}
 
+	TArray<AActor*> AreasPrompt;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), APromptCollisionArea::StaticClass(), AreasPrompt);
+	for (auto& it : AreasPrompt) {
+		APromptCollisionArea* CurAreaPrompt = Cast<APromptCollisionArea>(it);
+		if (CurAreaPrompt) {
+			if (CurAreaPrompt->TypePromptCollision == 0) {
+				CurAreaPrompt->bISAvaliable = false;
+				CurAreaPrompt->SettingAvaliableFalse();
+			}
+		}
+	}
+
 	FTimerHandle FuzeTimerHandle;
 	GetWorld()->GetTimerManager().SetTimer(FuzeTimerHandle, this, &ACanalizationDamageCollision::RefreshRadiation, 15.0f, false);
 
@@ -73,6 +85,18 @@ void ACanalizationDamageCollision::RefreshRadiation()
 	for (auto& it : Players)
 	{
 		Cast<AChel>(it)->CanalizationDamage = RadiationDamageCoef;
+	}
+
+	TArray<AActor*> AreasPrompt;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), APromptCollisionArea::StaticClass(), AreasPrompt);
+	for (auto& it : AreasPrompt) {
+		APromptCollisionArea* CurAreaPrompt = Cast<APromptCollisionArea>(it);
+		if (CurAreaPrompt) {
+			if (CurAreaPrompt->TypePromptCollision == 0) {
+				CurAreaPrompt->bISAvaliable = true;
+				CurAreaPrompt->SettingAvaliableTrue();
+			}
+		}
 	}
 
 	TArray<AActor*>Buttons;

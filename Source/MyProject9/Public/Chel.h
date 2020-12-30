@@ -81,8 +81,13 @@ public:
 
 
 	void UpdateTargetArrowPosition(AActor* TargetObj, UTargetArrow* ArrowWidget); //обновляем позицию стрелки-подсказки на экране
-	void AddTargetArrow(AActor* TargetObj); //добавляет стрелку-подсказку на экран(стрелка прикрепляется к определенному объекту)
-	void RemoveTargetArrow(AActor* TargetObj); //убирает стрелку-подсказку на экране(стрелка убирается по определенному объекту)
+	void AddTargetArrowStatic(AActor* TargetObj); //добавляет стрелку-подсказку на экран(стрелка прикрепляется к определенному объекту)
+	void RemoveTargetArrowStatic(AActor* TargetObj); //убирает стрелку-подсказку на экране(стрелка убирается по определенному объекту)
+	UFUNCTION(Server, Reliable, WithValidation)
+		void GoToDeletePromptStatic_Server();
+	UFUNCTION(Server, Reliable, WithValidation)
+		void GoToAddPromptStatic_Server();
+
 
 	UFUNCTION(Server, Reliable, WithValidation)
 		void ButtonPressAnimationServer();
@@ -413,8 +418,8 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite) //!!!!!!!!!!!!!!
 	TArray<AActor*>CustomizationChilds;
 
-	TArray<UTargetArrow*> TargetArrows; //массив со стрелками-подсказками на экране
-	TArray<AActor*> TargetItems; //массив с предметами, к которым привязаны стрелки-подсказки
+	TArray<UTargetArrow*> TargetArrowsStatic; //массив со стрелками-подсказками на экране
+	TArray<AActor*> TargetItemsStatic; //массив с предметами, к которым привязаны стрелки-подсказки
 
 	FTransform MeshTrans;
 	FRotator BaseRotation;

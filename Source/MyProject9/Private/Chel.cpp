@@ -100,8 +100,8 @@ AChel::AChel()
 //	OpenAreaObj = nullptr;
 
 	KeysCount.Init(0, 3);
-	TargetItems.Init(nullptr, 0);
-	TargetArrows.Init(nullptr, 0);
+	TargetItemsStatic.Init(nullptr, 0);
+	TargetArrowsStatic.Init(nullptr, 0);
 }
 
 //SetupReplicationVariables----
@@ -373,9 +373,9 @@ void AChel::Tick(float DeltaTime)
 			UserView->E_Mark->SetVisibility(ESlateVisibility::Hidden);
 
 		}
-		for(int i = 0; i < TargetArrows.Num(); ++i)
+		for(int i = 0; i < TargetArrowsStatic.Num(); ++i)
 		{
-			UpdateTargetArrowPosition(TargetItems[i],TargetArrows[i]);
+			UpdateTargetArrowPosition(TargetItemsStatic[i],TargetArrowsStatic[i]);
 		}
 	}
 }
@@ -1860,26 +1860,46 @@ void AChel::UpdateTargetArrowPosition(AActor* TargetObj, UTargetArrow* ArrowWidg
 
 }
 
-void AChel::AddTargetArrow(AActor * TargetObj)
+void AChel::AddTargetArrowStatic(AActor * TargetObj)
 {
 	UTargetArrow* Arrow = Cast<UTargetArrow>(CreateWidget(World, TargetArrowClass));
 	if (Arrow) 
 	{
 		Arrow->AddToViewport();
-		TargetItems.Add(TargetObj);
-		TargetArrows.Add(Arrow);
+		TargetItemsStatic.Add(TargetObj);
+		TargetArrowsStatic.Add(Arrow);
 	}
 }
 
-void AChel::RemoveTargetArrow(AActor * TargetObj)
+void AChel::RemoveTargetArrowStatic(AActor * TargetObj)
 {
-	for (int i = 0; i < TargetItems.Num(); ++i) 
+	for (int i = 0; i < TargetItemsStatic.Num(); ++i) 
 	{
-		if (TargetItems[i] == TargetObj) 
+		if (TargetItemsStatic[i] == TargetObj) 
 		{
-			TargetItems.RemoveAt(i);
-			TargetArrows[i]->RemoveFromViewport();
-			TargetArrows.RemoveAt(i);
+			TargetItemsStatic.RemoveAt(i);
+			TargetArrowsStatic[i]->RemoveFromViewport();
+			TargetArrowsStatic.RemoveAt(i);
 		}
 	}
+}
+
+void AChel::GoToDeletePromptStatic_Server_Implementation()
+{
+
+}
+
+bool AChel::GoToDeletePromptStatic_Server_Validate()
+{
+	return true;
+}
+
+void AChel::GoToAddPromptStatic_Server_Implementation()
+{
+
+}
+
+bool AChel::GoToAddPromptStatic_Server_Validate()
+{
+	return true;
 }

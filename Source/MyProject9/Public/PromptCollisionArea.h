@@ -32,13 +32,22 @@ public:
 	UFUNCTION()
 		void OnOverlapEnd(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 
+	UFUNCTION(NetMulticast, Reliable)
+		void SettingAvaliableFalse();
+
+	UFUNCTION(NetMulticast, Reliable)
+		void SettingAvaliableTrue();
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		TSubclassOf<AChel> Chel_class;
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Player")
 		UBoxComponent* Collision;
 
 	UPROPERTY(Replicated)
 		bool bISAvaliable;
 	
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		int32 TypePromptCollision;
 
 };
