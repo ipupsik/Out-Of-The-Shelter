@@ -815,7 +815,7 @@ void AChel::SleepAnimation_End()
 {
 	if (bCanPossessWebCam) {
 		UserView->SetVisibility(ESlateVisibility::Hidden);
-		GoToWebCam();
+		UpdateSpectating_Right();
 		IsAwake = false;
 	}
 	else
@@ -1243,25 +1243,6 @@ void AChel::KillPlayer()
 
 	FTimerHandle TimerHandle;
 	World->GetTimerManager().SetTimer(TimerHandle, this, &AChel::SpawnPlayer, SPAWN_TIME, false);
-}
-
-void AChel::GoToWebCam()
-{
-	int32 Iterator = FMath::Rand() % GS->WebCam_IsEnabled.Num();
-
-	while (!GS->WebCam_IsEnabled[Iterator])
-	{
-		Iterator += 1;
-
-		if (Iterator >= GS->WebCam_IsEnabled.Num())
-		{
-			Iterator -= GS->WebCam_IsEnabled.Num();
-		}
-	}
-	BaseRotation = GS->WebCam_Rotation[WebCamIterator];
-	CameraComp->SetWorldRotation(BaseRotation);
-	WebCamIterator = Iterator;
-	GoToWebCamServer(Iterator);
 }
 
 void AChel::HideCustomItems(bool NewHide)
