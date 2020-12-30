@@ -112,7 +112,7 @@ void AGS::BeginPlay()
 			Caches.Add(Cast<ACache>(TargetPoints_CacheItems[i]));
 		}
 
-		for (int i = 0; i < 4; i++)
+		/*for (int i = 0; i < 4; i++)
 		{
 			int ArrayIndex = FMath::Rand() % CacheItems_Stuff_IsAvaliable.Num();
 			while (!CacheItems_Stuff_IsAvaliable[ArrayIndex])
@@ -124,7 +124,7 @@ void AGS::BeginPlay()
 
 			if (NewItem)
 				CacheItems_Stuff_IsAvaliable[ArrayIndex] = false;
-		}
+		}*/
 
 		CurrentKeyShelter = MIN_COUNT_KeyShelter + FMath::Rand() % (MAX_COUNT_Boltorez - MIN_COUNT_KeyShelter + 1);
 		for (int i = 0; i < CurrentKeyShelter; ++i) {
