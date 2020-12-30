@@ -5,6 +5,8 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "Net/UnrealNetwork.h"
+#include "Kismet/KismetMathLibrary.h"
+#include "Blueprint/WidgetLayoutLibrary.h"
 
 #include "Spectator.h"
 #include "FinalMenuPawn.h"
@@ -29,6 +31,7 @@
 #include "UI/GeneratorWidget.h"
 #include "Components/TimelineComponent.h"
 #include "UI/NoteWidget.h"
+#include "UI/TargetArrow.h"
 #include "Components/CapsuleComponent.h"
 
 #include "Chel.generated.h"
@@ -75,6 +78,11 @@ protected:
 public:
 	void SpawnPlayer();
 	void PossessedBy(AController* NewController) override;
+
+
+	void UpdateTargetArrowPosition(AActor* TargetObj, UTargetArrow* ArrowWidget); //обновляем позицию стрелки-подсказки на экране
+	void AddTargetArrow(AActor* TargetObj); //добавляет стрелку-подсказку на экран(стрелка прикрепляется к определенному объекту)
+	void RemoveTargetArrow(AActor* TargetObj); //убирает стрелку-подсказку на экране(стрелка убирается по определенному объекту)
 
 	UFUNCTION(Server, Reliable, WithValidation)
 		void ButtonPressAnimationServer();
@@ -299,6 +307,8 @@ public:
 		TSubclassOf<UNoteWidget> NoteWidget_class;
 	UPROPERTY(EditAnywhere, Category = "UI HUD")
 		TSubclassOf<UKillFeed> KillFeed_class;
+	UPROPERTY(EditAnywhere, Category = "UI HUD") //класс стрелки подсказки
+		TSubclassOf<UTargetArrow> TargetArrowClass;
 
 	//HUD Variables
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite) //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -403,6 +413,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite) //!!!!!!!!!!!!!!
 	TArray<AActor*>CustomizationChilds;
 
+	TArray<UTargetArrow*> TargetArrows; //массив со стрелками-подсказками на экране
+	TArray<AActor*> TargetItems; //массив с предметами, к которым привязаны стрелки-подсказки
+
 	FTransform MeshTrans;
 	FRotator BaseRotation;
 
@@ -414,4 +427,6 @@ public:
 	AWebCamLocker* LastWebCamLocker;
 
 	UNoteWidget* Widget_Note;
+
+
 };

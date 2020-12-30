@@ -100,6 +100,8 @@ AChel::AChel()
 //	OpenAreaObj = nullptr;
 
 	KeysCount.Init(0, 3);
+	TargetItems.Init(nullptr, 0);
+	TargetArrows.Init(nullptr, 0);
 }
 
 //SetupReplicationVariables----
@@ -131,6 +133,7 @@ void AChel::BeginPlay()
 
 void AChel::MyBeginPlay()
 {
+	UE_LOG(LogTemp, Warning, TEXT("StartPlaying"));
 	GS = Cast<AGS>(GetWorld()->GetGameState());
 
 	IsServerAuth = GetLocalRole() == ROLE_Authority;
@@ -365,6 +368,10 @@ void AChel::Tick(float DeltaTime)
 			UserView->StopAllAnimations();
 			UserView->E_Mark->SetVisibility(ESlateVisibility::Hidden);
 
+		}
+		for(int i = 0; i < TargetArrows.Num(); ++i)
+		{
+			UpdateTargetArrowPosition(TargetItems[i],TargetArrows[i]);
 		}
 	}
 }
@@ -1804,4 +1811,84 @@ void AChel::GoToServerOpenArea_Implementation(bool IsStart)
 bool AChel::GoToServerOpenArea_Validate(bool IsStart)
 {
 	return true;
+}
+
+void AChel::UpdateTargetArrowPosition(AActor* TargetObj, UTargetArrow* ArrowWidget) {
+	if (ArrowWidget && TargetObj) {
+		APlayerController* CurPC = UGameplayStatics::GetPlayerController(World, 0);
+		FVector2D ScreenPosObj;
+		CurPC->ProjectWorldLocationToScreen(TargetObj->GetActorLocation(), ScreenPosObj);
+
+		int32 ScreenWidth = 0;
+		int32 ScreenHeight = 0;
+		CurPC->GetViewportSize(ScreenWidth, ScreenHeight);
+		
+
+		FVector temp = UKismetMathLibrary::InverseTransformLocation(CameraComp->GetComponentTransform(), TargetObj->GetActorLocation());
+		FRotator CurRotation = UKismetMathLibrary::MakeRotFromX(temp);
+		UE_LOG(LogTemp, Warning, TEXT("ScreenWidth  %d"), ScreenWidth);
+		UE_LOG(LogTemp, Warning, TEXT("ScreenHeight  %d"), ScreenHeight);
+		UE_LOG(LogTemp, Warning, TEXT("ScreenPosObj.X  %d"), int32(ScreenPosObj.X));
+		UE_LOG(LogTemp, Warning, TEXT("ScreenPosObj.Y  %d"), int32(ScreenPosObj.Y));
+		if (0 <= int32(ScreenPosObj.X) && int32(ScreenPosObj.X) <= ScreenWidth && 0 <= int32(ScreenPosObj.Y) && int32(ScreenPosObj.Y) <= ScreenHeight) { //в экране
+			
+			ArrowWidget->SetVisibility(ESlateVisibility::Hidden);
+		}
+		else { //не в экране
+			ArrowWidget->SetVisibility(ESlateVisibility::Visible);
+			ArrowWidget->SetRenderTransformAngle(0);
+			FVector2D NewPos; //новая позиция стрелки на экране
+			if (0 <= int32(ScreenPosObj.X) && int32(ScreenPosObj.X) <= ScreenWidth) { //сверху или снизу
+				float ArrowNewPosX = UKismetMathLibrary::FClamp((CurRotation.Yaw + 45.f) * ScreenWidth / 90.f, ScreenWidth * 0.05, ScreenWidth * 0.95 - 80.f);
+				NewPos.X = ArrowNewPosX;
+				if (CurRotation.Pitch < 0) { //снизу
+					NewPos.Y = ScreenHeight * 0.95 - 80;
+					ArrowWidget->SetPositionInViewport(NewPos);
+					ArrowWidget->SetRenderTransformAngle((CurRotation.Yaw * -1.f) + 180.f);
+				}
+				else { //сверху
+					NewPos.Y = ScreenHeight * 0.05;
+					ArrowWidget->SetPositionInViewport(NewPos);
+					ArrowWidget->SetRenderTransformAngle(CurRotation.Yaw);
+				}
+			}
+			else { //слева или справа
+				float ArrowNewPosY = UKismetMathLibrary::FClamp((ScreenHeight / 2) -(((CurRotation.Pitch + 20.f) * ScreenHeight / 40.f) - (ScreenHeight/2)), ScreenHeight * 0.05, ScreenHeight * 0.95 - 80.f);
+				NewPos.Y = ArrowNewPosY;
+				if (CurRotation.Yaw > 0) { //справа
+					NewPos.X = ScreenWidth * 0.95 - 80.f;
+					ArrowWidget->SetPositionInViewport(NewPos);
+					ArrowWidget->SetRenderTransformAngle((CurRotation.Pitch * -1.f) + 90.f);
+				}
+				else { //слева
+					NewPos.X = ScreenWidth * 0.05;
+					ArrowWidget->SetPositionInViewport(NewPos);
+					ArrowWidget->SetRenderTransformAngle(CurRotation.Pitch - 90.f);
+				}
+			}
+		}
+	}
+
+}
+
+void AChel::AddTargetArrow(AActor * TargetObj)
+{
+	UTargetArrow* Arrow = Cast<UTargetArrow>(CreateWidget(World, TargetArrowClass));
+	if (Arrow) {
+		Arrow->AddToViewport();
+		TargetItems.Add(TargetObj);
+		TargetArrows.Add(Arrow);
+	}
+}
+
+void AChel::RemoveTargetArrow(AActor * TargetObj)
+{
+	for (int i = 0; i < TargetItems.Num(); ++i) {
+		if (TargetItems[i] == TargetObj) 
+		{
+			TargetItems.RemoveAt(i);
+			TargetArrows[i]->RemoveFromViewport();
+			TargetArrows.RemoveAt(i);
+		}
+	}
 }
