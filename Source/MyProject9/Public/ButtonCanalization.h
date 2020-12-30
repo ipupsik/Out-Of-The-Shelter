@@ -3,24 +3,26 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "ItemPromtArrow.h"
 #include "GameFramework/Actor.h"
 #include "Components/StaticMeshComponent.h"
 #include "Components/BoxComponent.h"
+#include "ButtonCanalization.generated.h"
 
-#include "CanalizationButton.generated.h"
-
+/**
+ * 
+ */
 UCLASS()
-class MYPROJECT9_API ACanalizationButton : public AActor
+class MYPROJECT9_API AButtonCanalization : public AItemPromtArrow
 {
 	GENERATED_BODY()
-	
-public:	
+public:
 	// Sets default values for this actor's properties
-	ACanalizationButton();
+	AButtonCanalization();
 
 protected:
 
-public:	
+public:
 	UFUNCTION(NetMulticast, Reliable)
 		void DisableCollision();
 
@@ -36,8 +38,6 @@ public:
 	void Open();
 	void Close();
 public:
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Button")
-		UStaticMeshComponent* Mesh;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Button")
 		UBoxComponent* Collision;

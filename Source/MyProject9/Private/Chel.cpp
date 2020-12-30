@@ -312,7 +312,7 @@ void AChel::Tick(float DeltaTime)
 						}
 						else
 						{
-							ACanalizationButton* TracedButton = Cast<ACanalizationButton>(HittableActor);
+							AButtonCanalization* TracedButton = Cast<AButtonCanalization>(HittableActor);
 							if (TracedButton) {
 								bLineTrace_is_need_refresh = true;
 								ItemCodePickUp = CanalizationButton;
@@ -1565,7 +1565,7 @@ void AChel::ChangeButtonCount_Server_Implementation()
 
 	World->LineTraceSingleByChannel(OutHit, StartLocation, EndLocation, ECC_Visibility, CollisionParams);
 	if (OutHit.GetActor()) {
-		ACanalizationButton* TempItem = Cast<ACanalizationButton>(OutHit.GetActor());
+		AButtonCanalization* TempItem = Cast<AButtonCanalization>(OutHit.GetActor());
 		if (TempItem)
 		{
 			if (!TempItem->DoesRefresh)
