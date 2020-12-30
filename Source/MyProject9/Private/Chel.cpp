@@ -298,6 +298,8 @@ void AChel::Tick(float DeltaTime)
 					else
 					{
 						ACache* TracedCache = Cast<ACache>(HittableActor);
+						if (LastItem)
+							LastItem->Item->SetCustomDepthStencilValue(0);
 						if (TracedCache) {
 							if (TracedCache->IsEnabled && KeysCount[TracedCache->CacheType] > 0) {
 								isTracedBad = false;
@@ -321,6 +323,8 @@ void AChel::Tick(float DeltaTime)
 							else
 							{
 								AWebCamLocker* TracedWebCamLocker = Cast<AWebCamLocker>(HittableActor);
+								if (TracedCache)
+									TracedCache->Mesh->SetCustomDepthStencilValue(0);
 								if (TracedWebCamLocker)
 								{
 									bLineTrace_is_need_refresh = true;
@@ -804,7 +808,7 @@ void AChel::UnShowKillFeed()
 void AChel::PlaySpawnAnimationSleep_Implementation() {
 	UserView->PlayAnimation(UserView->Shading);
 	FTimerHandle FuzeTimerHandle;
-	World->GetTimerManager().SetTimer(FuzeTimerHandle, this, &AChel::SleepAnimation_End, 2, false);
+	World->GetTimerManager().SetTimer(FuzeTimerHandle, this, &AChel::SleepAnimation_End, 2.0f, false);
 }
 
 void AChel::SleepAnimation_End()

@@ -33,9 +33,6 @@ void AGasAreaVentil::DoSomethink()
 		if (DamageActor) {
 			DamageActor->areaType = areaType;
 		}
-		else {
-
-		}
 	}
 
 	FTimerHandle FuzeTimerHandle1;

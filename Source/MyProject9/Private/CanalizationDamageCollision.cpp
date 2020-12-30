@@ -23,8 +23,10 @@ void ACanalizationDamageCollision::OnOverlapBegin(UPrimitiveComponent* Overlappe
 {
 	if (GetLocalRole() == ROLE_Authority)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("OnBeginOverlapp"))
-		Cast<AChel>(OtherActor)->CanalizationDamage = RadiationDamageCoef;
+		UE_LOG(LogTemp, Warning, TEXT("OnBeginOverlapp"));
+		AChel* Player = Cast<AChel>(OtherActor);
+		if (Player)
+			Player->CanalizationDamage = RadiationDamageCoef;
 	}
 }
 
@@ -33,7 +35,9 @@ void ACanalizationDamageCollision::OnOverlapEnd(UPrimitiveComponent* OverlappedC
 	if (GetLocalRole() == ROLE_Authority)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("OnEndOverlapp"))
-		Cast<AChel>(OtherActor)->CanalizationDamage = 1.0f;
+			AChel* Player = Cast<AChel>(OtherActor);
+		if (Player)
+			Player->CanalizationDamage = 1.0f;
 	}
 }
 

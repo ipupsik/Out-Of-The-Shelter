@@ -22,11 +22,11 @@ void ADamageAreaCPP::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor*
 	if (GetLocalRole() == ROLE_Authority)
 	{
 		AChel* Player = Cast<AChel>(OtherActor);
-		if (Player != nullptr) {
+		if (Player) {
 			UE_LOG(LogTemp, Warning, TEXT("IsNotNullptr"));
 			Player->RadCoeff *= 2;
 			Player->AddDoubleRadiationWidget();
-		}		
+		}
 	}
 }
 

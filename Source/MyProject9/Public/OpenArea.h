@@ -30,8 +30,7 @@ public:
 		void RotateVentilServerReverse();
 	
 
-	UPROPERTY(EditAnywhere)
-		int32 areaType;
+	int32 areaType;
 	UPROPERTY(Replicated)
 		bool bIsAvaliable;
 	UPROPERTY(Replicated, BlueprintReadWrite)

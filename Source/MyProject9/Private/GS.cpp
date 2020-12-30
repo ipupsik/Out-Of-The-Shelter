@@ -134,12 +134,16 @@ void AGS::BeginPlay()
 				ArrayIndex = FMath::Rand() % CacheItems_Stuff_IsAvaliable.Num();
 			}
 
-			AActor* NewItem = GetWorld()->SpawnActor<AActor>(KeyShelter, Caches[ArrayIndex]->GetActorTransform());
+			AActor* NewItem = GetWorld()->SpawnActor<AActor>(KeyShelter);
 			FAttachmentTransformRules AttachmentRules = FAttachmentTransformRules(EAttachmentRule::KeepRelative, true);
 			NewItem->AttachToActor(Caches[ArrayIndex], AttachmentRules);
-			NewItem->AddActorLocalOffset(KeyShelterTransform[Caches[ArrayIndex]->CacheIndex].GetLocation());
-			NewItem->AddActorLocalRotation(KeyShelterTransform[Caches[ArrayIndex]->CacheIndex].GetRotation());
 			NewItem->SetActorScale3D(KeyShelterTransform[Caches[ArrayIndex]->CacheIndex].GetScale3D());
+			FVector NewLocation;
+			NewLocation.X = KeyShelterTransform[Caches[ArrayIndex]->CacheIndex].GetLocation().X / abs(Caches[ArrayIndex]->GetActorScale3D().X);
+			NewLocation.Y = KeyShelterTransform[Caches[ArrayIndex]->CacheIndex].GetLocation().Y / abs(Caches[ArrayIndex]->GetActorScale3D().Y);
+			NewLocation.Z = KeyShelterTransform[Caches[ArrayIndex]->CacheIndex].GetLocation().Z / abs(Caches[ArrayIndex]->GetActorScale3D().Z);
+			NewItem->AddActorLocalOffset(NewLocation);
+			NewItem->AddActorLocalRotation(KeyShelterTransform[Caches[ArrayIndex]->CacheIndex].GetRotation());
 
 			if (NewItem)
 				CacheItems_Stuff_IsAvaliable[ArrayIndex] = false;
@@ -152,12 +156,16 @@ void AGS::BeginPlay()
 			{
 				ArrayIndex = FMath::Rand() % CacheItems_Stuff_IsAvaliable.Num();
 			}
-			AActor* NewItem = GetWorld()->SpawnActor<AActor>(Boltorez, Caches[ArrayIndex]->GetActorTransform());
+			AActor* NewItem = GetWorld()->SpawnActor<AActor>(Boltorez);
 			FAttachmentTransformRules AttachmentRules = FAttachmentTransformRules(EAttachmentRule::KeepRelative, true);
 			NewItem->AttachToActor(Caches[ArrayIndex], AttachmentRules);
-			NewItem->AddActorLocalOffset(KeyShelterTransform[Caches[ArrayIndex]->CacheIndex].GetLocation());
-			NewItem->AddActorLocalRotation(KeyShelterTransform[Caches[ArrayIndex]->CacheIndex].GetRotation());
-			NewItem->SetActorScale3D(KeyShelterTransform[Caches[ArrayIndex]->CacheIndex].GetScale3D());
+			NewItem->SetActorScale3D(BoltorezTransform[Caches[ArrayIndex]->CacheIndex].GetScale3D());
+			FVector NewLocation;
+			NewLocation.X = BoltorezTransform[Caches[ArrayIndex]->CacheIndex].GetLocation().X / abs(Caches[ArrayIndex]->GetActorScale3D().X);
+			NewLocation.Y = BoltorezTransform[Caches[ArrayIndex]->CacheIndex].GetLocation().Y / abs(Caches[ArrayIndex]->GetActorScale3D().Y);
+			NewLocation.Z = BoltorezTransform[Caches[ArrayIndex]->CacheIndex].GetLocation().Z / abs(Caches[ArrayIndex]->GetActorScale3D().Z);
+			NewItem->AddActorLocalOffset(NewLocation);
+			NewItem->AddActorLocalRotation(BoltorezTransform[Caches[ArrayIndex]->CacheIndex].GetRotation());
 
 			if (NewItem)
 				CacheItems_Stuff_IsAvaliable[ArrayIndex] = false;
@@ -171,12 +179,16 @@ void AGS::BeginPlay()
 				ArrayIndex = FMath::Rand() % CacheItems_Stuff_IsAvaliable.Num();
 			}
 
-			AActor* NewItem = GetWorld()->SpawnActor<AActor>(Otvertka, Caches[ArrayIndex]->GetActorTransform());
+			AActor* NewItem = GetWorld()->SpawnActor<AActor>(Otvertka);
 			FAttachmentTransformRules AttachmentRules = FAttachmentTransformRules(EAttachmentRule::KeepRelative, true);
 			NewItem->AttachToActor(Caches[ArrayIndex], AttachmentRules);
-			NewItem->AddActorLocalOffset(KeyShelterTransform[Caches[ArrayIndex]->CacheIndex].GetLocation());
-			NewItem->AddActorLocalRotation(KeyShelterTransform[Caches[ArrayIndex]->CacheIndex].GetRotation());
-			NewItem->SetActorScale3D(KeyShelterTransform[Caches[ArrayIndex]->CacheIndex].GetScale3D());
+			NewItem->SetActorScale3D(OtvertkaTransform[Caches[ArrayIndex]->CacheIndex].GetScale3D());
+			FVector NewLocation;
+			NewLocation.X = OtvertkaTransform[Caches[ArrayIndex]->CacheIndex].GetLocation().X / abs(Caches[ArrayIndex]->GetActorScale3D().X);
+			NewLocation.Y = OtvertkaTransform[Caches[ArrayIndex]->CacheIndex].GetLocation().Y / abs(Caches[ArrayIndex]->GetActorScale3D().Y);
+			NewLocation.Z = OtvertkaTransform[Caches[ArrayIndex]->CacheIndex].GetLocation().Z / abs(Caches[ArrayIndex]->GetActorScale3D().Z);
+			NewItem->AddActorLocalOffset(NewLocation);
+			NewItem->AddActorLocalRotation(OtvertkaTransform[Caches[ArrayIndex]->CacheIndex].GetRotation());
 
 			if (NewItem)
 				CacheItems_Stuff_IsAvaliable[ArrayIndex] = false;

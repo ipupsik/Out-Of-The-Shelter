@@ -16,9 +16,6 @@ ACache::ACache()
 	Scene = CreateDefaultSubobject<USceneComponent>("Scene");
 	Scene->SetupAttachment(MainScene);
 
-	ChildActor = CreateDefaultSubobject<UChildActorComponent>("ChildActor");
-	ChildActor->SetupAttachment(MainScene);
-
 	Collision = CreateDefaultSubobject<UBoxComponent>("Collision");
 	Collision->SetupAttachment(Scene);
 

@@ -47,9 +47,6 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Player")
 		USceneComponent* Scene;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Player")
-		UChildActorComponent* ChildActor;
-
 	UPROPERTY(BlueprintReadWrite, Replicated)
 		bool IsEnabled;
 };
