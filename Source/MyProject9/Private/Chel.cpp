@@ -1239,16 +1239,14 @@ void AChel::RefreshWidgets_Implementation(const TArray<bool>& whatToUpdate, int 
 
 void AChel::KillPlayer()
 {
-	//GS->Deaths[Index] = FText::AsNumber(++Death);
 	TArray<AActor*>Players;
 	UGameplayStatics::GetAllActorsOfClass(World, AChel::StaticClass(), Players);
-	for (auto Player : Players)
+	for (auto& Player : Players)
 	{
 		AChel* Chel = Cast<AChel>(Player);
-		if (Chel->Index == KillerIndex)
+		if (Chel)
 		{
-			//GS->Kills[KillerIndex] = FText::AsNumber(++(Chel->Kills));
-			break;
+			Chel->DeleteStrelkaBadOutline_Client(Index);
 		}
 	}
 	DisableCollisionEverywhere();
@@ -1893,6 +1891,10 @@ void AChel::UpdateTargetArrowPosition(AActor* TargetObj, UTargetArrow* ArrowWidg
 			}
 		}
 	}
+	else if (!TargetObj) 
+	{
+		RemoveTargetArrowDynamic(ArrowWidget);
+	}
 
 }
 
@@ -1937,5 +1939,35 @@ void AChel::RemoveTargetArrowDynamic()
 		TargetItemsDynamic.RemoveAt(0);
 		TargetArrowsDynamic[0]->RemoveFromViewport();
 		TargetArrowsDynamic.RemoveAt(0);
+	}
+}
+
+void AChel::RemoveTargetArrowDynamic(UTargetArrow* ArrowObj)
+{
+	for (int i = 0; i < TargetArrowsDynamic.Num(); ++i)
+	{
+		if (TargetArrowsDynamic[i] == ArrowObj)
+		{
+			TargetArrowsDynamic.RemoveAt(i);
+			TargetItemsDynamic.RemoveAt(i);
+		}
+	}
+}
+
+void AChel::DeleteStrelkaBadOutline_Client_Implementation(int32 ChelIndex)
+{
+	RemoveArrowBadOutline(ChelIndex);
+}
+
+void AChel::RemoveArrowBadOutline(int32 ChelIndex)
+{
+	for (int i = 0; i < TargetItemsDynamic.Num(); ++i)
+	{
+		AChel* BadChel = Cast<AChel>(TargetItemsDynamic[i]);
+		if (BadChel && BadChel->Index == ChelIndex)
+		{
+			TargetItemsDynamic.RemoveAt(i);
+			TargetArrowsDynamic.RemoveAt(i);
+		}
 	}
 }

@@ -84,7 +84,12 @@ public:
 	void AddTargetArrowStatic(AActor* TargetObj); //добавляет стрелку-подсказку на экран(стрелка прикрепляется к определенному объекту)
 	void RemoveTargetArrowStatic(AActor* TargetObj); //убирает стрелку-подсказку на экране(стрелка убирается по определенному объекту)
 	void AddTargetArrowDynamic(AActor* TargetObj); //добавляет стрелку-подсказку на экран(стрелка прикрепляется к определенному объекту)
-	void RemoveTargetArrowDynamic(); //убирает стрелку-подсказку на экране(стрелка убирается по определенному объекту)
+	void RemoveTargetArrowDynamic(); //убирает стрелку-подсказку на экране
+	void RemoveTargetArrowDynamic(UTargetArrow* ArrowObj); //убирает стрелку-подсказку на экране(po etoi strelke-podskazke)
+
+	UFUNCTION(Client, Reliable)
+		void DeleteStrelkaBadOutline_Client(int32 ChelIndex);
+	void RemoveArrowBadOutline(int32 ChelIndex); //убирает стрелку-подсказку на экране, которая указывает на плохо обведенного чела(который щас подох)
 
 
 	UFUNCTION(Server, Reliable, WithValidation)
