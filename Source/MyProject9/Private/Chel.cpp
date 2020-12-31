@@ -1845,9 +1845,14 @@ void AChel::UpdateTargetArrowPosition(AActor* TargetObj, UTargetArrow* ArrowWidg
 
 		FVector temp = UKismetMathLibrary::InverseTransformLocation(CameraComp->GetComponentTransform(), TargetObj->GetActorLocation());
 		FRotator CurRotation = UKismetMathLibrary::MakeRotFromX(temp);
+		UE_LOG(LogTemp, Warning, TEXT("Screen width %d"), ScreenWidth);
+		UE_LOG(LogTemp, Warning, TEXT("Screen height %d"), ScreenHeight);
+		UE_LOG(LogTemp, Warning, TEXT("ScreenPosObj.X %d"), ScreenPosObj.X);
+		UE_LOG(LogTemp, Warning, TEXT("ScreenPosObj.Y %d"), ScreenPosObj.Y);
+		UE_LOG(LogTemp, Warning, TEXT("You looking at Actor!"));
 		if (0 <= int32(ScreenPosObj.X) && int32(ScreenPosObj.X) <= ScreenWidth && 0 <= int32(ScreenPosObj.Y) && int32(ScreenPosObj.Y) <= ScreenHeight) 
 		{ //в экране
-			
+			UE_LOG(LogTemp, Warning, TEXT("You looking at Actor!"));
 			ArrowWidget->SetVisibility(ESlateVisibility::Hidden);
 		}
 		else 
