@@ -204,6 +204,9 @@ public:
 		void InvisibleEverywhere();
 
 	UFUNCTION(BlueprintImplementableEvent)
+		void PofigKakNaz(AActor* SDJHfgActor);
+
+	UFUNCTION(BlueprintImplementableEvent)
 		void PlayStoneThrowSound();
 
 	UFUNCTION(Server, Reliable, WithValidation)
@@ -366,7 +369,8 @@ public:
 	UPROPERTY(EditAnywhere, Replicated, Category = "Settings")
 		FText NickName;
 
-
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		FVector2D ScreenPosObj;
 	//TimeLine
 	UTimelineComponent* TimeLine_Stone_First;
 	UTimelineComponent* TimeLine_Stone_Second;

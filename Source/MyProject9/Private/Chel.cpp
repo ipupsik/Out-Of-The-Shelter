@@ -1835,9 +1835,9 @@ bool AChel::GoToServerOpenArea_Validate(bool IsStart)
 void AChel::UpdateTargetArrowPosition(AActor* TargetObj, UTargetArrow* ArrowWidget) {
 	if (ArrowWidget && TargetObj) {
 		APlayerController* CurPC = UGameplayStatics::GetPlayerController(World, 0);
-		FVector2D ScreenPosObj;
-		CurPC->ProjectWorldLocationToScreen(TargetObj->GetActorLocation(), ScreenPosObj, true);
-
+		//ScreenPosObj = PofigKakNaz(TargetObj);
+		PofigKakNaz(TargetObj);
+		//CurPC->ProjectWorldLocationToScreen(TargetObj->GetActorLocation(), ScreenPosObj, true);
 		int32 ScreenWidth = 0;
 		int32 ScreenHeight = 0;
 		CurPC->GetViewportSize(ScreenWidth, ScreenHeight);
