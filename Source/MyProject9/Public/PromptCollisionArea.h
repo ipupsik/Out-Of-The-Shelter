@@ -38,9 +38,6 @@ public:
 	UFUNCTION(NetMulticast, Reliable)
 		void SettingAvaliableTrue();
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		TSubclassOf<AChel> Chel_class;
-
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Player")
 		UBoxComponent* Collision;
 

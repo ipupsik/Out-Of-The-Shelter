@@ -62,7 +62,7 @@ void APromptCollisionArea::OnOverlapEnd(UPrimitiveComponent* OverlappedComp, AAc
 void APromptCollisionArea::SettingAvaliableFalse_Implementation()
 {
 	TArray<AActor*> Chels;
-	GetOverlappingActors(Chels, Chel_class);
+	GetOverlappingActors(Chels, AChel::StaticClass());
 	for (auto& it : Chels) 
 	{
 		AChel* CurChel = Cast<AChel>(it);
@@ -79,7 +79,7 @@ void APromptCollisionArea::SettingAvaliableFalse_Implementation()
 void APromptCollisionArea::SettingAvaliableTrue_Implementation()
 {
 	TArray<AActor*> Chels;
-	GetOverlappingActors(Chels, Chel_class);
+	GetOverlappingActors(Chels, AChel::StaticClass());
 	for (auto& it : Chels)
 	{
 		AChel* CurChel = Cast<AChel>(it);

@@ -102,6 +102,8 @@ AChel::AChel()
 	KeysCount.Init(0, 3);
 	TargetItemsStatic.Init(nullptr, 0);
 	TargetArrowsStatic.Init(nullptr, 0);
+	TargetArrowsDynamic.Init(nullptr, 0);
+	TargetItemsDynamic.Init(nullptr, 0);
 }
 
 //SetupReplicationVariables----
@@ -376,6 +378,10 @@ void AChel::Tick(float DeltaTime)
 		for(int i = 0; i < TargetArrowsStatic.Num(); ++i)
 		{
 			UpdateTargetArrowPosition(TargetItemsStatic[i],TargetArrowsStatic[i]);
+		}
+		for (int i = 0; i < TargetArrowsDynamic.Num(); ++i)
+		{
+			UpdateTargetArrowPosition(TargetItemsDynamic[i], TargetArrowsDynamic[i]);
 		}
 	}
 }
@@ -806,6 +812,16 @@ void AChel::UnShowKillFeed()
 
 //PlayStartingAnimation---------------------
 void AChel::PlaySpawnAnimationSleep_Implementation() {
+	for (int i = 0; i < TargetArrowsStatic.Num(); ++i)
+	{
+		TargetArrowsStatic.RemoveAt(i);
+		TargetItemsStatic.RemoveAt(i);
+	}
+	for (int i = 0; i < TargetArrowsDynamic.Num(); ++i)
+	{
+		TargetArrowsDynamic.RemoveAt(i);
+		TargetItemsDynamic.RemoveAt(i);
+	}
 	UserView->PlayAnimation(UserView->Shading);
 	FTimerHandle FuzeTimerHandle;
 	World->GetTimerManager().SetTimer(FuzeTimerHandle, this, &AChel::SleepAnimation_End, 2.0f, false);
@@ -1490,6 +1506,22 @@ void AChel::ChangeGeneratorStas_Implementation()
 	if (GenAreaObj->Stadiya >= 3) {
 		GenAreaObj->Stadiya = 0;
 		GenAreaObj->DoSomethinkGen();
+
+		TArray<AActor*> temp;
+		UGameplayStatics::GetAllActorsOfClass(World, APromptCollisionArea::StaticClass(), temp);
+		for (auto& it : temp) {
+			APromptCollisionArea* CurAreaPromt = Cast<APromptCollisionArea>(it);
+			if (CurAreaPromt)
+			{
+				if (CurAreaPromt->TypePromptCollision == 1)
+				{
+					CurAreaPromt->bISAvaliable = false;
+					CurAreaPromt->SettingAvaliableFalse();
+				}
+			}
+		}
+
+
 		ShowRandomItem();
 
 		TArray<AActor*> Players;
@@ -1593,15 +1625,17 @@ bool AChel::ChangeButtonCount_Server_Validate()
 
 void AChel::RefreshOutline()
 {
+	Cast<AChel>(UGameplayStatics::GetPlayerCharacter(World, 0))->RemoveTargetArrowDynamic();
 	PoseableMeshComp->SetCustomDepthStencilValue(0);
 }
 
 void AChel::OutlineBad_Multicast_Implementation()
 {
 	PoseableMeshComp->SetCustomDepthStencilValue(1);
-
+	
+	Cast<AChel>(UGameplayStatics::GetPlayerCharacter(World, 0))->AddTargetArrowDynamic(this);
 	FTimerHandle FuzeTimerHandle;
-	GetWorld()->GetTimerManager().SetTimer(FuzeTimerHandle, this, &AChel::RefreshOutline, 2, false);
+	GetWorld()->GetTimerManager().SetTimer(FuzeTimerHandle, this, &AChel::RefreshOutline, 7, false);
 }
 
 
@@ -1631,9 +1665,10 @@ void AChel::ShowRandomItem_Implementation() {
 	{
 		LastOutlineItem = ImportantItems[FMath::Rand() % ImportantItems.Num()];
 		LastOutlineItem->Item->SetCustomDepthStencilValue(2);
+		AddTargetArrowDynamic(LastOutlineItem);
 
 		FTimerHandle FuzeTimerHandle;
-		World->GetTimerManager().SetTimer(FuzeTimerHandle, this, &AChel::HideRandomItem, 5, false);
+		World->GetTimerManager().SetTimer(FuzeTimerHandle, this, &AChel::HideRandomItem, 7, false);
 
 	}
 }
@@ -1643,6 +1678,7 @@ void AChel::HideRandomItem() {
 	{
 		LastOutlineItem->Item->SetCustomDepthStencilValue(0);
 		LastOutlineItem = nullptr;
+		RemoveTargetArrowDynamic();
 	}
 }
 
@@ -1884,22 +1920,22 @@ void AChel::RemoveTargetArrowStatic(AActor * TargetObj)
 	}
 }
 
-void AChel::GoToDeletePromptStatic_Server_Implementation()
+void AChel::AddTargetArrowDynamic(AActor * TargetObj)
 {
-
+	UTargetArrow* Arrow = Cast<UTargetArrow>(CreateWidget(World, TargetArrowClass));
+	if (Arrow)
+	{
+		Arrow->AddToViewport();
+		TargetItemsDynamic.Add(TargetObj);
+		TargetArrowsDynamic.Add(Arrow);
+	}
 }
 
-bool AChel::GoToDeletePromptStatic_Server_Validate()
+void AChel::RemoveTargetArrowDynamic() 
 {
-	return true;
-}
-
-void AChel::GoToAddPromptStatic_Server_Implementation()
-{
-
-}
-
-bool AChel::GoToAddPromptStatic_Server_Validate()
-{
-	return true;
+	if (TargetItemsDynamic.Num() != 0) {
+		TargetItemsDynamic.RemoveAt(0);
+		TargetArrowsDynamic[0]->RemoveFromViewport();
+		TargetArrowsDynamic.RemoveAt(0);
+	}
 }

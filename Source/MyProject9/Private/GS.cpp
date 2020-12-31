@@ -9,6 +9,7 @@
 #include "GM.h"
 #include "Cache_Key.h"
 #include "WebCamPoint.h"
+#include "PromptCollisionArea.h"
 
 AGS::AGS() {
 	NickNames.Init(FText::FromString(TEXT(" ")), 4);
@@ -427,6 +428,20 @@ void AGS::ChangeLamp_Neutral()
 
 void AGS::RefreshGenerator()
 {
+	TArray<AActor*> temp;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), APromptCollisionArea::StaticClass(), temp);
+	for (auto& it : temp) {
+		APromptCollisionArea* CurAreaPromt = Cast<APromptCollisionArea>(it);
+		if (CurAreaPromt)
+		{
+			if(CurAreaPromt->TypePromptCollision == 1) 
+			{
+				CurAreaPromt->bISAvaliable = true;
+				CurAreaPromt->SettingAvaliableTrue();
+			}			
+		}
+	}
+
 	TArray<AActor*> Generator;
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AGeneratorArea::StaticClass(), Generator);
 
