@@ -32,6 +32,8 @@ void ASpectator::BeginPlay()
 	Super::BeginPlay();
 	
 	GS = Cast<AGS>(GetWorld()->GetGameState());
+	if (GetLocalRole() == ROLE_AutonomousProxy)
+		Sensetivity = GetWorld()->GetGameInstance<UGI>()->Sensetivity;
 }
 
 void ASpectator::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const

@@ -185,8 +185,9 @@ void AChel::MyBeginPlay()
 		UserView->AmmoLabel->SetText(FText::AsNumber((int32)Ammo));
 
 		if (GI != nullptr) {
-			Sensetivity = 1.0f /*GI->Sensetivity*/;
-			DeliverNicknameToServer(FText::FromString("NickName"));
+			Sensetivity = GI->Sensetivity;
+			NickName = GI->NickName;
+			DeliverNicknameToServer(NickName);
 		}
 	}
 
@@ -860,178 +861,177 @@ void AChel::PlaySpawnAnimationAwake_Implementation() {
 
 	CameraComp->SetFieldOfView(90.0f);
 	StoneCountUpdate(15);
+	ShowStoneMulticast();
 	UserView->SetVisibility(ESlateVisibility::Visible);
 	UserView->PlayAnimation(UserView->Shading, 0, 1, EUMGSequencePlayMode::Type::Reverse);
 }
 
 //-----------------------------
 void AChel::PickUp() {
-	if (bCanWalkingAndWatching) {
-		if (IsEnableInput) {
-			if (ItemCodePickUp != -1) {
-				IsSuccessOpening = true;
-				switch (ItemCodePickUp) {
-				case Boltorez:
+	if (IsEnableInput) {
+		if (ItemCodePickUp != -1) {
+			IsSuccessOpening = true;
+			switch (ItemCodePickUp) {
+			case Boltorez:
+			{
+				UserView->WS_Boltorez->SetActiveWidgetIndex(1);
+				DoesHave_Owner = true;
+				NewHaveItemServer(ItemCodePickUp);
+				break;
+			}
+			case KeyShelter:
+			{
+				UserView->WS_KeyShelter->SetActiveWidgetIndex(1);
+				DoesHave_Owner = true;
+				NewHaveItemServer(ItemCodePickUp);
+				break;
+			}
+			case Otvertka:
+			{
+				UserView->WS_Otvertka->SetActiveWidgetIndex(1);
+				DoesHave_Owner = true;
+				NewHaveItemServer(ItemCodePickUp);
+				break;
+			}
+			case CacheKey:
+			{
+				int KeyType = Cast<ACache_Key>(LastItem)->KeyType;
+				switch (KeyType)
 				{
-					UserView->WS_Boltorez->SetActiveWidgetIndex(1);
-					DoesHave_Owner = true;
-					NewHaveItemServer(ItemCodePickUp);
+				case KeyBronze:
+				{
+					UserView->KeyLeft_Bronze->SetText(FText::AsNumber(KeysCount[KeyBronze] + 1));
 					break;
 				}
-				case KeyShelter:
+				case KeySilver:
 				{
-					UserView->WS_KeyShelter->SetActiveWidgetIndex(1);
-					DoesHave_Owner = true;
-					NewHaveItemServer(ItemCodePickUp);
+					UserView->KeyLeft_Silver->SetText(FText::AsNumber(KeysCount[KeySilver] + 1));
 					break;
 				}
-				case Otvertka:
+				case KeyGold:
 				{
-					UserView->WS_Otvertka->SetActiveWidgetIndex(1);
-					DoesHave_Owner = true;
-					NewHaveItemServer(ItemCodePickUp);
+					UserView->KeyLeft_Gold->SetText(FText::AsNumber(KeysCount[KeyGold] + 1));
 					break;
 				}
-				case CacheKey:
-				{
-					int KeyType = Cast<ACache_Key>(LastItem)->KeyType;
-					switch (KeyType)
-					{
-					case KeyBronze:
-					{
-						UserView->KeyLeft_Bronze->SetText(FText::AsNumber(KeysCount[KeyBronze] + 1));
-						break;
-					}
-					case KeySilver:
-					{
-						UserView->KeyLeft_Silver->SetText(FText::AsNumber(KeysCount[KeySilver] + 1));
-						break;
-					}
-					case KeyGold:
-					{
-						UserView->KeyLeft_Gold->SetText(FText::AsNumber(KeysCount[KeyGold] + 1));
-						break;
-					}
-					}
-					KeysCount[KeyType]++;
-					DoesHave_Owner = true;
-					NewHaveItemServer(ItemCodePickUp);
-					break;
 				}
-				case Cache:
-				{
-					if (LastCache != nullptr) {
-						if (KeysCount[LastCache->CacheType] > 0)
+				KeysCount[KeyType]++;
+				DoesHave_Owner = true;
+				NewHaveItemServer(ItemCodePickUp);
+				break;
+			}
+			case Cache:
+			{
+				if (LastCache != nullptr) {
+					if (KeysCount[LastCache->CacheType] > 0)
+					{
+						switch (LastCache->CacheType)
 						{
-							switch (LastCache->CacheType)
-							{
-							case KeyBronze:
-							{
-								UserView->KeyLeft_Bronze->SetText(FText::AsNumber(KeysCount[KeyBronze] - 1));
-								break;
-							}
-							case KeySilver:
-							{
-								UserView->KeyLeft_Silver->SetText(FText::AsNumber(KeysCount[KeySilver] - 1));
-								break;
-							}
-							case KeyGold:
-							{
-								UserView->KeyLeft_Gold->SetText(FText::AsNumber(KeysCount[KeyGold] - 1));
-								break;
-							}
-							}
-							KeysCount[LastCache->CacheType]--;
-							UserView->E_Mark->SetVisibility(ESlateVisibility::Hidden);
-							ChangeIsAvaliableCache();
+						case KeyBronze:
+						{
+							UserView->KeyLeft_Bronze->SetText(FText::AsNumber(KeysCount[KeyBronze] - 1));
+							break;
 						}
+						case KeySilver:
+						{
+							UserView->KeyLeft_Silver->SetText(FText::AsNumber(KeysCount[KeySilver] - 1));
+							break;
+						}
+						case KeyGold:
+						{
+							UserView->KeyLeft_Gold->SetText(FText::AsNumber(KeysCount[KeyGold] - 1));
+							break;
+						}
+						}
+						KeysCount[LastCache->CacheType]--;
+						UserView->E_Mark->SetVisibility(ESlateVisibility::Hidden);
+						ChangeIsAvaliableCache();
 					}
-					else
-					{
-						UE_LOG(LogTemp, Warning, TEXT("LastCache is nullptr"))
-					}
-					break;
+				}
+				else
+				{
+					UE_LOG(LogTemp, Warning, TEXT("LastCache is nullptr"))
+				}
+				break;
 
-				}
-				case CanalizationButton:
+			}
+			case CanalizationButton:
+			{
+				UserView->E_Mark->SetVisibility(ESlateVisibility::Hidden);
+				ChangeButtonCount_Server();
+				break;
+			}
+			case WebCamLocker:
+			{
+				LockWebCam_Server();
+				break;
+			}
+			case InvisiblePotion:
+			{
+				AddInvisibleServer();
+				break;
+			}
+			case CodeNote:
+			{
+				if (Widget_Note->IsVisible())
 				{
-					UserView->E_Mark->SetVisibility(ESlateVisibility::Hidden);
-					ChangeButtonCount_Server();
-					break;
+					Widget_Note->SetVisibility(ESlateVisibility::Hidden);
+					bCanWalkingAndWatching = true;
 				}
-				case WebCamLocker:
+				else
 				{
-					LockWebCam_Server();
-					break;
+					Widget_Note->ChangeText(GS->CodeGenerator);
+					Widget_Note->SetVisibility(ESlateVisibility::Visible);
+					bCanWalkingAndWatching = false;
 				}
-				case InvisiblePotion:
+				break;
+			}
+			case ClickButton:
+			{
+				AClickButton* CurButton = Cast<AClickButton>(LastItem);
+				if (GS->IsCodeTerminalAvaliable && !GS->ButtonPlayAnim && CurButton)
 				{
-					AddInvisibleServer();
-					break;
-				}
-				case CodeNote:
-				{
-					if (Widget_Note->IsVisible())
-					{
-						Widget_Note->SetVisibility(ESlateVisibility::Hidden);
-						bCanWalkingAndWatching = true;
+					if (CurButton->ButtonType <= 9) {
+						if (GS->NumbersOnPanel.Num() <= 4) {
+							AddNumToTerminalServer(CurButton->ButtonType);
+							ButtonPressAnimationServer();
+						}
 					}
-					else
-					{
-						Widget_Note->ChangeText(GS->CodeGenerator);
-						Widget_Note->SetVisibility(ESlateVisibility::Visible);
-						bCanWalkingAndWatching = false;
-					}
-					break;
-				}
-				case ClickButton:
-				{
-					AClickButton* CurButton = Cast<AClickButton>(LastItem);
-					if (GS->IsCodeTerminalAvaliable && !GS->ButtonPlayAnim && CurButton)
-					{
-						if (CurButton->ButtonType <= 9) {
-							if (GS->NumbersOnPanel.Num() <= 4) {
-								AddNumToTerminalServer(CurButton->ButtonType);
+					else {
+						if (CurButton->ButtonType == 10) {
+							if (GS->NumbersOnPanel.Num() > 0) {
+								DeleteLAstNumServer();
 								ButtonPressAnimationServer();
 							}
 						}
-						else {
-							if (CurButton->ButtonType == 10) {
-								if (GS->NumbersOnPanel.Num() > 0) {
-									DeleteLAstNumServer();
-									ButtonPressAnimationServer();
-								}
-							}
-							else
-							{
-								CheckCodeServer();
-								ButtonPressAnimationServer();
-							}
+						else
+						{
+							CheckCodeServer();
+							ButtonPressAnimationServer();
 						}
 					}
-					break;
 				}
-				case OpenArea:
+				break;
+			}
+			case OpenArea:
+			{
+				AOpenArea* CurOpArea = Cast<AOpenArea>(LastItem);
+				if (!CurOpArea->bIsUsed)
 				{
-					AOpenArea* CurOpArea = Cast<AOpenArea>(LastItem);
-					if (!CurOpArea->bIsUsed) 
-					{
-						if (CurOpArea != nullptr && CurOpArea->bIsAvaliable) {
-							UserView->PB_Opening->SetVisibility(ESlateVisibility::Visible);
-							UserView->TimeLeft->SetVisibility(ESlateVisibility::Visible);
-						}
-						UserView->PlayAnimation(UserView->OpenAreaAnim, CurOpArea->CurTimeVentil);
-						GoToServerOpenArea(true);
-						break;
+					if (CurOpArea != nullptr && CurOpArea->bIsAvaliable) {
+						UserView->PB_Opening->SetVisibility(ESlateVisibility::Visible);
+						UserView->TimeLeft->SetVisibility(ESlateVisibility::Visible);
 					}
-				}
+					UserView->PlayAnimation(UserView->OpenAreaAnim, CurOpArea->CurTimeVentil);
+					GoToServerOpenArea(true);
+					break;
 				}
 			}
+			}
 		}
-		else
-		{
-			TimeLine_FOV_WebCam->Play();
-		}
+	}
+	else
+	{
+		TimeLine_FOV_WebCam->Play();
 	}
 }
 
@@ -1040,7 +1040,7 @@ void AChel::PickUp_Released()
 	if (bCanWalkingAndWatching) {
 		if (IsEnableInput) {
 			IsSuccessOpening = false;
-			if (Cast<AOpenArea>(LastItem)) 
+			if (Cast<AOpenArea>(LastItem))
 			{
 				GoToServerOpenArea(false);
 			}
@@ -1631,7 +1631,8 @@ void AChel::OutlineBad_Multicast_Implementation()
 {
 	PoseableMeshComp->SetCustomDepthStencilValue(1);
 	
-	Cast<AChel>(UGameplayStatics::GetPlayerCharacter(World, 0))->AddTargetArrowDynamic(this);
+	if (!IsPlayerOwner)
+		Cast<AChel>(UGameplayStatics::GetPlayerCharacter(World, 0))->AddTargetArrowDynamic(this);
 	FTimerHandle FuzeTimerHandle;
 	GetWorld()->GetTimerManager().SetTimer(FuzeTimerHandle, this, &AChel::RefreshOutline, 7, false);
 }
@@ -1639,7 +1640,8 @@ void AChel::OutlineBad_Multicast_Implementation()
 
 void AChel::OutlineBad_Server_Implementation()
 {
-	OutlineBad_Multicast();
+	if (PoseableMeshComp->CustomDepthStencilValue != 1)
+		OutlineBad_Multicast();
 }
 
 bool AChel::OutlineBad_Server_Validate()
@@ -1954,6 +1956,7 @@ void AChel::RemoveTargetArrowDynamic(UTargetArrow* ArrowObj)
 		if (TargetArrowsDynamic[i] == ArrowObj)
 		{
 			TargetArrowsDynamic.RemoveAt(i);
+			TargetArrowsDynamic[i]->RemoveFromParent();
 			TargetItemsDynamic.RemoveAt(i);
 		}
 	}
@@ -1972,6 +1975,7 @@ void AChel::RemoveArrowBadOutline(int32 ChelIndex)
 		if (BadChel && BadChel->Index == ChelIndex)
 		{
 			TargetItemsDynamic.RemoveAt(i);
+			TargetArrowsDynamic[i]->RemoveFromParent();
 			TargetArrowsDynamic.RemoveAt(i);
 		}
 	}

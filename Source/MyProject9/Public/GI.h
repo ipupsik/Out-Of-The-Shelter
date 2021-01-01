@@ -21,6 +21,8 @@ public:
 
 	UPROPERTY(EditAnywhere, Category = "UI HUD")
 		TSubclassOf<UFinalMenu> FinalMenuClass;
-	float Sensetivity;
-	FText NickName;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		float Sensetivity;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		FText NickName;
 };
