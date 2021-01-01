@@ -6,6 +6,8 @@
 #include "GameFramework/Actor.h"
 #include "WebCamPoint.generated.h"
 
+class AChel;
+
 UCLASS()
 class MYPROJECT9_API AWebCamPoint : public AActor
 {
@@ -19,4 +21,5 @@ public:
 	bool is_Enabled;
 	UPROPERTY(EditAnywhere)
 		int Index;
+	AChel* CurChelix;
 };

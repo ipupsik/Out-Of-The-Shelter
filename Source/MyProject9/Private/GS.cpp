@@ -13,14 +13,8 @@
 
 AGS::AGS() {
 	NickNames.Init(FText::FromString(TEXT(" ")), 4);
-	//Kills.Init(FText::FromString(TEXT("0")), 4);
-	//Deaths.Init(FText::FromString(TEXT("1")), 4);
-	//Winners.Init(FText::FromString(TEXT("")), 3);
 	WinnersIndex.Init(0, 0);
 	WinnersNickNames.Init(FText::FromString(TEXT("")), 0);
-	WebCam_Rotation.Init({}, 0);
-	WebCam_Location.Init({}, 0);
-	WebCam_IsEnabled.Init(true, 0);
 	Keys_Transform.Init({}, 0);
 	Keys_IsAvaliable.Init(true, 0);
 	CacheItems_Stuff_IsAvaliable.Init(true, 0);
@@ -49,15 +43,8 @@ void AGS::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
-	//DOREPLIFETIME(AGS, NickNames);
-	//DOREPLIFETIME(AGS, Kills);
-	//DOREPLIFETIME(AGS, Deaths);
-	//DOREPLIFETIME(AGS, EscapeTime);
 	DOREPLIFETIME(AGS, AreaAvaliables);
 	DOREPLIFETIME(AGS, AreaClosed);
-	DOREPLIFETIME(AGS, WebCam_Rotation);
-	DOREPLIFETIME(AGS, WebCam_Location);
-	DOREPLIFETIME(AGS, WebCam_IsEnabled);
 	DOREPLIFETIME(AGS, CodeGenerator);
 	DOREPLIFETIME(AGS, IsCodeTerminalAvaliable);
 	DOREPLIFETIME(AGS, ButtonPlayAnim);
@@ -97,9 +84,8 @@ void AGS::BeginPlay()
 		for (int i = 0; i < WebCamSpectators.Num(); ++i)
 		{
 			UE_LOG(LogTemp, Warning, TEXT("Index - %d"), Cast<AWebCamPoint>(WebCamSpectators[i])->Index);
-			WebCam_Location.Add(WebCamSpectators[i]->GetActorLocation());
-			WebCam_Rotation.Add(WebCamSpectators[i]->GetActorRotation());
-			WebCam_IsEnabled.Add(true);
+			WebCams.Add(Cast<AWebCamPoint>(WebCamSpectators[i]));
+			WebCams[i]->is_Enabled = true;
 		}
 
 		//----------------------------Cache Items
@@ -134,7 +120,6 @@ void AGS::BeginPlay()
 			{
 				ArrayIndex = FMath::Rand() % CacheItems_Stuff_IsAvaliable.Num();
 			}
-
 			AActor* NewItem = GetWorld()->SpawnActor<AActor>(KeyShelter);
 			FAttachmentTransformRules AttachmentRules = FAttachmentTransformRules(EAttachmentRule::KeepRelative, true);
 			NewItem->AttachToActor(Caches[ArrayIndex], AttachmentRules);
@@ -145,7 +130,7 @@ void AGS::BeginPlay()
 			NewLocation.Z = KeyShelterTransform[Caches[ArrayIndex]->CacheIndex].GetLocation().Z / abs(Caches[ArrayIndex]->GetActorScale3D().Z);
 			NewItem->AddActorLocalOffset(NewLocation);
 			NewItem->AddActorLocalRotation(KeyShelterTransform[Caches[ArrayIndex]->CacheIndex].GetRotation());
-
+			Cast<APickableItem>(NewItem)->EnabledArrayIndex = ArrayIndex;
 			if (NewItem)
 				CacheItems_Stuff_IsAvaliable[ArrayIndex] = false;
 		}
@@ -167,14 +152,14 @@ void AGS::BeginPlay()
 			NewLocation.Z = BoltorezTransform[Caches[ArrayIndex]->CacheIndex].GetLocation().Z / abs(Caches[ArrayIndex]->GetActorScale3D().Z);
 			NewItem->AddActorLocalOffset(NewLocation);
 			NewItem->AddActorLocalRotation(BoltorezTransform[Caches[ArrayIndex]->CacheIndex].GetRotation());
-
+			Cast<APickableItem>(NewItem)->EnabledArrayIndex = ArrayIndex;
 			if (NewItem)
 				CacheItems_Stuff_IsAvaliable[ArrayIndex] = false;
 		}
 
 		CurrentOtvertka = MIN_COUNT_Otvertka + FMath::Rand() % (MAX_COUNT_Otvertka - MIN_COUNT_Otvertka + 1);
 		for (int i = 0; i < CurrentOtvertka; ++i) {
-			int ArrayIndex = 0;
+			int ArrayIndex = FMath::Rand() % CacheItems_Stuff_IsAvaliable.Num();
 			while (!CacheItems_Stuff_IsAvaliable[ArrayIndex])
 			{
 				ArrayIndex = FMath::Rand() % CacheItems_Stuff_IsAvaliable.Num();
@@ -190,7 +175,7 @@ void AGS::BeginPlay()
 			NewLocation.Z = OtvertkaTransform[Caches[ArrayIndex]->CacheIndex].GetLocation().Z / abs(Caches[ArrayIndex]->GetActorScale3D().Z);
 			NewItem->AddActorLocalOffset(NewLocation);
 			NewItem->AddActorLocalRotation(OtvertkaTransform[Caches[ArrayIndex]->CacheIndex].GetRotation());
-
+			Cast<APickableItem>(NewItem)->EnabledArrayIndex = ArrayIndex;
 			if (NewItem)
 				CacheItems_Stuff_IsAvaliable[ArrayIndex] = false;
 		}

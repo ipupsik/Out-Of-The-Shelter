@@ -37,4 +37,7 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Type")
 		int Type;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Type")
+		int32 EnabledArrayIndex;
 };

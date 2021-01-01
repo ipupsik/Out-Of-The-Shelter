@@ -26,6 +26,7 @@
 #include "OpenArea.h"
 #include "UI/UserView.h"
 #include "UI/PlayerKillPlayer.h"
+#include "UI/WebCamWidget.h"
 #include "UI/PlayerLostItem.h"
 #include "UI/PlayerSuicide.h"
 #include "UI/GeneratorWidget.h"
@@ -75,6 +76,11 @@ protected:
 
 	void UpdateSpectating_Left();
 	void UpdateSpectating_Right();
+
+	UFUNCTION(Server, Reliable, WithValidation)
+		void UpdateSpectating_Left_Server();
+	UFUNCTION(Server, Reliable, WithValidation)
+		void UpdateSpectating_Right_Server();
 public:
 	void SpawnPlayer();
 	void PossessedBy(AController* NewController) override;
@@ -134,8 +140,7 @@ public:
 		void GoToServerOpenArea(bool IsStart);
 
 
-	UFUNCTION(Server, Reliable, WithValidation)
-		void GoToWebCamServer(int32 Iterator);
+	void GoToWebCamServer(int32 Iterator);
 
 	void GoToWebCam();
 
@@ -252,6 +257,9 @@ public:
 	void HideCustomItems(bool NewHide);
 
 	UFUNCTION(Client, Reliable)
+		void ShowNoiseWebCamUI(bool DoesNoise);
+
+	UFUNCTION(Client, Reliable)
 		void RefreshWidgets(const TArray<bool> &whatToUpdate, int KillerNickIndex, int VictimNickIndex);
 	UFUNCTION()
 		void OnTimelineFinished_Stone_First();
@@ -317,6 +325,8 @@ public:
 	UPROPERTY(EditAnywhere, Category = "UI HUD")
 		TSubclassOf<UNoteWidget> NoteWidget_class;
 	UPROPERTY(EditAnywhere, Category = "UI HUD")
+		TSubclassOf<UWebCamWidget> WebCamWidget_class;
+	UPROPERTY(EditAnywhere, Category = "UI HUD")
 		TSubclassOf<UKillFeed> KillFeed_class;
 	UPROPERTY(EditAnywhere, Category = "UI HUD") //класс стрелки подсказки
 		TSubclassOf<UTargetArrow> TargetArrowClass;
@@ -325,6 +335,7 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite) //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 		UUserView* UserView;
 	UKillFeed* KillFeed;
+	UWebCamWidget* WebCamUI;
 	//GameInstance + GameState
 	AGS* GS;
 	UGI* GI;

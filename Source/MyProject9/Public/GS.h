@@ -12,20 +12,20 @@
 #include "Code_Note.h"
 #include "FinalMenuPawn.h"
 #include "Cache.h"
-
+#include "WebCamPoint.h"
 #include "GS.generated.h"
 
 class ASpectator;
 
 #define MAX_PLAYER_COUNT 1
 
-#define MIN_COUNT_KeyShelter 3
-#define MIN_COUNT_Boltorez 3
-#define MIN_COUNT_Otvertka 3
+#define MIN_COUNT_KeyShelter 1
+#define MIN_COUNT_Boltorez 1
+#define MIN_COUNT_Otvertka 1
 
-#define MAX_COUNT_KeySHelter 4
-#define MAX_COUNT_Boltorez 4
-#define MAX_COUNT_Otvertka 4
+#define MAX_COUNT_KeySHelter 1
+#define MAX_COUNT_Boltorez 1
+#define MAX_COUNT_Otvertka 1
 
 #define STONE_DAMAGE 0.15f
 #define DeltaRadiation 0.0f
@@ -96,12 +96,7 @@ public:
 	UPROPERTY(Replicated)
 		TArray<bool> AreaClosed;
 	TArray<AAreaCollision*>Areas;
-	UPROPERTY(Replicated)
-		TArray<FRotator>WebCam_Rotation;
-	UPROPERTY(Replicated)
-		TArray<FVector>WebCam_Location;
-	UPROPERTY(Replicated, BlueprintReadWrite)
-		TArray<bool>WebCam_IsEnabled;
+	TArray<AWebCamPoint*>WebCams;
 	UPROPERTY(Replicated)
 		int32 CodeGenerator;
 	UPROPERTY(Replicated)

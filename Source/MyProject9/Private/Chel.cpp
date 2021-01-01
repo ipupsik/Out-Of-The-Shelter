@@ -173,6 +173,8 @@ void AChel::MyBeginPlay()
 		GeneratorView = Cast<UGeneratorWidget>(CreateWidget(World, GeneratorView_class));
 		KillFeed = Cast<UKillFeed>(CreateWidget(World, KillFeed_class));
 		Widget_Note = Cast<UNoteWidget>(CreateWidget(World, NoteWidget_class));
+		WebCamUI = Cast<UWebCamWidget>(CreateWidget(World, WebCamWidget_class));
+		WebCamUI->AddToViewport();
 		UserView->AddToViewport();
 		KillFeed->AddToViewport();
 		GeneratorView->AddToViewport();
@@ -422,40 +424,60 @@ void AChel::UpdateSpectating_Right()
 {
 	if (!IsEnableInput)
 	{
-		do
-		{
-			WebCamIterator += 1;
-			if (WebCamIterator >= GS->WebCam_IsEnabled.Num())
-			{
-				WebCamIterator -= GS->WebCam_IsEnabled.Num();
-			}
-			UE_LOG(LogTemp, Warning, TEXT("WebCamIterator - %d"), WebCamIterator);
-			UE_LOG(LogTemp, Warning, TEXT("Count - %d"), GS->WebCam_IsEnabled.Num());
-		} while (!GS->WebCam_IsEnabled[WebCamIterator]);
-		BaseRotation = GS->WebCam_Rotation[WebCamIterator];
-		CameraComp->SetWorldRotation(BaseRotation);
-		GoToWebCamServer(WebCamIterator);
+		UpdateSpectating_Right_Server();
 	}
+}
+
+void AChel::UpdateSpectating_Right_Server_Implementation()
+{
+	do
+	{
+		WebCamIterator += 1;
+		if (WebCamIterator >= GS->WebCams.Num())
+		{
+			WebCamIterator -= GS->WebCams.Num();
+		}
+		UE_LOG(LogTemp, Warning, TEXT("WebCamIterator - %d"), WebCamIterator);
+		UE_LOG(LogTemp, Warning, TEXT("Count - %d"), GS->WebCams.Num());
+	} while (!GS->WebCams[WebCamIterator]->is_Enabled);
+	BaseRotation = GS->WebCams[WebCamIterator]->GetActorRotation();
+	CameraComp->SetWorldRotation(BaseRotation);
+	GoToWebCamServer(WebCamIterator);
+}
+
+bool AChel::UpdateSpectating_Right_Server_Validate()
+{
+	return true;
 }
 
 void AChel::UpdateSpectating_Left()
 {
 	if (!IsEnableInput)
 	{
-		do
-		{
-			WebCamIterator -= 1;
-			if (WebCamIterator < 0)
-			{
-				WebCamIterator += GS->WebCam_IsEnabled.Num();
-			}
-			UE_LOG(LogTemp, Warning, TEXT("WebCamIterator - %d"), WebCamIterator);
-			UE_LOG(LogTemp, Warning, TEXT("Count - %d"), GS->WebCam_IsEnabled.Num());
-		} while (!GS->WebCam_IsEnabled[WebCamIterator]);
-		BaseRotation = GS->WebCam_Rotation[WebCamIterator];
-		CameraComp->SetWorldRotation(BaseRotation);
-		GoToWebCamServer(WebCamIterator);
+		UpdateSpectating_Left_Server();
 	}
+}
+
+void AChel::UpdateSpectating_Left_Server_Implementation()
+{
+	do
+	{
+		WebCamIterator -= 1;
+		if (WebCamIterator < 0)
+		{
+			WebCamIterator += GS->WebCams.Num();
+		}
+		UE_LOG(LogTemp, Warning, TEXT("WebCamIterator - %d"), WebCamIterator);
+		UE_LOG(LogTemp, Warning, TEXT("Count - %d"), GS->WebCams.Num());
+	} while (!GS->WebCams[WebCamIterator]->is_Enabled);
+	BaseRotation = GS->WebCams[WebCamIterator]->GetActorRotation();
+	CameraComp->SetWorldRotation(BaseRotation);
+	GoToWebCamServer(WebCamIterator);
+}
+
+bool AChel::UpdateSpectating_Left_Server_Validate()
+{
+	return true;
 }
 
 void AChel::OpenAreaPressed() 
@@ -833,6 +855,7 @@ void AChel::SleepAnimation_End()
 	if (bCanPossessWebCam) {
 		UserView->SetVisibility(ESlateVisibility::Hidden);
 		UpdateSpectating_Right();
+		WebCamUI->SetVisibility(ESlateVisibility::Visible);
 		IsAwake = false;
 	}
 	else
@@ -861,7 +884,9 @@ void AChel::PlaySpawnAnimationAwake_Implementation() {
 
 	CameraComp->SetFieldOfView(90.0f);
 	StoneCountUpdate(15);
-	ShowStoneMulticast();
+
+	WebCamUI->SetVisibility(ESlateVisibility::Hidden);
+
 	UserView->SetVisibility(ESlateVisibility::Visible);
 	UserView->PlayAnimation(UserView->Shading, 0, 1, EUMGSequencePlayMode::Type::Reverse);
 }
@@ -1085,7 +1110,7 @@ void AChel::NewHaveItemServer_Implementation(int32 ItemType)
 		DoesHave[ItemType] = true;
 		TArray<AActor*>Players;
 		UGameplayStatics::GetAllActorsOfClass(GetWorld(), AChel::StaticClass(), Players);
-		for (auto Player : Players)
+		for (auto& Player : Players)
 			Cast<AChel>(Player)->NewHaveItemClient(ItemType);
 	}
 
@@ -1108,7 +1133,102 @@ void AChel::NewHaveItemServer_Implementation(int32 ItemType)
 			}
 			else
 			{
-				TempItem->Destroy();
+				switch (TempItem->Type)
+				{
+				case 0:
+				{
+					if (GS->CurrentBoltorez == 1)
+					{
+						int ArrayIndex = FMath::Rand() % GS->CacheItems_Stuff_IsAvaliable.Num();
+						while (!GS->CacheItems_Stuff_IsAvaliable[ArrayIndex])
+						{
+							ArrayIndex = FMath::Rand() % GS->CacheItems_Stuff_IsAvaliable.Num();
+						}
+						FAttachmentTransformRules AttachmentRules = FAttachmentTransformRules(EAttachmentRule::KeepRelative, true);
+						TempItem->AttachToActor(GS->Caches[ArrayIndex], AttachmentRules);
+						TempItem->SetActorScale3D(GS->BoltorezTransform[GS->Caches[ArrayIndex]->CacheIndex].GetScale3D());
+						FVector NewLocation;
+						NewLocation.X = GS->BoltorezTransform[GS->Caches[ArrayIndex]->CacheIndex].GetLocation().X / abs(GS->Caches[ArrayIndex]->GetActorScale3D().X);
+						NewLocation.Y = GS->BoltorezTransform[GS->Caches[ArrayIndex]->CacheIndex].GetLocation().Y / abs(GS->Caches[ArrayIndex]->GetActorScale3D().Y);
+						NewLocation.Z = GS->BoltorezTransform[GS->Caches[ArrayIndex]->CacheIndex].GetLocation().Z / abs(GS->Caches[ArrayIndex]->GetActorScale3D().Z);
+						TempItem->SetActorRelativeLocation({ 0.0f, 0.0f, 0.0f });
+						TempItem->SetActorRelativeRotation({ 0.0f, 0.0f, 0.0f });
+						TempItem->AddActorLocalOffset(NewLocation);
+						TempItem->AddActorLocalRotation(GS->BoltorezTransform[GS->Caches[ArrayIndex]->CacheIndex].GetRotation());
+						GS->CacheItems_Stuff_IsAvaliable[TempItem->EnabledArrayIndex] = true;
+						Cast<APickableItem>(TempItem)->EnabledArrayIndex = ArrayIndex;
+						GS->CacheItems_Stuff_IsAvaliable[ArrayIndex] = false;
+					}
+					else
+					{
+						GS->CurrentBoltorez--;
+						TempItem->Destroy();
+					}
+					break;
+				}
+				case 1:
+				{
+					if (GS->CurrentKeyShelter == 1)
+					{
+						int ArrayIndex = FMath::Rand() % GS->CacheItems_Stuff_IsAvaliable.Num();
+						while (!GS->CacheItems_Stuff_IsAvaliable[ArrayIndex])
+						{
+							ArrayIndex = FMath::Rand() % GS->CacheItems_Stuff_IsAvaliable.Num();
+						}
+						FAttachmentTransformRules AttachmentRules = FAttachmentTransformRules(EAttachmentRule::KeepRelative, true);
+						TempItem->AttachToActor(GS->Caches[ArrayIndex], AttachmentRules);
+						TempItem->SetActorScale3D(GS->KeyShelterTransform[GS->Caches[ArrayIndex]->CacheIndex].GetScale3D());
+						FVector NewLocation;
+						NewLocation.X = GS->KeyShelterTransform[GS->Caches[ArrayIndex]->CacheIndex].GetLocation().X / abs(GS->Caches[ArrayIndex]->GetActorScale3D().X);
+						NewLocation.Y = GS->KeyShelterTransform[GS->Caches[ArrayIndex]->CacheIndex].GetLocation().Y / abs(GS->Caches[ArrayIndex]->GetActorScale3D().Y);
+						NewLocation.Z = GS->KeyShelterTransform[GS->Caches[ArrayIndex]->CacheIndex].GetLocation().Z / abs(GS->Caches[ArrayIndex]->GetActorScale3D().Z);
+						TempItem->SetActorRelativeLocation({ 0.0f, 0.0f, 0.0f });
+						TempItem->SetActorRelativeRotation({ 0.0f, 0.0f, 0.0f });
+						TempItem->AddActorLocalOffset(NewLocation);
+						TempItem->AddActorLocalRotation(GS->KeyShelterTransform[GS->Caches[ArrayIndex]->CacheIndex].GetRotation());
+						GS->CacheItems_Stuff_IsAvaliable[TempItem->EnabledArrayIndex] = true;
+						Cast<APickableItem>(TempItem)->EnabledArrayIndex = ArrayIndex;
+						GS->CacheItems_Stuff_IsAvaliable[ArrayIndex] = false;
+					}
+					else
+					{
+						GS->CurrentKeyShelter--;
+						TempItem->Destroy();
+					}
+					break;
+				}
+				case 2:
+				{
+					if (GS->CurrentOtvertka == 1)
+					{
+						int ArrayIndex = FMath::Rand() % GS->CacheItems_Stuff_IsAvaliable.Num();
+						while (!GS->CacheItems_Stuff_IsAvaliable[ArrayIndex])
+						{
+							ArrayIndex = FMath::Rand() % GS->CacheItems_Stuff_IsAvaliable.Num();
+						}
+						FAttachmentTransformRules AttachmentRules = FAttachmentTransformRules(EAttachmentRule::KeepRelative, true);
+						TempItem->AttachToActor(GS->Caches[ArrayIndex], AttachmentRules);
+						TempItem->SetActorScale3D(GS->OtvertkaTransform[GS->Caches[ArrayIndex]->CacheIndex].GetScale3D());
+						FVector NewLocation;
+						NewLocation.X = GS->OtvertkaTransform[GS->Caches[ArrayIndex]->CacheIndex].GetLocation().X / abs(GS->Caches[ArrayIndex]->GetActorScale3D().X);
+						NewLocation.Y = GS->OtvertkaTransform[GS->Caches[ArrayIndex]->CacheIndex].GetLocation().Y / abs(GS->Caches[ArrayIndex]->GetActorScale3D().Y);
+						NewLocation.Z = GS->OtvertkaTransform[GS->Caches[ArrayIndex]->CacheIndex].GetLocation().Z / abs(GS->Caches[ArrayIndex]->GetActorScale3D().Z);
+						TempItem->SetActorRelativeLocation({ 0.0f, 0.0f, 0.0f });
+						TempItem->SetActorRelativeRotation({ 0.0f, 0.0f, 0.0f });
+						TempItem->AddActorLocalOffset(NewLocation);
+						TempItem->AddActorLocalRotation(GS->OtvertkaTransform[GS->Caches[ArrayIndex]->CacheIndex].GetRotation());
+						GS->CacheItems_Stuff_IsAvaliable[TempItem->EnabledArrayIndex] = true;
+						Cast<APickableItem>(TempItem)->EnabledArrayIndex = ArrayIndex;
+						GS->CacheItems_Stuff_IsAvaliable[ArrayIndex] = false;
+					}
+					else
+					{
+						GS->CurrentOtvertka--;
+						TempItem->Destroy();
+					}
+					break;
+				}
+				}
 			}
 		}
 	}
@@ -1268,16 +1388,13 @@ void AChel::HideCustomItems(bool NewHide)
 	}
 }
 
-void AChel::GoToWebCamServer_Implementation(int32 Iterator)
+void AChel::GoToWebCamServer(int32 Iterator)
 {
-	SetActorLocation(GS->WebCam_Location[Iterator]);
+	SetActorLocation(GS->WebCams[Iterator]->GetActorLocation());
+	GS->WebCams[Iterator]->CurChelix = this;
+	GS->WebCams[Iterator]->is_Enabled = false;
 	HideCustomItems(true);
 	UE_LOG(LogTemp, Warning, TEXT("Staying on webcam"));
-}
-
-bool AChel::GoToWebCamServer_Validate(int32 Iterator)
-{
-	return true;
 }
 
 void AChel::UpdatePositionClient_Implementation(FTransform NewTrans)
@@ -1295,6 +1412,7 @@ void AChel::SpawnPlayer()
 
 	HideCustomItems(false);
 	EnableCollisionEverywhere();
+	ShowStoneMulticast();
 	SetActorHiddenInGame(false);
 	IsEnableInput = true;
 	IsInGame = true;
@@ -1682,6 +1800,11 @@ void AChel::HideRandomItem() {
 	}
 }
 
+void AChel::ShowNoiseWebCamUI_Implementation(bool DoesNoise)
+{
+	//TODO Сделать шум
+}
+
 void AChel::LockWebCam_Server_Implementation()
 {
 	FHitResult OutHit;
@@ -1700,14 +1823,22 @@ void AChel::LockWebCam_Server_Implementation()
 			{
 				TempItem->Close();
 				TempItem->DoesLock = false;
-				GS->WebCam_IsEnabled[TempItem->Index] = true;
+				if (GS->WebCams[TempItem->Index]->is_Enabled == true)
+				{
+					GS->WebCams[TempItem->Index]->CurChelix->ShowNoiseWebCamUI(false);
+				}
+				GS->WebCams[TempItem->Index]->is_Enabled = true;
 			}
 			else
 			{
 				TempItem->Open();
 				TempItem->DoesLock = true;
-				GS->WebCam_IsEnabled[TempItem->Index] = false;
-			}
+				if (GS->WebCams[TempItem->Index]->is_Enabled == false)
+				{
+					GS->WebCams[TempItem->Index]->CurChelix->ShowNoiseWebCamUI(true);
+				}
+				GS->WebCams[TempItem->Index]->is_Enabled = false;
+			} 
 		}
 	}
 }
