@@ -430,6 +430,7 @@ void AChel::UpdateSpectating_Right()
 
 void AChel::UpdateSpectating_Right_Server_Implementation()
 {
+	GS->WebCams[WebCamIterator]->is_Enabled = true;
 	do
 	{
 		WebCamIterator += 1;
@@ -460,6 +461,7 @@ void AChel::UpdateSpectating_Left()
 
 void AChel::UpdateSpectating_Left_Server_Implementation()
 {
+	GS->WebCams[WebCamIterator]->is_Enabled = true;
 	do
 	{
 		WebCamIterator -= 1;
@@ -1370,6 +1372,7 @@ void AChel::KillPlayer()
 		}
 	}
 	DisableCollisionEverywhere();
+	HideCustomItems(true);
 	SetActorHiddenInGame(true);
 	IsInGame = false;
 	PlaySpawnAnimationSleep();
@@ -1379,7 +1382,7 @@ void AChel::KillPlayer()
 	World->GetTimerManager().SetTimer(TimerHandle, this, &AChel::SpawnPlayer, SPAWN_TIME, false);
 }
 
-void AChel::HideCustomItems(bool NewHide)
+void AChel::HideCustomItems_Implementation(bool NewHide)
 {
 	for (auto& CustomItem : CustomizationChilds)
 	{
@@ -1388,27 +1391,20 @@ void AChel::HideCustomItems(bool NewHide)
 	}
 }
 
+
 void AChel::GoToWebCamServer(int32 Iterator)
 {
 	SetActorLocation(GS->WebCams[Iterator]->GetActorLocation());
+
 	GS->WebCams[Iterator]->CurChelix = this;
 	GS->WebCams[Iterator]->is_Enabled = false;
 	HideCustomItems(true);
 	UE_LOG(LogTemp, Warning, TEXT("Staying on webcam"));
 }
 
-void AChel::UpdatePositionClient_Implementation(FTransform NewTrans)
-{
-	PoseableMeshComp->SetWorldTransform(NewTrans);
-}
-
 void AChel::SpawnPlayer()
 {
 	UE_LOG(LogTemp, Warning, TEXT("Setting camera from webcam to player"));
-	CameraComp->SetRelativeLocation( { 0,0,0 } );
-	CameraComp->SetRelativeRotation( { 0,0,0 } );
-
-	CameraComp->SetFieldOfView(90.0f);
 
 	HideCustomItems(false);
 	EnableCollisionEverywhere();
@@ -1438,6 +1434,8 @@ void AChel::EnableCollisionEverywhere_Implementation()
 	SetActorEnableCollision(true);
 	GetCharacterMovement()->GravityScale = 1.2f;
 	GetCharacterMovement()->StopMovementImmediately();
+	CameraComp->SetFieldOfView(90.0f);
+	CameraComp->SetRelativeRotation({ 0,0,0 });
 }
 
 void AChel::PlayerOpenAreaUpdate_Implementation(int32 EscapeWay)

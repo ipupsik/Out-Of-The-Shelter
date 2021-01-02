@@ -240,9 +240,6 @@ public:
 		void RefreshWidgets_Winner(int32 EscapeWay);
 
 	UFUNCTION(Client, Reliable)
-		void UpdatePositionClient(FTransform NewTrans);
-
-	UFUNCTION(Client, Reliable)
 		void AddDoubleRadiationWidget();
 
 	UFUNCTION(Client, Reliable)
@@ -254,7 +251,8 @@ public:
 	UFUNCTION(NetMulticast, Reliable)
 		void ShowStoneMulticast();
 
-	void HideCustomItems(bool NewHide);
+	UFUNCTION(NetMulticast, Reliable)
+		void HideCustomItems(bool NewHide);
 
 	UFUNCTION(Client, Reliable)
 		void ShowNoiseWebCamUI(bool DoesNoise);
