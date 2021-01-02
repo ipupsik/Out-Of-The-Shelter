@@ -65,7 +65,7 @@ void AGS::BeginPlay()
 		UGameplayStatics::GetAllActorsOfClass(GetWorld(), AAreaCollision::StaticClass(), FindAreas);
 		for (auto& FindArea : FindAreas) {
 			AAreaCollision* TmpArea = Cast<AAreaCollision>(FindArea);
-			Areas[TmpArea->AreaType] = TmpArea;
+			Areas[TmpArea->AreaType] = Cast<AAreaCollision>(FindArea);
 		}
 		UE_LOG(LogTemp, Warning, TEXT("%d"), Areas.Num());
 
