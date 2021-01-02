@@ -38,7 +38,7 @@ void AAreaCollision::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor*
 			}
 		}
 		else {
-			if (Player->IsPlayerOwner && !Player->GS->AreaClosed[1]) {
+			if (Player->IsPlayerOwner && !Player->GS->AreaClosed[1] && Player->GS->IsShelterAvaliable) {
 				Player->AreaCode = AreaType;
 				if (AreaType != 1 && Player->GS->AreaAvaliables[1]) {
 					Player->UserView->EscapeText->SetVisibility(ESlateVisibility::Visible);

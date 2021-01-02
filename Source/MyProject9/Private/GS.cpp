@@ -31,7 +31,7 @@ AGS::AGS() {
 	IsGameStarted = false;
 
 	CurrentButtonCount = 0;
-
+	IsShelterAvaliable = false;
 	CodeGenerator = -1;
 	CurrentCode = 0;
 	IsCodeTerminalAvaliable = false;

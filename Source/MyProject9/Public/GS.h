@@ -142,6 +142,7 @@ public:
 
 	int32 GeneralLayer;
 
+	bool IsShelterAvaliable;
 	bool IsGameStarted;
 
 	TArray<FTransform>Keys_Transform;
