@@ -258,6 +258,9 @@ public:
 		void ShowNoiseWebCamUI(bool DoesNoise);
 
 	UFUNCTION(Client, Reliable)
+		void SetCameraRotationWebCam(float RollRot, float PitchRot, float YawRot);
+
+	UFUNCTION(Client, Reliable)
 		void RefreshWidgets(const TArray<bool> &whatToUpdate, int KillerNickIndex, int VictimNickIndex);
 	UFUNCTION()
 		void OnTimelineFinished_Stone_First();

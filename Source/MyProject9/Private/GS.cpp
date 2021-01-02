@@ -113,7 +113,7 @@ void AGS::BeginPlay()
 				CacheItems_Stuff_IsAvaliable[ArrayIndex] = false;
 		}*/
 
-		CurrentKeyShelter = MIN_COUNT_KeyShelter + FMath::Rand() % (MAX_COUNT_Boltorez - MIN_COUNT_KeyShelter + 1);
+		CurrentKeyShelter = MIN_COUNT_KeyShelter + FMath::Rand() % (MAX_COUNT_KeySHelter - MIN_COUNT_KeyShelter + 1);
 		for (int i = 0; i < CurrentKeyShelter; ++i) {
 			int ArrayIndex = FMath::Rand() % CacheItems_Stuff_IsAvaliable.Num();
 			while (!CacheItems_Stuff_IsAvaliable[ArrayIndex])
@@ -136,7 +136,7 @@ void AGS::BeginPlay()
 		}
 		
 		CurrentBoltorez = MIN_COUNT_Boltorez + FMath::Rand() % (MAX_COUNT_Boltorez - MIN_COUNT_Boltorez + 1);
-		for (int i = 0; i < MIN_COUNT_Boltorez + FMath::Rand() % (MAX_COUNT_Boltorez - MIN_COUNT_Boltorez + 1); ++i) {
+		for (int i = 0; i < CurrentBoltorez; ++i) {
 			int ArrayIndex = FMath::Rand() % CacheItems_Stuff_IsAvaliable.Num();
 			while (!CacheItems_Stuff_IsAvaliable[ArrayIndex])
 			{

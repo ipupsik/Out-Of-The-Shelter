@@ -228,7 +228,7 @@ void AChel::PossessedBy(AController* NewController)
 void AChel::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
+	
 	if (IsInGame == true) {
 		if (IsServerAuth) {
 			DeltaTime *= 2 * 0.01f * RadCoeff * CanalizationDamage;
@@ -255,6 +255,8 @@ void AChel::Tick(float DeltaTime)
 	}
 
 	if (IsPlayerOwner) {
+		UE_LOG(LogTemp, Warning, TEXT("RotationYaw is - %f"), CameraComp->GetRelativeRotation().Yaw);
+		UE_LOG(LogTemp, Warning, TEXT("RotationPitch is - %f"), CameraComp->GetRelativeRotation().Pitch);
 		UserView->RadiationPoints->SetPercent(Health);
 		UserView->DarkScreen->SetRenderOpacity(Health);
 
@@ -428,6 +430,14 @@ void AChel::UpdateSpectating_Right()
 	}
 }
 
+void AChel::SetCameraRotationWebCam_Implementation(float RollRot, float PitchRot, float YawRot)
+{
+	BaseRotation = FRotator(PitchRot, YawRot, RollRot);
+	UE_LOG(LogTemp, Warning, TEXT("TmpBaseRotationYaw - %f"  ),   YawRot);
+	UE_LOG(LogTemp, Warning, TEXT("TmpBaseRotationPitch - %f"), PitchRot);
+	CameraComp->SetWorldRotation(BaseRotation);
+}
+
 void AChel::UpdateSpectating_Right_Server_Implementation()
 {
 	GS->WebCams[WebCamIterator]->is_Enabled = true;
@@ -441,8 +451,10 @@ void AChel::UpdateSpectating_Right_Server_Implementation()
 		UE_LOG(LogTemp, Warning, TEXT("WebCamIterator - %d"), WebCamIterator);
 		UE_LOG(LogTemp, Warning, TEXT("Count - %d"), GS->WebCams.Num());
 	} while (!GS->WebCams[WebCamIterator]->is_Enabled);
-	BaseRotation = GS->WebCams[WebCamIterator]->GetActorRotation();
-	CameraComp->SetWorldRotation(BaseRotation);
+	
+	SetCameraRotationWebCam(GS->WebCams[WebCamIterator]->GetActorRotation().Roll,
+		GS->WebCams[WebCamIterator]->GetActorRotation().Pitch,
+		GS->WebCams[WebCamIterator]->GetActorRotation().Yaw);
 	GoToWebCamServer(WebCamIterator);
 }
 
@@ -472,8 +484,10 @@ void AChel::UpdateSpectating_Left_Server_Implementation()
 		UE_LOG(LogTemp, Warning, TEXT("WebCamIterator - %d"), WebCamIterator);
 		UE_LOG(LogTemp, Warning, TEXT("Count - %d"), GS->WebCams.Num());
 	} while (!GS->WebCams[WebCamIterator]->is_Enabled);
-	BaseRotation = GS->WebCams[WebCamIterator]->GetActorRotation();
-	CameraComp->SetWorldRotation(BaseRotation);
+
+	SetCameraRotationWebCam(GS->WebCams[WebCamIterator]->GetActorRotation().Roll,
+		GS->WebCams[WebCamIterator]->GetActorRotation().Pitch,
+		GS->WebCams[WebCamIterator]->GetActorRotation().Yaw);
 	GoToWebCamServer(WebCamIterator);
 }
 
@@ -897,27 +911,34 @@ void AChel::PlaySpawnAnimationAwake_Implementation() {
 void AChel::PickUp() {
 	if (IsEnableInput) {
 		if (ItemCodePickUp != -1) {
+			UE_LOG(LogTemp, Warning, TEXT("ItemCode - %d"), ItemCodePickUp);
 			IsSuccessOpening = true;
 			switch (ItemCodePickUp) {
 			case Boltorez:
 			{
-				UserView->WS_Boltorez->SetActiveWidgetIndex(1);
-				DoesHave_Owner = true;
-				NewHaveItemServer(ItemCodePickUp);
+				if (!DoesHave[Boltorez]) {
+					UserView->WS_Boltorez->SetActiveWidgetIndex(1);
+					DoesHave_Owner = true;
+					NewHaveItemServer(Boltorez);
+				}
 				break;
 			}
 			case KeyShelter:
 			{
-				UserView->WS_KeyShelter->SetActiveWidgetIndex(1);
-				DoesHave_Owner = true;
-				NewHaveItemServer(ItemCodePickUp);
+				if (!DoesHave[KeyShelter]) {
+					UserView->WS_KeyShelter->SetActiveWidgetIndex(1);
+					DoesHave_Owner = true;
+					NewHaveItemServer(KeyShelter);
+				}
 				break;
 			}
 			case Otvertka:
 			{
-				UserView->WS_Otvertka->SetActiveWidgetIndex(1);
-				DoesHave_Owner = true;
-				NewHaveItemServer(ItemCodePickUp);
+				if (!DoesHave[Otvertka]) {
+					UserView->WS_Otvertka->SetActiveWidgetIndex(1);
+					DoesHave_Owner = true;
+					NewHaveItemServer(Otvertka);
+				}
 				break;
 			}
 			case CacheKey:
@@ -1398,7 +1419,7 @@ void AChel::GoToWebCamServer(int32 Iterator)
 
 	GS->WebCams[Iterator]->CurChelix = this;
 	GS->WebCams[Iterator]->is_Enabled = false;
-	HideCustomItems(true);
+
 	UE_LOG(LogTemp, Warning, TEXT("Staying on webcam"));
 }
 

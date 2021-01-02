@@ -16,7 +16,7 @@ void UUserView::OnAnimationFinished_Implementation(const UWidgetAnimation* Anima
 	UE_LOG(LogTemp, Warning, TEXT("Ya v Animacii"))
 	if (Animation == CanalizaciaAnim)
 	{
-		if (Player->IsSuccessOpening) {
+		if (Player->IsSuccessOpening && !Player->GS->AreaAvaliables[0]) {
 			Player->StuffAvaliableUpdate(0);
 			HoldText->SetVisibility(ESlateVisibility::Hidden);
 			EscapeText->SetVisibility(ESlateVisibility::Visible);
@@ -26,7 +26,7 @@ void UUserView::OnAnimationFinished_Implementation(const UWidgetAnimation* Anima
 	}
 	else if (Animation == ShelterAnim)
 	{
-		if (Player->IsSuccessOpening) {
+		if (Player->IsSuccessOpening && !Player->GS->AreaAvaliables[1]) {
 			Player->StuffAvaliableUpdate(1);
 			HoldText->SetVisibility(ESlateVisibility::Hidden);
 			Player->PlayerOpenAreaUpdate(1);
@@ -34,10 +34,11 @@ void UUserView::OnAnimationFinished_Implementation(const UWidgetAnimation* Anima
 	}
 	else if (Animation == VentilaciaAnim)
 	{
-		if (Player->IsSuccessOpening) {
+		if (Player->IsSuccessOpening && !Player->GS->AreaAvaliables[2]) {
 			Player->StuffAvaliableUpdate(2);
 			HoldText->SetVisibility(ESlateVisibility::Hidden);
 			EscapeText->SetVisibility(ESlateVisibility::Visible);
+
 			Player->PlayerOpenAreaUpdate(2);
 		}
 	}
