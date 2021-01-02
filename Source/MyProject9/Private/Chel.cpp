@@ -255,8 +255,6 @@ void AChel::Tick(float DeltaTime)
 	}
 
 	if (IsPlayerOwner) {
-		UE_LOG(LogTemp, Warning, TEXT("RotationYaw is - %f"), CameraComp->GetRelativeRotation().Yaw);
-		UE_LOG(LogTemp, Warning, TEXT("RotationPitch is - %f"), CameraComp->GetRelativeRotation().Pitch);
 		UserView->RadiationPoints->SetPercent(Health);
 		UserView->DarkScreen->SetRenderOpacity(Health);
 
@@ -1416,7 +1414,6 @@ void AChel::HideCustomItems_Implementation(bool NewHide)
 void AChel::GoToWebCamServer(int32 Iterator)
 {
 	SetActorLocation(GS->WebCams[Iterator]->GetActorLocation());
-
 	GS->WebCams[Iterator]->CurChelix = this;
 	GS->WebCams[Iterator]->is_Enabled = false;
 
