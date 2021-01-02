@@ -1443,8 +1443,7 @@ void AChel::PlayerOpenAreaUpdate_Implementation(int32 EscapeWay)
 	TArray<AActor*>Players;
 	UGameplayStatics::GetAllActorsOfClass(World, AChel::StaticClass(), Players);
 	for (auto& Player : Players) {
-		AChel* Chel = Cast<AChel>(Player);
-		Chel->RefreshWidgets_Winner(EscapeWay);
+		Cast<AChel>(Player)->RefreshWidgets_Winner(EscapeWay);
 	}
 
 	TArray<AActor*>Chels;
@@ -1620,7 +1619,7 @@ void AChel::ChangeGeneratorStas_Implementation()
 	if (GenAreaObj->Stadiya >= 3) {
 		GenAreaObj->Stadiya = 0;
 		GenAreaObj->DoSomethinkGen();
-
+		GS->IsShelterAvaliable = true;
 		TArray<AActor*> temp;
 		UGameplayStatics::GetAllActorsOfClass(World, APromptCollisionArea::StaticClass(), temp);
 		for (auto& it : temp) {

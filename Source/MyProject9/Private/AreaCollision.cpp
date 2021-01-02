@@ -23,6 +23,8 @@ void AAreaCollision::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor*
 	if (Player) {
 		if (AreaType != 3) { //Не в двери выхода шелтора
 			if (Player->IsPlayerOwner && !Player->GS->AreaClosed[AreaType]) {
+				if (AreaType == 1 && !Player->GS->IsShelterAvaliable)
+					return;
 				Player->AreaCode = AreaType;
 				if (!Player->GS->AreaAvaliables[AreaType])
 				{
@@ -38,9 +40,9 @@ void AAreaCollision::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor*
 			}
 		}
 		else {
-			if (Player->IsPlayerOwner && !Player->GS->AreaClosed[1] && Player->GS->IsShelterAvaliable) {
+			if (Player->IsPlayerOwner && !Player->GS->AreaClosed[1]) {
 				Player->AreaCode = AreaType;
-				if (AreaType != 1 && Player->GS->AreaAvaliables[1]) {
+				if (Player->GS->AreaAvaliables[1]) {
 					Player->UserView->EscapeText->SetVisibility(ESlateVisibility::Visible);
 				}
 			}

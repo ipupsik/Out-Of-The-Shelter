@@ -339,6 +339,7 @@ void AGS::CheckCode(int Index) {
 		CurrentCode = NumbersOnPanel[0]->NumberType * 10000 + NumbersOnPanel[1]->NumberType * 1000 + NumbersOnPanel[2]->NumberType * 100 + NumbersOnPanel[3]->NumberType * 10 + NumbersOnPanel[4]->NumberType;
 		if (CurrentCode == CodeGenerator) {
 			TArray<AActor*> GettingChelix;
+			IsShelterAvaliable = false;
 			UGameplayStatics::GetAllActorsOfClass(GetWorld(), AChel::StaticClass(), GettingChelix);
 			for (auto& it : GettingChelix) 
 			{
