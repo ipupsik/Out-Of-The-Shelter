@@ -6,8 +6,11 @@
 #include "GameFramework/Actor.h"
 #include "Components/BoxComponent.h"
 #include "GeneratorLampochka.h"
+#include "AreaCollision.h"
 
 #include "GeneratorArea.generated.h"
+
+class APromptCollisionArea;
 
 UCLASS()
 class MYPROJECT9_API AGeneratorArea : public AActor
@@ -33,6 +36,14 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Player")
 		UBoxComponent* Collision;
 
+	UPROPERTY(EditAnywhere)
+		TArray<APromptCollisionArea*> PromtCollisionGenerator;
+
+	UPROPERTY(EditAnywhere)
+		TArray<APromptCollisionArea*> PromtCollisionTerminal;
+
+	UPROPERTY(EditAnywhere)
+		AAreaCollision* ShelterCollision;
 
 	void GetLifetimeReplicatedProps(TArray < FLifetimeProperty >& OutLifetimeProps) const override;
 
