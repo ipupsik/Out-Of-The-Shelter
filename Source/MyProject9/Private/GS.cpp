@@ -361,6 +361,7 @@ void AGS::CheckCode(int Index) {
 				{
 					Cast<AChel>(it)->ShowUIAfterTerminalAndGenerator(-1, false);
 				}
+				GeneratorAreaTmp->ChangeSoundAmbientToNotWorking();
 			}
 
 			TArray<AActor*> GettingCodeNote;
@@ -453,7 +454,6 @@ void AGS::RefreshGenerator()
 	AGeneratorArea* FindGenerator = Cast<AGeneratorArea>(Generator[0]);
 	if (FindGenerator) {
 		FindGenerator->RefreshGenerator();
-		FindGenerator->ChangeSoundAmbientToNotWorking();
 	}
 
 }

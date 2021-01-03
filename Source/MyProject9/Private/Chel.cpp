@@ -937,6 +937,7 @@ void AChel::PickUp() {
 					UserView->WS_Boltorez->SetActiveWidgetIndex(1);
 					DoesHave_Owner = true;
 					NewHaveItemServer(Boltorez);
+					PickUpSound();
 				}
 				break;
 			}
@@ -946,6 +947,7 @@ void AChel::PickUp() {
 					UserView->WS_KeyShelter->SetActiveWidgetIndex(1);
 					DoesHave_Owner = true;
 					NewHaveItemServer(KeyShelter);
+					PickUpSound();
 				}
 				break;
 			}
@@ -955,6 +957,7 @@ void AChel::PickUp() {
 					UserView->WS_Otvertka->SetActiveWidgetIndex(1);
 					DoesHave_Owner = true;
 					NewHaveItemServer(Otvertka);
+					PickUpSound();
 				}
 				break;
 			}
@@ -982,6 +985,7 @@ void AChel::PickUp() {
 				KeysCount[KeyType]++;
 				DoesHave_Owner = true;
 				NewHaveItemServer(ItemCodePickUp);
+				PickUpSound();
 				break;
 			}
 			case Cache:
@@ -1040,12 +1044,14 @@ void AChel::PickUp() {
 				if (Widget_Note->IsVisible())
 				{
 					Widget_Note->SetVisibility(ESlateVisibility::Hidden);
+					PickUpSound();
 					bCanWalkingAndWatching = true;
 				}
 				else
 				{
 					Widget_Note->ChangeText(GS->CodeGenerator);
 					Widget_Note->SetVisibility(ESlateVisibility::Visible);
+					PickUpSound();
 					bCanWalkingAndWatching = false;
 				}
 				break;
@@ -1654,6 +1660,7 @@ void AChel::PossessToSpectator()
 void AChel::ChangeGeneratorStas_Implementation()
 {
 	GenAreaObj->Stadiya++;
+	GenAreaObj->ChangeSoundAmbientToWorking();
 	GoodAttempGeneratorSound();
 	if (GenAreaObj->Stadiya >= 3) {
 		GenAreaObj->Stadiya = 0;
@@ -1700,8 +1707,6 @@ void AChel::ChangeGeneratorStas_Implementation()
 			Cast<AChel>(it)->ChangeCorretca_Client(0);
 		}
 		GS->EventSpawnNote();
-
-		GenAreaObj->ChangeSoundAmbientToWorking();
 	}
 	else {
 		TArray<AActor*> Players;

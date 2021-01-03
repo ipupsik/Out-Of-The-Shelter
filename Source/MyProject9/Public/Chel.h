@@ -226,6 +226,9 @@ public:
 		void CameraSwitch();
 
 	UFUNCTION(BlueprintImplementableEvent)
+		void PickUpSound();
+
+	UFUNCTION(BlueprintImplementableEvent)
 		void CameraTurnOff();
 
 	UFUNCTION(BlueprintImplementableEvent)
