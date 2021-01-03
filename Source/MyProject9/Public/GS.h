@@ -32,6 +32,8 @@ class ASpectator;
 #define DeltaRadiation 0.1f
 
 #define SPAWN_TIME 15.f
+#define ShowRandomItem_TIME 5
+#define ShowMainExis_TIME 7
 
 #define COUNT_CacheKey 7
 /**

@@ -976,7 +976,7 @@ void AChel::PickUp() {
 					TargetArrowsDynamic.Add(ArrowCanalizacia);
 					ExisType = Boltorez;
 					FTimerHandle FuzeTimerHandle;
-					GetWorld()->GetTimerManager().SetTimer(FuzeTimerHandle, this, &AChel::DeleteArrowDelay, 5, false);
+					GetWorld()->GetTimerManager().SetTimer(FuzeTimerHandle, this, &AChel::DeleteArrowDelay, ShowMainExis_TIME, false);
 					PickUpSound();
 				}
 				break;
@@ -994,7 +994,7 @@ void AChel::PickUp() {
 					TargetArrowsDynamic.Add(ArrowShelter);
 					ExisType = KeyShelter;
 					FTimerHandle FuzeTimerHandle;
-					GetWorld()->GetTimerManager().SetTimer(FuzeTimerHandle, this, &AChel::DeleteArrowDelay, 5, false);
+					GetWorld()->GetTimerManager().SetTimer(FuzeTimerHandle, this, &AChel::DeleteArrowDelay, ShowMainExis_TIME, false);
 					PickUpSound();
 				}
 				break;
@@ -1011,7 +1011,7 @@ void AChel::PickUp() {
 					TargetArrowsDynamic.Add(ArrowVentilacia);
 					ExisType = Otvertka;
 					FTimerHandle FuzeTimerHandle;
-					GetWorld()->GetTimerManager().SetTimer(FuzeTimerHandle, this, &AChel::DeleteArrowDelay, 5, false);
+					GetWorld()->GetTimerManager().SetTimer(FuzeTimerHandle, this, &AChel::DeleteArrowDelay, ShowMainExis_TIME, false);
 					PickUpSound();
 				}
 				break;
@@ -1926,7 +1926,7 @@ void AChel::ShowRandomItem_Implementation() {
 		AddTargetArrowDynamic(LastOutlineItem);
 
 		FTimerHandle FuzeTimerHandle;
-		World->GetTimerManager().SetTimer(FuzeTimerHandle, this, &AChel::HideRandomItem, 7, false);
+		World->GetTimerManager().SetTimer(FuzeTimerHandle, this, &AChel::HideRandomItem, ShowRandomItem_TIME, false);
 
 	}
 }
