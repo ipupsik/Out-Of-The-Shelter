@@ -13,6 +13,7 @@
 #include "FinalMenuPawn.h"
 #include "Cache.h"
 #include "WebCamPoint.h"
+#include "ItemPromtArrow.h"
 #include "GS.generated.h"
 
 class ASpectator;

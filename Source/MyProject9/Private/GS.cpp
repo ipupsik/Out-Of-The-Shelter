@@ -343,6 +343,16 @@ void AGS::CheckCode(int Index) {
 				Cast<AChel>(it)->HideNoteWidget();
 			}
 			
+			TArray<AActor*> Generator;
+			UGameplayStatics::GetAllActorsOfClass(GetWorld(), AGeneratorArea::StaticClass(), Generator);
+
+			if (Generator[0]) {
+				AGeneratorArea* GeneratorAreaTmp = Cast<AGeneratorArea>(Generator[0]);
+				for (auto& it : GeneratorAreaTmp->PromtCollisionTerminal)
+				{
+					it->bISAvaliable = false;
+				}
+			}
 
 			TArray<AActor*> GettingCodeNote;
 			UGameplayStatics::GetAllActorsOfClass(GetWorld(), ACode_Note::StaticClass(), GettingCodeNote);

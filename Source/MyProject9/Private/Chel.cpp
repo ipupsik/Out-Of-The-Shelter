@@ -1643,6 +1643,16 @@ void AChel::ChangeGeneratorStas_Implementation()
 	GenAreaObj->Stadiya++;
 	if (GenAreaObj->Stadiya >= 3) {
 		GenAreaObj->Stadiya = 0;
+		for (auto& it : GenAreaObj->PromtCollisionTerminal)
+		{
+			it->bISAvaliable = true;
+		}
+
+		for (auto& it : GenAreaObj->PromtCollisionGenerator)
+		{
+			it->bISAvaliable = false;
+		}
+
 		GenAreaObj->DoSomethinkGen();
 		GS->IsShelterAvaliable = true;
 		TArray<AActor*> temp;
