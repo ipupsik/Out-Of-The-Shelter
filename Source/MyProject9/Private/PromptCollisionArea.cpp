@@ -31,10 +31,10 @@ void APromptCollisionArea::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, A
 	if (bISAvaliable) {
 		AChel* Player = Cast<AChel>(OtherActor);
 		if (Player) {
-			if (Player == UGameplayStatics::GetPlayerCharacter(GetWorld(), 0)) {
+			if (Player->IsPlayerOwner) {
 				for (auto& item : PromptedItems)
 				{
-					item->Mesh->SetCustomDepthStencilValue(2);
+					item->Mesh->SetCustomDepthStencilValue(OutlineColor);
 					Player->AddTargetArrowStatic(item);
 				}
 			}
@@ -48,7 +48,7 @@ void APromptCollisionArea::OnOverlapEnd(UPrimitiveComponent* OverlappedComp, AAc
 	if (bISAvaliable) {
 		AChel* Player = Cast<AChel>(OtherActor);
 		if (Player) {
-			if (Player == UGameplayStatics::GetPlayerCharacter(GetWorld(), 0)) {
+			if (Player->IsPlayerOwner) {
 				for (auto& item : PromptedItems)
 				{
 					item->Mesh->SetCustomDepthStencilValue(0);

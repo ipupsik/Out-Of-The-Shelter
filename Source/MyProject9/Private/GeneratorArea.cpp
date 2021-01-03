@@ -3,6 +3,7 @@
 
 #include "GeneratorArea.h"
 #include "Net/UnrealNetwork.h"
+#include "PromptCollisionArea.h"
 #include "Chel.h"
 
 
@@ -29,6 +30,11 @@ void AGeneratorArea::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLi
 void AGeneratorArea::RefreshGenerator()
 {
 	IsAvalible = true;
+
+	for (auto& it : PromtCollisionGenerator)
+	{
+		it->bISAvaliable = true;
+	}
 
 	TArray<AActor*>Chelix;
 	Collision->GetOverlappingActors(Chelix, AChel::StaticClass());

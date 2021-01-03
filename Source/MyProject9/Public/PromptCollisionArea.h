@@ -41,8 +41,11 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Player")
 		UBoxComponent* Collision;
 
-	UPROPERTY(Replicated)
+	UPROPERTY(EditAnywhere, Replicated)
 		bool bISAvaliable;
+
+	UPROPERTY(EditAnywhere)
+		int32 OutlineColor;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		int32 TypePromptCollision;
