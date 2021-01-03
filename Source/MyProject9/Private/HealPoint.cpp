@@ -17,6 +17,8 @@ AHealPoint::AHealPoint()
 	Mesh->SetupAttachment(Collision);
 
 	Collision->OnComponentBeginOverlap.AddDynamic(this, &AHealPoint::OnOverlapBegin);
+
+	IsEnabled = true;
 }
 
 // Called when the game starts or when spawned
@@ -40,20 +42,16 @@ void AHealPoint::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* Oth
 {
 	AChel* Player = Cast<AChel>(OtherActor);
 	if (Player) {
-		if (Player->IsServerAuth)
+		if (Player->IsServerAuth && IsEnabled)
 		{
 			Player->Health = 0;
 			Player->KillerIndex = -1;
 			SetActorHiddenInGame(true);
-			Collision->SetCollisionEnabled(ECollisionEnabled::Type::NoCollision);
+			Player->AddChromaticAbberationClient();
 			PlaySoundHeal();
-
+			IsEnabled = false;
 			FTimerHandle FuzeTimerHandle;
 			GetWorld()->GetTimerManager().SetTimer(FuzeTimerHandle, this, &AHealPoint::HealUpdate, 10, false);
-		}
-		if (Player->IsPlayerOwner)
-		{
-			Player->AddChromaticAbberation();
 		}
 	}
 	else
@@ -66,22 +64,22 @@ void AHealPoint::HealUpdate()
 {
 	TArray<AActor*>Players;
 	Collision->GetOverlappingActors(Players, AChel::StaticClass());
-
 	if (Players.Num() != 0){
 		AChel* Chel = Cast<AChel>(Players[0]);
+		Chel->AddChromaticAbberationClient();
+		PlaySoundHeal();
 		Chel->Health = 0;
 		Chel->KillerIndex = -1;
+		IsEnabled = false;
 		SetActorHiddenInGame(true);
-		Collision->SetCollisionEnabled(ECollisionEnabled::Type::NoCollision);
 
 		FTimerHandle FuzeTimerHandle;
 		GetWorld()->GetTimerManager().SetTimer(FuzeTimerHandle, this, &AHealPoint::HealUpdate, 10, false);
 	}
 	else
 	{
+		IsEnabled = true;
 		SetActorHiddenInGame(false);
-		Collision->SetCollisionEnabled(ECollisionEnabled::Type::QueryOnly);
 	}
-	Players.Empty();
 }
 

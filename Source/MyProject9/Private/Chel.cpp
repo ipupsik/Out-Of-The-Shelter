@@ -432,6 +432,7 @@ void AChel::UpdateSpectating_Right()
 	if (!IsEnableInput)
 	{
 		UpdateSpectating_Right_Server();
+		CameraSwitch();
 	}
 }
 
@@ -473,6 +474,7 @@ void AChel::UpdateSpectating_Left()
 	if (!IsEnableInput)
 	{
 		UpdateSpectating_Left_Server();
+		CameraSwitch();
 	}
 }
 
@@ -589,6 +591,11 @@ void AChel::OpenAreaReleased()
 			UserView->StopAllAnimations();
 		}
 	}
+}
+
+void AChel::AddChromaticAbberationClient_Implementation()
+{
+	AddChromaticAbberation();
 }
 
 //TimelineAnimation
@@ -898,12 +905,14 @@ void AChel::AwakeAnimation_End()
 
 //PlayStartingAnimation---------------------
 void AChel::PlaySpawnAnimationAwake_Implementation() {
+	IsEnableInput = true;
 	FTimerHandle FuzeTimerHandle;
 	World->GetTimerManager().SetTimer(FuzeTimerHandle, this, &AChel::AwakeAnimation_End, 2, false);
 
 	CameraComp->SetRelativeLocation({ 0,0,0 });
 	CameraComp->SetRelativeRotation({ 0,0,0 });
-
+	if (bCanPossessWebCam)
+		CameraTurnOff();
 	CameraComp->SetFieldOfView(90.0f);
 	StoneCountUpdate(15);
 
@@ -1086,6 +1095,7 @@ void AChel::PickUp() {
 	else
 	{
 		TimeLine_FOV_WebCam->Play();
+		CameraZoomIn();
 	}
 }
 
@@ -1103,6 +1113,7 @@ void AChel::PickUp_Released()
 		else
 		{
 			TimeLine_FOV_WebCam->Reverse();
+			CameraZoomOut();
 		}
 	}
 }

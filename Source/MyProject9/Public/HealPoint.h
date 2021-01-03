@@ -39,4 +39,6 @@ public:
 
 	UFUNCTION(BlueprintImplementableEvent)
 		void PlaySoundHeal();
+
+	bool IsEnabled;
 };
