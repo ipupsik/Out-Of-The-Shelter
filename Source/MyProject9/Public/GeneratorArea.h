@@ -23,6 +23,11 @@ public:
 
 	void DoSomethinkGen();
 
+	UFUNCTION(BlueprintImplementableEvent)
+		void ChangeSoundAmbientToWorking();
+	UFUNCTION(BlueprintImplementableEvent)
+		void ChangeSoundAmbientToNotWorking();
+
 	UFUNCTION(NetMulticast, Reliable)
 	void ChangeLampochka(int32 type);
 

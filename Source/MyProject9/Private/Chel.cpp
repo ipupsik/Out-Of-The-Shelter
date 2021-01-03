@@ -874,6 +874,7 @@ void AChel::PlaySpawnAnimationSleep_Implementation() {
 		TargetArrowsDynamic.RemoveAt(i);
 		TargetItemsDynamic.RemoveAt(i);
 	}
+	SpawnDeadSound();
 	UserView->PlayAnimation(UserView->Shading);
 	FTimerHandle FuzeTimerHandle;
 	World->GetTimerManager().SetTimer(FuzeTimerHandle, this, &AChel::SleepAnimation_End, 2.0f, false);
@@ -919,6 +920,7 @@ void AChel::PlaySpawnAnimationAwake_Implementation() {
 	WebCamUI->SetVisibility(ESlateVisibility::Hidden);
 
 	UserView->SetVisibility(ESlateVisibility::Visible);
+	SpawnWakeUpSound();
 	UserView->PlayAnimation(UserView->Shading, 0, 1, EUMGSequencePlayMode::Type::Reverse);
 }
 
@@ -1652,6 +1654,7 @@ void AChel::PossessToSpectator()
 void AChel::ChangeGeneratorStas_Implementation()
 {
 	GenAreaObj->Stadiya++;
+	GoodAttempGeneratorSound();
 	if (GenAreaObj->Stadiya >= 3) {
 		GenAreaObj->Stadiya = 0;
 		for (auto& it : GenAreaObj->PromtCollisionTerminal)
@@ -1697,6 +1700,8 @@ void AChel::ChangeGeneratorStas_Implementation()
 			Cast<AChel>(it)->ChangeCorretca_Client(0);
 		}
 		GS->EventSpawnNote();
+
+		GenAreaObj->ChangeSoundAmbientToWorking();
 	}
 	else {
 		TArray<AActor*> Players;

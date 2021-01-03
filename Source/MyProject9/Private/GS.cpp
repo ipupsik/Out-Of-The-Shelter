@@ -450,6 +450,10 @@ void AGS::RefreshGenerator()
 	TArray<AActor*> Generator;
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AGeneratorArea::StaticClass(), Generator);
 
-	if (Generator[0])
-		Cast<AGeneratorArea>(Generator[0])->RefreshGenerator();
+	AGeneratorArea* FindGenerator = Cast<AGeneratorArea>(Generator[0]);
+	if (FindGenerator) {
+		FindGenerator->RefreshGenerator();
+		FindGenerator->ChangeSoundAmbientToNotWorking();
+	}
+
 }

@@ -215,6 +215,14 @@ public:
 		void CameraZoomOut();
 
 	UFUNCTION(BlueprintImplementableEvent)
+		void SpawnDeadSound();
+	UFUNCTION(BlueprintImplementableEvent)
+		void SpawnWakeUpSound();
+
+	UFUNCTION(BlueprintImplementableEvent)
+		void GoodAttempGeneratorSound();
+
+	UFUNCTION(BlueprintImplementableEvent)
 		void CameraSwitch();
 
 	UFUNCTION(BlueprintImplementableEvent)
