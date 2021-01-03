@@ -323,9 +323,11 @@ void AGS::AddNumToTerminal(int32 Number) {
 		if (Num != nullptr)
 			NumbersOnPanel.Add(Num);
 	}
+	ClickOnButtonTerminal(LampObj->GetActorLocation());
 }
 
 void AGS::DeleteLastNumber() {
+	ClickOnButtonTerminal(LampObj->GetActorLocation());
 	NumbersOnPanel[NumbersOnPanel.Num() - 1]->Destroy();
 	NumbersOnPanel.Pop();
 }
@@ -335,6 +337,7 @@ void AGS::CheckCode(int Index) {
 	if (NumbersOnPanel.Num() == 5) {
 		CurrentCode = NumbersOnPanel[0]->NumberType * 10000 + NumbersOnPanel[1]->NumberType * 1000 + NumbersOnPanel[2]->NumberType * 100 + NumbersOnPanel[3]->NumberType * 10 + NumbersOnPanel[4]->NumberType;
 		if (CurrentCode == CodeGenerator) {
+
 			TArray<AActor*> GettingChelix;
 			IsShelterAvaliable = false;
 			UGameplayStatics::GetAllActorsOfClass(GetWorld(), AChel::StaticClass(), GettingChelix);
@@ -366,6 +369,7 @@ void AGS::CheckCode(int Index) {
 			{
 				Cast<ACode_Note>(it)->Destroy();
 			}
+			PlayGoodSoundTerminal(LampObj->GetActorLocation());
 
 			FTimerHandle FuzeTimerHandle;
 			GetWorld()->GetTimerManager().SetTimer(FuzeTimerHandle, this, &AGS::RefreshGenerator, 20, false);
@@ -402,6 +406,8 @@ void AGS::CheckCode(int Index) {
 		it->Destroy();
 	}
 	NumbersOnPanel.Empty();
+
+	PlayBadSoundTerminal(LampObj->GetActorLocation());
 
 	LampObj->ChangeMaterialLamp(1);
 

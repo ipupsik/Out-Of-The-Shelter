@@ -65,6 +65,15 @@ public:
 	UFUNCTION(BlueprintImplementableEvent)
 		void SpawnCustomizationChels();
 
+	UFUNCTION(BlueprintImplementableEvent)
+		void PlayGoodSoundTerminal(FVector Location);
+
+	UFUNCTION(BlueprintImplementableEvent)
+		void PlayBadSoundTerminal(FVector Location);
+
+	UFUNCTION(BlueprintImplementableEvent)
+		void ClickOnButtonTerminal(FVector Location);
+
 	UFUNCTION()
 		void SpawnPlayers();
 	UFUNCTION(BlueprintCallable)
