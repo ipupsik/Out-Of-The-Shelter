@@ -209,6 +209,18 @@ public:
 		void InvisibleEverywhere();
 
 	UFUNCTION(BlueprintImplementableEvent)
+		void CameraZoomIn();
+
+	UFUNCTION(BlueprintImplementableEvent)
+		void CameraZoomOut();
+
+	UFUNCTION(BlueprintImplementableEvent)
+		void CameraSwitch();
+
+	UFUNCTION(BlueprintImplementableEvent)
+		void CameraTurnOff();
+
+	UFUNCTION(BlueprintImplementableEvent)
 		void AddChromaticAbberation();
 
 	UFUNCTION(BlueprintImplementableEvent)
@@ -265,6 +277,9 @@ public:
 
 	UFUNCTION(Client, Reliable)
 		void ShowUIAfterTerminalAndGenerator(int32 NewAreaType, bool DoesEnabled);
+
+	UFUNCTION(Client, Reliable)
+		void AddChromaticAbberationClient();
 
 	UFUNCTION(Client, Reliable)
 		void SetCameraRotationWebCam(float RollRot, float PitchRot, float YawRot);

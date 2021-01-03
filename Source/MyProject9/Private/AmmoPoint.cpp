@@ -47,8 +47,6 @@ void AAmmoPoint::AmmoUpdate()
 	TArray<AActor*>Players;
 	Collision->GetOverlappingActors(Players, AChel::StaticClass());
 
-	Enable = true;
-
 	if (Players.Num() != 0) {
 		AChel* Chel = Cast<AChel>(Players[0]);
 		Chel->Ammo = 15;
@@ -60,7 +58,10 @@ void AAmmoPoint::AmmoUpdate()
 		FTimerHandle FuzeTimerHandle;
 		GetWorld()->GetTimerManager().SetTimer(FuzeTimerHandle, this, &AAmmoPoint::AmmoUpdate, 10, false);
 	}
-
+	else
+	{
+		Enable = true;
+	}
 }
 
 
