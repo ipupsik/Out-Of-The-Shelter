@@ -18,7 +18,7 @@
 #include "ClickButton.h"
 #include "UI/KillFeed.h"
 #include "Components/SceneComponent.h"
-
+#include "ItemPromtArrow_MainExis.h"
 #include "GI.h"
 #include "GS.h"
 #include "Stone.h"
@@ -252,6 +252,8 @@ public:
 		void OutlineBad_Multicast();
 
 	void RefreshOutline();
+
+	void DeleteArrowDelay();
 
 	UFUNCTION(Server, Reliable, WithValidation)
 		void LockWebCam_Server();
@@ -489,5 +491,13 @@ public:
 
 	UNoteWidget* Widget_Note;
 
+	UTargetArrow* ArrowShelter;
+	UTargetArrow* ArrowCanalizacia;
+	UTargetArrow* ArrowVentilacia;
 
+	AItemPromtArrow_MainExis* MainExis_Shelter;
+	AItemPromtArrow_MainExis* MainExis_Ventilacia;
+	AItemPromtArrow_MainExis* MainExis_Canalizacia;
+
+	int32 ExisType;
 };

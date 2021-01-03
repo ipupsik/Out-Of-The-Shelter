@@ -191,6 +191,37 @@ void AChel::MyBeginPlay()
 			NickName = GI->NickName;
 			DeliverNicknameToServer(NickName);
 		}
+
+		TArray<AActor*>MainExis;
+		UGameplayStatics::GetAllActorsOfClass(World, AItemPromtArrow_MainExis::StaticClass(), MainExis);
+		for (auto& it : MainExis)
+		{
+			AItemPromtArrow_MainExis* Exis = Cast<AItemPromtArrow_MainExis>(it);
+			switch (Exis->Type)
+			{
+			case 0:
+			{
+				ArrowCanalizacia = Cast<UTargetArrow>(CreateWidget(World, TargetArrowClass));
+				MainExis_Canalizacia = Cast<AItemPromtArrow_MainExis>(it);
+				UE_LOG(LogTemp, Warning, TEXT("AddCanalizacia"));
+				break;
+			}
+			case 1:
+			{
+				ArrowShelter = Cast<UTargetArrow>(CreateWidget(World, TargetArrowClass));
+				MainExis_Shelter = Cast<AItemPromtArrow_MainExis>(it);
+				UE_LOG(LogTemp, Warning, TEXT("AddArrowShelter"));
+				break;
+			}
+			case 2:
+			{
+				ArrowVentilacia = Cast<UTargetArrow>(CreateWidget(World, TargetArrowClass));
+				MainExis_Ventilacia = Cast<AItemPromtArrow_MainExis>(it);
+				UE_LOG(LogTemp, Warning, TEXT("AddArrowVentilacia"));
+				break;
+			}
+			}
+		}
 	}
 
 	if (IsServerAuth) {
@@ -934,9 +965,18 @@ void AChel::PickUp() {
 			case Boltorez:
 			{
 				if (!DoesHave[Boltorez]) {
+
 					UserView->WS_Boltorez->SetActiveWidgetIndex(1);
 					DoesHave_Owner = true;
 					NewHaveItemServer(Boltorez);
+
+					ArrowCanalizacia->AddToViewport();
+					MainExis_Canalizacia->Mesh->SetCustomDepthStencilValue(3);
+					TargetItemsDynamic.Add(MainExis_Canalizacia);
+					TargetArrowsDynamic.Add(ArrowCanalizacia);
+					ExisType = Boltorez;
+					FTimerHandle FuzeTimerHandle;
+					GetWorld()->GetTimerManager().SetTimer(FuzeTimerHandle, this, &AChel::DeleteArrowDelay, 5, false);
 					PickUpSound();
 				}
 				break;
@@ -947,6 +987,14 @@ void AChel::PickUp() {
 					UserView->WS_KeyShelter->SetActiveWidgetIndex(1);
 					DoesHave_Owner = true;
 					NewHaveItemServer(KeyShelter);
+
+					ArrowShelter->AddToViewport();
+					MainExis_Shelter->Mesh->SetCustomDepthStencilValue(3);
+					TargetItemsDynamic.Add(MainExis_Shelter);
+					TargetArrowsDynamic.Add(ArrowShelter);
+					ExisType = KeyShelter;
+					FTimerHandle FuzeTimerHandle;
+					GetWorld()->GetTimerManager().SetTimer(FuzeTimerHandle, this, &AChel::DeleteArrowDelay, 5, false);
 					PickUpSound();
 				}
 				break;
@@ -957,6 +1005,13 @@ void AChel::PickUp() {
 					UserView->WS_Otvertka->SetActiveWidgetIndex(1);
 					DoesHave_Owner = true;
 					NewHaveItemServer(Otvertka);
+					ArrowVentilacia->AddToViewport();
+					MainExis_Ventilacia->Mesh->SetCustomDepthStencilValue(3);
+					TargetItemsDynamic.Add(MainExis_Ventilacia);
+					TargetArrowsDynamic.Add(ArrowVentilacia);
+					ExisType = Otvertka;
+					FTimerHandle FuzeTimerHandle;
+					GetWorld()->GetTimerManager().SetTimer(FuzeTimerHandle, this, &AChel::DeleteArrowDelay, 5, false);
 					PickUpSound();
 				}
 				break;
@@ -1805,6 +1860,31 @@ void AChel::RefreshOutline()
 	PoseableMeshComp->SetCustomDepthStencilValue(0);
 }
 
+void AChel::DeleteArrowDelay()
+{
+	switch (ExisType)
+	{
+	case Boltorez:
+	{
+		RemoveTargetArrowDynamic(ArrowCanalizacia);
+		MainExis_Canalizacia->Mesh->SetCustomDepthStencilValue(0);
+		break;
+	}
+	case KeyShelter:
+	{
+		RemoveTargetArrowDynamic(ArrowShelter);
+		MainExis_Shelter->Mesh->SetCustomDepthStencilValue(0);
+		break;
+	}
+	case Otvertka:
+	{
+		RemoveTargetArrowDynamic(ArrowVentilacia);
+		MainExis_Ventilacia->Mesh->SetCustomDepthStencilValue(0);
+		break;
+	}
+	}
+}
+
 void AChel::OutlineBad_Multicast_Implementation()
 {
 	PoseableMeshComp->SetCustomDepthStencilValue(1);
@@ -2113,8 +2193,8 @@ void AChel::RemoveTargetArrowStatic(AActor * TargetObj)
 	{
 		if (TargetItemsStatic[i] == TargetObj) 
 		{
-			TargetItemsStatic.RemoveAt(i);
 			TargetArrowsStatic[i]->RemoveFromViewport();
+			TargetItemsStatic.RemoveAt(i);
 			TargetArrowsStatic.RemoveAt(i);
 		}
 	}
@@ -2134,8 +2214,8 @@ void AChel::AddTargetArrowDynamic(AActor * TargetObj)
 void AChel::RemoveTargetArrowDynamic() 
 {
 	if (TargetItemsDynamic.Num() != 0) {
-		TargetItemsDynamic.RemoveAt(0);
 		TargetArrowsDynamic[0]->RemoveFromViewport();
+		TargetItemsDynamic.RemoveAt(0);
 		TargetArrowsDynamic.RemoveAt(0);
 	}
 }
@@ -2146,8 +2226,8 @@ void AChel::RemoveTargetArrowDynamic(UTargetArrow* ArrowObj)
 	{
 		if (TargetArrowsDynamic[i] == ArrowObj)
 		{
-			TargetArrowsDynamic.RemoveAt(i);
 			TargetArrowsDynamic[i]->RemoveFromParent();
+			TargetArrowsDynamic.RemoveAt(i);
 			TargetItemsDynamic.RemoveAt(i);
 		}
 	}
