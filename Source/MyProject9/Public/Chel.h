@@ -209,6 +209,9 @@ public:
 		void InvisibleEverywhere();
 
 	UFUNCTION(BlueprintImplementableEvent)
+		void AddChromaticAbberation();
+
+	UFUNCTION(BlueprintImplementableEvent)
 		void PofigKakNaz(AActor* SDJHfgActor);
 
 	UFUNCTION(BlueprintImplementableEvent)

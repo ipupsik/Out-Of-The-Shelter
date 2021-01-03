@@ -50,6 +50,10 @@ void AHealPoint::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* Oth
 			FTimerHandle FuzeTimerHandle;
 			GetWorld()->GetTimerManager().SetTimer(FuzeTimerHandle, this, &AHealPoint::HealUpdate, 10, false);
 		}
+		if (Player->IsPlayerOwner)
+		{
+			Player->AddChromaticAbberation();
+		}
 	}
 	else
 	{

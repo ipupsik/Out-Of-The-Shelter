@@ -450,10 +450,10 @@ void AChel::UpdateSpectating_Right_Server_Implementation()
 		UE_LOG(LogTemp, Warning, TEXT("Count - %d"), GS->WebCams.Num());
 	} while (!GS->WebCams[WebCamIterator]->is_Enabled);
 	
+	GoToWebCamServer(WebCamIterator);
 	SetCameraRotationWebCam(GS->WebCams[WebCamIterator]->GetActorRotation().Roll,
 		GS->WebCams[WebCamIterator]->GetActorRotation().Pitch,
 		GS->WebCams[WebCamIterator]->GetActorRotation().Yaw);
-	GoToWebCamServer(WebCamIterator);
 }
 
 bool AChel::UpdateSpectating_Right_Server_Validate()
@@ -483,10 +483,10 @@ void AChel::UpdateSpectating_Left_Server_Implementation()
 		UE_LOG(LogTemp, Warning, TEXT("Count - %d"), GS->WebCams.Num());
 	} while (!GS->WebCams[WebCamIterator]->is_Enabled);
 
+	GoToWebCamServer(WebCamIterator);
 	SetCameraRotationWebCam(GS->WebCams[WebCamIterator]->GetActorRotation().Roll,
 		GS->WebCams[WebCamIterator]->GetActorRotation().Pitch,
 		GS->WebCams[WebCamIterator]->GetActorRotation().Yaw);
-	GoToWebCamServer(WebCamIterator);
 }
 
 bool AChel::UpdateSpectating_Left_Server_Validate()
