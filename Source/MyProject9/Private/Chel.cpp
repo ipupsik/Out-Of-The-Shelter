@@ -1639,7 +1639,6 @@ void AChel::PossessToSpectator()
 
 void AChel::ChangeGeneratorStas_Implementation()
 {
-	
 	GenAreaObj->Stadiya++;
 	if (GenAreaObj->Stadiya >= 3) {
 		GenAreaObj->Stadiya = 0;
@@ -1651,6 +1650,13 @@ void AChel::ChangeGeneratorStas_Implementation()
 		for (auto& it : GenAreaObj->PromtCollisionGenerator)
 		{
 			it->bISAvaliable = false;
+		}
+
+		TArray<AActor*>Chelix;
+		GenAreaObj->ShelterCollision->Collision->GetOverlappingActors(Chelix, AChel::StaticClass());
+		for (auto& it : Chelix)
+		{
+			Cast<AChel>(it)->ShowUIAfterTerminalAndGenerator(1, true);
 		}
 
 		GenAreaObj->DoSomethinkGen();
@@ -2141,5 +2147,22 @@ void AChel::RemoveArrowBadOutline(int32 ChelIndex)
 			TargetArrowsDynamic[i]->RemoveFromParent();
 			TargetArrowsDynamic.RemoveAt(i);
 		}
+	}
+}
+
+void AChel::ShowUIAfterTerminalAndGenerator_Implementation(int32 NewAreaType, bool DoesEnabled)
+{
+	if (DoesEnabled) {
+		AreaCode = NewAreaType;
+		if (!GS->AreaAvaliables[NewAreaType])
+		{
+			if (DoesHave[NewAreaType])
+				UserView->HoldText->SetVisibility(ESlateVisibility::Visible);
+		}
+	}
+	else
+	{
+		AreaCode = -1;
+		UserView->HoldText->SetVisibility(ESlateVisibility::Hidden);
 	}
 }

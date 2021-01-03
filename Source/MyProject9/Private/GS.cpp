@@ -352,6 +352,12 @@ void AGS::CheckCode(int Index) {
 				{
 					it->bISAvaliable = false;
 				}
+				TArray<AActor*>Chelix;
+				GeneratorAreaTmp->ShelterCollision->Collision->GetOverlappingActors(Chelix, AChel::StaticClass());
+				for (auto& it : Chelix)
+				{
+					Cast<AChel>(it)->ShowUIAfterTerminalAndGenerator(-1, false);
+				}
 			}
 
 			TArray<AActor*> GettingCodeNote;

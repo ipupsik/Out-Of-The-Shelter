@@ -261,6 +261,9 @@ public:
 		void ShowNoiseWebCamUI(bool DoesNoise);
 
 	UFUNCTION(Client, Reliable)
+		void ShowUIAfterTerminalAndGenerator(int32 NewAreaType, bool DoesEnabled);
+
+	UFUNCTION(Client, Reliable)
 		void SetCameraRotationWebCam(float RollRot, float PitchRot, float YawRot);
 
 	UFUNCTION(Client, Reliable)
