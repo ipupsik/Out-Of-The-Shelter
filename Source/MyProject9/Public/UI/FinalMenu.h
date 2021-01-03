@@ -25,10 +25,10 @@ public:
 		void PlayMore();
 public:
 
-	UPROPERTY(meta = (BindWidget))
+	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
 		UButton* BTN_PlayMore;
 
-	UPROPERTY(meta = (BindWidget))
+	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
 		UButton* BTN_Exit;
 
 	UPROPERTY(meta = (BindWidget))
