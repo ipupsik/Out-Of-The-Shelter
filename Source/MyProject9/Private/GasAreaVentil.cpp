@@ -22,6 +22,7 @@ void AGasAreaVentil::DoSomethink()
 	{
 		AParticleGasCPP* PSActor = GetWorld()->SpawnActor<AParticleGasCPP>(PS_Class, it->GetActorTransform());
 		PSActor->areaType = areaType;
+		PlaySoundGas(it->GetActorLocation());
 	}
 
 	TArray<AActor*> DamageArea_Targets;

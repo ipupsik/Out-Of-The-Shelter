@@ -217,6 +217,9 @@ public:
 	UFUNCTION(BlueprintImplementableEvent)
 		void PlayStoneThrowSound();
 
+	UFUNCTION(BlueprintImplementableEvent)
+		void PlayStoneHit();
+
 	UFUNCTION(Server, Reliable, WithValidation)
 		void OutlineBad_Server();
 

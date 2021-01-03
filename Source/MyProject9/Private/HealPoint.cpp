@@ -46,6 +46,7 @@ void AHealPoint::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* Oth
 			Player->KillerIndex = -1;
 			SetActorHiddenInGame(true);
 			Collision->SetCollisionEnabled(ECollisionEnabled::Type::NoCollision);
+			PlaySoundHeal();
 
 			FTimerHandle FuzeTimerHandle;
 			GetWorld()->GetTimerManager().SetTimer(FuzeTimerHandle, this, &AHealPoint::HealUpdate, 10, false);

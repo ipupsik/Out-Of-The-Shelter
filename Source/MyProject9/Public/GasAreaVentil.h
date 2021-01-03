@@ -32,4 +32,7 @@ public:
 		TSubclassOf<AParticleGasCPP> PS_Class;
 
 	void DeleteAllObjects();
+
+	UFUNCTION(BlueprintImplementableEvent)
+		void PlaySoundGas(FVector Location);
 };

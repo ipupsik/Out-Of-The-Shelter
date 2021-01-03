@@ -634,6 +634,7 @@ void AChel::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherAct
 						break;
 					}
 				}
+				PlayStoneHit();
 				OverStone->Destroy();
 			}
 		}

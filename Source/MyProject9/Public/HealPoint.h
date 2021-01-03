@@ -36,4 +36,7 @@ public:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Player")
 		UBoxComponent* Collision;
+
+	UFUNCTION(BlueprintImplementableEvent)
+		void PlaySoundHeal();
 };
