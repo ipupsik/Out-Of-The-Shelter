@@ -297,6 +297,13 @@ void AChel::Tick(float DeltaTime)
 								LastItem->Item->SetCustomDepthStencilValue(2);
 							}
 						}
+						else if (TracedItem->Type >= 0 && TracedItem->Type <= 2)
+						{
+							if (DoesHave[LastItem->Type])
+								LastItem->Item->SetCustomDepthStencilValue(1);
+							else
+								LastItem->Item->SetCustomDepthStencilValue(2);
+						}
 						else
 							LastItem->Item->SetCustomDepthStencilValue(2);
 					}

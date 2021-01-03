@@ -131,8 +131,7 @@ void AGS::BeginPlay()
 			NewItem->AddActorLocalOffset(NewLocation);
 			NewItem->AddActorLocalRotation(KeyShelterTransform[Caches[ArrayIndex]->CacheIndex].GetRotation());
 			Cast<APickableItem>(NewItem)->EnabledArrayIndex = ArrayIndex;
-			if (NewItem)
-				CacheItems_Stuff_IsAvaliable[ArrayIndex] = false;
+			CacheItems_Stuff_IsAvaliable[ArrayIndex] = false;
 		}
 		
 		CurrentBoltorez = MIN_COUNT_Boltorez + FMath::Rand() % (MAX_COUNT_Boltorez - MIN_COUNT_Boltorez + 1);
@@ -153,8 +152,7 @@ void AGS::BeginPlay()
 			NewItem->AddActorLocalOffset(NewLocation);
 			NewItem->AddActorLocalRotation(BoltorezTransform[Caches[ArrayIndex]->CacheIndex].GetRotation());
 			Cast<APickableItem>(NewItem)->EnabledArrayIndex = ArrayIndex;
-			if (NewItem)
-				CacheItems_Stuff_IsAvaliable[ArrayIndex] = false;
+			CacheItems_Stuff_IsAvaliable[ArrayIndex] = false;
 		}
 
 		CurrentOtvertka = MIN_COUNT_Otvertka + FMath::Rand() % (MAX_COUNT_Otvertka - MIN_COUNT_Otvertka + 1);
@@ -176,8 +174,7 @@ void AGS::BeginPlay()
 			NewItem->AddActorLocalOffset(NewLocation);
 			NewItem->AddActorLocalRotation(OtvertkaTransform[Caches[ArrayIndex]->CacheIndex].GetRotation());
 			Cast<APickableItem>(NewItem)->EnabledArrayIndex = ArrayIndex;
-			if (NewItem)
-				CacheItems_Stuff_IsAvaliable[ArrayIndex] = false;
+			CacheItems_Stuff_IsAvaliable[ArrayIndex] = false;
 		}
 
 
