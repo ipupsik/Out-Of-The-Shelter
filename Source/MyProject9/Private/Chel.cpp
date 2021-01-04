@@ -99,6 +99,7 @@ AChel::AChel()
 	bCanWalkingAndWatching = true;
 	IsAwake = true;
 
+	bInEscMenu = false;
 //	OpenAreaObj = nullptr;
 
 	KeysCount.Init(0, 3);
@@ -121,7 +122,6 @@ void AChel::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimePro
 	DOREPLIFETIME(AChel, Kills);
 	DOREPLIFETIME(AChel, DoesHave);
 	DOREPLIFETIME(AChel, KeysCount);
-	DOREPLIFETIME(AChel, bCanWalkingAndWatching);
 }
 //-----------------------------
 
@@ -539,80 +539,82 @@ bool AChel::UpdateSpectating_Left_Server_Validate()
 
 void AChel::OpenAreaPressed() 
 {
-	if (AreaCode != -1)
-	{
-		IsSuccessOpening = true;
-		if (AreaCode <= 2 && AreaCode >= 0) {
-			if (!GS->AreaAvaliables[AreaCode] && DoesHave[AreaCode]) {
-				UserView->PB_Opening->SetVisibility(ESlateVisibility::Visible);
-				UserView->TimeLeft->SetVisibility(ESlateVisibility::Visible);
-			}
-		}
-		switch (AreaCode)
+	if (!bInEscMenu && bCanWalkingAndWatching) {
+		if (AreaCode != -1)
 		{
-		case Boltorez:
-		{
-			if (GS->AreaAvaliables[AreaCode])
-			{
-				PlayerEscape(AreaCode);
-				UserView->RemoveFromParent();
-			}
-			else if (DoesHave[AreaCode])
-			{
-				UserView->PlayAnimation(UserView->CanalizaciaAnim);
-			}
-			break;
-		}
-		case KeyShelter:
-		{
-			if (DoesHave[AreaCode] && !GS->AreaAvaliables[AreaCode])
-			{
-				UserView->PlayAnimation(UserView->ShelterAnim);
-			}
-			break;
-		}
-		case Otvertka:
-		{
-			if (GS->AreaAvaliables[AreaCode])
-			{
-				PlayerEscape(AreaCode);
-				UserView->RemoveFromParent();
-			}
-			else if (DoesHave[AreaCode])
-			{
-				UserView->PlayAnimation(UserView->VentilaciaAnim);
-			}
-			break;
-		}
-		case GeneratorArea:
-		{
-			if (GenAreaObj) {
-				if (GenAreaObj->IsAvalible) {
-					if (GeneratorView->IsVisible()) {
-						if (GeneratorView->Corretca->Value <= GeneratorView->PB_Repair->Percent) {
-							ChangeGeneratorStas();
-						}
-						else {
-							GeneratorView->ChangeCorretcaPosition(GenAreaObj->Stadiya);
-							OutlineBad_Server();//Здесь могла быть ваша логика с обводкой конкретного челика для всех остальных, но уже 12 часов ночи, сори, бб
-						}
-					}
-					else {
-						UserView->HoldText->SetVisibility(ESlateVisibility::Hidden);
-						GeneratorView->ChangeCorretcaPosition(GenAreaObj->Stadiya);
-						GeneratorView->SetVisibility(ESlateVisibility::Visible);
-					}
+			IsSuccessOpening = true;
+			if (AreaCode <= 2 && AreaCode >= 0) {
+				if (!GS->AreaAvaliables[AreaCode] && DoesHave[AreaCode]) {
+					UserView->PB_Opening->SetVisibility(ESlateVisibility::Visible);
+					UserView->TimeLeft->SetVisibility(ESlateVisibility::Visible);
 				}
 			}
-			break;
-		}
-		case ShelterOpener:
-		{
-			if(GS->AreaAvaliables[1]) {
-				PlayerEscape(1);
-				UserView->RemoveFromParent();
+			switch (AreaCode)
+			{
+			case Boltorez:
+			{
+				if (GS->AreaAvaliables[AreaCode])
+				{
+					PlayerEscape(AreaCode);
+					UserView->RemoveFromParent();
+				}
+				else if (DoesHave[AreaCode])
+				{
+					UserView->PlayAnimation(UserView->CanalizaciaAnim);
+				}
+				break;
 			}
-		}
+			case KeyShelter:
+			{
+				if (DoesHave[AreaCode] && !GS->AreaAvaliables[AreaCode])
+				{
+					UserView->PlayAnimation(UserView->ShelterAnim);
+				}
+				break;
+			}
+			case Otvertka:
+			{
+				if (GS->AreaAvaliables[AreaCode])
+				{
+					PlayerEscape(AreaCode);
+					UserView->RemoveFromParent();
+				}
+				else if (DoesHave[AreaCode])
+				{
+					UserView->PlayAnimation(UserView->VentilaciaAnim);
+				}
+				break;
+			}
+			case GeneratorArea:
+			{
+				if (GenAreaObj) {
+					if (GenAreaObj->IsAvalible) {
+						if (GeneratorView->IsVisible()) {
+							if (GeneratorView->Corretca->Value <= GeneratorView->PB_Repair->Percent) {
+								ChangeGeneratorStas();
+							}
+							else {
+								GeneratorView->ChangeCorretcaPosition(GenAreaObj->Stadiya);
+								OutlineBad_Server();//Здесь могла быть ваша логика с обводкой конкретного челика для всех остальных, но уже 12 часов ночи, сори, бб
+							}
+						}
+						else {
+							UserView->HoldText->SetVisibility(ESlateVisibility::Hidden);
+							GeneratorView->ChangeCorretcaPosition(GenAreaObj->Stadiya);
+							GeneratorView->SetVisibility(ESlateVisibility::Visible);
+						}
+					}
+				}
+				break;
+			}
+			case ShelterOpener:
+			{
+				if (GS->AreaAvaliables[1]) {
+					PlayerEscape(1);
+					UserView->RemoveFromParent();
+				}
+			}
+			}
 		}
 	}
 }
@@ -703,7 +705,7 @@ void AChel::OnTimelineFinished_Stone_Second() {
 
 //AttackInput------------------
 void AChel::ThrowStone() {
-	if (Ammo > 0 && IsEnableInput) {
+	if (Ammo > 0 && IsEnableInput && bCanWalkingAndWatching && !bInEscMenu) {
 		if (!bIsAlreadyThrowing) {
 			bIsAlreadyThrowing = true;
 			TimeLine_Stone_First->PlayFromStart();
@@ -739,7 +741,7 @@ void AChel::ShowStoneMulticast_Implementation() {
 
 //KeyBoardInput----------------
 void AChel::GoForward(float input) {
-	if (bCanWalkingAndWatching) {
+	if (bCanWalkingAndWatching && !bInEscMenu) {
 		if (input != 0.0f && IsEnableInput) {
 			AddMovementInput(GetActorForwardVector(), input * MoveCoeff);
 		}
@@ -747,7 +749,7 @@ void AChel::GoForward(float input) {
 }
 
 void AChel::GoRight(float input) {
-	if (bCanWalkingAndWatching) {
+	if (bCanWalkingAndWatching && !bInEscMenu) {
 		if (input != 0.0f && IsEnableInput) {
 			AddMovementInput(GetActorRightVector(), input * MoveCoeff);
 		}
@@ -777,7 +779,7 @@ bool AChel::MeshCompRepServer_Validate(float RotationRoll)
 //MouseInput-------------------
 void AChel::LookUp(float input)
 {
-	if (bCanWalkingAndWatching) {
+	if (bCanWalkingAndWatching && !bInEscMenu) {
 		if (IsEnableInput) {
 			if (input != 0.0f)
 			{
@@ -818,7 +820,7 @@ void AChel::LookUp(float input)
 
 void AChel::LookRight(float input)
 {
-	if (bCanWalkingAndWatching) {
+	if (bCanWalkingAndWatching && !bInEscMenu) {
 		if (IsEnableInput) {
 			if (input != 0.0f) {
 				input *= Sensetivity;
@@ -961,208 +963,210 @@ void AChel::PlaySpawnAnimationAwake_Implementation() {
 
 //-----------------------------
 void AChel::PickUp() {
-	if (IsEnableInput) {
-		if (ItemCodePickUp != -1) {
-			UE_LOG(LogTemp, Warning, TEXT("ItemCode - %d"), ItemCodePickUp);
-			IsSuccessOpening = true;
-			switch (ItemCodePickUp) {
-			case Boltorez:
-			{
-				if (!DoesHave[Boltorez]) {
-
-					UserView->WS_Boltorez->SetActiveWidgetIndex(1);
-					DoesHave_Owner = true;
-					NewHaveItemServer(Boltorez);
-
-					ArrowCanalizacia->AddToViewport();
-					MainExis_Canalizacia->Mesh->SetCustomDepthStencilValue(3);
-					TargetItemsDynamic.Add(MainExis_Canalizacia);
-					TargetArrowsDynamic.Add(ArrowCanalizacia);
-					ExisType = Boltorez;
-					FTimerHandle FuzeTimerHandle;
-					GetWorld()->GetTimerManager().SetTimer(FuzeTimerHandle, this, &AChel::DeleteArrowDelay, ShowMainExis_TIME, false);
-					PickUpSound();
-				}
-				break;
-			}
-			case KeyShelter:
-			{
-				if (!DoesHave[KeyShelter]) {
-					UserView->WS_KeyShelter->SetActiveWidgetIndex(1);
-					DoesHave_Owner = true;
-					NewHaveItemServer(KeyShelter);
-
-					ArrowShelter->AddToViewport();
-					MainExis_Shelter->Mesh->SetCustomDepthStencilValue(3);
-					TargetItemsDynamic.Add(MainExis_Shelter);
-					TargetArrowsDynamic.Add(ArrowShelter);
-					ExisType = KeyShelter;
-					FTimerHandle FuzeTimerHandle;
-					GetWorld()->GetTimerManager().SetTimer(FuzeTimerHandle, this, &AChel::DeleteArrowDelay, ShowMainExis_TIME, false);
-					PickUpSound();
-				}
-				break;
-			}
-			case Otvertka:
-			{
-				if (!DoesHave[Otvertka]) {
-					UserView->WS_Otvertka->SetActiveWidgetIndex(1);
-					DoesHave_Owner = true;
-					NewHaveItemServer(Otvertka);
-					ArrowVentilacia->AddToViewport();
-					MainExis_Ventilacia->Mesh->SetCustomDepthStencilValue(3);
-					TargetItemsDynamic.Add(MainExis_Ventilacia);
-					TargetArrowsDynamic.Add(ArrowVentilacia);
-					ExisType = Otvertka;
-					FTimerHandle FuzeTimerHandle;
-					GetWorld()->GetTimerManager().SetTimer(FuzeTimerHandle, this, &AChel::DeleteArrowDelay, ShowMainExis_TIME, false);
-					PickUpSound();
-				}
-				break;
-			}
-			case CacheKey:
-			{
-				int KeyType = Cast<ACache_Key>(LastItem)->KeyType;
-				switch (KeyType)
+	if (!bInEscMenu) {
+		if (IsEnableInput) {
+			if (ItemCodePickUp != -1) {
+				UE_LOG(LogTemp, Warning, TEXT("ItemCode - %d"), ItemCodePickUp);
+				IsSuccessOpening = true;
+				switch (ItemCodePickUp) {
+				case Boltorez:
 				{
-				case KeyBronze:
-				{
-					UserView->KeyLeft_Bronze->SetText(FText::AsNumber(KeysCount[KeyBronze] + 1));
+					if (!DoesHave[Boltorez]) {
+
+						UserView->WS_Boltorez->SetActiveWidgetIndex(1);
+						DoesHave_Owner = true;
+						NewHaveItemServer(Boltorez);
+
+						ArrowCanalizacia->AddToViewport();
+						MainExis_Canalizacia->Mesh->SetCustomDepthStencilValue(3);
+						TargetItemsDynamic.Add(MainExis_Canalizacia);
+						TargetArrowsDynamic.Add(ArrowCanalizacia);
+						ExisType = Boltorez;
+						FTimerHandle FuzeTimerHandle;
+						GetWorld()->GetTimerManager().SetTimer(FuzeTimerHandle, this, &AChel::DeleteArrowDelay, ShowMainExis_TIME, false);
+						PickUpSound();
+					}
 					break;
 				}
-				case KeySilver:
+				case KeyShelter:
 				{
-					UserView->KeyLeft_Silver->SetText(FText::AsNumber(KeysCount[KeySilver] + 1));
+					if (!DoesHave[KeyShelter]) {
+						UserView->WS_KeyShelter->SetActiveWidgetIndex(1);
+						DoesHave_Owner = true;
+						NewHaveItemServer(KeyShelter);
+
+						ArrowShelter->AddToViewport();
+						MainExis_Shelter->Mesh->SetCustomDepthStencilValue(3);
+						TargetItemsDynamic.Add(MainExis_Shelter);
+						TargetArrowsDynamic.Add(ArrowShelter);
+						ExisType = KeyShelter;
+						FTimerHandle FuzeTimerHandle;
+						GetWorld()->GetTimerManager().SetTimer(FuzeTimerHandle, this, &AChel::DeleteArrowDelay, ShowMainExis_TIME, false);
+						PickUpSound();
+					}
 					break;
 				}
-				case KeyGold:
+				case Otvertka:
 				{
-					UserView->KeyLeft_Gold->SetText(FText::AsNumber(KeysCount[KeyGold] + 1));
+					if (!DoesHave[Otvertka]) {
+						UserView->WS_Otvertka->SetActiveWidgetIndex(1);
+						DoesHave_Owner = true;
+						NewHaveItemServer(Otvertka);
+						ArrowVentilacia->AddToViewport();
+						MainExis_Ventilacia->Mesh->SetCustomDepthStencilValue(3);
+						TargetItemsDynamic.Add(MainExis_Ventilacia);
+						TargetArrowsDynamic.Add(ArrowVentilacia);
+						ExisType = Otvertka;
+						FTimerHandle FuzeTimerHandle;
+						GetWorld()->GetTimerManager().SetTimer(FuzeTimerHandle, this, &AChel::DeleteArrowDelay, ShowMainExis_TIME, false);
+						PickUpSound();
+					}
 					break;
 				}
-				}
-				KeysCount[KeyType]++;
-				DoesHave_Owner = true;
-				NewHaveItemServer(ItemCodePickUp);
-				PickUpSound();
-				break;
-			}
-			case Cache:
-			{
-				if (LastCache != nullptr) {
-					if (KeysCount[LastCache->CacheType] > 0)
+				case CacheKey:
+				{
+					int KeyType = Cast<ACache_Key>(LastItem)->KeyType;
+					switch (KeyType)
 					{
-						switch (LastCache->CacheType)
-						{
-						case KeyBronze:
-						{
-							UserView->KeyLeft_Bronze->SetText(FText::AsNumber(KeysCount[KeyBronze] - 1));
-							break;
-						}
-						case KeySilver:
-						{
-							UserView->KeyLeft_Silver->SetText(FText::AsNumber(KeysCount[KeySilver] - 1));
-							break;
-						}
-						case KeyGold:
-						{
-							UserView->KeyLeft_Gold->SetText(FText::AsNumber(KeysCount[KeyGold] - 1));
-							break;
-						}
-						}
-						KeysCount[LastCache->CacheType]--;
-						UserView->E_Mark->SetVisibility(ESlateVisibility::Hidden);
-						ChangeIsAvaliableCache();
+					case KeyBronze:
+					{
+						UserView->KeyLeft_Bronze->SetText(FText::AsNumber(KeysCount[KeyBronze] + 1));
+						break;
 					}
+					case KeySilver:
+					{
+						UserView->KeyLeft_Silver->SetText(FText::AsNumber(KeysCount[KeySilver] + 1));
+						break;
+					}
+					case KeyGold:
+					{
+						UserView->KeyLeft_Gold->SetText(FText::AsNumber(KeysCount[KeyGold] + 1));
+						break;
+					}
+					}
+					KeysCount[KeyType]++;
+					DoesHave_Owner = true;
+					NewHaveItemServer(ItemCodePickUp);
+					PickUpSound();
+					break;
 				}
-				else
+				case Cache:
 				{
-					UE_LOG(LogTemp, Warning, TEXT("LastCache is nullptr"))
-				}
-				break;
+					if (LastCache != nullptr) {
+						if (KeysCount[LastCache->CacheType] > 0)
+						{
+							switch (LastCache->CacheType)
+							{
+							case KeyBronze:
+							{
+								UserView->KeyLeft_Bronze->SetText(FText::AsNumber(KeysCount[KeyBronze] - 1));
+								break;
+							}
+							case KeySilver:
+							{
+								UserView->KeyLeft_Silver->SetText(FText::AsNumber(KeysCount[KeySilver] - 1));
+								break;
+							}
+							case KeyGold:
+							{
+								UserView->KeyLeft_Gold->SetText(FText::AsNumber(KeysCount[KeyGold] - 1));
+								break;
+							}
+							}
+							KeysCount[LastCache->CacheType]--;
+							UserView->E_Mark->SetVisibility(ESlateVisibility::Hidden);
+							ChangeIsAvaliableCache();
+						}
+					}
+					else
+					{
+						UE_LOG(LogTemp, Warning, TEXT("LastCache is nullptr"))
+					}
+					break;
 
-			}
-			case CanalizationButton:
-			{
-				UserView->E_Mark->SetVisibility(ESlateVisibility::Hidden);
-				ChangeButtonCount_Server();
-				break;
-			}
-			case WebCamLocker:
-			{
-				LockWebCam_Server();
-				break;
-			}
-			case InvisiblePotion:
-			{
-				AddInvisibleServer();
-				break;
-			}
-			case CodeNote:
-			{
-				if (Widget_Note->IsVisible())
-				{
-					Widget_Note->SetVisibility(ESlateVisibility::Hidden);
-					PickUpSound();
-					bCanWalkingAndWatching = true;
 				}
-				else
+				case CanalizationButton:
 				{
-					Widget_Note->ChangeText(GS->CodeGenerator);
-					Widget_Note->SetVisibility(ESlateVisibility::Visible);
-					PickUpSound();
-					bCanWalkingAndWatching = false;
+					UserView->E_Mark->SetVisibility(ESlateVisibility::Hidden);
+					ChangeButtonCount_Server();
+					break;
 				}
-				break;
-			}
-			case ClickButton:
-			{
-				AClickButton* CurButton = Cast<AClickButton>(LastItem);
-				if (GS->IsCodeTerminalAvaliable && !GS->ButtonPlayAnim && CurButton)
+				case WebCamLocker:
 				{
-					if (CurButton->ButtonType <= 9) {
-						if (GS->NumbersOnPanel.Num() <= 4) {
-							AddNumToTerminalServer(CurButton->ButtonType);
-							ButtonPressAnimationServer();
-						}
+					LockWebCam_Server();
+					break;
+				}
+				case InvisiblePotion:
+				{
+					AddInvisibleServer();
+					break;
+				}
+				case CodeNote:
+				{
+					if (Widget_Note->IsVisible())
+					{
+						Widget_Note->SetVisibility(ESlateVisibility::Hidden);
+						PickUpSound();
+						bCanWalkingAndWatching = true;
 					}
-					else {
-						if (CurButton->ButtonType == 10) {
-							if (GS->NumbersOnPanel.Num() > 0) {
-								DeleteLAstNumServer();
+					else
+					{
+						Widget_Note->ChangeText(GS->CodeGenerator);
+						Widget_Note->SetVisibility(ESlateVisibility::Visible);
+						PickUpSound();
+						bCanWalkingAndWatching = false;
+					}
+					break;
+				}
+				case ClickButton:
+				{
+					AClickButton* CurButton = Cast<AClickButton>(LastItem);
+					if (GS->IsCodeTerminalAvaliable && !GS->ButtonPlayAnim && CurButton)
+					{
+						if (CurButton->ButtonType <= 9) {
+							if (GS->NumbersOnPanel.Num() <= 4) {
+								AddNumToTerminalServer(CurButton->ButtonType);
 								ButtonPressAnimationServer();
 							}
 						}
-						else
-						{
-							CheckCodeServer();
-							ButtonPressAnimationServer();
+						else {
+							if (CurButton->ButtonType == 10) {
+								if (GS->NumbersOnPanel.Num() > 0) {
+									DeleteLAstNumServer();
+									ButtonPressAnimationServer();
+								}
+							}
+							else
+							{
+								CheckCodeServer();
+								ButtonPressAnimationServer();
+							}
 						}
 					}
-				}
-				break;
-			}
-			case OpenArea:
-			{
-				AOpenArea* CurOpArea = Cast<AOpenArea>(LastItem);
-				if (!CurOpArea->bIsUsed)
-				{
-					if (CurOpArea != nullptr && CurOpArea->bIsAvaliable) {
-						UserView->PB_Opening->SetVisibility(ESlateVisibility::Visible);
-						UserView->TimeLeft->SetVisibility(ESlateVisibility::Visible);
-					}
-					UserView->PlayAnimation(UserView->OpenAreaAnim, CurOpArea->CurTimeVentil);
-					GoToServerOpenArea(true);
 					break;
 				}
-			}
+				case OpenArea:
+				{
+					AOpenArea* CurOpArea = Cast<AOpenArea>(LastItem);
+					if (!CurOpArea->bIsUsed)
+					{
+						if (CurOpArea != nullptr && CurOpArea->bIsAvaliable) {
+							UserView->PB_Opening->SetVisibility(ESlateVisibility::Visible);
+							UserView->TimeLeft->SetVisibility(ESlateVisibility::Visible);
+						}
+						UserView->PlayAnimation(UserView->OpenAreaAnim, CurOpArea->CurTimeVentil);
+						GoToServerOpenArea(true);
+						break;
+					}
+				}
+				}
 			}
 		}
-	}
-	else
-	{
-		TimeLine_FOV_WebCam->Play();
-		CameraZoomIn();
+		else
+		{
+			TimeLine_FOV_WebCam->Play();
+			CameraZoomIn();
+		}
 	}
 }
 
@@ -1480,6 +1484,8 @@ void AChel::KillPlayer()
 	DisableCollisionEverywhere();
 	HideCustomItems(true);
 	SetActorHiddenInGame(true);
+	if (Widget_Note)
+		Widget_Note->SetVisibility(ESlateVisibility::Hidden);
 	IsInGame = false;
 	PlaySpawnAnimationSleep();
 
