@@ -456,7 +456,7 @@ public:
 	UPROPERTY(Replicated)
 		bool bCanWalkingAndWatching;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Replicated)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 		bool IsEnableInput;
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite) //!!!!!!!!!!!!!!
 	bool IsSuccessOpening;

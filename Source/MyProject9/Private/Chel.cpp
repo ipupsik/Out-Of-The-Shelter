@@ -915,6 +915,7 @@ void AChel::SleepAnimation_End()
 {
 	if (bCanPossessWebCam) {
 		UserView->SetVisibility(ESlateVisibility::Hidden);
+		IsEnableInput = false;
 		UpdateSpectating_Right();
 		WebCamUI->SetVisibility(ESlateVisibility::Visible);
 		IsAwake = false;
@@ -1477,7 +1478,6 @@ void AChel::KillPlayer()
 	SetActorHiddenInGame(true);
 	IsInGame = false;
 	PlaySpawnAnimationSleep();
-	IsEnableInput = false;
 
 	FTimerHandle TimerHandle;
 	World->GetTimerManager().SetTimer(TimerHandle, this, &AChel::SpawnPlayer, SPAWN_TIME, false);
@@ -1959,7 +1959,7 @@ void AChel::LockWebCam_Server_Implementation()
 		AWebCamLocker* TempItem = Cast<AWebCamLocker>(OutHit.GetActor());
 		if (TempItem)
 		{
-			if (TempItem->DoesLock)
+			if (TempItem->DoesLock && !TempItem->DoesPlayAnim)
 			{
 				TempItem->Close();
 				TempItem->DoesLock = false;

@@ -19,5 +19,6 @@ AWebCamLocker::AWebCamLocker()
 
 	DoesLock = false;
 	Index = 0;
+	DoesPlayAnim = false;
 }
 

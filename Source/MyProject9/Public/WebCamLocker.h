@@ -37,4 +37,6 @@ public:
 	bool DoesLock;
 	UPROPERTY(EditAnywhere)
 	int32 Index;
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+		bool DoesPlayAnim;
 };
