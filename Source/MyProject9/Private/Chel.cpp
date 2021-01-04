@@ -88,6 +88,8 @@ AChel::AChel()
 	ItemCodePickUp = -1;
 	IsEnableInput = true;
 
+	WebCamIterator = -1;
+
 	CanalizationDamage = 1.0f;
 
 	KillerIndex = -1;
@@ -476,7 +478,8 @@ void AChel::SetCameraRotationWebCam_Implementation(float RollRot, float PitchRot
 
 void AChel::UpdateSpectating_Right_Server_Implementation()
 {
-	GS->WebCams[WebCamIterator]->is_Enabled = true;
+	if (WebCamIterator != -1)
+		GS->WebCams[WebCamIterator]->is_Enabled = true;
 	do
 	{
 		WebCamIterator += 1;
@@ -510,7 +513,8 @@ void AChel::UpdateSpectating_Left()
 
 void AChel::UpdateSpectating_Left_Server_Implementation()
 {
-	GS->WebCams[WebCamIterator]->is_Enabled = true;
+	if (WebCamIterator != -1)
+		GS->WebCams[WebCamIterator]->is_Enabled = true;
 	do
 	{
 		WebCamIterator -= 1;
@@ -1472,6 +1476,7 @@ void AChel::KillPlayer()
 			Chel->DeleteStrelkaBadOutline_Client(Index);
 		}
 	}
+	GetCharacterMovement()->StopMovementImmediately();
 	DisableCollisionEverywhere();
 	HideCustomItems(true);
 	SetActorHiddenInGame(true);
@@ -1968,7 +1973,7 @@ void AChel::LockWebCam_Server_Implementation()
 				}
 				GS->WebCams[TempItem->Index]->is_Enabled = true;
 			}
-			else
+			else if (!TempItem->DoesLock && !TempItem->DoesPlayAnim)
 			{
 				TempItem->Open();
 				TempItem->DoesLock = true;
