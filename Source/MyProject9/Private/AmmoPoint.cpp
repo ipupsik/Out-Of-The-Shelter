@@ -15,10 +15,12 @@ AAmmoPoint::AAmmoPoint()
 	Collision->SetupAttachment(RootComponent);
 
 	Mesh = CreateDefaultSubobject<UStaticMeshComponent>("Mesh");
-	Mesh->SetupAttachment(RootComponent);
+	Mesh->SetupAttachment(Collision);
+
+	Instances = CreateDefaultSubobject<UInstancedStaticMeshComponent>("Instances");
+	Mesh->SetupAttachment(Collision);
 
 	Collision->OnComponentBeginOverlap.AddDynamic(this, &AAmmoPoint::OnOverlapBegin);
-
 	Enable = true;
 }
 
@@ -35,7 +37,8 @@ void AAmmoPoint::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* Oth
 			Player->ShowStoneMulticast();
 
 			Enable = false;
-
+			Instances->SetHiddenInGame(true);
+			PlaySoundAmmoPoint();
 			FTimerHandle FuzeTimerHandle;
 			GetWorld()->GetTimerManager().SetTimer(FuzeTimerHandle, this, &AAmmoPoint::AmmoUpdate, 10, false);
 		}
@@ -54,12 +57,14 @@ void AAmmoPoint::AmmoUpdate()
 		Chel->ShowStoneMulticast();
 
 		Enable = false;
-
+		Instances->SetHiddenInGame(true);
+		PlaySoundAmmoPoint();
 		FTimerHandle FuzeTimerHandle;
 		GetWorld()->GetTimerManager().SetTimer(FuzeTimerHandle, this, &AAmmoPoint::AmmoUpdate, 10, false);
 	}
 	else
 	{
+		Instances->SetHiddenInGame(false);
 		Enable = true;
 	}
 }
