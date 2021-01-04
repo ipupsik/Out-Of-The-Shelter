@@ -243,6 +243,9 @@ public:
 	UFUNCTION(BlueprintImplementableEvent)
 		void PlayStoneHit();
 
+	UFUNCTION(BlueprintImplementableEvent)
+		void PlayArrowSound();
+
 	UFUNCTION(Server, Reliable, WithValidation)
 		void OutlineBad_Server();
 
