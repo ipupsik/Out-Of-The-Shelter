@@ -2194,6 +2194,7 @@ void AChel::AddTargetArrowStatic(AActor * TargetObj)
 		Arrow->AddToViewport();
 		TargetItemsStatic.Add(TargetObj);
 		TargetArrowsStatic.Add(Arrow);
+		PlayArrowSound();
 	}
 }
 
@@ -2218,6 +2219,7 @@ void AChel::AddTargetArrowDynamic(AActor * TargetObj)
 		Arrow->AddToViewport();
 		TargetItemsDynamic.Add(TargetObj);
 		TargetArrowsDynamic.Add(Arrow);
+		PlayArrowSound();
 	}
 }
 
@@ -2239,6 +2241,7 @@ void AChel::RemoveTargetArrowDynamic(UTargetArrow* ArrowObj)
 			TargetArrowsDynamic[i]->RemoveFromParent();
 			TargetArrowsDynamic.RemoveAt(i);
 			TargetItemsDynamic.RemoveAt(i);
+			PlayArrowSound();
 		}
 	}
 }
