@@ -453,7 +453,7 @@ public:
 	bool bLineTrace_is_need_refresh;
 		bool bCanPossessWebCam;
 	bool isTracedBad;
-	UPROPERTY(Replicated)
+	UPROPERTY(BlueprintReadWrite)
 		bool bCanWalkingAndWatching;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
@@ -489,6 +489,7 @@ public:
 
 	AWebCamLocker* LastWebCamLocker;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	UNoteWidget* Widget_Note;
 
 	UTargetArrow* ArrowShelter;
@@ -500,4 +501,7 @@ public:
 	AItemPromtArrow_MainExis* MainExis_Canalizacia;
 
 	int32 ExisType;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool bInEscMenu;
 };
