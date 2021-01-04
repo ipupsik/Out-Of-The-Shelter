@@ -1968,7 +1968,7 @@ void AChel::LockWebCam_Server_Implementation()
 				}
 				GS->WebCams[TempItem->Index]->is_Enabled = true;
 			}
-			else if (!TempItem->DoesLock && !TempItem->DoesPlayAnim)
+			else
 			{
 				TempItem->Open();
 				TempItem->DoesLock = true;
