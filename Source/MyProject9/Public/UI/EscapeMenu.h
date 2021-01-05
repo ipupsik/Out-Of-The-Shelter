@@ -21,7 +21,7 @@ public:
 	UPROPERTY(meta = (BindWidget)) 
 		UButton* DoneButton;
 
-	UPROPERTY(meta = (BindWidget))
+	UPROPERTY(meta = (BindWidget), BluprintReadWrite)
 		UTextBlock* NetID;
 
 	void NativeConstruct() override;
