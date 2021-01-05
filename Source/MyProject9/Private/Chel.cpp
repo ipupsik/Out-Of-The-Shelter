@@ -86,8 +86,8 @@ AChel::AChel()
 	bLineTrace_is_need_refresh = false;
 	DoesHave_Owner = false;
 	ItemCodePickUp = -1;
-	IsEnableInput = true;
-
+	IsNotInWebCam = true;
+	CanThrowStone = true;
 	WebCamIterator = -1;
 
 	CanalizationDamage = 1.0f;
@@ -202,21 +202,18 @@ void AChel::MyBeginPlay()
 			{
 			case 0:
 			{
-				ArrowCanalizacia = Cast<UTargetArrow>(CreateWidget(World, TargetArrowClass));
 				MainExis_Canalizacia = Cast<AItemPromtArrow_MainExis>(it);
 				UE_LOG(LogTemp, Warning, TEXT("AddCanalizacia"));
 				break;
 			}
 			case 1:
 			{
-				ArrowShelter = Cast<UTargetArrow>(CreateWidget(World, TargetArrowClass));
 				MainExis_Shelter = Cast<AItemPromtArrow_MainExis>(it);
 				UE_LOG(LogTemp, Warning, TEXT("AddArrowShelter"));
 				break;
 			}
 			case 2:
 			{
-				ArrowVentilacia = Cast<UTargetArrow>(CreateWidget(World, TargetArrowClass));
 				MainExis_Ventilacia = Cast<AItemPromtArrow_MainExis>(it);
 				UE_LOG(LogTemp, Warning, TEXT("AddArrowVentilacia"));
 				break;
@@ -421,6 +418,8 @@ void AChel::Tick(float DeltaTime)
 		{
 			UpdateTargetArrowPosition(TargetItemsStatic[i],TargetArrowsStatic[i]);
 		}
+		UE_LOG(LogTemp, Warning, TEXT("TargetItemsDynamic.Num - %d"), TargetItemsDynamic.Num());
+		UE_LOG(LogTemp, Warning, TEXT("TargetArrowsDynamic.Num - %d"), TargetArrowsDynamic.Num());
 		for (int i = 0; i < TargetArrowsDynamic.Num(); ++i)
 		{
 			UpdateTargetArrowPosition(TargetItemsDynamic[i], TargetArrowsDynamic[i]);
@@ -461,7 +460,7 @@ void AChel::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 
 void AChel::UpdateSpectating_Right()
 {
-	if (!IsEnableInput)
+	if (!IsNotInWebCam)
 	{
 		UpdateSpectating_Right_Server();
 		CameraSwitch();
@@ -504,7 +503,7 @@ bool AChel::UpdateSpectating_Right_Server_Validate()
 
 void AChel::UpdateSpectating_Left()
 {
-	if (!IsEnableInput)
+	if (!IsNotInWebCam)
 	{
 		UpdateSpectating_Left_Server();
 		CameraSwitch();
@@ -705,7 +704,7 @@ void AChel::OnTimelineFinished_Stone_Second() {
 
 //AttackInput------------------
 void AChel::ThrowStone() {
-	if (Ammo > 0 && IsEnableInput && bCanWalkingAndWatching && !bInEscMenu) {
+	if (Ammo > 0 && IsNotInWebCam && bCanWalkingAndWatching && !bInEscMenu && CanThrowStone) {
 		if (!bIsAlreadyThrowing) {
 			bIsAlreadyThrowing = true;
 			TimeLine_Stone_First->PlayFromStart();
@@ -742,7 +741,7 @@ void AChel::ShowStoneMulticast_Implementation() {
 //KeyBoardInput----------------
 void AChel::GoForward(float input) {
 	if (bCanWalkingAndWatching && !bInEscMenu) {
-		if (input != 0.0f && IsEnableInput) {
+		if (input != 0.0f && IsNotInWebCam) {
 			AddMovementInput(GetActorForwardVector(), input * MoveCoeff);
 		}
 	}
@@ -750,7 +749,7 @@ void AChel::GoForward(float input) {
 
 void AChel::GoRight(float input) {
 	if (bCanWalkingAndWatching && !bInEscMenu) {
-		if (input != 0.0f && IsEnableInput) {
+		if (input != 0.0f && IsNotInWebCam) {
 			AddMovementInput(GetActorRightVector(), input * MoveCoeff);
 		}
 	}
@@ -780,7 +779,7 @@ bool AChel::MeshCompRepServer_Validate(float RotationRoll)
 void AChel::LookUp(float input)
 {
 	if (bCanWalkingAndWatching && !bInEscMenu) {
-		if (IsEnableInput) {
+		if (IsNotInWebCam) {
 			if (input != 0.0f)
 			{
 				input *= Sensetivity;
@@ -821,7 +820,7 @@ void AChel::LookUp(float input)
 void AChel::LookRight(float input)
 {
 	if (bCanWalkingAndWatching && !bInEscMenu) {
-		if (IsEnableInput) {
+		if (IsNotInWebCam) {
 			if (input != 0.0f) {
 				input *= Sensetivity;
 				AddControllerYawInput(input);
@@ -847,7 +846,7 @@ void AChel::LookRight(float input)
 void AChel::MyJump()
 {
 	if (bCanWalkingAndWatching) {
-		if (IsEnableInput)
+		if (IsNotInWebCam)
 			Jump();
 	}
 }
@@ -910,6 +909,7 @@ void AChel::PlaySpawnAnimationSleep_Implementation() {
 		TargetArrowsDynamic.RemoveAt(i);
 		TargetItemsDynamic.RemoveAt(i);
 	}
+	CanThrowStone = false;
 	SpawnDeadSound();
 	UserView->PlayAnimation(UserView->Shading);
 	FTimerHandle FuzeTimerHandle;
@@ -920,7 +920,7 @@ void AChel::SleepAnimation_End()
 {
 	if (bCanPossessWebCam) {
 		UserView->SetVisibility(ESlateVisibility::Hidden);
-		IsEnableInput = false;
+		IsNotInWebCam = false;
 		UpdateSpectating_Right();
 		WebCamUI->SetVisibility(ESlateVisibility::Visible);
 		IsAwake = false;
@@ -943,10 +943,10 @@ void AChel::AwakeAnimation_End()
 
 //PlayStartingAnimation---------------------
 void AChel::PlaySpawnAnimationAwake_Implementation() {
-	IsEnableInput = true;
+	IsNotInWebCam = true;
 	FTimerHandle FuzeTimerHandle;
 	World->GetTimerManager().SetTimer(FuzeTimerHandle, this, &AChel::AwakeAnimation_End, 2, false);
-
+	CanThrowStone = true;
 	CameraComp->SetRelativeLocation({ 0,0,0 });
 	CameraComp->SetRelativeRotation({ 0,0,0 });
 	if (bCanPossessWebCam)
@@ -964,7 +964,7 @@ void AChel::PlaySpawnAnimationAwake_Implementation() {
 //-----------------------------
 void AChel::PickUp() {
 	if (!bInEscMenu) {
-		if (IsEnableInput) {
+		if (IsNotInWebCam) {
 			if (ItemCodePickUp != -1) {
 				UE_LOG(LogTemp, Warning, TEXT("ItemCode - %d"), ItemCodePickUp);
 				IsSuccessOpening = true;
@@ -976,7 +976,7 @@ void AChel::PickUp() {
 						UserView->WS_Boltorez->SetActiveWidgetIndex(1);
 						DoesHave_Owner = true;
 						NewHaveItemServer(Boltorez);
-
+						ArrowCanalizacia = Cast<UTargetArrow>(CreateWidget(World, TargetArrowClass));
 						ArrowCanalizacia->AddToViewport();
 						MainExis_Canalizacia->Mesh->SetCustomDepthStencilValue(3);
 						TargetItemsDynamic.Add(MainExis_Canalizacia);
@@ -994,7 +994,7 @@ void AChel::PickUp() {
 						UserView->WS_KeyShelter->SetActiveWidgetIndex(1);
 						DoesHave_Owner = true;
 						NewHaveItemServer(KeyShelter);
-
+						ArrowShelter = Cast<UTargetArrow>(CreateWidget(World, TargetArrowClass));
 						ArrowShelter->AddToViewport();
 						MainExis_Shelter->Mesh->SetCustomDepthStencilValue(3);
 						TargetItemsDynamic.Add(MainExis_Shelter);
@@ -1012,6 +1012,7 @@ void AChel::PickUp() {
 						UserView->WS_Otvertka->SetActiveWidgetIndex(1);
 						DoesHave_Owner = true;
 						NewHaveItemServer(Otvertka);
+						ArrowVentilacia = Cast<UTargetArrow>(CreateWidget(World, TargetArrowClass));
 						ArrowVentilacia->AddToViewport();
 						MainExis_Ventilacia->Mesh->SetCustomDepthStencilValue(3);
 						TargetItemsDynamic.Add(MainExis_Ventilacia);
@@ -1173,7 +1174,7 @@ void AChel::PickUp() {
 void AChel::PickUp_Released()
 {
 	if (bCanWalkingAndWatching) {
-		if (IsEnableInput) {
+		if (IsNotInWebCam) {
 			IsSuccessOpening = false;
 			if (Cast<AOpenArea>(LastItem))
 			{
@@ -1520,7 +1521,7 @@ void AChel::SpawnPlayer()
 	EnableCollisionEverywhere();
 	ShowStoneMulticast();
 	SetActorHiddenInGame(false);
-	IsEnableInput = true;
+	IsNotInWebCam = true;
 	IsInGame = true;
 	Health = 0;
 	Ammo = 15;
@@ -2128,11 +2129,11 @@ void AChel::UpdateTargetArrowPosition(AActor* TargetObj, UTargetArrow* ArrowWidg
 
 		FVector temp = UKismetMathLibrary::InverseTransformLocation(CameraComp->GetComponentTransform(), TargetObj->GetActorLocation());
 		FRotator CurRotation = UKismetMathLibrary::MakeRotFromX(temp);
-		UE_LOG(LogTemp, Warning, TEXT("Screen width %d"), ScreenWidth);
-		UE_LOG(LogTemp, Warning, TEXT("Screen height %d"), ScreenHeight);
-		UE_LOG(LogTemp, Warning, TEXT("ScreenPosObj.X %f"), ScreenPosObj.X);
-		UE_LOG(LogTemp, Warning, TEXT("ScreenPosObj.Y %f"), ScreenPosObj.Y);
-		UE_LOG(LogTemp, Warning, TEXT("You looking at Actor!"));
+		//UE_LOG(LogTemp, Warning, TEXT("Screen width %d"), ScreenWidth);
+		//UE_LOG(LogTemp, Warning, TEXT("Screen height %d"), ScreenHeight);
+		//UE_LOG(LogTemp, Warning, TEXT("ScreenPosObj.X %f"), ScreenPosObj.X);
+		//UE_LOG(LogTemp, Warning, TEXT("ScreenPosObj.Y %f"), ScreenPosObj.Y);
+		//UE_LOG(LogTemp, Warning, TEXT("You looking at Actor!"));
 		if (0 < int32(ScreenPosObj.X) && int32(ScreenPosObj.X) <= ScreenWidth && 0 < int32(ScreenPosObj.Y) && int32(ScreenPosObj.Y) <= ScreenHeight) 
 		{ //в экране
 			UE_LOG(LogTemp, Warning, TEXT("You looking at Actor!"));
@@ -2179,7 +2180,7 @@ void AChel::UpdateTargetArrowPosition(AActor* TargetObj, UTargetArrow* ArrowWidg
 			}
 		}
 	}
-	else if (!TargetObj) 
+	else if (!TargetObj && ArrowWidget)
 	{
 		RemoveTargetArrowDynamic(ArrowWidget);
 	}
@@ -2258,8 +2259,8 @@ void AChel::RemoveArrowBadOutline(int32 ChelIndex)
 		AChel* BadChel = Cast<AChel>(TargetItemsDynamic[i]);
 		if (BadChel && BadChel->Index == ChelIndex)
 		{
-			TargetItemsDynamic.RemoveAt(i);
 			TargetArrowsDynamic[i]->RemoveFromParent();
+			TargetItemsDynamic.RemoveAt(i);
 			TargetArrowsDynamic.RemoveAt(i);
 		}
 	}

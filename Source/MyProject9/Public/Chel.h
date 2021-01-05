@@ -460,7 +460,8 @@ public:
 		bool bCanWalkingAndWatching;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-		bool IsEnableInput;
+		bool IsNotInWebCam;
+	bool CanThrowStone;
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite) //!!!!!!!!!!!!!!
 	bool IsSuccessOpening;
 	
