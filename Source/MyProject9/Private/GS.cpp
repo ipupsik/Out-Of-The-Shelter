@@ -312,17 +312,21 @@ void AGS::EventSpawnNote() {
 
 void AGS::AddNumToTerminal(int32 Number) {
 	FTransform Trans;
-	Trans.SetLocation(FVector(TransformOfFirstNum.GetLocation().X + 7 * NumbersOnPanel.Num(), TransformOfFirstNum.GetLocation().Y, TransformOfFirstNum.GetLocation().Z));
+	Trans.SetLocation(FVector(TransformOfFirstNum.GetLocation().X + 11 * NumbersOnPanel.Num(), TransformOfFirstNum.GetLocation().Y, TransformOfFirstNum.GetLocation().Z));
 	Trans.SetRotation(TransformOfFirstNum.GetRotation());
-	Trans.SetScale3D(TransformOfFirstNum.GetScale3D());
 	ANumberTerminal* Num = GetWorld()->SpawnActorDeferred<ANumberTerminal>(NumberTerminalClass, Trans);
-	if (Num != nullptr) 
+	if (Num != nullptr)
 	{
 		Num->NumberType = Number;
 		UGameplayStatics::FinishSpawningActor(Num, Trans);
+		Num->SetActorScale3D(TransformOfFirstNum.GetScale3D());
 		if (Num != nullptr)
 			NumbersOnPanel.Add(Num);
+		else
+			UE_LOG(LogTemp, Warning, TEXT("Govno2"))
 	}
+	else
+		UE_LOG(LogTemp, Warning, TEXT("Govno1"));
 	ClickOnButtonTerminal(LampObj->GetActorLocation());
 }
 

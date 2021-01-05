@@ -270,6 +270,8 @@ public:
 	UFUNCTION(Client, Reliable)
 		void AreaClosedUpdate(int32 EscapeWay);
 
+	void ResetCacheKeys();
+
 	UFUNCTION(Client, Reliable)
 		void RefreshWidgets_Winner(int32 EscapeWay);
 

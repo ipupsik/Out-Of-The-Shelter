@@ -306,7 +306,10 @@ void AChel::Tick(float DeltaTime)
 					APickableItem* TracedItem = Cast<APickableItem>(HittableActor);
 					if (TracedItem) { //Если мы стукнулись в нужный нам предмет
 						ItemCodePickUp = TracedItem->Type;
-						UserView->E_Mark->SetVisibility(ESlateVisibility::Visible);
+						if (TracedItem->Type != ClickButton)
+							UserView->E_Mark->SetVisibility(ESlateVisibility::Visible);
+						else if (GS->IsShelterAvaliable)
+							UserView->E_Mark->SetVisibility(ESlateVisibility::Visible);
 						isTracedBad = false;
 						bLineTrace_is_need_refresh = true;  //Говорим, что в текущем кадре мы ударились в нужный предмет
 						if (LastItem)
@@ -418,8 +421,8 @@ void AChel::Tick(float DeltaTime)
 		{
 			UpdateTargetArrowPosition(TargetItemsStatic[i],TargetArrowsStatic[i]);
 		}
-		UE_LOG(LogTemp, Warning, TEXT("TargetItemsDynamic.Num - %d"), TargetItemsDynamic.Num());
-		UE_LOG(LogTemp, Warning, TEXT("TargetArrowsDynamic.Num - %d"), TargetArrowsDynamic.Num());
+		//UE_LOG(LogTemp, Warning, TEXT("TargetItemsDynamic.Num - %d"), TargetItemsDynamic.Num());
+		//UE_LOG(LogTemp, Warning, TEXT("TargetArrowsDynamic.Num - %d"), TargetArrowsDynamic.Num());
 		for (int i = 0; i < TargetArrowsDynamic.Num(); ++i)
 		{
 			UpdateTargetArrowPosition(TargetItemsDynamic[i], TargetArrowsDynamic[i]);
@@ -479,16 +482,13 @@ void AChel::UpdateSpectating_Right_Server_Implementation()
 {
 	if (WebCamIterator != -1)
 		GS->WebCams[WebCamIterator]->is_Enabled = true;
-	do
+	WebCamIterator += 1;
+	if (WebCamIterator >= GS->WebCams.Num())
 	{
-		WebCamIterator += 1;
-		if (WebCamIterator >= GS->WebCams.Num())
-		{
-			WebCamIterator -= GS->WebCams.Num();
-		}
-		UE_LOG(LogTemp, Warning, TEXT("WebCamIterator - %d"), WebCamIterator);
-		UE_LOG(LogTemp, Warning, TEXT("Count - %d"), GS->WebCams.Num());
-	} while (!GS->WebCams[WebCamIterator]->is_Enabled);
+		WebCamIterator -= GS->WebCams.Num();
+	}
+	UE_LOG(LogTemp, Warning, TEXT("WebCamIterator - %d"), WebCamIterator);
+	UE_LOG(LogTemp, Warning, TEXT("Count - %d"), GS->WebCams.Num());
 	
 	GoToWebCamServer(WebCamIterator);
 	SetCameraRotationWebCam(GS->WebCams[WebCamIterator]->GetActorRotation().Roll,
@@ -514,16 +514,13 @@ void AChel::UpdateSpectating_Left_Server_Implementation()
 {
 	if (WebCamIterator != -1)
 		GS->WebCams[WebCamIterator]->is_Enabled = true;
-	do
+	WebCamIterator -= 1;
+	if (WebCamIterator < 0)
 	{
-		WebCamIterator -= 1;
-		if (WebCamIterator < 0)
-		{
-			WebCamIterator += GS->WebCams.Num();
-		}
-		UE_LOG(LogTemp, Warning, TEXT("WebCamIterator - %d"), WebCamIterator);
-		UE_LOG(LogTemp, Warning, TEXT("Count - %d"), GS->WebCams.Num());
-	} while (!GS->WebCams[WebCamIterator]->is_Enabled);
+		WebCamIterator += GS->WebCams.Num();
+	}
+	UE_LOG(LogTemp, Warning, TEXT("WebCamIterator - %d"), WebCamIterator);
+	UE_LOG(LogTemp, Warning, TEXT("Count - %d"), GS->WebCams.Num());
 
 	GoToWebCamServer(WebCamIterator);
 	SetCameraRotationWebCam(GS->WebCams[WebCamIterator]->GetActorRotation().Roll,
@@ -909,6 +906,7 @@ void AChel::PlaySpawnAnimationSleep_Implementation() {
 		TargetArrowsDynamic.RemoveAt(i);
 		TargetItemsDynamic.RemoveAt(i);
 	}
+	ResetCacheKeys();
 	CanThrowStone = false;
 	SpawnDeadSound();
 	UserView->PlayAnimation(UserView->Shading);
@@ -931,6 +929,7 @@ void AChel::SleepAnimation_End()
 
 void AChel::AwakeAnimation_End()
 {
+	CameraComp->SetFieldOfView(90.0f);
 	if (bCanPossessWebCam) {
 		IsAwake = true;
 	}
@@ -943,6 +942,7 @@ void AChel::AwakeAnimation_End()
 
 //PlayStartingAnimation---------------------
 void AChel::PlaySpawnAnimationAwake_Implementation() {
+	TimeLine_FOV_WebCam->Stop();
 	IsNotInWebCam = true;
 	FTimerHandle FuzeTimerHandle;
 	World->GetTimerManager().SetTimer(FuzeTimerHandle, this, &AChel::AwakeAnimation_End, 2, false);
@@ -1473,6 +1473,11 @@ void AChel::KillPlayer()
 {
 	TArray<AActor*>Players;
 	UGameplayStatics::GetAllActorsOfClass(World, AChel::StaticClass(), Players);
+
+	KeysCount[0] = 0;
+	KeysCount[1] = 0;
+	KeysCount[2] = 0;
+
 	for (auto& Player : Players)
 	{
 		AChel* Chel = Cast<AChel>(Player);
@@ -1508,7 +1513,14 @@ void AChel::GoToWebCamServer(int32 Iterator)
 {
 	SetActorLocation(GS->WebCams[Iterator]->GetActorLocation());
 	GS->WebCams[Iterator]->CurChelix = this;
-	GS->WebCams[Iterator]->is_Enabled = false;
+	if (GS->WebCams[Iterator]->is_Enabled == true)
+	{
+		ShowNoiseWebCamUI(false);
+	}
+	else
+	{
+		ShowNoiseWebCamUI(false);
+	}
 
 	UE_LOG(LogTemp, Warning, TEXT("Staying on webcam"));
 }
@@ -1624,6 +1636,31 @@ void AChel::PlayerEscape_Implementation(int32 EscapeWay)
 	GS->WinnersIndex.Add(Index);
 	GS->EscapeTime.Add(GS->CurrentTime);
 	
+	TArray<AActor*>DeletingItems;
+	switch (EscapeWay)
+	{
+	case Boltorez:
+	{
+		UGameplayStatics::GetAllActorsOfClass(World, GS->Boltorez, DeletingItems);
+		break;
+	}
+	case KeyShelter:
+	{
+		UGameplayStatics::GetAllActorsOfClass(World, GS->KeyShelter, DeletingItems);
+		break;
+	}
+	case Otvertka:
+	{
+		UGameplayStatics::GetAllActorsOfClass(World, GS->Otvertka, DeletingItems);
+		break;
+	}
+	}
+
+	for (auto& it : DeletingItems)
+	{
+		it->Destroy();
+	}
+
 	for (int i = 0; i < CustomizationChilds.Num(); ++i)
 	{
 		if (CustomizationChilds[i])
@@ -2281,4 +2318,11 @@ void AChel::ShowUIAfterTerminalAndGenerator_Implementation(int32 NewAreaType, bo
 		AreaCode = -1;
 		UserView->HoldText->SetVisibility(ESlateVisibility::Hidden);
 	}
+}
+
+void AChel::ResetCacheKeys()
+{
+	UserView->KeyLeft_Gold->SetText(FText::AsNumber(0));
+	UserView->KeyLeft_Silver->SetText(FText::AsNumber(0));
+	UserView->KeyLeft_Bronze->SetText(FText::AsNumber(0));
 }

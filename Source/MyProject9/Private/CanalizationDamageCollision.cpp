@@ -13,7 +13,7 @@ ACanalizationDamageCollision::ACanalizationDamageCollision()
 	Collision = CreateDefaultSubobject<UBoxComponent>("Collision");
 	Collision->SetupAttachment(RootComponent);
 
-	RadiationDamageCoef = 4.0f;
+	RadiationDamageCoef = 5.0f;
 
 	Collision->OnComponentBeginOverlap.AddDynamic(this, &ACanalizationDamageCollision::OnOverlapBegin);
 	Collision->OnComponentEndOverlap.AddDynamic(this, &ACanalizationDamageCollision::OnOverlapEnd);
@@ -65,7 +65,7 @@ void ACanalizationDamageCollision::StopRadiation()
 	}
 
 	FTimerHandle FuzeTimerHandle;
-	GetWorld()->GetTimerManager().SetTimer(FuzeTimerHandle, this, &ACanalizationDamageCollision::RefreshRadiation, 15.0f, false);
+	GetWorld()->GetTimerManager().SetTimer(FuzeTimerHandle, this, &ACanalizationDamageCollision::RefreshRadiation, 120.0f, false);
 
 	TArray<AActor*>Buttons;
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AButtonCanalization::StaticClass(), Buttons);
