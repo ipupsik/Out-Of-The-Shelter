@@ -410,7 +410,7 @@ public:
 	bool IsPlayerOwner;
 	UWorld* World;
 	//Settings Variables
-	UPROPERTY(EditAnywhere, Category = "Settings")
+	UPROPERTY(VisibleAnywhere,BlueprintReadWrite, Category = "Settings")
 		float Sensetivity;
 	UPROPERTY(EditAnywhere, Category = "Settings")
 		float WebCamSensetivity;

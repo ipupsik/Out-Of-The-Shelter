@@ -21,8 +21,11 @@ public:
 	UPROPERTY(meta = (BindWidget)) 
 		UButton* DoneButton;
 
-	UPROPERTY(meta = (BindWidget), BluprintReadWrite)
+	UPROPERTY(meta = (BindWidget), BlueprintReadWrite)
 		UTextBlock* NetID;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+		APawn* Player;
 
 	void NativeConstruct() override;
 };

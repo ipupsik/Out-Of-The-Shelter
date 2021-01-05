@@ -71,7 +71,8 @@ public:
 		AChel* Player;
 	int32 Index;
 	int32 Layer;
-	float Sensetivity;
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+		float Sensetivity;
 	UPROPERTY(Replicated, BlueprintReadOnly)
 	bool IsKilled;
 
