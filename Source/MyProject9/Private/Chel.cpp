@@ -101,7 +101,7 @@ AChel::AChel()
 
 	bInEscMenu = false;
 //	OpenAreaObj = nullptr;
-
+	TickEnableGeneratorWidget = false;
 	KeysCount.Init(0, 3);
 	TargetItemsStatic.Init(nullptr, 0);
 	TargetArrowsStatic.Init(nullptr, 0);
@@ -254,6 +254,13 @@ void AChel::PossessedBy(AController* NewController)
 	MyBeginPlay();
 }
 
+void AChel::ChangeCorretcaPosition(int32 TypeChange) {
+	GeneratorView->Corretca->SetValue(GeneratorView->PositionX[TypeChange]);
+	GeneratorView->PB_Repair->SetPercent(0.0f);
+	bToRight = true;
+	GeneratorView->curSpeed = GeneratorView->Speed[TypeChange];
+}
+
 // Called every frame
 void AChel::Tick(float DeltaTime)
 {
@@ -285,6 +292,21 @@ void AChel::Tick(float DeltaTime)
 		}
 
 		if (IsPlayerOwner) {
+			if (TickEnableGeneratorWidget) {
+				if (bToRight) {
+					GeneratorView->PB_Repair->SetPercent(GeneratorView->PB_Repair->Percent + (GeneratorView->curSpeed + FMath::FRand() * GeneratorView->delta) * DeltaTime);
+					if (GeneratorView->PB_Repair->Percent >= 1.0f) {
+						bToRight = false;
+					}
+				}
+				else {
+					GeneratorView->PB_Repair->SetPercent(GeneratorView->PB_Repair->Percent - (GeneratorView->curSpeed + FMath::FRand() * GeneratorView->delta) * DeltaTime);
+					if (GeneratorView->PB_Repair->Percent <= 0.0f) {
+						bToRight = true;
+					}
+				}
+			}
+
 			UserView->RadiationPoints->SetPercent(Health);
 			UserView->DarkScreen->SetRenderOpacity(Health);
 
@@ -309,19 +331,16 @@ void AChel::Tick(float DeltaTime)
 							ItemCodePickUp = TracedItem->Type;
 							if (TracedItem->Type != ClickButton)
 								UserView->E_Mark->SetVisibility(ESlateVisibility::Visible);
-							else if (GS->IsShelterAvaliable)
+							else if (GS->IsShelterAvaliable) {
 								UserView->E_Mark->SetVisibility(ESlateVisibility::Visible);
+								LastItem->Item->SetCustomDepthStencilValue(2);
+							}
 							isTracedBad = false;
 							bLineTrace_is_need_refresh = true;  //Говорим, что в текущем кадре мы ударились в нужный предмет
 							if (LastItem)
 								LastItem->Item->SetCustomDepthStencilValue(0);
 							LastItem = TracedItem;
-							if (TracedItem->Type == ClickButton)
-							{
-								if (GS->IsCodeTerminalAvaliable)
-									LastItem->Item->SetCustomDepthStencilValue(2);
-							}
-							else if (TracedItem->Type == OpenArea) {
+							if (TracedItem->Type == OpenArea) {
 								AOpenArea* MyOpenArea = Cast<AOpenArea>(TracedItem);
 								if (!MyOpenArea->bIsAvaliable) {
 									UserView->E_Mark->SetVisibility(ESlateVisibility::Hidden);
@@ -590,13 +609,14 @@ void AChel::OpenAreaPressed()
 								ChangeGeneratorStas();
 							}
 							else {
-								GeneratorView->ChangeCorretcaPosition(GenAreaObj->Stadiya);
+								ChangeCorretcaPosition(GenAreaObj->Stadiya);
 								OutlineBad_Server();//Здесь могла быть ваша логика с обводкой конкретного челика для всех остальных, но уже 12 часов ночи, сори, бб
 							}
 						}
 						else {
 							UserView->HoldText->SetVisibility(ESlateVisibility::Hidden);
-							GeneratorView->ChangeCorretcaPosition(GenAreaObj->Stadiya);
+							ChangeCorretcaPosition(GenAreaObj->Stadiya);
+							TickEnableGeneratorWidget = true;
 							GeneratorView->SetVisibility(ESlateVisibility::Visible);
 						}
 					}
@@ -1125,7 +1145,7 @@ void AChel::PickUp() {
 				case ClickButton:
 				{
 					AClickButton* CurButton = Cast<AClickButton>(LastItem);
-					if (GS->IsCodeTerminalAvaliable && !GS->ButtonPlayAnim && CurButton)
+					if (GS->IsShelterAvaliable && !GS->ButtonPlayAnim && CurButton)
 					{
 						if (CurButton->ButtonType <= 9) {
 							if (GS->NumbersOnPanel.Num() <= 4) {
@@ -1860,13 +1880,14 @@ void AChel::DisableDoubleRadiationWidget_Implementation()
 
 void AChel::ChangeCorretca_Client_Implementation(int32 ValueV)
 {
-	GeneratorView->ChangeCorretcaPosition(ValueV);
+	ChangeCorretcaPosition(ValueV);
 }
 
 void AChel::HideWidgetStas_Implementation()
 {
 	UserView->AreaUsedText->SetVisibility(ESlateVisibility::Visible);
 	GeneratorView->SetVisibility(ESlateVisibility::Hidden);
+	TickEnableGeneratorWidget = false;
 }
 
 void AChel::ChangeButtonCount_Server_Implementation()

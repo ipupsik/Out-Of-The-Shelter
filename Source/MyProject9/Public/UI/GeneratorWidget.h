@@ -21,8 +21,6 @@ class MYPROJECT9_API UGeneratorWidget : public UUserWidget
 
 public:
 	void NativeConstruct() override;
-	void ChangeCorretcaPosition(int32 TypeChange);
-	virtual void NativeTick(const FGeometry& MyGeometry, float DeltaTime) override;
 	
 	UPROPERTY(meta = (BindWidget))
 		USlider* Corretca;

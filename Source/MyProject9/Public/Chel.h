@@ -357,6 +357,8 @@ public:
 	UPROPERTY(EditAnywhere, Category = "UI HUD")
 		TSubclassOf<UUserView> UserViewClass;
 
+	void ChangeCorretcaPosition(int32 TypeChange);
+
 	UPROPERTY(EditAnywhere, Category = "Spectator")
 		TSubclassOf<ASpectator> SpectatorClass;
 
@@ -514,4 +516,6 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	bool bInEscMenu;
+	bool TickEnableGeneratorWidget;
+	bool bToRight;
 };

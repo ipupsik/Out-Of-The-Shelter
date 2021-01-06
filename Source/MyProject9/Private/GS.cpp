@@ -34,7 +34,6 @@ AGS::AGS() {
 	IsShelterAvaliable = false;
 	CodeGenerator = -1;
 	CurrentCode = 0;
-	IsCodeTerminalAvaliable = false;
 	ButtonPlayAnim = false;
 	NumbersOnPanel.Init(nullptr, 0);
 }
@@ -46,7 +45,6 @@ void AGS::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps
 	DOREPLIFETIME(AGS, AreaAvaliables);
 	DOREPLIFETIME(AGS, AreaClosed);
 	DOREPLIFETIME(AGS, CodeGenerator);
-	DOREPLIFETIME(AGS, IsCodeTerminalAvaliable);
 	DOREPLIFETIME(AGS, ButtonPlayAnim);
 	DOREPLIFETIME(AGS, NumbersOnPanel);
 	DOREPLIFETIME(AGS, IsShelterAvaliable);
@@ -311,7 +309,6 @@ void AGS::EventSpawnNote() {
 	TArray<AActor*> GettingTagActors;
 	UGameplayStatics::GetAllActorsOfClassWithTag(GetWorld(), ATargetPoint::StaticClass(), "NoteSpawn", GettingTagActors);
 	GetWorld()->SpawnActor<ACode_Note>(CodeNoteClass, GettingTagActors[FMath::Rand() % GettingTagActors.Num()]->GetTransform());
-	IsCodeTerminalAvaliable = true;
 }
 
 void AGS::AddNumToTerminal(int32 Number) {
@@ -392,8 +389,6 @@ void AGS::CheckCode(int Index) {
 					break;
 				}
 			}
-
-			IsCodeTerminalAvaliable = false;
 
 			LampObj->ChangeMaterialLamp(2);
 
