@@ -1003,9 +1003,8 @@ void AChel::PickUp() {
 						MainExis_Canalizacia->Mesh->SetCustomDepthStencilValue(3);
 						TargetItemsDynamic.Add(MainExis_Canalizacia);
 						TargetArrowsDynamic.Add(ArrowCanalizacia);
-						ExisType = Boltorez;
 						FTimerHandle FuzeTimerHandle;
-						GetWorld()->GetTimerManager().SetTimer(FuzeTimerHandle, this, &AChel::DeleteArrowDelay, ShowMainExis_TIME, false);
+						GetWorld()->GetTimerManager().SetTimer(FuzeTimerHandle, this, &AChel::DeleteArrowDelayBoltorez, ShowMainExis_TIME, false);
 						PickUpSound();
 					}
 					break;
@@ -1021,9 +1020,8 @@ void AChel::PickUp() {
 						MainExis_Shelter->Mesh->SetCustomDepthStencilValue(3);
 						TargetItemsDynamic.Add(MainExis_Shelter);
 						TargetArrowsDynamic.Add(ArrowShelter);
-						ExisType = KeyShelter;
 						FTimerHandle FuzeTimerHandle;
-						GetWorld()->GetTimerManager().SetTimer(FuzeTimerHandle, this, &AChel::DeleteArrowDelay, ShowMainExis_TIME, false);
+						GetWorld()->GetTimerManager().SetTimer(FuzeTimerHandle, this, &AChel::DeleteArrowDelayKeyShelter, ShowMainExis_TIME, false);
 						PickUpSound();
 					}
 					break;
@@ -1039,9 +1037,8 @@ void AChel::PickUp() {
 						MainExis_Ventilacia->Mesh->SetCustomDepthStencilValue(3);
 						TargetItemsDynamic.Add(MainExis_Ventilacia);
 						TargetArrowsDynamic.Add(ArrowVentilacia);
-						ExisType = Otvertka;
 						FTimerHandle FuzeTimerHandle;
-						GetWorld()->GetTimerManager().SetTimer(FuzeTimerHandle, this, &AChel::DeleteArrowDelay, ShowMainExis_TIME, false);
+						GetWorld()->GetTimerManager().SetTimer(FuzeTimerHandle, this, &AChel::DeleteArrowDelayOtvertka, ShowMainExis_TIME, false);
 						PickUpSound();
 					}
 					break;
@@ -1933,29 +1930,19 @@ void AChel::RefreshOutline()
 	PoseableMeshComp->SetCustomDepthStencilValue(0);
 }
 
-void AChel::DeleteArrowDelay()
-{
-	switch (ExisType)
-	{
-	case Boltorez:
-	{
-		RemoveTargetArrowDynamic(ArrowCanalizacia);
-		MainExis_Canalizacia->Mesh->SetCustomDepthStencilValue(0);
-		break;
-	}
-	case KeyShelter:
-	{
-		RemoveTargetArrowDynamic(ArrowShelter);
-		MainExis_Shelter->Mesh->SetCustomDepthStencilValue(0);
-		break;
-	}
-	case Otvertka:
-	{
-		RemoveTargetArrowDynamic(ArrowVentilacia);
-		MainExis_Ventilacia->Mesh->SetCustomDepthStencilValue(0);
-		break;
-	}
-	}
+void AChel::DeleteArrowDelayKeyShelter() {
+	RemoveTargetArrowDynamic(ArrowShelter);
+	MainExis_Shelter->Mesh->SetCustomDepthStencilValue(0);
+}
+
+void AChel::DeleteArrowDelayBoltorez() {
+	RemoveTargetArrowDynamic(ArrowCanalizacia);
+	MainExis_Canalizacia->Mesh->SetCustomDepthStencilValue(0);
+}
+
+void AChel::DeleteArrowDelayOtvertka() {
+	RemoveTargetArrowDynamic(ArrowVentilacia);
+	MainExis_Ventilacia->Mesh->SetCustomDepthStencilValue(0);
 }
 
 void AChel::OutlineBad_Multicast_Implementation()

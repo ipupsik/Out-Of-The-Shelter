@@ -259,7 +259,9 @@ public:
 
 	void RefreshOutline();
 
-	void DeleteArrowDelay();
+	void DeleteArrowDelayKeyShelter();
+	void DeleteArrowDelayBoltorez();
+	void DeleteArrowDelayOtvertka();
 
 	UFUNCTION(Server, Reliable, WithValidation)
 		void LockWebCam_Server();
@@ -511,8 +513,6 @@ public:
 	AItemPromtArrow_MainExis* MainExis_Shelter;
 	AItemPromtArrow_MainExis* MainExis_Ventilacia;
 	AItemPromtArrow_MainExis* MainExis_Canalizacia;
-
-	int32 ExisType;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	bool bInEscMenu;
