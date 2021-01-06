@@ -297,8 +297,11 @@ void AGS::ResetGame() {
 
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ABP_PlayerController::StaticClass(), Players);
 
-	for (auto Chel : Players)
+	for (auto& Chel : Players)
+	{
 		Cast<ABP_PlayerController>(Chel)->RemoveFinalMenu();
+		Cast<ABP_PlayerController>(Chel)->EnableOutline();
+	}
 
 	Cast<AGM>(UGameplayStatics::GetGameMode(GetWorld()))->Respawn();
 }

@@ -28,7 +28,13 @@ public:
 		void ToDoBlueprint();
 
 	UFUNCTION(BlueprintImplementableEvent)
-		void PlayGameplaySound();
+		void DisableOutline();
+
+	UFUNCTION(BlueprintImplementableEvent)
+		void EnableOutline();
+
+	UFUNCTION(BlueprintImplementableEvent)
+		void PlayGameplayMusic();
 
 	void PlayMore();
 

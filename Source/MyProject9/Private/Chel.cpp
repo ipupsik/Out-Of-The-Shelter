@@ -920,7 +920,10 @@ void AChel::SleepAnimation_End()
 		IsAwake = false;
 	}
 	else
+	{
 		IsAwake = false;
+		Cast<ABP_PlayerController>(GetController())->PlayGameplayMusic();
+	}
 }
 
 void AChel::AwakeAnimation_End()
@@ -939,7 +942,7 @@ void AChel::AwakeAnimation_End()
 //PlayStartingAnimation---------------------
 void AChel::PlaySpawnAnimationAwake_Implementation() {
 	TimeLine_FOV_WebCam->Stop();
-	Cast<ABP_PlayerController>(GetController())->PlayGameplaySound();
+	ShowNoiseWebCamUI(false);
 	IsNotInWebCam = true;
 	FTimerHandle FuzeTimerHandle;
 	World->GetTimerManager().SetTimer(FuzeTimerHandle, this, &AChel::AwakeAnimation_End, 2, false);
@@ -1516,7 +1519,7 @@ void AChel::GoToWebCamServer(int32 Iterator)
 	}
 	else
 	{
-		ShowNoiseWebCamUI(false);
+		ShowNoiseWebCamUI(true);
 	}
 
 	UE_LOG(LogTemp, Warning, TEXT("Staying on webcam"));
@@ -1722,6 +1725,7 @@ void AChel::AreaClosedUpdate_Implementation(int32 EscapeWay)
 
 void AChel::PossessToSpectator()
 {
+	Cast<ABP_PlayerController>(GetController())->DisableOutline();
 	int iteration = 0;
 	for (iteration = 0; iteration < 8; iteration += 2)
 	{
@@ -1987,7 +1991,7 @@ void AChel::HideRandomItem() {
 
 void AChel::ShowNoiseWebCamUI_Implementation(bool DoesNoise)
 {
-	//TODO Сделать шум
+	ShowNoiseBlueprint(DoesNoise);
 }
 
 void AChel::LockWebCam_Server_Implementation()

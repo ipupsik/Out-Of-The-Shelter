@@ -223,6 +223,9 @@ public:
 		void GoodAttempGeneratorSound();
 
 	UFUNCTION(BlueprintImplementableEvent)
+		void ShowNoiseBlueprint(bool NewShow);
+
+	UFUNCTION(BlueprintImplementableEvent)
 		void CameraSwitch();
 
 	UFUNCTION(BlueprintImplementableEvent)
@@ -378,6 +381,7 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite) //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 		UUserView* UserView;
 	UKillFeed* KillFeed;
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	UWebCamWidget* WebCamUI;
 	//GameInstance + GameState
 	AGS* GS;

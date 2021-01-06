@@ -29,6 +29,7 @@ void ABP_PlayerController::RefreshPlayersVoteCount_Implementation(int32 Agreed, 
 void ABP_PlayerController::AddFinalMenu_Implementation()
 {
 	FinalMenu = Cast<UFinalMenu>(CreateWidget(this, Cast<UGI>(GetGameInstance())->FinalMenuClass));
+	DisableOutline();
 	FinalMenu->Player = this;
 	FinalMenu->AddToViewport();
 
