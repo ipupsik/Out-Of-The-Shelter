@@ -2281,7 +2281,6 @@ void AChel::RemoveTargetArrowDynamic(UTargetArrow* ArrowObj)
 			TargetArrowsDynamic[i]->RemoveFromParent();
 			TargetArrowsDynamic.RemoveAt(i);
 			TargetItemsDynamic.RemoveAt(i);
-			PlayArrowSound();
 		}
 	}
 }
