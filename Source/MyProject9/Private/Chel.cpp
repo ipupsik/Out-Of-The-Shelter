@@ -294,13 +294,13 @@ void AChel::Tick(float DeltaTime)
 		if (IsPlayerOwner) {
 			if (TickEnableGeneratorWidget) {
 				if (bToRight) {
-					GeneratorView->PB_Repair->SetPercent(GeneratorView->PB_Repair->Percent + (GeneratorView->curSpeed + FMath::FRand() * GeneratorView->delta) * DeltaTime);
+					GeneratorView->PB_Repair->SetPercent(GeneratorView->PB_Repair->Percent + (GeneratorView->curSpeed) * DeltaTime);
 					if (GeneratorView->PB_Repair->Percent >= 1.0f) {
 						bToRight = false;
 					}
 				}
 				else {
-					GeneratorView->PB_Repair->SetPercent(GeneratorView->PB_Repair->Percent - (GeneratorView->curSpeed + FMath::FRand() * GeneratorView->delta) * DeltaTime);
+					GeneratorView->PB_Repair->SetPercent(GeneratorView->PB_Repair->Percent - (GeneratorView->curSpeed) * DeltaTime);
 					if (GeneratorView->PB_Repair->Percent <= 0.0f) {
 						bToRight = true;
 					}
