@@ -36,6 +36,11 @@ void AHealPoint::Tick(float DeltaTime)
 	AddActorLocalRotation({ 0.0f, DeltaTime * 50, 0.0f});
 }
 
+void AHealPoint::HiddenMulticast_Implementation(bool NewHidden)
+{
+	SetActorHiddenInGame(NewHidden);
+}
+
 void AHealPoint::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
 	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex,
 	bool bFromSweep, const FHitResult& SweepResult)
@@ -46,7 +51,7 @@ void AHealPoint::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* Oth
 		{
 			Player->Health = 0;
 			Player->KillerIndex = -1;
-			SetActorHiddenInGame(true);
+			HiddenMulticast(true);
 			Player->AddChromaticAbberationClient();
 			PlaySoundHeal();
 			IsEnabled = false;
@@ -71,15 +76,15 @@ void AHealPoint::HealUpdate()
 		Chel->Health = 0;
 		Chel->KillerIndex = -1;
 		IsEnabled = false;
-		SetActorHiddenInGame(true);
+		HiddenMulticast(true);
 
 		FTimerHandle FuzeTimerHandle;
-		GetWorld()->GetTimerManager().SetTimer(FuzeTimerHandle, this, &AHealPoint::HealUpdate, 10, false);
+		GetWorld()->GetTimerManager().SetTimer(FuzeTimerHandle, this, &AHealPoint::HealUpdate, 15, false);
 	}
 	else
 	{
 		IsEnabled = true;
-		SetActorHiddenInGame(false);
+		HiddenMulticast(false);
 	}
 }
 

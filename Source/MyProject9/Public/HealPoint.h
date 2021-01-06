@@ -31,6 +31,9 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+	UFUNCTION(NetMulticast, Reliable)
+		void HiddenMulticast(bool NewHidden);
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Player")
 		UStaticMeshComponent* Mesh;
 

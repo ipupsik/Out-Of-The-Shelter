@@ -49,6 +49,7 @@ void AGS::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps
 	DOREPLIFETIME(AGS, IsCodeTerminalAvaliable);
 	DOREPLIFETIME(AGS, ButtonPlayAnim);
 	DOREPLIFETIME(AGS, NumbersOnPanel);
+	DOREPLIFETIME(AGS, IsShelterAvaliable);
 }
 
 void AGS::BeginPlay()

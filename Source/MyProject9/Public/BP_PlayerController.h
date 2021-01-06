@@ -27,6 +27,9 @@ public:
 	UFUNCTION(BlueprintImplementableEvent)
 		void ToDoBlueprint();
 
+	UFUNCTION(BlueprintImplementableEvent)
+		void PlayGameplaySound();
+
 	void PlayMore();
 
 	void BeginPlay() override;

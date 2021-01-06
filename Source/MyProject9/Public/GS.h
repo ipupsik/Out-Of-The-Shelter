@@ -153,8 +153,8 @@ public:
 	int CurrentTime;
 
 	int32 GeneralLayer;
-
-	bool IsShelterAvaliable;
+	UPROPERTY(Replicated)
+		bool IsShelterAvaliable;
 	bool IsGameStarted;
 
 	TArray<FTransform>Keys_Transform;

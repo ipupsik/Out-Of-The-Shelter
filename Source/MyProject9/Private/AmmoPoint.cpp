@@ -37,12 +37,17 @@ void AAmmoPoint::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* Oth
 			Player->ShowStoneMulticast();
 
 			Enable = false;
-			Instances->SetHiddenInGame(true);
+			HiddenMulticast(true);
 			PlaySoundAmmoPoint();
 			FTimerHandle FuzeTimerHandle;
-			GetWorld()->GetTimerManager().SetTimer(FuzeTimerHandle, this, &AAmmoPoint::AmmoUpdate, 10, false);
+			GetWorld()->GetTimerManager().SetTimer(FuzeTimerHandle, this, &AAmmoPoint::AmmoUpdate, 15, false);
 		}
 	}
+}
+
+void AAmmoPoint::HiddenMulticast_Implementation(bool NewHidden)
+{
+	Instances->SetHiddenInGame(NewHidden);
 }
 
 void AAmmoPoint::AmmoUpdate()
@@ -57,14 +62,14 @@ void AAmmoPoint::AmmoUpdate()
 		Chel->ShowStoneMulticast();
 
 		Enable = false;
-		Instances->SetHiddenInGame(true);
+		HiddenMulticast(true);
 		PlaySoundAmmoPoint();
 		FTimerHandle FuzeTimerHandle;
 		GetWorld()->GetTimerManager().SetTimer(FuzeTimerHandle, this, &AAmmoPoint::AmmoUpdate, 10, false);
 	}
 	else
 	{
-		Instances->SetHiddenInGame(false);
+		HiddenMulticast(false);
 		Enable = true;
 	}
 }

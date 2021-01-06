@@ -122,6 +122,7 @@ void AChel::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimePro
 	DOREPLIFETIME(AChel, Kills);
 	DOREPLIFETIME(AChel, DoesHave);
 	DOREPLIFETIME(AChel, KeysCount);
+	DOREPLIFETIME(AChel, IsInGame);
 }
 //-----------------------------
 
@@ -279,153 +280,154 @@ void AChel::Tick(float DeltaTime)
 				KillerIndex = -1;
 				bCanWalkingAndWatching = true;
 				KillPlayer();
+				return;
 			}
 		}
-	}
 
-	if (IsPlayerOwner) {
-		UserView->RadiationPoints->SetPercent(Health);
-		UserView->DarkScreen->SetRenderOpacity(Health);
+		if (IsPlayerOwner) {
+			UserView->RadiationPoints->SetPercent(Health);
+			UserView->DarkScreen->SetRenderOpacity(Health);
 
-		FHitResult OutHit;
+			FHitResult OutHit;
 
-		FVector StartLocation = CameraComp->GetComponentLocation();
-		FVector EndLocation = StartLocation + CameraComp->GetForwardVector() * 300;
+			FVector StartLocation = CameraComp->GetComponentLocation();
+			FVector EndLocation = StartLocation + CameraComp->GetForwardVector() * 300;
 
-		FCollisionQueryParams CollisionParams;
+			FCollisionQueryParams CollisionParams;
 
-		//DrawDebugLine(World, StartLocation, EndLocation, FColor::Red, false, 1, 0, 1);
+			//DrawDebugLine(World, StartLocation, EndLocation, FColor::Red, false, 1, 0, 1);
 
-		isTracedBad = false; //Предположим, что мы не нашли лайн трейсом нужные нам предметы
-		if (World->LineTraceSingleByChannel(OutHit, StartLocation, EndLocation, ECC_Visibility, CollisionParams))
-		{
-			if (OutHit.bBlockingHit)
+			isTracedBad = false; //Предположим, что мы не нашли лайн трейсом нужные нам предметы
+			if (World->LineTraceSingleByChannel(OutHit, StartLocation, EndLocation, ECC_Visibility, CollisionParams))
 			{
-				AActor* HittableActor = OutHit.GetActor();
-				if (HittableActor) { //Если мы стукнулись в какой-то актор, а не в пустоту
-					APickableItem* TracedItem = Cast<APickableItem>(HittableActor);
-					if (TracedItem) { //Если мы стукнулись в нужный нам предмет
-						ItemCodePickUp = TracedItem->Type;
-						if (TracedItem->Type != ClickButton)
-							UserView->E_Mark->SetVisibility(ESlateVisibility::Visible);
-						else if (GS->IsShelterAvaliable)
-							UserView->E_Mark->SetVisibility(ESlateVisibility::Visible);
-						isTracedBad = false;
-						bLineTrace_is_need_refresh = true;  //Говорим, что в текущем кадре мы ударились в нужный предмет
-						if (LastItem)
-							LastItem->Item->SetCustomDepthStencilValue(0);
-						LastItem = TracedItem;
-						if (TracedItem->Type == ClickButton)
-						{
-							if (GS->IsCodeTerminalAvaliable)
-								LastItem->Item->SetCustomDepthStencilValue(2);
-						}
-						else if (TracedItem->Type == OpenArea) {
-							AOpenArea* MyOpenArea = Cast<AOpenArea>(TracedItem);
-							if (!MyOpenArea->bIsAvaliable) {
-								UserView->E_Mark->SetVisibility(ESlateVisibility::Hidden);
+				if (OutHit.bBlockingHit)
+				{
+					AActor* HittableActor = OutHit.GetActor();
+					if (HittableActor) { //Если мы стукнулись в какой-то актор, а не в пустоту
+						APickableItem* TracedItem = Cast<APickableItem>(HittableActor);
+						if (TracedItem) { //Если мы стукнулись в нужный нам предмет
+							ItemCodePickUp = TracedItem->Type;
+							if (TracedItem->Type != ClickButton)
+								UserView->E_Mark->SetVisibility(ESlateVisibility::Visible);
+							else if (GS->IsShelterAvaliable)
+								UserView->E_Mark->SetVisibility(ESlateVisibility::Visible);
+							isTracedBad = false;
+							bLineTrace_is_need_refresh = true;  //Говорим, что в текущем кадре мы ударились в нужный предмет
+							if (LastItem)
+								LastItem->Item->SetCustomDepthStencilValue(0);
+							LastItem = TracedItem;
+							if (TracedItem->Type == ClickButton)
+							{
+								if (GS->IsCodeTerminalAvaliable)
+									LastItem->Item->SetCustomDepthStencilValue(2);
 							}
-							else {
-								LastItem->Item->SetCustomDepthStencilValue(2);
+							else if (TracedItem->Type == OpenArea) {
+								AOpenArea* MyOpenArea = Cast<AOpenArea>(TracedItem);
+								if (!MyOpenArea->bIsAvaliable) {
+									UserView->E_Mark->SetVisibility(ESlateVisibility::Hidden);
+								}
+								else {
+									LastItem->Item->SetCustomDepthStencilValue(2);
+								}
 							}
-						}
-						else if (TracedItem->Type >= 0 && TracedItem->Type <= 2)
-						{
-							if (DoesHave[LastItem->Type])
-								LastItem->Item->SetCustomDepthStencilValue(1);
+							else if (TracedItem->Type >= 0 && TracedItem->Type <= 2)
+							{
+								if (DoesHave[LastItem->Type])
+									LastItem->Item->SetCustomDepthStencilValue(1);
+								else
+									LastItem->Item->SetCustomDepthStencilValue(2);
+							}
 							else
 								LastItem->Item->SetCustomDepthStencilValue(2);
 						}
 						else
-							LastItem->Item->SetCustomDepthStencilValue(2);
-					}
-					else
-					{
-						ACache* TracedCache = Cast<ACache>(HittableActor);
-						if (LastItem)
-							LastItem->Item->SetCustomDepthStencilValue(0);
-						if (TracedCache) {
-							if (TracedCache->IsEnabled && KeysCount[TracedCache->CacheType] > 0) {
-								isTracedBad = false;
-								bLineTrace_is_need_refresh = true;
-								ItemCodePickUp = Cache;
-								UserView->E_Mark->SetVisibility(ESlateVisibility::Visible);
-
-								LastCache = TracedCache;
-							}
-						}
-						else
 						{
-							AButtonCanalization* TracedButton = Cast<AButtonCanalization>(HittableActor);
-							if (TracedButton) {
-								bLineTrace_is_need_refresh = true;
-								ItemCodePickUp = CanalizationButton;
-								UserView->E_Mark->SetVisibility(ESlateVisibility::Visible);
+							ACache* TracedCache = Cast<ACache>(HittableActor);
+							if (LastItem)
+								LastItem->Item->SetCustomDepthStencilValue(0);
+							if (TracedCache) {
+								if (TracedCache->IsEnabled && KeysCount[TracedCache->CacheType] > 0) {
+									isTracedBad = false;
+									bLineTrace_is_need_refresh = true;
+									ItemCodePickUp = Cache;
+									UserView->E_Mark->SetVisibility(ESlateVisibility::Visible);
 
-								LastButton = TracedButton;
+									LastCache = TracedCache;
+								}
 							}
 							else
 							{
-								AWebCamLocker* TracedWebCamLocker = Cast<AWebCamLocker>(HittableActor);
-								if (TracedCache)
-									TracedCache->Mesh->SetCustomDepthStencilValue(0);
-								if (TracedWebCamLocker)
-								{
+								AButtonCanalization* TracedButton = Cast<AButtonCanalization>(HittableActor);
+								if (TracedButton) {
 									bLineTrace_is_need_refresh = true;
-									ItemCodePickUp = WebCamLocker;
+									ItemCodePickUp = CanalizationButton;
 									UserView->E_Mark->SetVisibility(ESlateVisibility::Visible);
-									TracedWebCamLocker->Mesh->SetCustomDepthStencilValue(2);
-									LastWebCamLocker = TracedWebCamLocker;
+
+									LastButton = TracedButton;
 								}
 								else
-									isTracedBad = true; //Мы не попали в нужный нам предмет
-								
+								{
+									AWebCamLocker* TracedWebCamLocker = Cast<AWebCamLocker>(HittableActor);
+									if (TracedCache)
+										TracedCache->Mesh->SetCustomDepthStencilValue(0);
+									if (TracedWebCamLocker)
+									{
+										bLineTrace_is_need_refresh = true;
+										ItemCodePickUp = WebCamLocker;
+										UserView->E_Mark->SetVisibility(ESlateVisibility::Visible);
+										TracedWebCamLocker->Mesh->SetCustomDepthStencilValue(2);
+										LastWebCamLocker = TracedWebCamLocker;
+									}
+									else
+										isTracedBad = true; //Мы не попали в нужный нам предмет
+
+								}
 							}
 						}
 					}
+					else
+						isTracedBad = true;  //Мы не попали в нужный нам предмет
 				}
 				else
 					isTracedBad = true;  //Мы не попали в нужный нам предмет
 			}
 			else
-				isTracedBad = true;  //Мы не попали в нужный нам предмет
-		}
-		else
-			isTracedBad = true;   //Мы не попали в нужный нам предмет
+				isTracedBad = true;   //Мы не попали в нужный нам предмет
 
-		if (isTracedBad && bLineTrace_is_need_refresh) { 
-			//Если мы не попали в нужный нам предмет, но на прошлом кадре мы отрисовали виджет,
-			// то для оптимизации мы скрываем все виджеты до первого удачного столкновения с нужным предметом
-			bLineTrace_is_need_refresh = false;
+			if (isTracedBad && bLineTrace_is_need_refresh) {
+				//Если мы не попали в нужный нам предмет, но на прошлом кадре мы отрисовали виджет,
+				// то для оптимизации мы скрываем все виджеты до первого удачного столкновения с нужным предметом
+				bLineTrace_is_need_refresh = false;
 
-			ItemCodePickUp = -1;
-			if (LastItem)
-			{
-				LastItem->Item->SetCustomDepthStencilValue(0);
+				ItemCodePickUp = -1;
+				if (LastItem)
+				{
+					LastItem->Item->SetCustomDepthStencilValue(0);
+				}
+
+				if (LastWebCamLocker)
+				{
+					LastWebCamLocker->Mesh->SetCustomDepthStencilValue(0);
+				}
+
+				if (LastItem && Cast<AOpenArea>(LastItem))
+				{
+					PickUp_Released();
+				}
+				UserView->StopAllAnimations();
+				UserView->E_Mark->SetVisibility(ESlateVisibility::Hidden);
+
 			}
-
-			if (LastWebCamLocker)
+			for (int i = 0; i < TargetArrowsStatic.Num(); ++i)
 			{
-				LastWebCamLocker->Mesh->SetCustomDepthStencilValue(0);
+				UpdateTargetArrowPosition(TargetItemsStatic[i], TargetArrowsStatic[i]);
 			}
-
-			if (LastItem && Cast<AOpenArea>(LastItem)) 
+			//UE_LOG(LogTemp, Warning, TEXT("TargetItemsDynamic.Num - %d"), TargetItemsDynamic.Num());
+			//UE_LOG(LogTemp, Warning, TEXT("TargetArrowsDynamic.Num - %d"), TargetArrowsDynamic.Num());
+			for (int i = 0; i < TargetArrowsDynamic.Num(); ++i)
 			{
-				PickUp_Released();
+				UpdateTargetArrowPosition(TargetItemsDynamic[i], TargetArrowsDynamic[i]);
 			}
-			UserView->StopAllAnimations();
-			UserView->E_Mark->SetVisibility(ESlateVisibility::Hidden);
-
-		}
-		for(int i = 0; i < TargetArrowsStatic.Num(); ++i)
-		{
-			UpdateTargetArrowPosition(TargetItemsStatic[i],TargetArrowsStatic[i]);
-		}
-		//UE_LOG(LogTemp, Warning, TEXT("TargetItemsDynamic.Num - %d"), TargetItemsDynamic.Num());
-		//UE_LOG(LogTemp, Warning, TEXT("TargetArrowsDynamic.Num - %d"), TargetArrowsDynamic.Num());
-		for (int i = 0; i < TargetArrowsDynamic.Num(); ++i)
-		{
-			UpdateTargetArrowPosition(TargetItemsDynamic[i], TargetArrowsDynamic[i]);
 		}
 	}
 }
@@ -480,8 +482,6 @@ void AChel::SetCameraRotationWebCam_Implementation(float RollRot, float PitchRot
 
 void AChel::UpdateSpectating_Right_Server_Implementation()
 {
-	if (WebCamIterator != -1)
-		GS->WebCams[WebCamIterator]->is_Enabled = true;
 	WebCamIterator += 1;
 	if (WebCamIterator >= GS->WebCams.Num())
 	{
@@ -512,8 +512,6 @@ void AChel::UpdateSpectating_Left()
 
 void AChel::UpdateSpectating_Left_Server_Implementation()
 {
-	if (WebCamIterator != -1)
-		GS->WebCams[WebCamIterator]->is_Enabled = true;
 	WebCamIterator -= 1;
 	if (WebCamIterator < 0)
 	{
@@ -896,15 +894,13 @@ void AChel::UnShowKillFeed()
 
 //PlayStartingAnimation---------------------
 void AChel::PlaySpawnAnimationSleep_Implementation() {
-	for (int i = 0; i < TargetArrowsStatic.Num(); ++i)
+	for (int i = 0; i < TargetItemsStatic.Num(); ++i)
 	{
-		TargetArrowsStatic.RemoveAt(i);
-		TargetItemsStatic.RemoveAt(i);
+		RemoveTargetArrowStatic(TargetItemsStatic[i]);
 	}
 	for (int i = 0; i < TargetArrowsDynamic.Num(); ++i)
 	{
-		TargetArrowsDynamic.RemoveAt(i);
-		TargetItemsDynamic.RemoveAt(i);
+		RemoveTargetArrowDynamic(TargetArrowsDynamic[i]);
 	}
 	ResetCacheKeys();
 	CanThrowStone = false;
@@ -943,6 +939,7 @@ void AChel::AwakeAnimation_End()
 //PlayStartingAnimation---------------------
 void AChel::PlaySpawnAnimationAwake_Implementation() {
 	TimeLine_FOV_WebCam->Stop();
+	Cast<ABP_PlayerController>(GetController())->PlayGameplaySound();
 	IsNotInWebCam = true;
 	FTimerHandle FuzeTimerHandle;
 	World->GetTimerManager().SetTimer(FuzeTimerHandle, this, &AChel::AwakeAnimation_End, 2, false);
