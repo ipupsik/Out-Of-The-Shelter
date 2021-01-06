@@ -359,6 +359,7 @@ void AChel::Tick(float DeltaTime)
 							{
 								AButtonCanalization* TracedButton = Cast<AButtonCanalization>(HittableActor);
 								if (TracedButton) {
+									isTracedBad = false;
 									bLineTrace_is_need_refresh = true;
 									ItemCodePickUp = CanalizationButton;
 									UserView->E_Mark->SetVisibility(ESlateVisibility::Visible);
@@ -372,6 +373,7 @@ void AChel::Tick(float DeltaTime)
 										TracedCache->Mesh->SetCustomDepthStencilValue(0);
 									if (TracedWebCamLocker)
 									{
+										isTracedBad = false;
 										bLineTrace_is_need_refresh = true;
 										ItemCodePickUp = WebCamLocker;
 										UserView->E_Mark->SetVisibility(ESlateVisibility::Visible);
