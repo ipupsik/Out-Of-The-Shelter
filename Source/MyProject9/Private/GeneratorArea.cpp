@@ -50,8 +50,8 @@ void AGeneratorArea::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, c
 	AChel* Player = Cast<AChel>(OtherActor);
 	if (Player) {
 		Player->GenAreaObj = this;
-		Player->AreaCode = 6;
 		if (Player->UserView) {
+			Player->AreaCode = 6;
 			if (IsAvalible) {
 				Player->UserView->HoldText->SetVisibility(ESlateVisibility::Visible);
 			}
@@ -68,8 +68,8 @@ void AGeneratorArea::OnOverlapEnd(UPrimitiveComponent * OverlappedComp, AActor *
 	AChel* Player = Cast<AChel>(OtherActor);
 	if (Player) {
 		Player->GenAreaObj = nullptr;
-		Player->AreaCode = -1;
 		if (Player->UserView) {
+			Player->AreaCode = -1;
 			Player->TickEnableGeneratorWidget = false;
 			Player->UserView->HoldText->SetVisibility(ESlateVisibility::Hidden);
 			Player->UserView->AreaUsedText->SetVisibility(ESlateVisibility::Hidden);

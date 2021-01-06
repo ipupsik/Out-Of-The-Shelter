@@ -21,29 +21,31 @@ void AAreaCollision::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor*
 {
 	AChel* Player = Cast<AChel>(OtherActor);
 	if (Player) {
-		if (AreaType != 3) { //Не в двери выхода шелтора
-			if (Player->IsPlayerOwner && !Player->GS->AreaClosed[AreaType]) {
-				if (AreaType == 1 && !Player->GS->IsShelterAvaliable)
-					return;
-				Player->AreaCode = AreaType;
-				if (!Player->GS->AreaAvaliables[AreaType])
-				{
-					if (Player->DoesHave[AreaType])
-						Player->UserView->HoldText->SetVisibility(ESlateVisibility::Visible);
-				}
-				else
-				{
-					if (AreaType != 1) {
-						Player->UserView->EscapeText->SetVisibility(ESlateVisibility::Visible);
+		if (Player->IsPlayerOwner) {
+			if (AreaType != 3) { //Не в двери выхода шелтора
+				if (Player->IsPlayerOwner && !Player->GS->AreaClosed[AreaType]) {
+					if (AreaType == 1 && !Player->GS->IsShelterAvaliable)
+						return;
+					Player->AreaCode = AreaType;
+					if (!Player->GS->AreaAvaliables[AreaType])
+					{
+						if (Player->DoesHave[AreaType])
+							Player->UserView->HoldText->SetVisibility(ESlateVisibility::Visible);
+					}
+					else
+					{
+						if (AreaType != 1) {
+							Player->UserView->EscapeText->SetVisibility(ESlateVisibility::Visible);
+						}
 					}
 				}
 			}
-		}
-		else {
-			if (Player->IsPlayerOwner && !Player->GS->AreaClosed[1]) {
-				Player->AreaCode = AreaType;
-				if (Player->GS->AreaAvaliables[1]) {
-					Player->UserView->EscapeText->SetVisibility(ESlateVisibility::Visible);
+			else {
+				if (Player->IsPlayerOwner && !Player->GS->AreaClosed[1]) {
+					Player->AreaCode = AreaType;
+					if (Player->GS->AreaAvaliables[1]) {
+						Player->UserView->EscapeText->SetVisibility(ESlateVisibility::Visible);
+					}
 				}
 			}
 		}
@@ -55,29 +57,31 @@ void AAreaCollision::OnOverlapEnd(UPrimitiveComponent* OverlappedComp, AActor* O
 {
 	AChel* Player = Cast<AChel>(OtherActor);
 	if (Player) {
-		if (AreaType != 3) { //Не в двери выхода шелтора
-			if (Player->IsPlayerOwner && !Player->GS->AreaClosed[AreaType]) {
-				Player->AreaCode = -1;
-				if (!Player->GS->AreaAvaliables[AreaType])
-				{
-					Player->IsSuccessOpening = false;
-					Player->UserView->StopAllAnimations();
-					Player->UserView->PB_Opening->SetVisibility(ESlateVisibility::Hidden);
-					Player->UserView->HoldText->SetVisibility(ESlateVisibility::Hidden);
-				}
-				else
-				{
-					if (AreaType != 1)
-						Player->UserView->EscapeText->SetVisibility(ESlateVisibility::Hidden);
+		if (Player->IsPlayerOwner) {
+			if (AreaType != 3) { //Не в двери выхода шелтора
+				if (Player->IsPlayerOwner && !Player->GS->AreaClosed[AreaType]) {
+					Player->AreaCode = -1;
+					if (!Player->GS->AreaAvaliables[AreaType])
+					{
+						Player->IsSuccessOpening = false;
+						Player->UserView->StopAllAnimations();
+						Player->UserView->PB_Opening->SetVisibility(ESlateVisibility::Hidden);
+						Player->UserView->HoldText->SetVisibility(ESlateVisibility::Hidden);
+					}
+					else
+					{
+						if (AreaType != 1)
+							Player->UserView->EscapeText->SetVisibility(ESlateVisibility::Hidden);
+					}
 				}
 			}
-		}
-		else {
-			if (Player->IsPlayerOwner && !Player->GS->AreaClosed[1])
-			{
-				Player->AreaCode = -1;
-				if (Player->GS->AreaAvaliables[1]) {
-					Player->UserView->EscapeText->SetVisibility(ESlateVisibility::Hidden);
+			else {
+				if (Player->IsPlayerOwner && !Player->GS->AreaClosed[1])
+				{
+					Player->AreaCode = -1;
+					if (Player->GS->AreaAvaliables[1]) {
+						Player->UserView->EscapeText->SetVisibility(ESlateVisibility::Hidden);
+					}
 				}
 			}
 		}

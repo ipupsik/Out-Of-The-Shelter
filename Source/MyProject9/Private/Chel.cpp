@@ -268,8 +268,7 @@ void AChel::Tick(float DeltaTime)
 	
 	if (IsInGame == true) {
 		if (IsServerAuth) {
-			DeltaTime *= 2 * 0.01f * RadCoeff * CanalizationDamage;
-			Health += DeltaTime;
+			Health += DeltaTime * 2 * 0.01f * RadCoeff * CanalizationDamage;
 			if (Health > 1.0f) {
 				if (DoesHave[Boltorez])
 					GS->CurrentBoltorez--;
@@ -293,6 +292,7 @@ void AChel::Tick(float DeltaTime)
 
 		if (IsPlayerOwner) {
 			if (TickEnableGeneratorWidget) {
+				UE_LOG(LogTemp, Warning, TEXT("%f"), DeltaTime);
 				if (bToRight) {
 					GeneratorView->PB_Repair->SetPercent(GeneratorView->PB_Repair->Percent + (GeneratorView->curSpeed) * DeltaTime);
 					if (GeneratorView->PB_Repair->Percent >= 1.0f) {
