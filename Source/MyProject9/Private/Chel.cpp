@@ -1047,6 +1047,7 @@ void AChel::PickUp() {
 					}
 					KeysCount[KeyType]++;
 					DoesHave_Owner = true;
+					LastItem->Destroy();
 					NewHaveItemServer(ItemCodePickUp);
 					PickUpSound();
 					break;
@@ -1616,26 +1617,7 @@ void AChel::RefreshWidgets_Winner_Implementation(int32 EscapeWay)
 void AChel::StuffAvaliableUpdate_Implementation(int32 EscapeWay)
 {
 	GS->AreaAvaliables[EscapeWay] = true;
-}
-
-bool AChel::StuffAvaliableUpdate_Validate(int32 EscapeWay)
-{
-	return true;
-}
-
-void AChel::ExitAvaliableUpdate_Implementation(int32 EscapeWay)
-{
-	AreaCode = EscapeWay;
-	UserView->EscapeText->SetVisibility(ESlateVisibility::Visible);
-}
-
-void AChel::PlayerEscape_Implementation(int32 EscapeWay)
-{
-	GS->AreaClosed[EscapeWay] = true;
-	GS->WinnersNickNames.Add(GS->NickNames[Index]);
-	GS->WinnersIndex.Add(Index);
-	GS->EscapeTime.Add(GS->CurrentTime);
-	
+	DoesHave[EscapeWay] = false;
 	TArray<AActor*>DeletingItems;
 	switch (EscapeWay)
 	{
@@ -1660,7 +1642,26 @@ void AChel::PlayerEscape_Implementation(int32 EscapeWay)
 	{
 		it->Destroy();
 	}
+}
 
+bool AChel::StuffAvaliableUpdate_Validate(int32 EscapeWay)
+{
+	return true;
+}
+
+void AChel::ExitAvaliableUpdate_Implementation(int32 EscapeWay)
+{
+	AreaCode = EscapeWay;
+	UserView->EscapeText->SetVisibility(ESlateVisibility::Visible);
+}
+
+void AChel::PlayerEscape_Implementation(int32 EscapeWay)
+{
+	GS->AreaClosed[EscapeWay] = true;
+	GS->WinnersNickNames.Add(GS->NickNames[Index]);
+	GS->WinnersIndex.Add(Index);
+	GS->EscapeTime.Add(GS->CurrentTime);
+	
 	for (int i = 0; i < CustomizationChilds.Num(); ++i)
 	{
 		if (CustomizationChilds[i])
