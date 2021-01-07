@@ -291,8 +291,8 @@ void AChel::Tick(float DeltaTime)
 		}
 
 		if (IsPlayerOwner) {
+			UE_LOG(LogTemp, Warning, TEXT("Lala - %d"), AreaCode);
 			if (TickEnableGeneratorWidget) {
-				UE_LOG(LogTemp, Warning, TEXT("%f"), DeltaTime);
 				if (bToRight) {
 					GeneratorView->PB_Repair->SetPercent(GeneratorView->PB_Repair->Percent + (GeneratorView->curSpeed) * DeltaTime);
 					if (GeneratorView->PB_Repair->Percent >= 1.0f) {

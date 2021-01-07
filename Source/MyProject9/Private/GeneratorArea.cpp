@@ -45,12 +45,14 @@ void AGeneratorArea::RefreshGenerator()
 	ChangeLampochka(1);
 }
 
-
 void AGeneratorArea::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult) {
 	AChel* Player = Cast<AChel>(OtherActor);
 	if (Player) {
-		Player->GenAreaObj = this;
-		if (Player->UserView) {
+		if (Player->IsServerAuth)
+		{
+			Player->GenAreaObj = this;
+		}
+		if (Player->IsPlayerOwner) {
 			Player->AreaCode = 6;
 			if (IsAvalible) {
 				Player->UserView->HoldText->SetVisibility(ESlateVisibility::Visible);
@@ -67,8 +69,12 @@ void AGeneratorArea::OnOverlapEnd(UPrimitiveComponent * OverlappedComp, AActor *
 {
 	AChel* Player = Cast<AChel>(OtherActor);
 	if (Player) {
-		Player->GenAreaObj = nullptr;
-		if (Player->UserView) {
+		if (Player->IsServerAuth)
+		{
+			Player->GenAreaObj = nullptr;
+		}
+		if (Player->IsPlayerOwner) {
+			Player->GenAreaObj = nullptr;
 			Player->AreaCode = -1;
 			Player->TickEnableGeneratorWidget = false;
 			Player->UserView->HoldText->SetVisibility(ESlateVisibility::Hidden);
