@@ -53,6 +53,7 @@ void AGeneratorArea::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, c
 			Player->GenAreaObj = this;
 		}
 		if (Player->IsPlayerOwner) {
+			Player->GenAreaObj = this;
 			Player->AreaCode = 6;
 			if (IsAvalible) {
 				Player->UserView->HoldText->SetVisibility(ESlateVisibility::Visible);
