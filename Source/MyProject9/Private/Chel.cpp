@@ -469,16 +469,19 @@ void AChel::Tick(float DeltaTime)
 				UserView->E_Mark->SetVisibility(ESlateVisibility::Hidden);
 
 			}
-			for (int i = 0; i < TargetArrowsStatic.Num(); ++i)
-			{
-				UpdateTargetArrowPosition(TargetItemsStatic[i], TargetArrowsStatic[i]);
-			}
-			//UE_LOG(LogTemp, Warning, TEXT("TargetItemsDynamic.Num - %d"), TargetItemsDynamic.Num());
-			//UE_LOG(LogTemp, Warning, TEXT("TargetArrowsDynamic.Num - %d"), TargetArrowsDynamic.Num());
-			for (int i = 0; i < TargetArrowsDynamic.Num(); ++i)
-			{
-				UpdateTargetArrowPosition(TargetItemsDynamic[i], TargetArrowsDynamic[i]);
-			}
+		}
+	}
+
+	if (IsPlayerOwner) {
+		for (int i = 0; i < TargetArrowsStatic.Num(); ++i)
+		{
+			UpdateTargetArrowPosition(TargetItemsStatic[i], TargetArrowsStatic[i]);
+		}
+		//UE_LOG(LogTemp, Warning, TEXT("TargetItemsDynamic.Num - %d"), TargetItemsDynamic.Num());
+		//UE_LOG(LogTemp, Warning, TEXT("TargetArrowsDynamic.Num - %d"), TargetArrowsDynamic.Num());
+		for (int i = 0; i < TargetArrowsDynamic.Num(); ++i)
+		{
+			UpdateTargetArrowPosition(TargetItemsDynamic[i], TargetArrowsDynamic[i]);
 		}
 	}
 }
