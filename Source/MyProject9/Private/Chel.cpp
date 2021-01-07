@@ -291,7 +291,6 @@ void AChel::Tick(float DeltaTime)
 		}
 
 		if (IsPlayerOwner) {
-			UE_LOG(LogTemp, Warning, TEXT("Lala - %d"), AreaCode);
 			if (TickEnableGeneratorWidget) {
 				if (bToRight) {
 					GeneratorView->PB_Repair->SetPercent(GeneratorView->PB_Repair->Percent + (GeneratorView->curSpeed) * DeltaTime);
@@ -1066,7 +1065,6 @@ void AChel::PickUp() {
 					}
 					KeysCount[KeyType]++;
 					DoesHave_Owner = true;
-					LastItem->Destroy();
 					NewHaveItemServer(ItemCodePickUp);
 					PickUpSound();
 					break;
@@ -1261,6 +1259,7 @@ void AChel::NewHaveItemServer_Implementation(int32 ItemType)
 			ACache_Key* CacheKey = Cast<ACache_Key>(TempItem);
 			if (CacheKey)
 			{
+				UE_LOG(LogTemp, Warning, TEXT("Lalala"));
 				CacheKey->RemoveAndRefreshTimer();
 			}
 			else

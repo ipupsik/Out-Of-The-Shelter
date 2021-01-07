@@ -189,7 +189,7 @@ void AGS::BeginPlay()
 
 		for (int Keys = 0; Keys < 3; ++Keys)
 		{
-			for (int i = 0; i < COUNT_CacheKey; i++)
+			for (int i = 0; i < COUNT_CacheKey; ++i)
 			{
 				int ArrayIndex = 0;
 				while (!Keys_IsAvaliable[ArrayIndex])

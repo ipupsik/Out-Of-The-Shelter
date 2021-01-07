@@ -22,6 +22,11 @@ public:
 
 	void Refresh();
 
+	UFUNCTION(NetMulticast, Reliable)
+		void ReplaceMulticast(FTransform NewTrans);
+
+	UFUNCTION(NetMulticast, Reliable)
+		void RefreshMulticast();
 public:
 	//Vars
 	int ArrayIndex;
