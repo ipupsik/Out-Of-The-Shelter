@@ -34,7 +34,9 @@ void APromptCollisionArea::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, A
 			if (Player->IsPlayerOwner) {
 				for (auto& item : PromptedItems)
 				{
+					item->Mesh->SetRenderCustomDepth(true);
 					item->Mesh->SetCustomDepthStencilValue(OutlineColor);
+					item->Mesh->MarkRenderStateDirty();
 					Player->AddTargetArrowStatic(item);
 				}
 			}
@@ -51,7 +53,9 @@ void APromptCollisionArea::OnOverlapEnd(UPrimitiveComponent* OverlappedComp, AAc
 			if (Player->IsPlayerOwner) {
 				for (auto& item : PromptedItems)
 				{
+					item->Mesh->SetRenderCustomDepth(false);
 					item->Mesh->SetCustomDepthStencilValue(0);
+					item->Mesh->MarkRenderStateDirty();
 					Player->RemoveTargetArrowStatic(item);
 				}
 			}

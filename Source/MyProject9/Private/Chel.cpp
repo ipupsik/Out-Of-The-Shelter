@@ -332,12 +332,17 @@ void AChel::Tick(float DeltaTime)
 								UserView->E_Mark->SetVisibility(ESlateVisibility::Visible);
 							else if (GS->IsShelterAvaliable) {
 								UserView->E_Mark->SetVisibility(ESlateVisibility::Visible);
+								LastItem->Item->SetRenderCustomDepth(true);
 								LastItem->Item->SetCustomDepthStencilValue(2);
+								LastItem->Item->MarkRenderStateDirty();
 							}
 							isTracedBad = false;
 							bLineTrace_is_need_refresh = true;  //Говорим, что в текущем кадре мы ударились в нужный предмет
-							if (LastItem)
+							if (LastItem) {
+								LastItem->Item->SetRenderCustomDepth(false);
 								LastItem->Item->SetCustomDepthStencilValue(0);
+								LastItem->Item->MarkRenderStateDirty();
+							}
 							LastItem = TracedItem;
 							if (TracedItem->Type == OpenArea) {
 								AOpenArea* MyOpenArea = Cast<AOpenArea>(TracedItem);
@@ -345,24 +350,40 @@ void AChel::Tick(float DeltaTime)
 									UserView->E_Mark->SetVisibility(ESlateVisibility::Hidden);
 								}
 								else {
+									LastItem->Item->SetRenderCustomDepth(true);
 									LastItem->Item->SetCustomDepthStencilValue(2);
+									LastItem->Item->MarkRenderStateDirty();
 								}
 							}
 							else if (TracedItem->Type >= 0 && TracedItem->Type <= 2)
 							{
-								if (DoesHave[LastItem->Type])
+								if (DoesHave[LastItem->Type]) {
+									LastItem->Item->SetRenderCustomDepth(true);
 									LastItem->Item->SetCustomDepthStencilValue(1);
+									LastItem->Item->MarkRenderStateDirty();
+								}
 								else
+								{
+									LastItem->Item->SetRenderCustomDepth(true);
 									LastItem->Item->SetCustomDepthStencilValue(2);
+									LastItem->Item->MarkRenderStateDirty();
+								}
 							}
 							else
+							{
+								LastItem->Item->SetRenderCustomDepth(true);
 								LastItem->Item->SetCustomDepthStencilValue(2);
+								LastItem->Item->MarkRenderStateDirty();
+							}
 						}
 						else
 						{
 							ACache* TracedCache = Cast<ACache>(HittableActor);
-							if (LastItem)
+							if (LastItem) {
+								LastItem->Item->SetRenderCustomDepth(false);
 								LastItem->Item->SetCustomDepthStencilValue(0);
+								LastItem->Item->MarkRenderStateDirty();
+							}
 							if (TracedCache) {
 								if (TracedCache->IsEnabled && KeysCount[TracedCache->CacheType] > 0) {
 									isTracedBad = false;
@@ -388,14 +409,20 @@ void AChel::Tick(float DeltaTime)
 								{
 									AWebCamLocker* TracedWebCamLocker = Cast<AWebCamLocker>(HittableActor);
 									if (TracedCache)
+									{
+										TracedCache->Mesh->SetRenderCustomDepth(false);
 										TracedCache->Mesh->SetCustomDepthStencilValue(0);
+										TracedCache->Mesh->MarkRenderStateDirty();
+									}
 									if (TracedWebCamLocker)
 									{
 										isTracedBad = false;
 										bLineTrace_is_need_refresh = true;
 										ItemCodePickUp = WebCamLocker;
 										UserView->E_Mark->SetVisibility(ESlateVisibility::Visible);
+										TracedWebCamLocker->Mesh->SetRenderCustomDepth(true);
 										TracedWebCamLocker->Mesh->SetCustomDepthStencilValue(2);
+										TracedWebCamLocker->Mesh->MarkRenderStateDirty();
 										LastWebCamLocker = TracedWebCamLocker;
 									}
 									else
@@ -422,12 +449,16 @@ void AChel::Tick(float DeltaTime)
 				ItemCodePickUp = -1;
 				if (LastItem)
 				{
+					LastItem->Item->SetRenderCustomDepth(false);
 					LastItem->Item->SetCustomDepthStencilValue(0);
+					LastItem->Item->MarkRenderStateDirty();
 				}
 
 				if (LastWebCamLocker)
 				{
+					LastWebCamLocker->Mesh->SetRenderCustomDepth(false);
 					LastWebCamLocker->Mesh->SetCustomDepthStencilValue(0);
+					LastWebCamLocker->Mesh->MarkRenderStateDirty();
 				}
 
 				if (LastItem && Cast<AOpenArea>(LastItem))
@@ -999,7 +1030,9 @@ void AChel::PickUp() {
 						NewHaveItemServer(Boltorez);
 						ArrowCanalizacia = Cast<UTargetArrow>(CreateWidget(World, TargetArrowClass));
 						ArrowCanalizacia->AddToViewport();
+						MainExis_Canalizacia->Mesh->SetRenderCustomDepth(true);
 						MainExis_Canalizacia->Mesh->SetCustomDepthStencilValue(3);
+						MainExis_Canalizacia->Mesh->MarkRenderStateDirty();
 						TargetItemsDynamic.Add(MainExis_Canalizacia);
 						TargetArrowsDynamic.Add(ArrowCanalizacia);
 						FTimerHandle FuzeTimerHandle;
@@ -1016,7 +1049,9 @@ void AChel::PickUp() {
 						NewHaveItemServer(KeyShelter);
 						ArrowShelter = Cast<UTargetArrow>(CreateWidget(World, TargetArrowClass));
 						ArrowShelter->AddToViewport();
+						MainExis_Shelter->Mesh->SetRenderCustomDepth(true);
 						MainExis_Shelter->Mesh->SetCustomDepthStencilValue(3);
+						MainExis_Shelter->Mesh->MarkRenderStateDirty();
 						TargetItemsDynamic.Add(MainExis_Shelter);
 						TargetArrowsDynamic.Add(ArrowShelter);
 						FTimerHandle FuzeTimerHandle;
@@ -1033,7 +1068,9 @@ void AChel::PickUp() {
 						NewHaveItemServer(Otvertka);
 						ArrowVentilacia = Cast<UTargetArrow>(CreateWidget(World, TargetArrowClass));
 						ArrowVentilacia->AddToViewport();
+						MainExis_Ventilacia->Mesh->SetRenderCustomDepth(true);
 						MainExis_Ventilacia->Mesh->SetCustomDepthStencilValue(3);
+						MainExis_Ventilacia->Mesh->MarkRenderStateDirty();
 						TargetItemsDynamic.Add(MainExis_Ventilacia);
 						TargetArrowsDynamic.Add(ArrowVentilacia);
 						FTimerHandle FuzeTimerHandle;
@@ -1926,27 +1963,37 @@ bool AChel::ChangeButtonCount_Server_Validate()
 void AChel::RefreshOutline()
 {
 	Cast<AChel>(UGameplayStatics::GetPlayerCharacter(World, 0))->RemoveTargetArrowDynamic();
+	PoseableMeshComp->SetRenderCustomDepth(false);
 	PoseableMeshComp->SetCustomDepthStencilValue(0);
+	PoseableMeshComp->MarkRenderStateDirty();
 }
 
 void AChel::DeleteArrowDelayKeyShelter() {
 	RemoveTargetArrowDynamic(ArrowShelter);
+	MainExis_Shelter->Mesh->SetRenderCustomDepth(false);
 	MainExis_Shelter->Mesh->SetCustomDepthStencilValue(0);
+	MainExis_Shelter->Mesh->MarkRenderStateDirty();
 }
 
 void AChel::DeleteArrowDelayBoltorez() {
 	RemoveTargetArrowDynamic(ArrowCanalizacia);
+	MainExis_Canalizacia->Mesh->SetRenderCustomDepth(false);
 	MainExis_Canalizacia->Mesh->SetCustomDepthStencilValue(0);
+	MainExis_Canalizacia->Mesh->MarkRenderStateDirty();
 }
 
 void AChel::DeleteArrowDelayOtvertka() {
 	RemoveTargetArrowDynamic(ArrowVentilacia);
+	MainExis_Ventilacia->Mesh->SetRenderCustomDepth(false);
 	MainExis_Ventilacia->Mesh->SetCustomDepthStencilValue(0);
+	MainExis_Ventilacia->Mesh->MarkRenderStateDirty();
 }
 
 void AChel::OutlineBad_Multicast_Implementation()
 {
+	PoseableMeshComp->SetRenderCustomDepth(true);
 	PoseableMeshComp->SetCustomDepthStencilValue(1);
+	PoseableMeshComp->MarkRenderStateDirty();
 	
 	if (!IsPlayerOwner)
 		Cast<AChel>(UGameplayStatics::GetPlayerCharacter(World, 0))->AddTargetArrowDynamic(this);
@@ -1981,7 +2028,9 @@ void AChel::ShowRandomItem_Implementation() {
 	if (ImportantItems.Num() != 0)
 	{
 		LastOutlineItem = ImportantItems[FMath::Rand() % ImportantItems.Num()];
+		LastOutlineItem->Item->SetRenderCustomDepth(true);
 		LastOutlineItem->Item->SetCustomDepthStencilValue(2);
+		LastOutlineItem->Item->MarkRenderStateDirty();
 		AddTargetArrowDynamic(LastOutlineItem);
 
 		FTimerHandle FuzeTimerHandle;
@@ -1993,7 +2042,9 @@ void AChel::ShowRandomItem_Implementation() {
 void AChel::HideRandomItem() {
 	if (LastOutlineItem) 
 	{
+		LastOutlineItem->Item->SetRenderCustomDepth(false);
 		LastOutlineItem->Item->SetCustomDepthStencilValue(0);
+		LastOutlineItem->Item->MarkRenderStateDirty();
 		LastOutlineItem = nullptr;
 		RemoveTargetArrowDynamic();
 	}

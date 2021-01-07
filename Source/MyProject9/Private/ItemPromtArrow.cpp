@@ -8,6 +8,4 @@ AItemPromtArrow::AItemPromtArrow()
 {
 	Mesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
 	Mesh->SetupAttachment(RootComponent);
-	Mesh->bRenderInDepthPass = true;
-	Mesh->CustomDepthStencilValue = 0;
 }
