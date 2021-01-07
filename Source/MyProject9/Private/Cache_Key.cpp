@@ -6,7 +6,7 @@
 
 void ACache_Key::RemoveAndRefreshTimer()
 {
-	int NewIndex = 0;
+	int NewIndex = ArrayIndex;
 	AGS* GS = GetWorld()->GetGameState<AGS>();
 	UE_LOG(LogTemp, Warning, TEXT("GS->Keys_IsAvaliable.Num() - %d"), GS->Keys_IsAvaliable.Num());
 	UE_LOG(LogTemp, Warning, TEXT("ArrayIndex - %d"), ArrayIndex);
