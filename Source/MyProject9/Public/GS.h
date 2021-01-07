@@ -18,7 +18,7 @@
 
 class ASpectator;
 
-#define MAX_PLAYER_COUNT 4
+#define MAX_PLAYER_COUNT 1
 
 #define MIN_COUNT_KeyShelter 3
 #define MIN_COUNT_Boltorez 3
