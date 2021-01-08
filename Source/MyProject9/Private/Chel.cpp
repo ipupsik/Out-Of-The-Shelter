@@ -317,7 +317,7 @@ void AChel::Tick(float DeltaTime)
 
 			//DrawDebugLine(World, StartLocation, EndLocation, FColor::Red, false, 1, 0, 1);
 
-			isTracedBad = false; //Предположим, что мы не нашли лайн трейсом нужные нам предметы
+			isTracedBad = false; //Предположим, что мы нашли лайн трейсом нужные нам предметы
 			if (World->LineTraceSingleByChannel(OutHit, StartLocation, EndLocation, ECC_Visibility, CollisionParams))
 			{
 				if (OutHit.bBlockingHit)
@@ -329,47 +329,51 @@ void AChel::Tick(float DeltaTime)
 							ItemCodePickUp = TracedItem->Type;
 							if (TracedItem->Type != ClickButton)
 								UserView->E_Mark->SetVisibility(ESlateVisibility::Visible);
-							else if (GS->IsShelterAvaliable) {
-								UserView->E_Mark->SetVisibility(ESlateVisibility::Visible);
-								LastItem->Item->SetRenderCustomDepth(true);
-								LastItem->Item->SetCustomDepthStencilValue(2);
-								LastItem->Item->MarkRenderStateDirty();
-							}
-							isTracedBad = false;
-							bLineTrace_is_need_refresh = true;  //Говорим, что в текущем кадре мы ударились в нужный предмет
-							if (LastItem) {
+							if (LastItem && LastItem != TracedItem) {
 								LastItem->Item->SetRenderCustomDepth(false);
 								LastItem->Item->MarkRenderStateDirty();
 							}
-							LastItem = TracedItem;
-							if (TracedItem->Type == OpenArea) {
-								AOpenArea* MyOpenArea = Cast<AOpenArea>(TracedItem);
-								if (!MyOpenArea->bIsAvaliable) {
-									UserView->E_Mark->SetVisibility(ESlateVisibility::Hidden);
+							if (LastItem != TracedItem) {
+								LastItem = TracedItem;
+								bLineTrace_is_need_refresh = true;
+								if (TracedItem->Type == OpenArea) {
+									AOpenArea* MyOpenArea = Cast<AOpenArea>(TracedItem);
+									if (!MyOpenArea->bIsAvaliable) {
+										UserView->E_Mark->SetVisibility(ESlateVisibility::Hidden);
+									}
+									else {
+										LastItem->Item->SetRenderCustomDepth(true);
+										LastItem->Item->MarkRenderStateDirty();
+									}
 								}
-								else {
-									LastItem->Item->SetRenderCustomDepth(true);
-									LastItem->Item->MarkRenderStateDirty();
+								else if (TracedItem->Type >= 0 && TracedItem->Type <= 2)
+								{
+									if (DoesHave[LastItem->Type]) {
+										LastItem->Item->SetRenderCustomDepth(true);
+										LastItem->Item->SetCustomDepthStencilValue(1);
+										LastItem->Item->MarkRenderStateDirty();
+									}
+									else
+									{
+										LastItem->Item->SetRenderCustomDepth(true);
+										LastItem->Item->SetCustomDepthStencilValue(2);
+										LastItem->Item->MarkRenderStateDirty();
+									}
 								}
-							}
-							else if (TracedItem->Type >= 0 && TracedItem->Type <= 2)
-							{
-								if (DoesHave[LastItem->Type]) {
-									LastItem->Item->SetRenderCustomDepth(true);
-									LastItem->Item->SetCustomDepthStencilValue(1);
-									LastItem->Item->MarkRenderStateDirty();
+								else if (TracedItem->Type == ClickButton)
+								{
+									if (GS->IsShelterAvaliable) {
+										UserView->E_Mark->SetVisibility(ESlateVisibility::Visible);
+										LastItem->Item->SetRenderCustomDepth(true);
+										LastItem->Item->SetCustomDepthStencilValue(2);
+										LastItem->Item->MarkRenderStateDirty();
+									}
 								}
 								else
 								{
 									LastItem->Item->SetRenderCustomDepth(true);
-									LastItem->Item->SetCustomDepthStencilValue(2);
 									LastItem->Item->MarkRenderStateDirty();
 								}
-							}
-							else
-							{
-								LastItem->Item->SetRenderCustomDepth(true);
-								LastItem->Item->MarkRenderStateDirty();
 							}
 						}
 						else
@@ -381,7 +385,6 @@ void AChel::Tick(float DeltaTime)
 									LastItem->Item->MarkRenderStateDirty();
 								}
 								if (TracedCache->IsEnabled && KeysCount[TracedCache->CacheType] > 0) {
-									isTracedBad = false;
 									bLineTrace_is_need_refresh = true;
 									ItemCodePickUp = Cache;
 									UserView->E_Mark->SetVisibility(ESlateVisibility::Visible);
@@ -393,7 +396,6 @@ void AChel::Tick(float DeltaTime)
 							{
 								AButtonCanalization* TracedButton = Cast<AButtonCanalization>(HittableActor);
 								if (TracedButton) {
-									isTracedBad = false;
 									bLineTrace_is_need_refresh = true;
 									ItemCodePickUp = CanalizationButton;
 									UserView->E_Mark->SetVisibility(ESlateVisibility::Visible);
@@ -405,7 +407,6 @@ void AChel::Tick(float DeltaTime)
 									AWebCamLocker* TracedWebCamLocker = Cast<AWebCamLocker>(HittableActor);
 									if (TracedWebCamLocker)
 									{
-										isTracedBad = false;
 										bLineTrace_is_need_refresh = true;
 										ItemCodePickUp = WebCamLocker;
 										UserView->E_Mark->SetVisibility(ESlateVisibility::Visible);
@@ -434,7 +435,7 @@ void AChel::Tick(float DeltaTime)
 				//Если мы не попали в нужный нам предмет, но на прошлом кадре мы отрисовали виджет,
 				// то для оптимизации мы скрываем все виджеты до первого удачного столкновения с нужным предметом
 				bLineTrace_is_need_refresh = false;
-
+				UE_LOG(LogTemp, Warning, TEXT("Widget Update"));
 				ItemCodePickUp = -1;
 				if (LastItem)
 				{
@@ -454,7 +455,8 @@ void AChel::Tick(float DeltaTime)
 				}
 				UserView->StopAllAnimations();
 				UserView->E_Mark->SetVisibility(ESlateVisibility::Hidden);
-
+				LastItem = nullptr;
+				LastWebCamLocker = nullptr;
 			}
 		}
 	}
@@ -944,10 +946,9 @@ void AChel::PlaySpawnAnimationSleep_Implementation() {
 	{
 		RemoveTargetArrowDynamic(TargetArrowsDynamic[i]);
 	}
-	if (bCanPossessWebCam)
-		DisableCollisionEverywhere();
 	ResetCacheKeys();
-	CanThrowStone = false;
+	if (bCanPossessWebCam)
+		CanThrowStone = false;
 	SpawnDeadSound();
 	UserView->PlayAnimation(UserView->Shading);
 	FTimerHandle FuzeTimerHandle;
@@ -1016,9 +1017,11 @@ void AChel::PickUp() {
 				case Boltorez:
 				{
 					if (!DoesHave[Boltorez]) {
-
 						UserView->WS_Boltorez->SetActiveWidgetIndex(1);
 						DoesHave_Owner = true;
+						LastItem->Item->SetRenderCustomDepth(false);
+						LastItem->Item->MarkRenderStateDirty();
+						LastItem = nullptr;
 						NewHaveItemServer(Boltorez);
 						MainExis_Canalizacia->Mesh->SetRenderCustomDepth(true);
 						MainExis_Canalizacia->Mesh->MarkRenderStateDirty();
@@ -1031,6 +1034,9 @@ void AChel::PickUp() {
 					if (!DoesHave[KeyShelter]) {
 						UserView->WS_KeyShelter->SetActiveWidgetIndex(1);
 						DoesHave_Owner = true;
+						LastItem->Item->SetRenderCustomDepth(false);
+						LastItem->Item->MarkRenderStateDirty();
+						LastItem = nullptr;
 						NewHaveItemServer(KeyShelter);
 						MainExis_Shelter->Mesh->SetRenderCustomDepth(true);
 						MainExis_Shelter->Mesh->MarkRenderStateDirty();
@@ -1043,6 +1049,9 @@ void AChel::PickUp() {
 					if (!DoesHave[Otvertka]) {
 						UserView->WS_Otvertka->SetActiveWidgetIndex(1);
 						DoesHave_Owner = true;
+						LastItem->Item->SetRenderCustomDepth(false);
+						LastItem->Item->MarkRenderStateDirty();
+						LastItem = nullptr;
 						NewHaveItemServer(Otvertka);
 						MainExis_Ventilacia->Mesh->SetRenderCustomDepth(true);
 						MainExis_Ventilacia->Mesh->MarkRenderStateDirty();
@@ -1073,6 +1082,9 @@ void AChel::PickUp() {
 					}
 					KeysCount[KeyType]++;
 					DoesHave_Owner = true;
+					LastItem->Item->SetRenderCustomDepth(false);
+					LastItem->Item->MarkRenderStateDirty();
+					LastItem = nullptr;
 					NewHaveItemServer(ItemCodePickUp);
 					PickUpSound();
 					break;
@@ -1128,6 +1140,7 @@ void AChel::PickUp() {
 				case InvisiblePotion:
 				{
 					AddInvisibleServer();
+					LastItem = nullptr;
 					break;
 				}
 				case CodeNote:
