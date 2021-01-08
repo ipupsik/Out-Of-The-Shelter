@@ -10,6 +10,7 @@
 
 #include "Spectator.h"
 #include "FinalMenuPawn.h"
+#include "AmmoPoint.h"
 #include "Cache.h"
 #include "GeneratorArea.h"
 #include "UI/GeneratorWidget.h"

@@ -18,8 +18,7 @@ public:
 	// Sets default values for this actor's properties
 	AAmmoPoint();
 
-protected:
-
+	void EnableUpdateToTrue();
 	void AmmoUpdate();
 public:	
 	UFUNCTION()
