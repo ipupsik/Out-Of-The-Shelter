@@ -35,7 +35,7 @@ class ASpectator;
 #define ShowRandomItem_TIME 6
 #define ShowMainExis_TIME 8
 
-#define COUNT_CacheKey 9
+#define COUNT_CacheKey 7
 /**
  * 
  */
