@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "AdvancedFriendsGameInstance.h"
 #include "Engine/GameInstance.h"
 #include "UI/FinalMenu.h"
 
@@ -12,7 +13,7 @@
  * 
  */
 UCLASS()
-class MYPROJECT9_API UGI : public UGameInstance
+class MYPROJECT9_API UGI : public UAdvancedFriendsGameInstance
 {
 	GENERATED_BODY()
 
