@@ -785,7 +785,7 @@ void AChel::ShowStoneMulticast_Implementation() {
 //KeyBoardInput----------------
 void AChel::GoForward(float input) {
 	if (bCanWalkingAndWatching && !bInEscMenu) {
-		if (input != 0.0f && IsNotInWebCam) {
+		if (input != 0.0f && IsNotInWebCam && CanThrowStone) {
 			AddMovementInput(GetActorForwardVector(), input * MoveCoeff);
 		}
 	}
@@ -793,7 +793,7 @@ void AChel::GoForward(float input) {
 
 void AChel::GoRight(float input) {
 	if (bCanWalkingAndWatching && !bInEscMenu) {
-		if (input != 0.0f && IsNotInWebCam) {
+		if (input != 0.0f && IsNotInWebCam && CanThrowStone) {
 			AddMovementInput(GetActorRightVector(), input * MoveCoeff);
 		}
 	}
@@ -951,6 +951,8 @@ void AChel::PlaySpawnAnimationSleep_Implementation() {
 	{
 		RemoveTargetArrowDynamic(TargetArrowsDynamic[i]);
 	}
+	if (bCanPossessWebCam)
+		DisableCollisionEverywhere();
 	ResetCacheKeys();
 	CanThrowStone = false;
 	SpawnDeadSound();
