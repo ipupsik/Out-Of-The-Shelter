@@ -349,7 +349,6 @@ void AChel::Tick(float DeltaTime)
 								}
 								else {
 									LastItem->Item->SetRenderCustomDepth(true);
-									LastItem->Item->SetCustomDepthStencilValue(2);
 									LastItem->Item->MarkRenderStateDirty();
 								}
 							}
@@ -370,18 +369,17 @@ void AChel::Tick(float DeltaTime)
 							else
 							{
 								LastItem->Item->SetRenderCustomDepth(true);
-								LastItem->Item->SetCustomDepthStencilValue(2);
 								LastItem->Item->MarkRenderStateDirty();
 							}
 						}
 						else
 						{
 							ACache* TracedCache = Cast<ACache>(HittableActor);
-							if (LastItem) {
-								LastItem->Item->SetRenderCustomDepth(false);
-								LastItem->Item->MarkRenderStateDirty();
-							}
 							if (TracedCache) {
+								if (LastItem) {
+									LastItem->Item->SetRenderCustomDepth(false);
+									LastItem->Item->MarkRenderStateDirty();
+								}
 								if (TracedCache->IsEnabled && KeysCount[TracedCache->CacheType] > 0) {
 									isTracedBad = false;
 									bLineTrace_is_need_refresh = true;
@@ -405,11 +403,6 @@ void AChel::Tick(float DeltaTime)
 								else
 								{
 									AWebCamLocker* TracedWebCamLocker = Cast<AWebCamLocker>(HittableActor);
-									if (TracedCache)
-									{
-										TracedCache->Mesh->SetRenderCustomDepth(false);
-										TracedCache->Mesh->MarkRenderStateDirty();
-									}
 									if (TracedWebCamLocker)
 									{
 										isTracedBad = false;
@@ -1028,7 +1021,6 @@ void AChel::PickUp() {
 						DoesHave_Owner = true;
 						NewHaveItemServer(Boltorez);
 						MainExis_Canalizacia->Mesh->SetRenderCustomDepth(true);
-						MainExis_Canalizacia->Mesh->SetCustomDepthStencilValue(3);
 						MainExis_Canalizacia->Mesh->MarkRenderStateDirty();
 						PickUpSound();
 					}
@@ -1041,7 +1033,6 @@ void AChel::PickUp() {
 						DoesHave_Owner = true;
 						NewHaveItemServer(KeyShelter);
 						MainExis_Shelter->Mesh->SetRenderCustomDepth(true);
-						MainExis_Shelter->Mesh->SetCustomDepthStencilValue(3);
 						MainExis_Shelter->Mesh->MarkRenderStateDirty();
 						PickUpSound();
 					}
@@ -1054,7 +1045,6 @@ void AChel::PickUp() {
 						DoesHave_Owner = true;
 						NewHaveItemServer(Otvertka);
 						MainExis_Ventilacia->Mesh->SetRenderCustomDepth(true);
-						MainExis_Ventilacia->Mesh->SetCustomDepthStencilValue(3);
 						MainExis_Ventilacia->Mesh->MarkRenderStateDirty();
 						PickUpSound();
 					}
@@ -1090,8 +1080,10 @@ void AChel::PickUp() {
 				case Cache:
 				{
 					if (LastCache != nullptr) {
-						if (KeysCount[LastCache->CacheType] > 0)
+						if (KeysCount[LastCache->CacheType] > 0 && LastCache->IsEnabled)
 						{
+							if (!IsServerAuth)
+								LastCache->IsEnabled = false;
 							switch (LastCache->CacheType)
 							{
 							case KeyBronze:
@@ -1240,9 +1232,10 @@ void AChel::ChangeIsAvaliableCache_Implementation()
 		ACache* TempItem = Cast<ACache>(OutHit.GetActor());
 		if (TempItem)
 		{
-			TempItem->IsEnabled = false;
-			TempItem->Opening();
-			return;
+			if (TempItem->IsEnabled) {
+				TempItem->IsEnabled = false;
+				TempItem->Opening();
+			}
 		}
 	}
 }

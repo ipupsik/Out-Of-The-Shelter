@@ -21,7 +21,7 @@ void AButtonCanalization::Open()
 	DisableCollision();
 	ForwardAnimation();
 	FTimerHandle FuzeTimerHandle;
-	GetWorld()->GetTimerManager().SetTimer(FuzeTimerHandle, this, &AButtonCanalization::Close, 5, false);
+	GetWorld()->GetTimerManager().SetTimer(FuzeTimerHandle, this, &AButtonCanalization::Close, 10, false);
 }
 
 void AButtonCanalization::Close()

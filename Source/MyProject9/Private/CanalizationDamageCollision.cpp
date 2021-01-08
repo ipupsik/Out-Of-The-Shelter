@@ -13,7 +13,7 @@ ACanalizationDamageCollision::ACanalizationDamageCollision()
 	Collision = CreateDefaultSubobject<UBoxComponent>("Collision");
 	Collision->SetupAttachment(RootComponent);
 
-	RadiationDamageCoef = 5.0f;
+	RadiationDamageCoef = 3.5f;
 
 	Collision->OnComponentBeginOverlap.AddDynamic(this, &ACanalizationDamageCollision::OnOverlapBegin);
 	Collision->OnComponentEndOverlap.AddDynamic(this, &ACanalizationDamageCollision::OnOverlapEnd);
