@@ -54,7 +54,6 @@ void APromptCollisionArea::OnOverlapEnd(UPrimitiveComponent* OverlappedComp, AAc
 				for (auto& item : PromptedItems)
 				{
 					item->Mesh->SetRenderCustomDepth(false);
-					item->Mesh->SetCustomDepthStencilValue(0);
 					item->Mesh->MarkRenderStateDirty();
 					Player->RemoveTargetArrowStatic(item);
 				}

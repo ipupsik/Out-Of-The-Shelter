@@ -12,9 +12,7 @@ void ACache_Key::RemoveAndRefreshTimer()
 	UE_LOG(LogTemp, Warning, TEXT("ArrayIndex - %d"), ArrayIndex);
 	while (!GS->Keys_IsAvaliable[NewIndex])
 	{
-		NewIndex++;
-		if (NewIndex >= GS->Keys_IsAvaliable.Num())
-			NewIndex = 0;
+		NewIndex = FMath::Rand() % GS->Keys_IsAvaliable.Num();
 	}
 	GS->Keys_IsAvaliable[ArrayIndex] = true;
 	GS->Keys_IsAvaliable[NewIndex] = false;
@@ -23,7 +21,7 @@ void ACache_Key::RemoveAndRefreshTimer()
 	UE_LOG(LogTemp, Warning, TEXT("NewIndex - %d"), NewIndex);
 	ReplaceMulticast(GS->Keys_Transform[NewIndex]);
 	FTimerHandle FuzeTimerHandle;
-	GetWorld()->GetTimerManager().SetTimer(FuzeTimerHandle, this, &ACache_Key::Refresh, 20, false);
+	GetWorld()->GetTimerManager().SetTimer(FuzeTimerHandle, this, &ACache_Key::Refresh, 12.f, false);
 }
 
 void ACache_Key::ReplaceMulticast_Implementation(FTransform NewTrans)

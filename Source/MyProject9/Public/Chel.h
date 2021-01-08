@@ -409,8 +409,7 @@ public:
 	int32 AreaCode;
 	UPROPERTY(Replicated)
 		TArray<bool>DoesHave;
-	UPROPERTY(Replicated)
-		TArray<int32>KeysCount;
+	TArray<int32>KeysCount;
 	bool DoesHave_Owner;
 	APickableItem* LastItem;
 	ACache* LastCache;
@@ -505,10 +504,6 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	UNoteWidget* Widget_Note;
-
-	UTargetArrow* ArrowShelter;
-	UTargetArrow* ArrowCanalizacia;
-	UTargetArrow* ArrowVentilacia;
 
 	AItemPromtArrow_MainExis* MainExis_Shelter;
 	AItemPromtArrow_MainExis* MainExis_Ventilacia;

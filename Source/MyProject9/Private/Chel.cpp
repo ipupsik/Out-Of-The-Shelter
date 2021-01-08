@@ -121,7 +121,6 @@ void AChel::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimePro
 	DOREPLIFETIME(AChel, Death);
 	DOREPLIFETIME(AChel, Kills);
 	DOREPLIFETIME(AChel, DoesHave);
-	DOREPLIFETIME(AChel, KeysCount);
 	DOREPLIFETIME(AChel, IsInGame);
 }
 //-----------------------------
@@ -340,7 +339,6 @@ void AChel::Tick(float DeltaTime)
 							bLineTrace_is_need_refresh = true;  //Говорим, что в текущем кадре мы ударились в нужный предмет
 							if (LastItem) {
 								LastItem->Item->SetRenderCustomDepth(false);
-								LastItem->Item->SetCustomDepthStencilValue(0);
 								LastItem->Item->MarkRenderStateDirty();
 							}
 							LastItem = TracedItem;
@@ -381,7 +379,6 @@ void AChel::Tick(float DeltaTime)
 							ACache* TracedCache = Cast<ACache>(HittableActor);
 							if (LastItem) {
 								LastItem->Item->SetRenderCustomDepth(false);
-								LastItem->Item->SetCustomDepthStencilValue(0);
 								LastItem->Item->MarkRenderStateDirty();
 							}
 							if (TracedCache) {
@@ -411,7 +408,6 @@ void AChel::Tick(float DeltaTime)
 									if (TracedCache)
 									{
 										TracedCache->Mesh->SetRenderCustomDepth(false);
-										TracedCache->Mesh->SetCustomDepthStencilValue(0);
 										TracedCache->Mesh->MarkRenderStateDirty();
 									}
 									if (TracedWebCamLocker)
@@ -450,14 +446,12 @@ void AChel::Tick(float DeltaTime)
 				if (LastItem)
 				{
 					LastItem->Item->SetRenderCustomDepth(false);
-					LastItem->Item->SetCustomDepthStencilValue(0);
 					LastItem->Item->MarkRenderStateDirty();
 				}
 
 				if (LastWebCamLocker)
 				{
 					LastWebCamLocker->Mesh->SetRenderCustomDepth(false);
-					LastWebCamLocker->Mesh->SetCustomDepthStencilValue(0);
 					LastWebCamLocker->Mesh->MarkRenderStateDirty();
 				}
 
@@ -1031,15 +1025,9 @@ void AChel::PickUp() {
 						UserView->WS_Boltorez->SetActiveWidgetIndex(1);
 						DoesHave_Owner = true;
 						NewHaveItemServer(Boltorez);
-						ArrowCanalizacia = Cast<UTargetArrow>(CreateWidget(World, TargetArrowClass));
-						ArrowCanalizacia->AddToViewport();
 						MainExis_Canalizacia->Mesh->SetRenderCustomDepth(true);
 						MainExis_Canalizacia->Mesh->SetCustomDepthStencilValue(3);
 						MainExis_Canalizacia->Mesh->MarkRenderStateDirty();
-						TargetItemsDynamic.Add(MainExis_Canalizacia);
-						TargetArrowsDynamic.Add(ArrowCanalizacia);
-						FTimerHandle FuzeTimerHandle;
-						GetWorld()->GetTimerManager().SetTimer(FuzeTimerHandle, this, &AChel::DeleteArrowDelayBoltorez, ShowMainExis_TIME, false);
 						PickUpSound();
 					}
 					break;
@@ -1050,15 +1038,9 @@ void AChel::PickUp() {
 						UserView->WS_KeyShelter->SetActiveWidgetIndex(1);
 						DoesHave_Owner = true;
 						NewHaveItemServer(KeyShelter);
-						ArrowShelter = Cast<UTargetArrow>(CreateWidget(World, TargetArrowClass));
-						ArrowShelter->AddToViewport();
 						MainExis_Shelter->Mesh->SetRenderCustomDepth(true);
 						MainExis_Shelter->Mesh->SetCustomDepthStencilValue(3);
 						MainExis_Shelter->Mesh->MarkRenderStateDirty();
-						TargetItemsDynamic.Add(MainExis_Shelter);
-						TargetArrowsDynamic.Add(ArrowShelter);
-						FTimerHandle FuzeTimerHandle;
-						GetWorld()->GetTimerManager().SetTimer(FuzeTimerHandle, this, &AChel::DeleteArrowDelayKeyShelter, ShowMainExis_TIME, false);
 						PickUpSound();
 					}
 					break;
@@ -1069,15 +1051,9 @@ void AChel::PickUp() {
 						UserView->WS_Otvertka->SetActiveWidgetIndex(1);
 						DoesHave_Owner = true;
 						NewHaveItemServer(Otvertka);
-						ArrowVentilacia = Cast<UTargetArrow>(CreateWidget(World, TargetArrowClass));
-						ArrowVentilacia->AddToViewport();
 						MainExis_Ventilacia->Mesh->SetRenderCustomDepth(true);
 						MainExis_Ventilacia->Mesh->SetCustomDepthStencilValue(3);
 						MainExis_Ventilacia->Mesh->MarkRenderStateDirty();
-						TargetItemsDynamic.Add(MainExis_Ventilacia);
-						TargetArrowsDynamic.Add(ArrowVentilacia);
-						FTimerHandle FuzeTimerHandle;
-						GetWorld()->GetTimerManager().SetTimer(FuzeTimerHandle, this, &AChel::DeleteArrowDelayOtvertka, ShowMainExis_TIME, false);
 						PickUpSound();
 					}
 					break;
@@ -1533,10 +1509,6 @@ void AChel::KillPlayer()
 	TArray<AActor*>Players;
 	UGameplayStatics::GetAllActorsOfClass(World, AChel::StaticClass(), Players);
 
-	KeysCount[0] = 0;
-	KeysCount[1] = 0;
-	KeysCount[2] = 0;
-
 	for (auto& Player : Players)
 	{
 		AChel* Chel = Cast<AChel>(Player);
@@ -1967,28 +1939,21 @@ void AChel::RefreshOutline()
 {
 	Cast<AChel>(UGameplayStatics::GetPlayerCharacter(World, 0))->RemoveTargetArrowDynamic();
 	PoseableMeshComp->SetRenderCustomDepth(false);
-	PoseableMeshComp->SetCustomDepthStencilValue(0);
 	PoseableMeshComp->MarkRenderStateDirty();
 }
 
 void AChel::DeleteArrowDelayKeyShelter() {
-	RemoveTargetArrowDynamic(ArrowShelter);
 	MainExis_Shelter->Mesh->SetRenderCustomDepth(false);
-	MainExis_Shelter->Mesh->SetCustomDepthStencilValue(0);
 	MainExis_Shelter->Mesh->MarkRenderStateDirty();
 }
 
 void AChel::DeleteArrowDelayBoltorez() {
-	RemoveTargetArrowDynamic(ArrowCanalizacia);
 	MainExis_Canalizacia->Mesh->SetRenderCustomDepth(false);
-	MainExis_Canalizacia->Mesh->SetCustomDepthStencilValue(0);
 	MainExis_Canalizacia->Mesh->MarkRenderStateDirty();
 }
 
 void AChel::DeleteArrowDelayOtvertka() {
-	RemoveTargetArrowDynamic(ArrowVentilacia);
 	MainExis_Ventilacia->Mesh->SetRenderCustomDepth(false);
-	MainExis_Ventilacia->Mesh->SetCustomDepthStencilValue(0);
 	MainExis_Ventilacia->Mesh->MarkRenderStateDirty();
 }
 
@@ -2046,7 +2011,6 @@ void AChel::HideRandomItem() {
 	if (LastOutlineItem) 
 	{
 		LastOutlineItem->Item->SetRenderCustomDepth(false);
-		LastOutlineItem->Item->SetCustomDepthStencilValue(0);
 		LastOutlineItem->Item->MarkRenderStateDirty();
 		LastOutlineItem = nullptr;
 		RemoveTargetArrowDynamic();
@@ -2386,6 +2350,12 @@ void AChel::ShowUIAfterTerminalAndGenerator_Implementation(int32 NewAreaType, bo
 
 void AChel::ResetCacheKeys()
 {
+	DeleteArrowDelayKeyShelter();
+	DeleteArrowDelayBoltorez();
+	DeleteArrowDelayOtvertka();
+	KeysCount[0] = 0;
+	KeysCount[1] = 0;
+	KeysCount[2] = 0;
 	UserView->KeyLeft_Gold->SetText(FText::AsNumber(0));
 	UserView->KeyLeft_Silver->SetText(FText::AsNumber(0));
 	UserView->KeyLeft_Bronze->SetText(FText::AsNumber(0));

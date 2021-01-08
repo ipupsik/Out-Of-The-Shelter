@@ -20,7 +20,7 @@ void UUserView::OnAnimationFinished_Implementation(const UWidgetAnimation* Anima
 			Player->StuffAvaliableUpdate(0);
 			HoldText->SetVisibility(ESlateVisibility::Hidden);
 			EscapeText->SetVisibility(ESlateVisibility::Visible);
-
+			Player->DeleteArrowDelayBoltorez();
 			Player->PlayerOpenAreaUpdate(0);
 		}
 	}
@@ -30,6 +30,7 @@ void UUserView::OnAnimationFinished_Implementation(const UWidgetAnimation* Anima
 			Player->StuffAvaliableUpdate(1);
 			HoldText->SetVisibility(ESlateVisibility::Hidden);
 			Player->PlayerOpenAreaUpdate(1);
+			Player->DeleteArrowDelayKeyShelter();
 		}
 	}
 	else if (Animation == VentilaciaAnim)
@@ -38,7 +39,7 @@ void UUserView::OnAnimationFinished_Implementation(const UWidgetAnimation* Anima
 			Player->StuffAvaliableUpdate(2);
 			HoldText->SetVisibility(ESlateVisibility::Hidden);
 			EscapeText->SetVisibility(ESlateVisibility::Visible);
-
+			Player->DeleteArrowDelayOtvertka();
 			Player->PlayerOpenAreaUpdate(2);
 		}
 	}

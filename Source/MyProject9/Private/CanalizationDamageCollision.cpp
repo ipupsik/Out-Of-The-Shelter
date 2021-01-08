@@ -65,7 +65,7 @@ void ACanalizationDamageCollision::StopRadiation()
 	}
 
 	FTimerHandle FuzeTimerHandle;
-	GetWorld()->GetTimerManager().SetTimer(FuzeTimerHandle, this, &ACanalizationDamageCollision::RefreshRadiation, 120.0f, false);
+	GetWorld()->GetTimerManager().SetTimer(FuzeTimerHandle, this, &ACanalizationDamageCollision::RefreshRadiation, 180.0f, false);
 
 	TArray<AActor*>Buttons;
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AButtonCanalization::StaticClass(), Buttons);
