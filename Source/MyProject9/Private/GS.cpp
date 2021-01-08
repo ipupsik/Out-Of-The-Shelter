@@ -259,10 +259,10 @@ void AGS::SpawnPlayers()
 
 		Player->PlaySpawnAnimationAwake();
 		Player->SetActorLocation(SpawnPoints[i]->GetActorLocation());
+		Player->ShowStoneMulticast();
 		Player->Ammo = 15;
 		Player->IsInGame = true;
 		Player->Health = 0;
-		Player->Stone->SetHiddenInGame(false);
 	}
 }
 

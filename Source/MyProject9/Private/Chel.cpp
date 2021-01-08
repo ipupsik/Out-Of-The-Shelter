@@ -686,7 +686,6 @@ void AChel::OnTimelineFinished_Stone_First() {
 	}
 
 	if (IsServerAuth) {
-		--Ammo;
 		StoneCountUpdate(Ammo);
 
 		FTransform trans;
@@ -765,7 +764,19 @@ void AChel::ThrowStoneMulticast_Implementation()
 
 void AChel::ThrowStoneServer_Implementation()
 {
+	--Ammo;
 	ThrowStoneMulticast();
+	TArray<AActor*> OverlappngActors;
+	GetOverlappingActors(OverlappngActors, AAmmoPoint::StaticClass());
+	for (auto& it : OverlappngActors) {
+		AAmmoPoint* AmPt = Cast<AAmmoPoint>(it);
+		if (AmPt) {
+			UE_LOG(LogTemp, Warning, TEXT("UpdatingAmmo-Server"));
+			AmPt->AmmoUpdate();
+			break;
+		}
+	}
+	UE_LOG(LogTemp, Warning, TEXT("Complete Throwing stone - server"));
 }
 
 bool AChel::ThrowStoneServer_Validate()

@@ -30,7 +30,7 @@ void AAmmoPoint::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* Oth
 {
 	AChel* Player = Cast<AChel>(OtherActor);
 	if (Player) {
-		if (Player->IsServerAuth && Enable)
+		if (Player->IsServerAuth && Enable && Player->Ammo < 15)
 		{
 			Player->Ammo = 15;
 			Player->StoneCountUpdate(15);
@@ -39,8 +39,9 @@ void AAmmoPoint::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* Oth
 			Enable = false;
 			HiddenMulticast(true);
 			PlaySoundAmmoPoint();
-			FTimerHandle FuzeTimerHandle;
-			GetWorld()->GetTimerManager().SetTimer(FuzeTimerHandle, this, &AAmmoPoint::AmmoUpdate, 15, false);
+
+			FTimerHandle FuzeTimerHandle2;
+			GetWorld()->GetTimerManager().SetTimer(FuzeTimerHandle2, this, &AAmmoPoint::EnableUpdateToTrue, 15, false);
 		}
 	}
 }
@@ -50,27 +51,49 @@ void AAmmoPoint::HiddenMulticast_Implementation(bool NewHidden)
 	Instances->SetHiddenInGame(NewHidden);
 }
 
+void AAmmoPoint::EnableUpdateToTrue()
+{
+	HiddenMulticast(false);
+	Enable = true;
+	AmmoUpdate();
+}
+
 void AAmmoPoint::AmmoUpdate()
 {
-	TArray<AActor*>Players;
-	Collision->GetOverlappingActors(Players, AChel::StaticClass());
+	if (Enable) {
+		TArray<AActor*>Players;
+		Collision->GetOverlappingActors(Players, AChel::StaticClass());
+		UE_LOG(LogTemp, Warning, TEXT("Nums of Overlapping players: %d"), Players.Num());
+		if (Players.Num() != 0) {
 
-	if (Players.Num() != 0) {
-		AChel* Chel = Cast<AChel>(Players[0]);
-		Chel->Ammo = 15;
-		Chel->StoneCountUpdate(15);
-		Chel->ShowStoneMulticast();
+			AChel* Chel = nullptr;
+			for (int i = 0; i < Players.Num(); ++i)
+			{
+				Chel = Cast<AChel>(Players[i]);
+				if (Chel) {
+					if (Chel->Ammo < 15) {
+						UE_LOG(LogTemp, Warning, TEXT("FoundGoodChel: %d"), Players.Num());
+						break;
+					}
+					else
+						Chel = nullptr;
+				}
+			}
+			if (Chel) {
 
-		Enable = false;
-		HiddenMulticast(true);
-		PlaySoundAmmoPoint();
-		FTimerHandle FuzeTimerHandle;
-		GetWorld()->GetTimerManager().SetTimer(FuzeTimerHandle, this, &AAmmoPoint::AmmoUpdate, 10, false);
-	}
-	else
-	{
-		HiddenMulticast(false);
-		Enable = true;
+				Chel->Ammo = 15;
+				Chel->StoneCountUpdate(15);
+				Chel->ShowStoneMulticast();
+
+				Enable = false;
+				HiddenMulticast(true);
+				PlaySoundAmmoPoint();
+
+
+				FTimerHandle FuzeTimerHandle2;
+				GetWorld()->GetTimerManager().SetTimer(FuzeTimerHandle2, this, &AAmmoPoint::EnableUpdateToTrue, 15, false);
+			}
+		}
 	}
 }
 
