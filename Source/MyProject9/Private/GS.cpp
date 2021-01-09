@@ -191,7 +191,7 @@ void AGS::BeginPlay()
 		{
 			for (int i = 0; i < COUNT_CacheKey; ++i)
 			{
-				int ArrayIndex = 0;
+				int ArrayIndex = FMath::Rand() % Keys_IsAvaliable.Num();
 				while (!Keys_IsAvaliable[ArrayIndex])
 				{
 					ArrayIndex = FMath::Rand() % Keys_IsAvaliable.Num();
@@ -275,9 +275,6 @@ void AGS::ResetGame() {
 		Obj->Destroy();
 
 	NickNames.Init(FText::FromString(TEXT(" ")), 4);
-	//Kills.Init(FText::FromString(TEXT("0")), 4);
-	//Deaths.Init(FText::FromString(TEXT("1")), 4);
-	//Winners.Init(FText::FromString(TEXT("")), 3);
 
 	EscapeTime.Init(0, 0);
 	AcceptPiedistalAmount = 0;

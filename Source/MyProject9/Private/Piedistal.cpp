@@ -14,9 +14,6 @@ APiedistal::APiedistal()
 	Collision = CreateDefaultSubobject<UBoxComponent>("Collision");
 	Collision->SetupAttachment(Piedistal);
 
-	Collision->OnComponentBeginOverlap.AddDynamic(this, &APiedistal::OnOverlapBegin);
-	Collision->OnComponentEndOverlap.AddDynamic(this, &APiedistal::OnOverlapEnd);
-
 	PlayersCount = 0;
 }
 
