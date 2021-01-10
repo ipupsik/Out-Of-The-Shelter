@@ -43,6 +43,7 @@ enum PickUpType {
 	ChelsDetector,
 	HealthPacket,
 	DoubleArmAbility,
+	Shields,
 };
 
 enum CacheType {
@@ -98,6 +99,7 @@ AChel::AChel()
 
 	DamageCollision->OnComponentBeginOverlap.AddDynamic(this, &AChel::OnOverlapBegin);
 
+	ShieldsCount = 0;
 	Health = 0;
 	bIsAlreadyThrowing = false;
 	IsInGame = false;
@@ -1531,6 +1533,11 @@ void AChel::PickUp() {
 					}
 					break;
 				}
+				case Shields:
+				{
+					NewHaveItemServer(Shields);
+					break;
+				}
 				}
 			}
 		}
@@ -1742,6 +1749,12 @@ void AChel::NewHaveItemServer_Implementation(int32 ItemType)
 					TempItem->Destroy();
 					break;
 				}
+				case Shields:
+				{
+					ShieldsCount++;
+					TempItem->Destroy();
+					break;
+				}
 				}
 			}
 		}
@@ -1795,12 +1808,11 @@ void AChel::StoneAttack(int StoneIndex)
 {
 	if (IsInGame) 
 	{
-		if (STONE_DAMAGE + Health + DeltaRadiation >= 1.0f)
+		Health += STONE_DAMAGE / (1 + 0.2 * ShieldsCount);
+		if (Health + DeltaRadiation >= 1.0f)
 		{
 			KillerIndex = StoneIndex;
 		}
-
-		Health += STONE_DAMAGE;
 
 		if (Health >= 1.0f)
 		{

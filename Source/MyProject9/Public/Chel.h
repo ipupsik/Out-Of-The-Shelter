@@ -495,6 +495,8 @@ public:
 	int32 QAbilityType;
 	int32 RAbilityType;
 
+	int32 ShieldsCount;
+
 	int32 WebCamIterator;
 	UPROPERTY(BlueprintReadWrite)
 	FRotator BaseWebCamRotation;
