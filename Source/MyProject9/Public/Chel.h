@@ -61,7 +61,10 @@ protected:
 	void GoRight(float);
 	void LookUp(float);
 	void LookRight(float);
-	
+	void QAbilityEnable();
+	void QAbilityDisable();
+	void RAbilityEnable();
+	void RAbilityDisable();
 	// Actions functions
 	void MyJump();
 	void StartSprint();
@@ -69,7 +72,13 @@ protected:
 	void ShowKillFeed();
 	void UnShowKillFeed();
 
-	void ThrowStone();
+	void EnableRentgen();
+	void DisableRentgen();
+	void EnableChelDetector();
+	void DisableChelDetector();
+
+	void ThrowStoneLeft();
+	void ThrowStoneRight();
 	void PickUp();
 	void PickUp_Released();
 	void OpenAreaPressed();
@@ -140,6 +149,8 @@ public:
 	UFUNCTION(Server, Reliable, WithValidation)
 		void GoToServerOpenArea(bool IsStart);
 
+	UFUNCTION(Server, Reliable, WithValidation)
+		void RAbility_HealPacket();
 
 	void GoToWebCamServer(int32 Iterator);
 
@@ -149,11 +160,11 @@ public:
 		void DeliverNicknameToServer(const FText& newNickName);
 	//StoneThrowReplication
 	UFUNCTION(Server, Reliable, WithValidation)
-		void ThrowStoneServer();
+		void ThrowStoneServer(bool Type);
 
 
 	UFUNCTION(NetMulticast, Reliable)
-		void ThrowStoneMulticast();
+		void ThrowStoneMulticast(bool Type);
 
 	UFUNCTION(Server, Reliable, WithValidation)
 		void NewHaveItemServer(int32 ItemType);
@@ -312,6 +323,8 @@ public:
 		void RefreshWidgets(const TArray<bool> &whatToUpdate, int KillerNickIndex, int VictimNickIndex);
 	UFUNCTION()
 		void OnTimelineFinished_Stone_First();
+	UFUNCTION()
+		void OnTimelineFinished_Stone_First_Left();
 
 	UFUNCTION()
 		void OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
@@ -319,10 +332,15 @@ public:
 	UFUNCTION()
 		void TimelineVectorReturn_Stone(FVector value);
 	UFUNCTION()
+		void TimelineVectorReturn_Stone_Left(FVector value);
+
+	UFUNCTION()
 		void TimelineFloatReturn_FOV_WebCam(float value);
 
 	UFUNCTION()
 		void OnTimelineFinished_Stone_Second();
+	UFUNCTION()
+		void OnTimelineFinished_Stone_Second_Left();
 
 	UFUNCTION()
 		void SleepAnimation_End();
@@ -347,9 +365,13 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Player")
 		UPoseableMeshComponent* PoseableMeshComp;
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Player")
-		UStaticMeshComponent* Stone;
+		UStaticMeshComponent* StoneRight;
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Player")
+		UStaticMeshComponent* StoneLeft;
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Player")
 		UCapsuleComponent* DamageCollision;
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Player")
+		USphereComponent* SenseCollision;
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Player")
 		USceneComponent* Scene;
 
@@ -419,6 +441,9 @@ public:
 	bool IsServerAuth;
 	bool IsPlayerOwner;
 	UWorld* World;
+	//
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		int32 MaxAmmoCount;
 	//Settings Variables
 	UPROPERTY(VisibleAnywhere,BlueprintReadWrite, Category = "Settings")
 		float Sensetivity;
@@ -437,25 +462,38 @@ public:
 	UTimelineComponent* TimeLine_Stone_First;
 	UTimelineComponent* TimeLine_Stone_Second;
 
+	UTimelineComponent* TimeLine_Stone_First_Left;
+	UTimelineComponent* TimeLine_Stone_Second_Left;
+
 	UTimelineComponent* TimeLine_FOV_WebCam;
 	//ThrowStoneFunctions
 	FOnTimelineVector InterpFunction_Stone;
+	FOnTimelineVector InterpFunction_Stone_Left;
 	FOnTimelineEvent TimelineFinished_Stone_First;
 	FOnTimelineEvent TimelineFinished_Stone_Second;
 
+	FOnTimelineEvent TimelineFinished_Stone_First_Left;
+	FOnTimelineEvent TimelineFinished_Stone_Second_Left;
+
 	FOnTimelineFloat InterpFunction_FOV_WebCam;
 
+	TArray<AChel*>PlayersArray;
 
 	//StoneAttackVars
 	bool bIsAlreadyThrowing;
+	bool bIsAlreadyThrowingLeft;
 	UPROPERTY(EditAnywhere, Category = "Timeline")
 		UCurveVector*  vCurveStone;
 	UPROPERTY(EditAnywhere, Category = "Timeline")
 		UCurveFloat* vCurveFOV_WebCam;
-	FVector StonePosition;
+	FVector StonePositionRight;
+	FVector StonePositionLeft;
 
 	//KillFeed Vars
 	int KillerIndex;
+
+	int32 QAbilityType;
+	int32 RAbilityType;
 
 	int32 WebCamIterator;
 	UPROPERTY(BlueprintReadWrite)
@@ -514,4 +552,8 @@ public:
 	bool bInEscMenu;
 	bool TickEnableGeneratorWidget;
 	bool bToRight;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		bool IsRentgenRender;
+
+	bool DoubleArmThrowing;
 };

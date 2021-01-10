@@ -38,6 +38,11 @@ enum PickUpType {
 	InvisiblePotion,
 	CodeNote,
 	ClickButton,
+	AmmoBackPack,
+	RentgenGlasses,
+	ChelsDetector,
+	HealthPacket,
+	DoubleArmAbility,
 };
 
 enum CacheType {
@@ -64,34 +69,49 @@ AChel::AChel()
 	DamageCollision = CreateDefaultSubobject<UCapsuleComponent>(TEXT("DamageCollision"));
 	DamageCollision->SetupAttachment(RootComponent);
 
-	Stone = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Stone"));
-	Stone->SetupAttachment(CameraComp);
+	SenseCollision = CreateDefaultSubobject<USphereComponent>(TEXT("SenseCollision"));
+	SenseCollision->SetupAttachment(RootComponent);
+
+	StoneRight = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("StoneRight"));
+	StoneRight->SetupAttachment(CameraComp);
+
+	StoneLeft = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("StoneLeft"));
+	StoneLeft->SetupAttachment(CameraComp);
 
 	TimeLine_Stone_First = CreateDefaultSubobject<UTimelineComponent>(TEXT("ThrowStoneFirst"));
 	TimeLine_Stone_Second = CreateDefaultSubobject<UTimelineComponent>(TEXT("ThrowStoneSecond"));
+	TimeLine_Stone_First_Left = CreateDefaultSubobject<UTimelineComponent>(TEXT("TimeLine_Stone_First_Left"));
+	TimeLine_Stone_Second_Left = CreateDefaultSubobject<UTimelineComponent>(TEXT("TimeLine_Stone_Second_Left"));
 	TimeLine_FOV_WebCam = CreateDefaultSubobject<UTimelineComponent>(TEXT("FOV_WebCam"));
 
 	//Говорим делегатам, какую функцию подцепить для Update и для OnFinished
 	InterpFunction_Stone.BindUFunction(this, FName("TimelineVectorReturn_Stone"));
+	InterpFunction_Stone_Left.BindUFunction(this, FName("TimelineVectorReturn_Stone_Left"));
+
 	InterpFunction_FOV_WebCam.BindUFunction(this, FName("TimelineFloatReturn_FOV_WebCam"));
+
 	TimelineFinished_Stone_First.BindUFunction(this, FName("OnTimelineFinished_Stone_First"));
 	TimelineFinished_Stone_Second.BindUFunction(this, FName("OnTimelineFinished_Stone_Second"));
+
+	TimelineFinished_Stone_First_Left.BindUFunction(this, FName("OnTimelineFinished_Stone_First_Left"));
+	TimelineFinished_Stone_Second_Left.BindUFunction(this, FName("OnTimelineFinished_Stone_Second_Left"));
 
 	DamageCollision->OnComponentBeginOverlap.AddDynamic(this, &AChel::OnOverlapBegin);
 
 	Health = 0;
 	bIsAlreadyThrowing = false;
 	IsInGame = false;
-	Ammo = 15;
+	Ammo = MaxAmmoCount;
 	bLineTrace_is_need_refresh = false;
 	DoesHave_Owner = false;
 	ItemCodePickUp = -1;
 	IsNotInWebCam = true;
 	CanThrowStone = true;
 	WebCamIterator = -1;
-
+	DoubleArmThrowing = false;
+	bIsAlreadyThrowingLeft = false;
 	CanalizationDamage = 1.0f;
-
+	QAbilityType = -1;
 	KillerIndex = -1;
 	IsSuccessOpening = false;
 	AreaCode = -1;
@@ -107,6 +127,8 @@ AChel::AChel()
 	TargetArrowsStatic.Init(nullptr, 0);
 	TargetArrowsDynamic.Init(nullptr, 0);
 	TargetItemsDynamic.Init(nullptr, 0);
+
+	IsRentgenRender = false;
 }
 
 //SetupReplicationVariables----
@@ -125,6 +147,173 @@ void AChel::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimePro
 }
 //-----------------------------
 
+void AChel::EnableChelDetector()
+{
+	for (auto& it : PlayersArray)
+	{
+		if (!it->IsPlayerOwner) {
+			UE_LOG(LogTemp, Warning, TEXT("lla"))
+			it->PoseableMeshComp->SetRenderCustomDepth(true);
+			it->PoseableMeshComp->MarkRenderStateDirty();
+		}
+	}
+}
+
+void AChel::DisableChelDetector()
+{
+	for (auto& it : PlayersArray)
+	{
+		if (!it->IsPlayerOwner) {
+			it->PoseableMeshComp->SetRenderCustomDepth(false);
+			it->PoseableMeshComp->MarkRenderStateDirty();
+		}
+	}
+}
+
+void AChel::EnableRentgen()
+{
+	IsRentgenRender = true;
+	SenseCollision->SetRenderCustomDepth(true);
+	SenseCollision->MarkRenderStateDirty();
+
+	TArray<AActor*>RentgenItems1;
+	SenseCollision->GetOverlappingActors(RentgenItems1, GS->Boltorez);
+	for (auto& it : RentgenItems1)
+	{
+		APickableItem* RentgenOverlappItem = Cast<APickableItem>(it);
+		RentgenOverlappItem->Item->SetRenderCustomDepth(true);
+		RentgenOverlappItem->Item->MarkRenderStateDirty();
+		UE_LOG(LogTemp, Warning, TEXT("Find Boltorez"));
+	}
+	TArray<AActor*>RentgenItems2;
+	SenseCollision->GetOverlappingActors(RentgenItems2, GS->KeyShelter);
+	for (auto& it : RentgenItems2)
+	{
+		APickableItem* RentgenOverlappItem = Cast<APickableItem>(it);
+		RentgenOverlappItem->Item->SetRenderCustomDepth(true);
+		RentgenOverlappItem->Item->MarkRenderStateDirty();
+		UE_LOG(LogTemp, Warning, TEXT("Find KeyShelter"));
+	}
+	TArray<AActor*>RentgenItems3;
+	SenseCollision->GetOverlappingActors(RentgenItems3, GS->Otvertka);
+	for (auto& it : RentgenItems3)
+	{
+		APickableItem* RentgenOverlappItem = Cast<APickableItem>(it);
+		RentgenOverlappItem->Item->SetRenderCustomDepth(true);
+		RentgenOverlappItem->Item->MarkRenderStateDirty();
+		UE_LOG(LogTemp, Warning, TEXT("Find Otvertka"));
+	}
+}
+
+void AChel::DisableRentgen()
+{
+	IsRentgenRender = false;
+	SenseCollision->SetRenderCustomDepth(false);
+	SenseCollision->MarkRenderStateDirty();
+
+	TArray<AActor*>RentgenItems1;
+	SenseCollision->GetOverlappingActors(RentgenItems1, GS->Boltorez);
+	for (auto& it : RentgenItems1)
+	{
+		APickableItem* RentgenOverlappItem = Cast<APickableItem>(it);
+		RentgenOverlappItem->Item->SetRenderCustomDepth(false);
+		RentgenOverlappItem->Item->MarkRenderStateDirty();
+	}
+	TArray<AActor*>RentgenItems2;
+	SenseCollision->GetOverlappingActors(RentgenItems2, GS->KeyShelter);
+	for (auto& it : RentgenItems2)
+	{
+		APickableItem* RentgenOverlappItem = Cast<APickableItem>(it);
+		RentgenOverlappItem->Item->SetRenderCustomDepth(false);
+		RentgenOverlappItem->Item->MarkRenderStateDirty();
+	}
+	TArray<AActor*>RentgenItems3;
+	SenseCollision->GetOverlappingActors(RentgenItems3, GS->Otvertka);
+	for (auto& it : RentgenItems3)
+	{
+		APickableItem* RentgenOverlappItem = Cast<APickableItem>(it);
+		RentgenOverlappItem->Item->SetRenderCustomDepth(false);
+		RentgenOverlappItem->Item->MarkRenderStateDirty();
+	}
+}
+
+void AChel::QAbilityEnable()
+{
+	if (QAbilityType != -1)
+	{
+		switch (QAbilityType)
+		{
+		case RentgenGlasses:
+		{
+			EnableRentgen();
+			break;
+		}
+		case ChelsDetector:
+		{
+			EnableChelDetector();
+			break;
+		}
+		}
+	}
+}
+
+void AChel::QAbilityDisable()
+{
+	if (QAbilityType != -1)
+	{
+		switch (QAbilityType)
+		{
+		case RentgenGlasses:
+		{
+			DisableRentgen();
+			break;
+		}
+		case ChelsDetector:
+		{
+			DisableChelDetector();
+			break;
+		}
+		}
+	}
+}
+
+void AChel::RAbilityEnable()
+{
+	if (RAbilityType != -1)
+	{
+		switch (RAbilityType)
+		{
+		case HealthPacket:
+		{
+			RAbilityType = -1;
+			RAbility_HealPacket();
+			break;
+		}
+		}
+	}
+}
+
+/*void AChel::RAbilityDisable()
+{
+	if (RAbilityType != -1)
+	{
+		switch (RAbilityType)
+		{
+
+		}
+	}
+}*/
+
+void AChel::RAbility_HealPacket_Implementation()
+{
+	Health = 0;
+}
+
+bool AChel::RAbility_HealPacket_Validate()
+{
+	return true;
+}
+
 // Called when the game starts or when spawned
 void AChel::BeginPlay()
 {
@@ -142,9 +331,12 @@ void AChel::MyBeginPlay()
 	IsServerAuth = GetLocalRole() == ROLE_Authority;
 	World = GetWorld();
 	IsPlayerOwner = UGameplayStatics::GetPlayerController(GetWorld(), 0) == GetController();
-	StonePosition = Stone->GetRelativeLocation();
+	StonePositionRight = StoneRight->GetRelativeLocation();
+	StonePositionLeft = StoneLeft->GetRelativeLocation();
 
 	GI = World->GetGameInstance<UGI>();
+
+	Cast<AChel>(UGameplayStatics::GetPlayerCharacter(World, 0))->PlayersArray.Add(this);
 
 	if (vCurveStone) {
 		//Подцепляем эти функции для TimeLine
@@ -159,6 +351,18 @@ void AChel::MyBeginPlay()
 
 		TimeLine_Stone_Second->SetLooping(false);
 		TimeLine_Stone_Second->SetIgnoreTimeDilation(true);
+		//-----------------------------------------------
+		TimeLine_Stone_First_Left->AddInterpVector(vCurveStone, InterpFunction_Stone_Left);
+		TimeLine_Stone_First_Left->SetTimelineFinishedFunc(TimelineFinished_Stone_First_Left);
+
+		TimeLine_Stone_First_Left->SetLooping(false);
+		TimeLine_Stone_First_Left->SetIgnoreTimeDilation(true);
+
+		TimeLine_Stone_Second_Left->AddInterpVector(vCurveStone, InterpFunction_Stone_Left);
+		TimeLine_Stone_Second_Left->SetTimelineFinishedFunc(TimelineFinished_Stone_Second_Left);
+
+		TimeLine_Stone_Second_Left->SetLooping(false);
+		TimeLine_Stone_Second_Left->SetIgnoreTimeDilation(true);
 	}
 
 	if (vCurveFOV_WebCam)
@@ -267,7 +471,7 @@ void AChel::Tick(float DeltaTime)
 	
 	if (IsInGame == true) {
 		if (IsServerAuth) {
-			Health += DeltaTime * 2 * 0.01f * RadCoeff * CanalizationDamage;
+			Health += DeltaTime * 2 * 0.01f * RadCoeff * CanalizationDamage / 1.5f;
 			if (Health > 1.0f) {
 				if (DoesHave[Boltorez])
 					GS->CurrentBoltorez--;
@@ -439,8 +643,15 @@ void AChel::Tick(float DeltaTime)
 				ItemCodePickUp = -1;
 				if (LastItem)
 				{
-					LastItem->Item->SetRenderCustomDepth(false);
-					LastItem->Item->MarkRenderStateDirty();
+					if (LastItem->Type <= 2 && !IsRentgenRender) {
+						LastItem->Item->SetRenderCustomDepth(false);
+						LastItem->Item->MarkRenderStateDirty();
+					}
+					else if (LastItem->Type > 2)
+					{
+						LastItem->Item->SetRenderCustomDepth(false);
+						LastItem->Item->MarkRenderStateDirty();
+					}
 				}
 
 				if (LastWebCamLocker)
@@ -497,13 +708,17 @@ void AChel::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 	PlayerInputComponent->BindAction("Sprint", IE_Released, this, &AChel::StopSprint);
 	PlayerInputComponent->BindAction("KillFeed", IE_Pressed, this, &AChel::ShowKillFeed);
 	PlayerInputComponent->BindAction("KillFeed", IE_Released, this, &AChel::UnShowKillFeed);
-	PlayerInputComponent->BindAction("ThrowStone", IE_Pressed, this, &AChel::ThrowStone);
+	PlayerInputComponent->BindAction("ThrowStoneRight", IE_Pressed, this, &AChel::ThrowStoneRight);
+	PlayerInputComponent->BindAction("ThrowStoneLeft", IE_Pressed, this, &AChel::ThrowStoneLeft);
 	PlayerInputComponent->BindAction("PickUp", IE_Pressed, this, &AChel::PickUp);
 	PlayerInputComponent->BindAction("PickUp", IE_Released, this, &AChel::PickUp_Released);
 	PlayerInputComponent->BindAction("Opening", IE_Pressed, this, &AChel::OpenAreaPressed);
 	PlayerInputComponent->BindAction("Opening", IE_Released, this, &AChel::OpenAreaReleased);
 	PlayerInputComponent->BindAction("UpdateSpectating_Left", IE_Released, this, &AChel::UpdateSpectating_Left);
 	PlayerInputComponent->BindAction("UpdateSpectating_Right", IE_Released, this, &AChel::UpdateSpectating_Right);
+	PlayerInputComponent->BindAction("QAbility", IE_Pressed, this, &AChel::QAbilityEnable);
+	PlayerInputComponent->BindAction("QAbility", IE_Released, this, &AChel::QAbilityDisable);
+	PlayerInputComponent->BindAction("RAbility", IE_Pressed, this, &AChel::RAbilityEnable);
 }
 
 void AChel::UpdateSpectating_Right()
@@ -684,8 +899,32 @@ void AChel::OnTimelineFinished_Stone_First() {
 		StoneCountUpdate(Ammo);
 
 		FTransform trans;
-		trans.SetLocation(FVector(GetActorLocation().X, GetActorLocation().Y, Stone->GetComponentLocation().Z));
-		trans.SetRotation(FQuat(Stone->GetComponentRotation()));
+		trans.SetLocation(FVector(GetActorLocation().X, GetActorLocation().Y, StoneRight->GetComponentLocation().Z));
+		trans.SetRotation(FQuat(StoneRight->GetComponentRotation()));
+
+		AStone* NewStone = World->SpawnActorDeferred<AStone>(StoneClass, trans, this, this, ESpawnActorCollisionHandlingMethod::AlwaysSpawn);
+		NewStone->Index = Index;
+		UGameplayStatics::FinishSpawningActor(NewStone, trans);
+		if (Ammo == 0) {
+			HideStoneMulticast();
+		}
+	}
+}
+
+void AChel::OnTimelineFinished_Stone_First_Left()
+{
+	TimeLine_Stone_Second_Left->ReverseFromEnd();
+	if (IsPlayerOwner)
+	{
+		PlayStoneThrowSound();
+	}
+
+	if (IsServerAuth) {
+		StoneCountUpdate(Ammo);
+
+		FTransform trans;
+		trans.SetLocation(FVector(GetActorLocation().X, GetActorLocation().Y, StoneLeft->GetComponentLocation().Z));
+		trans.SetRotation(FQuat(StoneLeft->GetComponentRotation()));
 
 		AStone* NewStone = World->SpawnActorDeferred<AStone>(StoneClass, trans, this, this, ESpawnActorCollisionHandlingMethod::AlwaysSpawn);
 		NewStone->Index = Index;
@@ -727,7 +966,11 @@ void AChel::StoneCountUpdate_Implementation(int32 Count)
 }
 
 void AChel::TimelineVectorReturn_Stone(FVector value) {
-	Stone->SetRelativeLocation(StonePosition + value);
+	StoneRight->SetRelativeLocation(StonePositionRight + value);
+}
+
+void AChel::TimelineVectorReturn_Stone_Left(FVector value) {
+	StoneLeft->SetRelativeLocation(StonePositionLeft + value);
 }
 
 void AChel::TimelineFloatReturn_FOV_WebCam(float value)
@@ -738,29 +981,65 @@ void AChel::TimelineFloatReturn_FOV_WebCam(float value)
 void AChel::OnTimelineFinished_Stone_Second() {
 	bIsAlreadyThrowing = false;
 }
+
+void AChel::OnTimelineFinished_Stone_Second_Left() {
+	bIsAlreadyThrowingLeft = false;
+}
 //-----------------------------
 
 //AttackInput------------------
-void AChel::ThrowStone() {
-	if (Ammo > 0 && IsNotInWebCam && bCanWalkingAndWatching && !bInEscMenu && CanThrowStone) {
-		if (!bIsAlreadyThrowing) {
-			bIsAlreadyThrowing = true;
-			TimeLine_Stone_First->PlayFromStart();
-			ThrowStoneServer();
+void AChel::ThrowStoneRight() {
+	if (DoubleArmThrowing) {
+		if (Ammo > 0 && IsNotInWebCam && bCanWalkingAndWatching && !bInEscMenu && CanThrowStone) {
+			if (!bIsAlreadyThrowing) {
+				bIsAlreadyThrowing = true;
+				TimeLine_Stone_First->PlayFromStart();
+				ThrowStoneServer(true);
+			}
 		}
 	}
 }
 
-void AChel::ThrowStoneMulticast_Implementation()
-{
-	if (!IsPlayerOwner)
-		TimeLine_Stone_First->PlayFromStart();
+void AChel::ThrowStoneLeft() {
+	if (!DoubleArmThrowing) {
+		if (Ammo > 0 && IsNotInWebCam && bCanWalkingAndWatching && !bInEscMenu && CanThrowStone) {
+			if (!bIsAlreadyThrowing) {
+				bIsAlreadyThrowing = true;
+				TimeLine_Stone_First->PlayFromStart();
+				ThrowStoneServer(true);
+			}
+		}
+	}
+	else
+	{
+		if (Ammo > 0 && IsNotInWebCam && bCanWalkingAndWatching && !bInEscMenu && CanThrowStone) {
+			if (!bIsAlreadyThrowingLeft) {
+				bIsAlreadyThrowingLeft = true;
+				TimeLine_Stone_First_Left->PlayFromStart();
+				ThrowStoneServer(false);
+			}
+		}
+	}
 }
 
-void AChel::ThrowStoneServer_Implementation()
+void AChel::ThrowStoneMulticast_Implementation(bool Type)
+{
+	if (!IsPlayerOwner)
+	{
+		if (Type) {
+			TimeLine_Stone_First->PlayFromStart();
+		}
+		else
+		{
+			TimeLine_Stone_First_Left->PlayFromStart();
+		}
+	}
+}
+
+void AChel::ThrowStoneServer_Implementation(bool Type)
 {
 	--Ammo;
-	ThrowStoneMulticast();
+	ThrowStoneMulticast(Type);
 	TArray<AActor*> OverlappngActors;
 	GetOverlappingActors(OverlappngActors, AAmmoPoint::StaticClass());
 	for (auto& it : OverlappngActors) {
@@ -774,17 +1053,21 @@ void AChel::ThrowStoneServer_Implementation()
 	UE_LOG(LogTemp, Warning, TEXT("Complete Throwing stone - server"));
 }
 
-bool AChel::ThrowStoneServer_Validate()
+bool AChel::ThrowStoneServer_Validate(bool Type)
 {
 	return true;
 }
 
 void AChel::HideStoneMulticast_Implementation() {
-	Stone->SetHiddenInGame(true);
+	StoneRight->SetHiddenInGame(true);
+	if (DoubleArmThrowing)
+		StoneLeft->SetHiddenInGame(true);
 }
 
 void AChel::ShowStoneMulticast_Implementation() {
-	Stone->SetHiddenInGame(false);
+	StoneRight->SetHiddenInGame(false);
+	if (DoubleArmThrowing)
+		StoneLeft->SetHiddenInGame(false);
 }
 //----------------------------
 
@@ -1008,7 +1291,7 @@ void AChel::PlaySpawnAnimationAwake_Implementation() {
 	if (bCanPossessWebCam)
 		CameraTurnOff();
 	CameraComp->SetFieldOfView(90.0f);
-	StoneCountUpdate(15);
+	StoneCountUpdate(MaxAmmoCount);
 
 	WebCamUI->SetVisibility(ESlateVisibility::Hidden);
 
@@ -1212,6 +1495,42 @@ void AChel::PickUp() {
 						break;
 					}
 				}
+				case AmmoBackPack:
+				{
+					if (!IsServerAuth)
+						MaxAmmoCount += 5;
+					NewHaveItemServer(ItemCodePickUp);
+					break;
+				}
+				case RentgenGlasses:
+				{
+					QAbilityDisable();
+					QAbilityType = RentgenGlasses;
+					NewHaveItemServer(RentgenGlasses);
+					break;
+				}
+				case ChelsDetector:
+				{
+					QAbilityDisable();
+					QAbilityType = ChelsDetector;
+					NewHaveItemServer(ChelsDetector);
+					break;
+				}
+				case HealthPacket:
+				{
+					RAbilityType = HealthPacket;
+					NewHaveItemServer(HealthPacket);
+					break;
+				}
+				case DoubleArmAbility:
+				{
+					if (!DoubleArmThrowing) {
+						StoneLeft->SetHiddenInGame(false);
+						DoubleArmThrowing = true;
+						NewHaveItemServer(DoubleArmAbility);
+					}
+					break;
+				}
 				}
 			}
 		}
@@ -1328,6 +1647,7 @@ void AChel::NewHaveItemServer_Implementation(int32 ItemType)
 					else
 					{
 						GS->CurrentBoltorez--;
+						GS->CacheItems_Stuff_IsAvaliable[TempItem->EnabledArrayIndex] = true;
 						TempItem->Destroy();
 					}
 					break;
@@ -1359,6 +1679,7 @@ void AChel::NewHaveItemServer_Implementation(int32 ItemType)
 					else
 					{
 						GS->CurrentKeyShelter--;
+						GS->CacheItems_Stuff_IsAvaliable[TempItem->EnabledArrayIndex] = true;
 						TempItem->Destroy();
 					}
 					break;
@@ -1390,8 +1711,35 @@ void AChel::NewHaveItemServer_Implementation(int32 ItemType)
 					else
 					{
 						GS->CurrentOtvertka--;
+						GS->CacheItems_Stuff_IsAvaliable[TempItem->EnabledArrayIndex] = true;
 						TempItem->Destroy();
 					}
+					break;
+				}
+				case AmmoBackPack:
+				{
+					MaxAmmoCount += 5;
+					TempItem->Destroy();
+					break;
+				}
+				case RentgenGlasses:
+				{
+					TempItem->Destroy();
+					break;
+				}
+				case ChelsDetector:
+				{
+					TempItem->Destroy();
+					break;
+				}
+				case HealthPacket:
+				{
+					TempItem->Destroy();
+					break;
+				}
+				case DoubleArmAbility:
+				{
+					TempItem->Destroy();
 					break;
 				}
 				}
@@ -1586,7 +1934,7 @@ void AChel::SpawnPlayer()
 	IsNotInWebCam = true;
 	IsInGame = true;
 	Health = 0;
-	Ammo = 15;
+	Ammo = MaxAmmoCount;
 
 	TArray<AActor*> TargetPoints;
 	UGameplayStatics::GetAllActorsOfClassWithTag(World, ATargetPoint::StaticClass(), TEXT("spawn"), TargetPoints);
@@ -1979,7 +2327,6 @@ void AChel::DeleteArrowDelayOtvertka() {
 void AChel::OutlineBad_Multicast_Implementation()
 {
 	PoseableMeshComp->SetRenderCustomDepth(true);
-	PoseableMeshComp->SetCustomDepthStencilValue(1);
 	PoseableMeshComp->MarkRenderStateDirty();
 	
 	if (!IsPlayerOwner)

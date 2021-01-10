@@ -30,10 +30,10 @@ void AAmmoPoint::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* Oth
 {
 	AChel* Player = Cast<AChel>(OtherActor);
 	if (Player) {
-		if (Player->IsServerAuth && Enable && Player->Ammo < 15)
+		if (Player->IsServerAuth && Enable && Player->Ammo < Player->MaxAmmoCount)
 		{
-			Player->Ammo = 15;
-			Player->StoneCountUpdate(15);
+			Player->Ammo = Player->MaxAmmoCount;
+			Player->StoneCountUpdate(Player->MaxAmmoCount);
 			Player->ShowStoneMulticast();
 
 			Enable = false;
@@ -71,7 +71,7 @@ void AAmmoPoint::AmmoUpdate()
 			{
 				Chel = Cast<AChel>(Players[i]);
 				if (Chel) {
-					if (Chel->Ammo < 15) {
+					if (Chel->Ammo < Chel->MaxAmmoCount) {
 						UE_LOG(LogTemp, Warning, TEXT("FoundGoodChel: %d"), Players.Num());
 						break;
 					}
@@ -81,8 +81,8 @@ void AAmmoPoint::AmmoUpdate()
 			}
 			if (Chel) {
 
-				Chel->Ammo = 15;
-				Chel->StoneCountUpdate(15);
+				Chel->Ammo = Chel->MaxAmmoCount;
+				Chel->StoneCountUpdate(Chel->MaxAmmoCount);
 				Chel->ShowStoneMulticast();
 
 				Enable = false;
