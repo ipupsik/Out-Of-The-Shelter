@@ -23,10 +23,14 @@ class ASpectator;
 #define MIN_COUNT_KeyShelter 4
 #define MIN_COUNT_Boltorez 4
 #define MIN_COUNT_Otvertka 4
+#define MIN_COUNT_Rentgen 4
+#define MIN_COUNT_ChelDetector 4
 
 #define MAX_COUNT_KeySHelter 5
 #define MAX_COUNT_Boltorez 5
 #define MAX_COUNT_Otvertka 5
+#define MAX_COUNT_Rentgen 5
+#define MAX_COUNT_ChelDetector 5
 
 #define STONE_DAMAGE 0.15f
 #define DeltaRadiation 0.1f
@@ -128,6 +132,10 @@ public:
 		TSubclassOf<APickableItem> Boltorez;
 	UPROPERTY(EditAnywhere, Category = "ItemClasses")
 		TSubclassOf<APickableItem> Otvertka;
+	UPROPERTY(EditAnywhere, Category = "ItemClasses")
+		TSubclassOf<APickableItem> ChelDetector_class;
+	UPROPERTY(EditAnywhere, Category = "ItemClasses")
+		TSubclassOf<APickableItem> RentgenGlass_class;
 
 	UPROPERTY(EditAnywhere, Category = "ItemClasses")
 		TSubclassOf<AActor> InvisiblePotion;
@@ -180,5 +188,11 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		TArray<FTransform> OtvertkaTransform;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		TArray<FTransform> ChelDetectorTransform;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		TArray<FTransform> RentgenGlassTransform;
 
 };

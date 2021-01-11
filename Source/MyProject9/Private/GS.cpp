@@ -176,6 +176,50 @@ void AGS::BeginPlay()
 			CacheItems_Stuff_IsAvaliable[ArrayIndex] = false;
 		}
 
+		int32 CurrentRentgen = MIN_COUNT_Rentgen + FMath::Rand() % (MAX_COUNT_Rentgen - MIN_COUNT_Rentgen + 1);
+		for (int i = 0; i < CurrentRentgen; ++i) {
+			int ArrayIndex = FMath::Rand() % CacheItems_Stuff_IsAvaliable.Num();
+			while (!CacheItems_Stuff_IsAvaliable[ArrayIndex])
+			{
+				ArrayIndex = FMath::Rand() % CacheItems_Stuff_IsAvaliable.Num();
+			}
+
+			AActor* NewItem = GetWorld()->SpawnActor<AActor>(RentgenGlass_class);
+			FAttachmentTransformRules AttachmentRules = FAttachmentTransformRules(EAttachmentRule::KeepRelative, true);
+			NewItem->AttachToActor(Caches[ArrayIndex], AttachmentRules);
+			NewItem->SetActorScale3D(RentgenGlassTransform[Caches[ArrayIndex]->CacheIndex].GetScale3D());
+			FVector NewLocation;
+			NewLocation.X = RentgenGlassTransform[Caches[ArrayIndex]->CacheIndex].GetLocation().X / abs(Caches[ArrayIndex]->GetActorScale3D().X);
+			NewLocation.Y = RentgenGlassTransform[Caches[ArrayIndex]->CacheIndex].GetLocation().Y / abs(Caches[ArrayIndex]->GetActorScale3D().Y);
+			NewLocation.Z = RentgenGlassTransform[Caches[ArrayIndex]->CacheIndex].GetLocation().Z / abs(Caches[ArrayIndex]->GetActorScale3D().Z);
+			NewItem->AddActorLocalOffset(NewLocation);
+			NewItem->AddActorLocalRotation(RentgenGlassTransform[Caches[ArrayIndex]->CacheIndex].GetRotation());
+			Cast<APickableItem>(NewItem)->EnabledArrayIndex = ArrayIndex;
+			CacheItems_Stuff_IsAvaliable[ArrayIndex] = false;
+		}
+
+		int32 CurrentChelDetector = MIN_COUNT_ChelDetector + FMath::Rand() % (MAX_COUNT_ChelDetector - MIN_COUNT_ChelDetector + 1);
+		for (int i = 0; i < CurrentChelDetector; ++i) {
+			int ArrayIndex = FMath::Rand() % CacheItems_Stuff_IsAvaliable.Num();
+			while (!CacheItems_Stuff_IsAvaliable[ArrayIndex])
+			{
+				ArrayIndex = FMath::Rand() % CacheItems_Stuff_IsAvaliable.Num();
+			}
+
+			AActor* NewItem = GetWorld()->SpawnActor<AActor>(ChelDetector_class);
+			FAttachmentTransformRules AttachmentRules = FAttachmentTransformRules(EAttachmentRule::KeepRelative, true);
+			NewItem->AttachToActor(Caches[ArrayIndex], AttachmentRules);
+			NewItem->SetActorScale3D(ChelDetectorTransform[Caches[ArrayIndex]->CacheIndex].GetScale3D());
+			FVector NewLocation;
+			NewLocation.X = ChelDetectorTransform[Caches[ArrayIndex]->CacheIndex].GetLocation().X / abs(Caches[ArrayIndex]->GetActorScale3D().X);
+			NewLocation.Y = ChelDetectorTransform[Caches[ArrayIndex]->CacheIndex].GetLocation().Y / abs(Caches[ArrayIndex]->GetActorScale3D().Y);
+			NewLocation.Z = ChelDetectorTransform[Caches[ArrayIndex]->CacheIndex].GetLocation().Z / abs(Caches[ArrayIndex]->GetActorScale3D().Z);
+			NewItem->AddActorLocalOffset(NewLocation);
+			NewItem->AddActorLocalRotation(ChelDetectorTransform[Caches[ArrayIndex]->CacheIndex].GetRotation());
+			Cast<APickableItem>(NewItem)->EnabledArrayIndex = ArrayIndex;
+			CacheItems_Stuff_IsAvaliable[ArrayIndex] = false;
+		}
+
 
 		//------------------------------------Cache Keys
 		TArray<AActor*>TargetPoints_CacheKey;

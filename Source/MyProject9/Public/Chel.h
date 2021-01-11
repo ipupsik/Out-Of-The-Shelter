@@ -77,6 +77,8 @@ protected:
 	void EnableChelDetector();
 	void DisableChelDetector();
 
+	void StopUseSpeedBust();
+
 	void ThrowStoneLeft();
 	void ThrowStoneRight();
 	void PickUp();
@@ -167,7 +169,7 @@ public:
 		void ThrowStoneMulticast(bool Type);
 
 	UFUNCTION(Server, Reliable, WithValidation)
-		void NewHaveItemServer(int32 ItemType);
+		void NewHaveItemServer(int32 ItemType, int32 ReplaceItemType = -1);
 
 	UFUNCTION(Client, Reliable)
 		void NewHaveItemClient(int32 ItemType);
@@ -264,6 +266,9 @@ public:
 	UFUNCTION(Server, Reliable, WithValidation)
 		void OutlineBad_Server();
 
+	UFUNCTION(Server, Reliable, WithValidation)
+		void UseSpeedBust_Server();
+
 	void DoTraceOpenArea();
 
 	UFUNCTION(NetMulticast, Reliable) //легендарна€ св€зќчка
@@ -274,6 +279,8 @@ public:
 	void DeleteArrowDelayKeyShelter();
 	void DeleteArrowDelayBoltorez();
 	void DeleteArrowDelayOtvertka();
+
+	void ReplaceQAbilityItem(int32 Type, int32 ItemIndex);
 
 	UFUNCTION(Server, Reliable, WithValidation)
 		void LockWebCam_Server();
@@ -348,7 +355,7 @@ public:
 	UFUNCTION()
 		void AwakeAnimation_End();
 
-	void StoneAttack(int StoneIndex);
+	void StoneAttack(int StoneIndex, float StoneDamage);
 	void KillPlayer();
 public:	
 	// Called every frame
@@ -496,6 +503,11 @@ public:
 	int32 RAbilityType;
 
 	int32 ShieldsCount;
+	int32 StoneDamageBuffCount;
+
+	int32 DoesRadiationAntidot;
+	int32 CurrentSpeedBustCount;
+	float SpeedBustValue;
 
 	int32 WebCamIterator;
 	UPROPERTY(BlueprintReadWrite)

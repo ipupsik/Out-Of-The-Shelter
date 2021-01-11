@@ -44,6 +44,9 @@ enum PickUpType {
 	HealthPacket,
 	DoubleArmAbility,
 	Shields,
+	StoneDamageBuff,
+	RadiationAntidot,
+	SpeedBust,
 };
 
 enum CacheType {
@@ -99,6 +102,9 @@ AChel::AChel()
 
 	DamageCollision->OnComponentBeginOverlap.AddDynamic(this, &AChel::OnOverlapBegin);
 
+	SpeedBustValue = 0;
+	DoesRadiationAntidot = 1;
+	StoneDamageBuffCount = 0;
 	ShieldsCount = 0;
 	Health = 0;
 	bIsAlreadyThrowing = false;
@@ -291,6 +297,17 @@ void AChel::RAbilityEnable()
 			RAbility_HealPacket();
 			break;
 		}
+		case SpeedBust:
+		{
+			RAbilityType = -1;
+			UseSpeedBust_Server();
+			SpeedBustValue = 300;
+			GetCharacterMovement()->MaxWalkSpeed = 800.f + SpeedBustValue;
+			CurrentSpeedBustCount++;
+			FTimerHandle FuzeTimerHandle;
+			GetWorld()->GetTimerManager().SetTimer(FuzeTimerHandle, this, &AChel::StopUseSpeedBust, 20, false);
+			break;
+		}
 		}
 	}
 }
@@ -473,7 +490,7 @@ void AChel::Tick(float DeltaTime)
 	
 	if (IsInGame == true) {
 		if (IsServerAuth) {
-			Health += DeltaTime * 2 * 0.01f * RadCoeff * CanalizationDamage / 1.5f;
+			Health += DeltaTime * 2 * 0.01f * RadCoeff * CanalizationDamage / 1.5f * DoesRadiationAntidot;
 			if (Health > 1.0f) {
 				if (DoesHave[Boltorez])
 					GS->CurrentBoltorez--;
@@ -906,6 +923,7 @@ void AChel::OnTimelineFinished_Stone_First() {
 
 		AStone* NewStone = World->SpawnActorDeferred<AStone>(StoneClass, trans, this, this, ESpawnActorCollisionHandlingMethod::AlwaysSpawn);
 		NewStone->Index = Index;
+		NewStone->StoneDamage = STONE_DAMAGE + 0.02 * StoneDamageBuffCount;
 		UGameplayStatics::FinishSpawningActor(NewStone, trans);
 		if (Ammo == 0) {
 			HideStoneMulticast();
@@ -944,7 +962,7 @@ void AChel::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherAct
 		if (OverStone) {
 			if (OverStone->Index != Index)
 			{
-				StoneAttack(OverStone->Index);
+				StoneAttack(OverStone->Index, OverStone->StoneDamage);
 				TArray<AActor*>Players;
 				UGameplayStatics::GetAllActorsOfClass(GetWorld(), AChel::StaticClass(), Players);
 				for (int i = 0; i < Players.Num(); i++) {
@@ -1191,7 +1209,7 @@ void AChel::MyJump()
 //Sprint-----------------------
 void AChel::StartSprint_Server_Implementation()
 {
-	GetCharacterMovement()->MaxWalkSpeed = 1200.f;
+	GetCharacterMovement()->MaxWalkSpeed = 1200.f + SpeedBustValue;
 }
 
 bool AChel::StartSprint_Server_Validate()
@@ -1200,13 +1218,13 @@ bool AChel::StartSprint_Server_Validate()
 }
 
 void AChel::StartSprint() {
-	GetCharacterMovement()->MaxWalkSpeed = 1200.f;
+	GetCharacterMovement()->MaxWalkSpeed = 1200.f + SpeedBustValue;
 	StartSprint_Server();
 }
 
 void AChel::StopSprint_Server_Implementation()
 {
-	GetCharacterMovement()->MaxWalkSpeed = 800.f;
+	GetCharacterMovement()->MaxWalkSpeed = 800.f + SpeedBustValue;
 }
 
 bool AChel::StopSprint_Server_Validate()
@@ -1215,7 +1233,7 @@ bool AChel::StopSprint_Server_Validate()
 }
 
 void AChel::StopSprint() {
-	GetCharacterMovement()->MaxWalkSpeed = 800.f;
+	GetCharacterMovement()->MaxWalkSpeed = 800.f + SpeedBustValue;
 	StopSprint_Server();
 }
 //-----------------------------
@@ -1506,16 +1524,18 @@ void AChel::PickUp() {
 				}
 				case RentgenGlasses:
 				{
-					QAbilityDisable();
+					if (QAbilityType != -1)
+						QAbilityDisable();
+					NewHaveItemServer(RentgenGlasses, QAbilityType);
 					QAbilityType = RentgenGlasses;
-					NewHaveItemServer(RentgenGlasses);
 					break;
 				}
 				case ChelsDetector:
 				{
-					QAbilityDisable();
+					if (QAbilityType != -1)
+						QAbilityDisable();
+					NewHaveItemServer(ChelsDetector, QAbilityType);
 					QAbilityType = ChelsDetector;
-					NewHaveItemServer(ChelsDetector);
 					break;
 				}
 				case HealthPacket:
@@ -1536,6 +1556,22 @@ void AChel::PickUp() {
 				case Shields:
 				{
 					NewHaveItemServer(Shields);
+					break;
+				}
+				case StoneDamageBuff:
+				{
+					NewHaveItemServer(StoneDamageBuff);
+					break;
+				}
+				case RadiationAntidot:
+				{
+					NewHaveItemServer(RadiationAntidot);
+					break;
+				}
+				case SpeedBust:
+				{
+					RAbilityType = SpeedBust;
+					NewHaveItemServer(RadiationAntidot);
 					break;
 				}
 				}
@@ -1595,7 +1631,7 @@ bool AChel::ChangeIsAvaliableCache_Validate()
 	return true;
 }
 
-void AChel::NewHaveItemServer_Implementation(int32 ItemType)
+void AChel::NewHaveItemServer_Implementation(int32 ItemType, int32 ReplaceItemType = -1)
 {
 	if (ItemType >= 0 && ItemType <= 2) {
 		DoesHave[ItemType] = true;
@@ -1731,11 +1767,13 @@ void AChel::NewHaveItemServer_Implementation(int32 ItemType)
 				}
 				case RentgenGlasses:
 				{
+					ReplaceQAbilityItem(ReplaceItemType, TempItem->EnabledArrayIndex);
 					TempItem->Destroy();
 					break;
 				}
 				case ChelsDetector:
 				{
+					ReplaceQAbilityItem(ReplaceItemType, TempItem->EnabledArrayIndex);
 					TempItem->Destroy();
 					break;
 				}
@@ -1755,6 +1793,23 @@ void AChel::NewHaveItemServer_Implementation(int32 ItemType)
 					TempItem->Destroy();
 					break;
 				}
+				case StoneDamageBuff:
+				{
+					StoneDamageBuffCount++;
+					TempItem->Destroy();
+					break;
+				}
+				case RadiationAntidot:
+				{
+					DoesRadiationAntidot = 0;
+					TempItem->Destroy();
+					break;
+				}
+				case SpeedBust:
+				{
+					TempItem->Destroy();
+					break;
+				}
 				}
 			}
 		}
@@ -1762,7 +1817,53 @@ void AChel::NewHaveItemServer_Implementation(int32 ItemType)
 	
 }
 
-bool AChel::NewHaveItemServer_Validate(int32 ItemType)
+void AChel::ReplaceQAbilityItem(int32 Type, int32 ItemIndex)
+{
+	if (Type == -1)
+		return;
+	TSubclassOf<APickableItem> ReplaceClass;
+	FVector NewLocation;
+	FVector NewScale;
+	FRotator NewRotation;
+	switch (Type)
+	{
+	case ChelsDetector:
+	{
+		ReplaceClass = GS->ChelDetector_class;
+
+		NewLocation.X = GS->ChelDetectorTransform[GS->Caches[ItemIndex]->CacheIndex].GetLocation().X / abs(GS->Caches[ItemIndex]->GetActorScale3D().X);
+		NewLocation.Y = GS->ChelDetectorTransform[GS->Caches[ItemIndex]->CacheIndex].GetLocation().Y / abs(GS->Caches[ItemIndex]->GetActorScale3D().Y);
+		NewLocation.Z = GS->ChelDetectorTransform[GS->Caches[ItemIndex]->CacheIndex].GetLocation().Z / abs(GS->Caches[ItemIndex]->GetActorScale3D().Z);
+
+		NewRotation = FRotator(GS->ChelDetectorTransform[GS->Caches[ItemIndex]->CacheIndex].GetRotation());
+		NewScale = GS->ChelDetectorTransform[GS->Caches[ItemIndex]->CacheIndex].GetScale3D();
+		break;
+	}
+	case RentgenGlasses:
+	{
+		ReplaceClass = GS->RentgenGlass_class;
+
+		NewLocation.X = GS->RentgenGlassTransform[GS->Caches[ItemIndex]->CacheIndex].GetLocation().X / abs(GS->Caches[ItemIndex]->GetActorScale3D().X);
+		NewLocation.Y = GS->RentgenGlassTransform[GS->Caches[ItemIndex]->CacheIndex].GetLocation().Y / abs(GS->Caches[ItemIndex]->GetActorScale3D().Y);
+		NewLocation.Z = GS->RentgenGlassTransform[GS->Caches[ItemIndex]->CacheIndex].GetLocation().Z / abs(GS->Caches[ItemIndex]->GetActorScale3D().Z);
+
+		NewRotation = FRotator(GS->RentgenGlassTransform[GS->Caches[ItemIndex]->CacheIndex].GetRotation());
+		NewScale = GS->RentgenGlassTransform[GS->Caches[ItemIndex]->CacheIndex].GetScale3D();
+		break;
+	}
+	}
+
+	AActor* NewItem = GetWorld()->SpawnActor<AActor>(ReplaceClass);
+	FAttachmentTransformRules AttachmentRules = FAttachmentTransformRules(EAttachmentRule::KeepRelative, true);
+	NewItem->AttachToActor(GS->Caches[ItemIndex], AttachmentRules);
+	NewItem->SetActorScale3D(NewScale);
+	NewItem->AddActorLocalOffset(NewLocation);
+	NewItem->AddActorLocalRotation(NewRotation);
+	Cast<APickableItem>(NewItem)->EnabledArrayIndex = ItemIndex;
+	GS->CacheItems_Stuff_IsAvaliable[ItemIndex] = false;
+}
+
+bool AChel::NewHaveItemServer_Validate(int32 ItemType, int32 ReplaceItemType = -1)
 {
 	return true;
 }
@@ -1804,11 +1905,11 @@ void AChel::RemoveHitMarker()
 	UserView->Marker->SetVisibility(ESlateVisibility::Hidden);
 }
 
-void AChel::StoneAttack(int StoneIndex)
+void AChel::StoneAttack(int StoneIndex, float StoneDamage)
 {
 	if (IsInGame) 
 	{
-		Health += STONE_DAMAGE / (1 + 0.2 * ShieldsCount);
+		Health += StoneDamage / (1 + 0.2 * ShieldsCount);
 		if (Health + DeltaRadiation >= 1.0f)
 		{
 			KillerIndex = StoneIndex;
@@ -2737,4 +2838,27 @@ void AChel::ResetCacheKeys()
 	UserView->KeyLeft_Gold->SetText(FText::AsNumber(0));
 	UserView->KeyLeft_Silver->SetText(FText::AsNumber(0));
 	UserView->KeyLeft_Bronze->SetText(FText::AsNumber(0));
+}
+
+void AChel::StopUseSpeedBust()
+{
+	CurrentSpeedBustCount--;
+	if (CurrentSpeedBustCount == 0)
+	{
+		SpeedBustValue = 0;
+	}
+}
+
+void AChel::UseSpeedBust_Server_Implementation()
+{
+	SpeedBustValue = 300;
+	GetCharacterMovement()->MaxWalkSpeed = 800.f + SpeedBustValue;
+	CurrentSpeedBustCount++;
+	FTimerHandle FuzeTimerHandle;
+	GetWorld()->GetTimerManager().SetTimer(FuzeTimerHandle, this, &AChel::StopUseSpeedBust, 20, false);
+}
+
+bool AChel::UseSpeedBust_Server_Validate()
+{
+	return true;
 }

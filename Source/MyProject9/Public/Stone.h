@@ -28,4 +28,6 @@ public:
 		UProjectileMovementComponent* ProjectileMovementComponent;
 
 	int Index;
+
+	float StoneDamage;
 };
