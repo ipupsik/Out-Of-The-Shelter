@@ -914,20 +914,18 @@ void AChel::OnTimelineFinished_Stone_First() {
 		PlayStoneThrowSound();
 	}
 
-	if (IsServerAuth) {
-		StoneCountUpdate(Ammo);
+	StoneCountUpdate(Ammo);
 
-		FTransform trans;
-		trans.SetLocation(FVector(GetActorLocation().X, GetActorLocation().Y, StoneRight->GetComponentLocation().Z));
-		trans.SetRotation(FQuat(StoneRight->GetComponentRotation()));
+	FTransform trans;
+	trans.SetLocation(FVector(GetActorLocation().X, GetActorLocation().Y, StoneRight->GetComponentLocation().Z));
+	trans.SetRotation(FQuat(StoneRight->GetComponentRotation()));
 
-		AStone* NewStone = World->SpawnActorDeferred<AStone>(StoneClass, trans, this, this, ESpawnActorCollisionHandlingMethod::AlwaysSpawn);
-		NewStone->Index = Index;
-		NewStone->StoneDamage = STONE_DAMAGE + 0.02 * StoneDamageBuffCount;
-		UGameplayStatics::FinishSpawningActor(NewStone, trans);
-		if (Ammo == 0) {
-			HideStoneMulticast();
-		}
+	AStone* NewStone = World->SpawnActorDeferred<AStone>(StoneClass, trans, this, this, ESpawnActorCollisionHandlingMethod::AlwaysSpawn);
+	NewStone->Index = Index;
+	NewStone->StoneDamage = STONE_DAMAGE + 0.02 * StoneDamageBuffCount;
+	UGameplayStatics::FinishSpawningActor(NewStone, trans);
+	if (Ammo == 0) {
+		HideStoneMulticast();
 	}
 }
 
@@ -939,26 +937,25 @@ void AChel::OnTimelineFinished_Stone_First_Left()
 		PlayStoneThrowSound();
 	}
 
-	if (IsServerAuth) {
-		StoneCountUpdate(Ammo);
+	StoneCountUpdate(Ammo);
 
-		FTransform trans;
-		trans.SetLocation(FVector(GetActorLocation().X, GetActorLocation().Y, StoneLeft->GetComponentLocation().Z));
-		trans.SetRotation(FQuat(StoneLeft->GetComponentRotation()));
+	FTransform trans;
+	trans.SetLocation(FVector(GetActorLocation().X, GetActorLocation().Y, StoneLeft->GetComponentLocation().Z));
+	trans.SetRotation(FQuat(StoneLeft->GetComponentRotation()));
 
-		AStone* NewStone = World->SpawnActorDeferred<AStone>(StoneClass, trans, this, this, ESpawnActorCollisionHandlingMethod::AlwaysSpawn);
-		NewStone->Index = Index;
-		UGameplayStatics::FinishSpawningActor(NewStone, trans);
-		if (Ammo == 0) {
-			HideStoneMulticast();
-		}
+	AStone* NewStone = World->SpawnActorDeferred<AStone>(StoneClass, trans, this, this, ESpawnActorCollisionHandlingMethod::AlwaysSpawn);
+	NewStone->Index = Index;
+	NewStone->StoneDamage = STONE_DAMAGE + 0.02 * StoneDamageBuffCount;
+	UGameplayStatics::FinishSpawningActor(NewStone, trans);
+	if (Ammo == 0) {
+		HideStoneMulticast();
 	}
 }
 
 void AChel::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	if (GetLocalRole() == ROLE_Authority) {
-		AStone* OverStone = Cast<AStone>(OtherActor);
+	AStone* OverStone = Cast<AStone>(OtherActor);
+	if (IsServerAuth) {
 		if (OverStone) {
 			if (OverStone->Index != Index)
 			{
@@ -978,11 +975,19 @@ void AChel::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherAct
 			}
 		}
 	}
+	else
+	{
+		if (OverStone->Index != Index)
+		{
+			OverStone->Destroy();
+		}
+	}
 }
 
 void AChel::StoneCountUpdate_Implementation(int32 Count)
 {
-	UserView->AmmoLabel->SetText(FText::AsNumber(Count));
+	if (IsPlayerOwner)
+		UserView->AmmoLabel->SetText(FText::AsNumber(Count));
 }
 
 void AChel::TimelineVectorReturn_Stone(FVector value) {
@@ -1517,6 +1522,7 @@ void AChel::PickUp() {
 				}
 				case AmmoBackPack:
 				{
+					UserView->AmmoMax->SetText(FText::AsNumber(MaxAmmoCount + 5));
 					if (!IsServerAuth)
 						MaxAmmoCount += 5;
 					NewHaveItemServer(ItemCodePickUp);

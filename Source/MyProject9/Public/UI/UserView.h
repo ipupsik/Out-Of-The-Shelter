@@ -58,6 +58,9 @@ public:
 		UTextBlock* KeyLeft_Silver;
 
 	UPROPERTY(meta = (BindWidget))
+		UTextBlock* AmmoMax;
+
+	UPROPERTY(meta = (BindWidget))
 		UTextBlock* KeyLeft_Gold;
 	//---------------------------
 	UPROPERTY(meta = (BindWidget)) //!!!!!!!!!!!!!!!!!!!!!!!

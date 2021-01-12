@@ -446,7 +446,8 @@ public:
 	AButtonCanalization* LastButton;
 	//GlobalSettings
 	bool IsServerAuth;
-	bool IsPlayerOwner;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+		bool IsPlayerOwner;
 	UWorld* World;
 	//
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
