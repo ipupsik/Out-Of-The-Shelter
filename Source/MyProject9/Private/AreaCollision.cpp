@@ -26,6 +26,8 @@ void AAreaCollision::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor*
 				if (Player->IsPlayerOwner && !Player->GS->AreaClosed[AreaType]) {
 					if (AreaType == 1 && !Player->GS->IsShelterAvaliable)
 						return;
+					if (AreaType == 2 && !Player->GS->IsVentilaciaAvaliable)
+						return;
 					Player->AreaCode = AreaType;
 					if (!Player->GS->AreaAvaliables[AreaType])
 					{

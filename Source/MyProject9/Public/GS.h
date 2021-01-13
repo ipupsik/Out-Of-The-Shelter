@@ -155,6 +155,7 @@ public:
 	int CurrentOtvertka;
 	int CurrentKeyShelter;
 	int CurrentBoltorez;
+	int32 VentilaciaRubilnickCount;
 
 	int CurrentButtonCount;
 
@@ -163,6 +164,10 @@ public:
 	int32 GeneralLayer;
 	UPROPERTY(Replicated)
 		bool IsShelterAvaliable;
+	UPROPERTY(Replicated)
+		bool IsVentilaciaAvaliable;
+	UPROPERTY(Replicated)
+		bool IsCanalizaciaAvaliable;
 	bool IsGameStarted;
 
 	TArray<FTransform>Keys_Transform;

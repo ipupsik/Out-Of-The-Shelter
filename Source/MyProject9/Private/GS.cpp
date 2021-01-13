@@ -9,6 +9,7 @@
 #include "GM.h"
 #include "Cache_Key.h"
 #include "WebCamPoint.h"
+#include "BP_VentilaciaRubilnick.h"
 #include "PromptCollisionArea.h"
 
 AGS::AGS() {
@@ -32,6 +33,8 @@ AGS::AGS() {
 
 	CurrentButtonCount = 0;
 	IsShelterAvaliable = false;
+	IsVentilaciaAvaliable = false;
+	IsCanalizaciaAvaliable = false;
 	CodeGenerator = -1;
 	CurrentCode = 0;
 	ButtonPlayAnim = false;
@@ -48,6 +51,8 @@ void AGS::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps
 	DOREPLIFETIME(AGS, ButtonPlayAnim);
 	DOREPLIFETIME(AGS, NumbersOnPanel);
 	DOREPLIFETIME(AGS, IsShelterAvaliable);
+	DOREPLIFETIME(AGS, IsVentilaciaAvaliable);
+	DOREPLIFETIME(AGS, IsCanalizaciaAvaliable);
 }
 
 void AGS::BeginPlay()
@@ -86,6 +91,10 @@ void AGS::BeginPlay()
 			WebCams.Add(Cast<AWebCamPoint>(WebCamSpectators[i]));
 			WebCams[i]->is_Enabled = true;
 		}
+
+		TArray<AActor*>VentilaciaRubilnick;
+		UGameplayStatics::GetAllActorsOfClass(GetWorld(), ABP_VentilaciaRubilnick::StaticClass(), VentilaciaRubilnick);
+		VentilaciaRubilnickCount = VentilaciaRubilnick.Num();
 
 		//----------------------------Cache Items
 

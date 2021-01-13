@@ -16,6 +16,7 @@
 #include "Cache_Key.h"
 #include "CanalizationDamageCollision.h"
 #include "Code_Note.h"
+#include "BP_VentilaciaRubilnick.h"
 
 enum AreaType
 {
@@ -47,6 +48,7 @@ enum PickUpType {
 	StoneDamageBuff,
 	RadiationAntidot,
 	SpeedBust,
+	VentilaciaRubilnick,
 };
 
 enum CacheType {
@@ -550,7 +552,7 @@ void AChel::Tick(float DeltaTime)
 						APickableItem* TracedItem = Cast<APickableItem>(HittableActor);
 						if (TracedItem) { //Если мы стукнулись в нужный нам предмет
 							ItemCodePickUp = TracedItem->Type;
-							if (TracedItem->Type != ClickButton)
+							if (TracedItem->Type != ClickButton && TracedItem->Type != VentilaciaRubilnick)
 								UserView->E_Mark->SetVisibility(ESlateVisibility::Visible);
 							if (LastItem && LastItem != TracedItem) {
 								LastItem->Item->SetRenderCustomDepth(false);
@@ -565,6 +567,15 @@ void AChel::Tick(float DeltaTime)
 										UserView->E_Mark->SetVisibility(ESlateVisibility::Hidden);
 									}
 									else {
+										LastItem->Item->SetRenderCustomDepth(true);
+										LastItem->Item->MarkRenderStateDirty();
+									}
+								}
+								else if (TracedItem->Type == VentilaciaRubilnick) {
+									ABP_VentilaciaRubilnick* MyVentilaciaRubilnick = Cast<ABP_VentilaciaRubilnick>(TracedItem);
+									UE_LOG(LogTemp, Warning, TEXT("Enable - %d"), (int)MyVentilaciaRubilnick->is_Avaliable);
+									if (MyVentilaciaRubilnick->is_Avaliable) {
+										UserView->E_Mark->SetVisibility(ESlateVisibility::Visible);
 										LastItem->Item->SetRenderCustomDepth(true);
 										LastItem->Item->MarkRenderStateDirty();
 									}
@@ -588,7 +599,6 @@ void AChel::Tick(float DeltaTime)
 									if (GS->IsShelterAvaliable) {
 										UserView->E_Mark->SetVisibility(ESlateVisibility::Visible);
 										LastItem->Item->SetRenderCustomDepth(true);
-										LastItem->Item->SetCustomDepthStencilValue(2);
 										LastItem->Item->MarkRenderStateDirty();
 									}
 								}
@@ -1580,6 +1590,17 @@ void AChel::PickUp() {
 					NewHaveItemServer(RadiationAntidot);
 					break;
 				}
+				case VentilaciaRubilnick:
+				{
+					if (Cast<ABP_VentilaciaRubilnick>(LastItem)->is_Avaliable) {
+						UserView->E_Mark->SetVisibility(ESlateVisibility::Hidden);
+						LastItem->Item->SetRenderCustomDepth(false);
+						LastItem->Item->MarkRenderStateDirty();
+						Cast<ABP_VentilaciaRubilnick>(LastItem)->is_Avaliable = false;
+						NewHaveItemServer(VentilaciaRubilnick);
+					}
+					break;
+				}
 				}
 			}
 		}
@@ -1815,6 +1836,11 @@ void AChel::NewHaveItemServer_Implementation(int32 ItemType, int32 ReplaceItemTy
 				{
 					TempItem->Destroy();
 					break;
+				}
+				case VentilaciaRubilnick:
+				{
+					ABP_VentilaciaRubilnick* Rubilnick = Cast<ABP_VentilaciaRubilnick>(TempItem);
+					Rubilnick->CheckVentilaciaAvaliable();
 				}
 				}
 			}
