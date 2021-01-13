@@ -624,6 +624,10 @@ void AChel::Tick(float DeltaTime)
 
 									LastCache = TracedCache;
 								}
+								else
+								{
+									UserView->E_Mark->SetVisibility(ESlateVisibility::Hidden);
+								}
 							}
 							else
 							{
