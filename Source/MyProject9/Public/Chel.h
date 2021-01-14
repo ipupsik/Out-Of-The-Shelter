@@ -7,7 +7,8 @@
 #include "Net/UnrealNetwork.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Blueprint/WidgetLayoutLibrary.h"
-
+#include "UI/Tab.h"
+#include "UI/KDA_Stat.h"
 #include "Spectator.h"
 #include "FinalMenuPawn.h"
 #include "AmmoPoint.h"
@@ -69,8 +70,8 @@ protected:
 	void MyJump();
 	void StartSprint();
 	void StopSprint();
-	void ShowKillFeed();
-	void UnShowKillFeed();
+	void ShowTab();
+	void UnShowTab();
 
 	void EnableRentgen();
 	void DisableRentgen();
@@ -124,6 +125,10 @@ public:
 		void DeleteLAstNumServer();
 	UFUNCTION(Server, Reliable, WithValidation)
 		void CheckCodeServer();
+	UFUNCTION(Server, Reliable, WithValidation)
+		void AddStoneDamageBuffTemp();
+
+	void RemoveStoneDamageBuffTemp();
 
 	UFUNCTION(Client, Reliable)
 		void RefreshGeneratorArea();
@@ -164,6 +169,9 @@ public:
 	UFUNCTION(Server, Reliable, WithValidation)
 		void ThrowStoneServer(bool Type);
 
+	UFUNCTION(Server, Reliable, WithValidation)
+		void AddImmortalServer();
+	void RemoveImmortalServer();
 
 	UFUNCTION(NetMulticast, Reliable)
 		void ThrowStoneMulticast(bool Type);
@@ -321,6 +329,12 @@ public:
 		void ShowUIAfterTerminalAndGenerator(int32 NewAreaType, bool DoesEnabled);
 
 	UFUNCTION(Client, Reliable)
+		void CreateKDAWidget(int32 PlayerIndex, const FText& newNickName);
+
+	UFUNCTION(Client, Reliable, BlueprintCallable)
+		void DeleteKDATab(int32 newPlayerIndex);
+
+	UFUNCTION(Client, Reliable)
 		void AddChromaticAbberationClient();
 
 	UFUNCTION(Client, Reliable)
@@ -328,6 +342,10 @@ public:
 
 	UFUNCTION(Client, Reliable)
 		void RefreshWidgets(const TArray<bool> &whatToUpdate, int KillerNickIndex, int VictimNickIndex);
+
+	UFUNCTION(Client, Reliable)
+		void RefreshTabWidget(int32 VictimIndex, int32 newKillerIndex);
+
 	UFUNCTION()
 		void OnTimelineFinished_Stone_First();
 	UFUNCTION()
@@ -407,6 +425,10 @@ public:
 	UPROPERTY(EditAnywhere, Category = "UI HUD")
 		TSubclassOf<UWebCamWidget> WebCamWidget_class;
 	UPROPERTY(EditAnywhere, Category = "UI HUD")
+		TSubclassOf<UKDA_Stat> KDA_Stat_class;
+	UPROPERTY(EditAnywhere, Category = "UI HUD")
+		TSubclassOf<UTab> Tab_class;
+	UPROPERTY(EditAnywhere, Category = "UI HUD")
 		TSubclassOf<UKillFeed> KillFeed_class;
 	UPROPERTY(EditAnywhere, Category = "UI HUD") //класс стрелки подсказки
 		TSubclassOf<UTargetArrow> TargetArrowClass;
@@ -427,10 +449,6 @@ public:
 		int Index;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Replicated, Category = "PlayerVariables")
 		int Ammo;
-	UPROPERTY(EditAnywhere, Replicated, Category = "PlayerVariables")
-		int Kills;
-	UPROPERTY(EditAnywhere, Replicated, Category = "PlayerVariables")
-		int Death;
 	//InGameVariables
 	UPROPERTY(EditAnywhere, Replicated, Category = "InGameVariables")
 		bool IsInGame;
@@ -509,8 +527,11 @@ public:
 	int32 DoesRadiationAntidot;
 	int32 CurrentSpeedBustCount;
 	float SpeedBustValue;
-
+	float StoneDamageBuffTempValue;
+	int32 CurrentStoneDamageBuffTempCount;
 	int32 WebCamIterator;
+	int32 DoesNotImmortal;
+	int32 DoesNotImmortalCount;
 	UPROPERTY(BlueprintReadWrite)
 	FRotator BaseWebCamRotation;
 
@@ -545,6 +566,9 @@ public:
 	TArray<AActor*> TargetItemsStatic; //массив с предметами, к которым привязаны стрелки-подсказки
 	TArray<UTargetArrow*> TargetArrowsDynamic; //массив со стрелками-подсказками на экране
 	TArray<AActor*> TargetItemsDynamic; //массив с предметами, к которым привязаны стрелки-подсказки
+
+	TArray<UKDA_Stat*>MyKDA_Stat;
+	UTab* TabWidget;
 
 	FTransform MeshTrans;
 	FRotator BaseRotation;

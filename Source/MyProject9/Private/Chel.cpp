@@ -49,6 +49,8 @@ enum PickUpType {
 	RadiationAntidot,
 	SpeedBust,
 	VentilaciaRubilnick,
+	StoneDamageBuffTemp,
+	ImmortalPotion,
 };
 
 enum CacheType {
@@ -104,6 +106,9 @@ AChel::AChel()
 
 	DamageCollision->OnComponentBeginOverlap.AddDynamic(this, &AChel::OnOverlapBegin);
 
+	DoesNotImmortal = 1;
+	CurrentStoneDamageBuffTempCount = 0;
+	StoneDamageBuffTempValue = 1.0f;
 	SpeedBustValue = 0;
 	DoesRadiationAntidot = 1;
 	StoneDamageBuffCount = 0;
@@ -137,7 +142,7 @@ AChel::AChel()
 	TargetArrowsStatic.Init(nullptr, 0);
 	TargetArrowsDynamic.Init(nullptr, 0);
 	TargetItemsDynamic.Init(nullptr, 0);
-
+	MyKDA_Stat.Init(nullptr, 4);
 	IsRentgenRender = false;
 }
 
@@ -150,8 +155,6 @@ void AChel::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimePro
 	DOREPLIFETIME(AChel, Health);
 	DOREPLIFETIME(AChel, NickName);
 	DOREPLIFETIME(AChel, Ammo);
-	DOREPLIFETIME(AChel, Death);
-	DOREPLIFETIME(AChel, Kills);
 	DOREPLIFETIME(AChel, DoesHave);
 	DOREPLIFETIME(AChel, IsInGame);
 }
@@ -310,6 +313,18 @@ void AChel::RAbilityEnable()
 			GetWorld()->GetTimerManager().SetTimer(FuzeTimerHandle, this, &AChel::StopUseSpeedBust, 20, false);
 			break;
 		}
+		case StoneDamageBuffTemp:
+		{
+			AddStoneDamageBuffTemp();
+			RAbilityType = -1;
+			break;
+		}
+		case ImmortalPotion:
+		{
+			AddImmortalServer();
+			RAbilityType = -1;
+			break;
+		}
 		}
 	}
 }
@@ -350,11 +365,10 @@ void AChel::MyBeginPlay()
 	GS = Cast<AGS>(GetWorld()->GetGameState());
 
 	IsServerAuth = GetLocalRole() == ROLE_Authority;
-	World = GetWorld();
 	IsPlayerOwner = UGameplayStatics::GetPlayerController(GetWorld(), 0) == GetController();
 	StonePositionRight = StoneRight->GetRelativeLocation();
 	StonePositionLeft = StoneLeft->GetRelativeLocation();
-
+	World = GetWorld();
 	GI = World->GetGameInstance<UGI>();
 
 	Cast<AChel>(UGameplayStatics::GetPlayerCharacter(World, 0))->PlayersArray.Add(this);
@@ -394,14 +408,55 @@ void AChel::MyBeginPlay()
 		TimeLine_FOV_WebCam->SetIgnoreTimeDilation(true);
 	}
 
+	if (IsServerAuth) {
+		TArray<AActor*>Players;
+		UGameplayStatics::GetAllActorsOfClass(World, AChel::StaticClass(), Players);
+		for (int i = 0; i < 4; i++)
+		{
+			bool CanUseIndex = true;
+			for (auto& it : Players)
+			{
+				if (Cast<AChel>(it)->Index == i)
+				{
+					CanUseIndex = false;
+					break;
+				}
+			}
+			if (CanUseIndex)
+			{
+				Index = i;
+				break;
+			}
+		}
+		GS->AmountOfPlayers++;
+		Cast<ABP_PlayerController>(GetController())->Index = Index;
+		UE_LOG(LogTemp, Warning, TEXT("AmountOfPlayers increase Chel"))
+		for (int i = 0; i < 2; ++i)
+		{
+			ASpectator* spec = World->SpawnActorDeferred<ASpectator>(SpectatorClass, CameraComp->GetComponentTransform());
+			if (spec != nullptr) {
+				spec->Player = this;
+				spec->Index = Index;
+				spec->Layer = i;
+				UGameplayStatics::FinishSpawningActor(spec, CameraComp->GetComponentTransform());
+			}
+			if (GS != nullptr)
+				GS->Spectators.Add(spec);
+		}
+
+		DoesHave.Init(false, 3);
+	}
+
 	if (IsPlayerOwner) {
 		UserView = Cast<UUserView>(CreateWidget(World, UserViewClass));
 		GeneratorView = Cast<UGeneratorWidget>(CreateWidget(World, GeneratorView_class));
 		KillFeed = Cast<UKillFeed>(CreateWidget(World, KillFeed_class));
 		Widget_Note = Cast<UNoteWidget>(CreateWidget(World, NoteWidget_class));
 		WebCamUI = Cast<UWebCamWidget>(CreateWidget(World, WebCamWidget_class));
+		TabWidget = Cast<UTab>(CreateWidget(World, Tab_class));
 		WebCamUI->AddToViewport();
 		UserView->AddToViewport();
+		TabWidget->AddToViewport();
 		KillFeed->AddToViewport();
 		GeneratorView->AddToViewport();
 		GeneratorView->SetVisibility(ESlateVisibility::Hidden);
@@ -411,12 +466,6 @@ void AChel::MyBeginPlay()
 
 		UserView->Player = this;
 		UserView->AmmoLabel->SetText(FText::AsNumber((int32)Ammo));
-
-		if (GI != nullptr) {
-			Sensetivity = GI->Sensetivity;
-			NickName = GI->NickName;
-			DeliverNicknameToServer(NickName);
-		}
 
 		TArray<AActor*>MainExis;
 		UGameplayStatics::GetAllActorsOfClass(World, AItemPromtArrow_MainExis::StaticClass(), MainExis);
@@ -445,26 +494,12 @@ void AChel::MyBeginPlay()
 			}
 			}
 		}
-	}
 
-	if (IsServerAuth) {
-		Index = GS->AmountOfPlayers++;
-		Cast<ABP_PlayerController>(GetController())->Index = Index;
-		UE_LOG(LogTemp, Warning, TEXT("AmountOfPlayers increase Chel"))
-		for (int i = 0; i < 2; ++i)
-		{
-			ASpectator* spec = World->SpawnActorDeferred<ASpectator>(SpectatorClass, CameraComp->GetComponentTransform());
-			if (spec != nullptr) {
-				spec->Player = this;
-				spec->Index = Index;
-				spec->Layer = i;
-				UGameplayStatics::FinishSpawningActor(spec, CameraComp->GetComponentTransform());
-			}
-			if (GS != nullptr)
-				GS->Spectators.Add(spec);
+		if (GI != nullptr) {
+			Sensetivity = GI->Sensetivity;
+			NickName = GI->NickName;
+			DeliverNicknameToServer(NickName);
 		}
-
-		DoesHave.Init(false, 3);
 	}
 
 	if (IsServerAuth && IsPlayerOwner)
@@ -492,7 +527,7 @@ void AChel::Tick(float DeltaTime)
 	
 	if (IsInGame == true) {
 		if (IsServerAuth) {
-			Health += DeltaTime * 2 * 0.01f * RadCoeff * CanalizationDamage / 1.5f * DoesRadiationAntidot;
+			Health += DeltaTime * 2 * 0.01f * RadCoeff * CanalizationDamage / 1.5f * DoesRadiationAntidot * DoesNotImmortal;
 			if (Health > 1.0f) {
 				if (DoesHave[Boltorez])
 					GS->CurrentBoltorez--;
@@ -722,6 +757,15 @@ void AChel::Tick(float DeltaTime)
 //NicknameSetup----------------
 void AChel::DeliverNicknameToServer_Implementation(const FText& newNickName) {
 	GS->NickNames[Index] = newNickName;
+	TArray<AActor*>Players;
+	UGameplayStatics::GetAllActorsOfClass(World, AChel::StaticClass(), Players);
+	for (auto& it : Players)
+	{
+		AChel* CurChel = Cast<AChel>(it);
+		CurChel->CreateKDAWidget(Index, newNickName);
+		if (CurChel->Index != Index)
+			CreateKDAWidget(CurChel->Index, GS->NickNames[CurChel->Index]);
+	}
 }
 
 bool AChel::DeliverNicknameToServer_Validate(const FText& newNickName) {
@@ -739,8 +783,8 @@ void AChel::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &AChel::MyJump);
 	PlayerInputComponent->BindAction("Sprint", IE_Pressed, this, &AChel::StartSprint);
 	PlayerInputComponent->BindAction("Sprint", IE_Released, this, &AChel::StopSprint);
-	PlayerInputComponent->BindAction("KillFeed", IE_Pressed, this, &AChel::ShowKillFeed);
-	PlayerInputComponent->BindAction("KillFeed", IE_Released, this, &AChel::UnShowKillFeed);
+	PlayerInputComponent->BindAction("TabStat", IE_Pressed, this, &AChel::ShowTab);
+	PlayerInputComponent->BindAction("TabStat", IE_Released, this, &AChel::UnShowTab);
 	PlayerInputComponent->BindAction("ThrowStoneRight", IE_Pressed, this, &AChel::ThrowStoneRight);
 	PlayerInputComponent->BindAction("ThrowStoneLeft", IE_Pressed, this, &AChel::ThrowStoneLeft);
 	PlayerInputComponent->BindAction("PickUp", IE_Pressed, this, &AChel::PickUp);
@@ -936,7 +980,7 @@ void AChel::OnTimelineFinished_Stone_First() {
 
 	AStone* NewStone = World->SpawnActorDeferred<AStone>(StoneClass, trans, this, this, ESpawnActorCollisionHandlingMethod::AlwaysSpawn);
 	NewStone->Index = Index;
-	NewStone->StoneDamage = STONE_DAMAGE + 0.02 * StoneDamageBuffCount;
+	NewStone->StoneDamage = (STONE_DAMAGE + 0.02 * StoneDamageBuffCount) * StoneDamageBuffTempValue;
 	UGameplayStatics::FinishSpawningActor(NewStone, trans);
 	if (Ammo == 0) {
 		HideStoneMulticast();
@@ -959,7 +1003,7 @@ void AChel::OnTimelineFinished_Stone_First_Left()
 
 	AStone* NewStone = World->SpawnActorDeferred<AStone>(StoneClass, trans, this, this, ESpawnActorCollisionHandlingMethod::AlwaysSpawn);
 	NewStone->Index = Index;
-	NewStone->StoneDamage = STONE_DAMAGE + 0.02 * StoneDamageBuffCount;
+	NewStone->StoneDamage = (STONE_DAMAGE + 0.02 * StoneDamageBuffCount) * StoneDamageBuffTempValue;
 	UGameplayStatics::FinishSpawningActor(NewStone, trans);
 	if (Ammo == 0) {
 		HideStoneMulticast();
@@ -1259,14 +1303,14 @@ void AChel::StopSprint() {
 
 
 //KillFeed --------------------
-void AChel::ShowKillFeed()
+void AChel::ShowTab()
 {
-	KillFeed->SetVisibility(ESlateVisibility::Visible);
+	TabWidget->SetVisibility(ESlateVisibility::Visible);
 }
 
-void AChel::UnShowKillFeed()
+void AChel::UnShowTab()
 {
-	KillFeed->SetVisibility(ESlateVisibility::Hidden);
+	TabWidget->SetVisibility(ESlateVisibility::Hidden);	
 }
 
 //PlayStartingAnimation---------------------
@@ -1605,6 +1649,18 @@ void AChel::PickUp() {
 					}
 					break;
 				}
+				case StoneDamageBuffTemp:
+				{
+					RAbilityType = StoneDamageBuffTemp;
+					NewHaveItemServer(StoneDamageBuffTemp);
+					break;
+				}
+				case ImmortalPotion:
+				{
+					RAbilityType = ImmortalPotion;
+					NewHaveItemServer(ImmortalPotion);
+					break;
+				}
 				}
 			}
 		}
@@ -1845,6 +1901,17 @@ void AChel::NewHaveItemServer_Implementation(int32 ItemType, int32 ReplaceItemTy
 				{
 					ABP_VentilaciaRubilnick* Rubilnick = Cast<ABP_VentilaciaRubilnick>(TempItem);
 					Rubilnick->CheckVentilaciaAvaliable();
+					break;
+				}
+				case StoneDamageBuffTemp:
+				{
+					TempItem->Destroy();
+					break;
+				}
+				case ImmortalPotion:
+				{
+					TempItem->Destroy();
+					break;
 				}
 				}
 			}
@@ -1945,7 +2012,7 @@ void AChel::StoneAttack(int StoneIndex, float StoneDamage)
 {
 	if (IsInGame) 
 	{
-		Health += StoneDamage / (1 + 0.2 * ShieldsCount);
+		Health += StoneDamage / (1 + 0.2 * ShieldsCount) * DoesNotImmortal;
 		if (Health + DeltaRadiation >= 1.0f)
 		{
 			KillerIndex = StoneIndex;
@@ -2031,6 +2098,7 @@ void AChel::KillPlayer()
 		if (Chel)
 		{
 			Chel->DeleteStrelkaBadOutline_Client(Index);
+			Chel->RefreshTabWidget(Index, KillerIndex);
 		}
 	}
 	GetCharacterMovement()->StopMovementImmediately();
@@ -2897,4 +2965,95 @@ void AChel::UseSpeedBust_Server_Implementation()
 bool AChel::UseSpeedBust_Server_Validate()
 {
 	return true;
+}
+
+void AChel::AddStoneDamageBuffTemp_Implementation()
+{
+	StoneDamageBuffTempValue = 2.0f;
+	CurrentStoneDamageBuffTempCount++;
+	FTimerHandle FuzeTimerHandle2;
+	GetWorld()->GetTimerManager().SetTimer(FuzeTimerHandle2, this, &AChel::RemoveStoneDamageBuffTemp, 10, false);
+}
+
+bool AChel::AddStoneDamageBuffTemp_Validate()
+{
+	return true;
+}
+
+void AChel::RemoveStoneDamageBuffTemp()
+{
+	CurrentStoneDamageBuffTempCount--;
+	if (CurrentStoneDamageBuffTempCount == 0)
+	{
+		StoneDamageBuffTempValue = 1.0f;
+	}
+}
+
+void AChel::AddImmortalServer_Implementation()
+{
+	DoesNotImmortal = 0;
+	DoesNotImmortalCount++;
+	FTimerHandle FuzeTimerHandle2;
+	GetWorld()->GetTimerManager().SetTimer(FuzeTimerHandle2, this, &AChel::RemoveImmortalServer, 4, false);
+}
+
+bool AChel::AddImmortalServer_Validate()
+{
+	return true;
+}
+
+void AChel::RemoveImmortalServer()
+{
+	DoesNotImmortalCount--;
+	if (DoesNotImmortalCount == 0)
+	{
+		DoesNotImmortal = 1;
+	}
+}
+
+void AChel::CreateKDAWidget_Implementation(int32 PlayerIndex, const FText& newNickName)
+{
+	if (IsPlayerOwner) {
+		UKDA_Stat* NewKDAWidget = Cast<UKDA_Stat>(CreateWidget(World, KDA_Stat_class));
+		NewKDAWidget->NickName->SetText(NickName);
+		NewKDAWidget->Deaths->SetText(FText::AsNumber(0));
+		NewKDAWidget->Kills->SetText(FText::AsNumber(0));
+		NewKDAWidget->PlayerIndex = PlayerIndex;
+
+		TabWidget->Tab_KD_Stat->AddChild(NewKDAWidget);
+		MyKDA_Stat[PlayerIndex] = NewKDAWidget;
+	}
+}
+
+void AChel::RefreshTabWidget_Implementation(int32 VictimIndex, int32 newKillerIndex)
+{
+	for (int i = 0; i < 4; ++i)
+	{
+		if (MyKDA_Stat[i]) {
+			if (MyKDA_Stat[i]->PlayerIndex == VictimIndex)
+			{
+				MyKDA_Stat[i]->DeathsCount++;
+				MyKDA_Stat[i]->Deaths->SetText(FText::AsNumber(MyKDA_Stat[i]->DeathsCount));
+			}
+
+			if (MyKDA_Stat[i]->PlayerIndex == newKillerIndex)
+			{
+				MyKDA_Stat[i]->KillsCount++;
+				MyKDA_Stat[i]->Kills->SetText(FText::AsNumber(MyKDA_Stat[i]->KillsCount));
+			}
+		}
+	}
+}
+
+void AChel::DeleteKDATab_Implementation(int32 newPlayerIndex)
+{
+	for (int i = 0; i < 4; ++i)
+	{
+		if (MyKDA_Stat[i]) {
+			if (MyKDA_Stat[i]->PlayerIndex == newPlayerIndex)
+			{
+				MyKDA_Stat[i]->RemoveFromParent();
+			}
+		}
+	}
 }
