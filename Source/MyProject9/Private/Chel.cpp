@@ -106,6 +106,8 @@ AChel::AChel()
 
 	DamageCollision->OnComponentBeginOverlap.AddDynamic(this, &AChel::OnOverlapBegin);
 
+	IsAlreadyCreated = false;
+	LastRAbilityIndex = -1;
 	DoesNotImmortal = 1;
 	CurrentStoneDamageBuffTempCount = 0;
 	StoneDamageBuffTempValue = 1.0f;
@@ -133,7 +135,7 @@ AChel::AChel()
 	bCanPossessWebCam = false;
 	bCanWalkingAndWatching = true;
 	IsAwake = true;
-
+	Index = -1;
 	bInEscMenu = false;
 //	OpenAreaObj = nullptr;
 	TickEnableGeneratorWidget = false;
@@ -292,19 +294,19 @@ void AChel::QAbilityDisable()
 
 void AChel::RAbilityEnable()
 {
-	if (RAbilityType != -1)
+	if (RAbilityTypeIndex != -1)
 	{
-		switch (RAbilityType)
+		switch (RAbilityPanel[RAbilityTypeIndex]->AbilityType)
 		{
 		case HealthPacket:
 		{
-			RAbilityType = -1;
+			UseRAbility();
 			RAbility_HealPacket();
 			break;
 		}
 		case SpeedBust:
 		{
-			RAbilityType = -1;
+			UseRAbility();
 			UseSpeedBust_Server();
 			SpeedBustValue = 300;
 			GetCharacterMovement()->MaxWalkSpeed = 800.f + SpeedBustValue;
@@ -315,17 +317,18 @@ void AChel::RAbilityEnable()
 		}
 		case StoneDamageBuffTemp:
 		{
+			UseRAbility();
 			AddStoneDamageBuffTemp();
-			RAbilityType = -1;
 			break;
 		}
 		case ImmortalPotion:
 		{
+			UseRAbility();
 			AddImmortalServer();
-			RAbilityType = -1;
 			break;
 		}
 		}
+
 	}
 }
 
@@ -363,9 +366,9 @@ void AChel::MyBeginPlay()
 {
 	UE_LOG(LogTemp, Warning, TEXT("StartPlaying"));
 	GS = Cast<AGS>(GetWorld()->GetGameState());
-
+	MyController = Cast<ABP_PlayerController>(GetController());
 	IsServerAuth = GetLocalRole() == ROLE_Authority;
-	IsPlayerOwner = UGameplayStatics::GetPlayerController(GetWorld(), 0) == GetController();
+	IsPlayerOwner = UGameplayStatics::GetPlayerController(GetWorld(), 0) == MyController;
 	StonePositionRight = StoneRight->GetRelativeLocation();
 	StonePositionLeft = StoneLeft->GetRelativeLocation();
 	World = GetWorld();
@@ -411,7 +414,7 @@ void AChel::MyBeginPlay()
 	if (IsServerAuth) {
 		TArray<AActor*>Players;
 		UGameplayStatics::GetAllActorsOfClass(World, AChel::StaticClass(), Players);
-		for (int i = 0; i < 4; i++)
+		for (int i = 0; i < Players.Num(); i++)
 		{
 			bool CanUseIndex = true;
 			for (auto& it : Players)
@@ -429,7 +432,7 @@ void AChel::MyBeginPlay()
 			}
 		}
 		GS->AmountOfPlayers++;
-		Cast<ABP_PlayerController>(GetController())->Index = Index;
+		MyController->Index = Index;
 		UE_LOG(LogTemp, Warning, TEXT("AmountOfPlayers increase Chel"))
 		for (int i = 0; i < 2; ++i)
 		{
@@ -453,10 +456,12 @@ void AChel::MyBeginPlay()
 		KillFeed = Cast<UKillFeed>(CreateWidget(World, KillFeed_class));
 		Widget_Note = Cast<UNoteWidget>(CreateWidget(World, NoteWidget_class));
 		WebCamUI = Cast<UWebCamWidget>(CreateWidget(World, WebCamWidget_class));
-		TabWidget = Cast<UTab>(CreateWidget(World, Tab_class));
+		MyInventory = Cast<UInventory>(CreateWidget(World, Inventory_class));
+		MyInventory->AddToViewport(2);
+		MyController->TabWidget = Cast<UTab>(CreateWidget(World, Tab_Stat_class));
+		MyController->TabWidget->AddToViewport(1);
 		WebCamUI->AddToViewport();
 		UserView->AddToViewport();
-		TabWidget->AddToViewport();
 		KillFeed->AddToViewport();
 		GeneratorView->AddToViewport();
 		GeneratorView->SetVisibility(ESlateVisibility::Hidden);
@@ -466,6 +471,12 @@ void AChel::MyBeginPlay()
 
 		UserView->Player = this;
 		UserView->AmmoLabel->SetText(FText::AsNumber((int32)Ammo));
+
+		TArray<UWidget*>InventoryRArray = MyInventory->RAbilityPanel->GetAllChildren();;
+		for (auto& it : InventoryRArray)
+		{
+			RAbilityPanel.Add(Cast<URAbilitySlot>(it));
+		}
 
 		TArray<AActor*>MainExis;
 		UGameplayStatics::GetAllActorsOfClass(World, AItemPromtArrow_MainExis::StaticClass(), MainExis);
@@ -498,12 +509,13 @@ void AChel::MyBeginPlay()
 		if (GI != nullptr) {
 			Sensetivity = GI->Sensetivity;
 			NickName = GI->NickName;
+			IsAlreadyCreated = true;
 			DeliverNicknameToServer(NickName);
 		}
 	}
 
 	if (IsServerAuth && IsPlayerOwner)
-		Cast<ABP_PlayerController>(GetController())->IsHost = true;
+		MyController->IsHost = true;
 }
 
 void AChel::PossessedBy(AController* NewController)
@@ -542,7 +554,6 @@ void AChel::Tick(float DeltaTime)
 					Cast<AChel>(Player)->RefreshWidgets(DoesHave, KillerIndex, Index);
 				}
 				DoesHave.Init(false, 3);
-				KillerIndex = -1;
 				bCanWalkingAndWatching = true;
 				KillPlayer();
 				return;
@@ -757,14 +768,17 @@ void AChel::Tick(float DeltaTime)
 //NicknameSetup----------------
 void AChel::DeliverNicknameToServer_Implementation(const FText& newNickName) {
 	GS->NickNames[Index] = newNickName;
+	NickName = newNickName;
 	TArray<AActor*>Players;
 	UGameplayStatics::GetAllActorsOfClass(World, AChel::StaticClass(), Players);
 	for (auto& it : Players)
 	{
 		AChel* CurChel = Cast<AChel>(it);
 		CurChel->CreateKDAWidget(Index, newNickName);
-		if (CurChel->Index != Index)
-			CreateKDAWidget(CurChel->Index, GS->NickNames[CurChel->Index]);
+		if (CurChel->Index != Index) {
+			CreateKDAWidget(CurChel->Index, CurChel->NickName);
+			UE_LOG(LogTemp, Warning, TEXT("12354"))
+		}
 	}
 }
 
@@ -783,8 +797,6 @@ void AChel::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &AChel::MyJump);
 	PlayerInputComponent->BindAction("Sprint", IE_Pressed, this, &AChel::StartSprint);
 	PlayerInputComponent->BindAction("Sprint", IE_Released, this, &AChel::StopSprint);
-	PlayerInputComponent->BindAction("TabStat", IE_Pressed, this, &AChel::ShowTab);
-	PlayerInputComponent->BindAction("TabStat", IE_Released, this, &AChel::UnShowTab);
 	PlayerInputComponent->BindAction("ThrowStoneRight", IE_Pressed, this, &AChel::ThrowStoneRight);
 	PlayerInputComponent->BindAction("ThrowStoneLeft", IE_Pressed, this, &AChel::ThrowStoneLeft);
 	PlayerInputComponent->BindAction("PickUp", IE_Pressed, this, &AChel::PickUp);
@@ -1300,19 +1312,6 @@ void AChel::StopSprint() {
 	StopSprint_Server();
 }
 //-----------------------------
-
-
-//KillFeed --------------------
-void AChel::ShowTab()
-{
-	TabWidget->SetVisibility(ESlateVisibility::Visible);
-}
-
-void AChel::UnShowTab()
-{
-	TabWidget->SetVisibility(ESlateVisibility::Hidden);	
-}
-
 //PlayStartingAnimation---------------------
 void AChel::PlaySpawnAnimationSleep_Implementation() {
 	for (int i = 0; i < TargetItemsStatic.Num(); ++i)
@@ -1344,7 +1343,7 @@ void AChel::SleepAnimation_End()
 	else
 	{
 		IsAwake = false;
-		Cast<ABP_PlayerController>(GetController())->PlayGameplayMusic();
+		MyController->PlayGameplayMusic();
 	}
 }
 
@@ -1604,8 +1603,11 @@ void AChel::PickUp() {
 				}
 				case HealthPacket:
 				{
-					RAbilityType = HealthPacket;
-					NewHaveItemServer(HealthPacket);
+					if (LastRAbilityIndex < 2)
+					{
+						NewRAbility(HealthPacket);
+						NewHaveItemServer(HealthPacket);
+					}
 					break;
 				}
 				case DoubleArmAbility:
@@ -1634,8 +1636,11 @@ void AChel::PickUp() {
 				}
 				case SpeedBust:
 				{
-					RAbilityType = SpeedBust;
-					NewHaveItemServer(RadiationAntidot);
+					if (LastRAbilityIndex < 2)
+					{
+						NewRAbility(SpeedBust);
+						NewHaveItemServer(RadiationAntidot);
+					}
 					break;
 				}
 				case VentilaciaRubilnick:
@@ -1651,14 +1656,20 @@ void AChel::PickUp() {
 				}
 				case StoneDamageBuffTemp:
 				{
-					RAbilityType = StoneDamageBuffTemp;
-					NewHaveItemServer(StoneDamageBuffTemp);
+					if (LastRAbilityIndex < 2)
+					{
+						NewRAbility(StoneDamageBuffTemp);
+						NewHaveItemServer(StoneDamageBuffTemp);
+					}
 					break;
 				}
 				case ImmortalPotion:
 				{
-					RAbilityType = ImmortalPotion;
-					NewHaveItemServer(ImmortalPotion);
+					if (LastRAbilityIndex < 2)
+					{
+						NewRAbility(ImmortalPotion);
+						NewHaveItemServer(ImmortalPotion);
+					}
 					break;
 				}
 				}
@@ -2109,7 +2120,7 @@ void AChel::KillPlayer()
 		Widget_Note->SetVisibility(ESlateVisibility::Hidden);
 	IsInGame = false;
 	PlaySpawnAnimationSleep();
-
+	KillerIndex = -1;
 	FTimerHandle TimerHandle;
 	World->GetTimerManager().SetTimer(TimerHandle, this, &AChel::SpawnPlayer, SPAWN_TIME, false);
 }
@@ -2340,7 +2351,7 @@ void AChel::AreaClosedUpdate_Implementation(int32 EscapeWay)
 
 void AChel::PossessToSpectator()
 {
-	Cast<ABP_PlayerController>(GetController())->DisableOutline();
+	MyController->DisableOutline();
 	int iteration = 0;
 	for (iteration = 0; iteration < 8; iteration += 2)
 	{
@@ -2368,7 +2379,7 @@ void AChel::PossessToSpectator()
 		}
 		if (!GS->Spectators[iteration]->IsKilled)
 		{
-			GetController()->Possess(GS->Spectators[iteration]);
+			MyController->Possess(GS->Spectators[iteration]);
 			Destroy();
 			break;
 		}
@@ -3013,14 +3024,14 @@ void AChel::RemoveImmortalServer()
 
 void AChel::CreateKDAWidget_Implementation(int32 PlayerIndex, const FText& newNickName)
 {
-	if (IsPlayerOwner) {
+	if (IsAlreadyCreated && newNickName.ToString() != "") {
 		UKDA_Stat* NewKDAWidget = Cast<UKDA_Stat>(CreateWidget(World, KDA_Stat_class));
-		NewKDAWidget->NickName->SetText(NickName);
+		NewKDAWidget->NickName->SetText(newNickName);
 		NewKDAWidget->Deaths->SetText(FText::AsNumber(0));
 		NewKDAWidget->Kills->SetText(FText::AsNumber(0));
 		NewKDAWidget->PlayerIndex = PlayerIndex;
 
-		TabWidget->Tab_KD_Stat->AddChild(NewKDAWidget);
+		MyController->TabWidget->Tab_KD_Stat->AddChild(NewKDAWidget);
 		MyKDA_Stat[PlayerIndex] = NewKDAWidget;
 	}
 }
@@ -3056,4 +3067,64 @@ void AChel::DeleteKDATab_Implementation(int32 newPlayerIndex)
 			}
 		}
 	}
+}
+
+void AChel::ShowInventory()
+{
+	MyInventory->SetVisibility(ESlateVisibility::Visible);
+}
+
+void AChel::UnShowInventory()
+{
+	MyInventory->SetVisibility(ESlateVisibility::Hidden);
+}
+
+void AChel::UseRAbility()
+{
+	RAbilityPanel[RAbilityTypeIndex]->Count--;
+	RAbilityPanel[RAbilityTypeIndex]->CountText->SetText(FText::AsNumber(RAbilityPanel[LastRAbilityIndex]->Count));
+	if (RAbilityPanel[RAbilityTypeIndex]->Count == 0)
+	{
+		LastRAbilityIndex = RAbilityTypeIndex - 1;
+		for (int i = RAbilityTypeIndex + 1; i < RAbilityPanel.Num(); i++)
+		{
+			if (RAbilityPanel[i]->Count > 0) 
+			{
+				RAbilityPanel[i - 1]->Count = RAbilityPanel[i]->Count;
+				RAbilityPanel[i - 1]->AbilityType = RAbilityPanel[i]->AbilityType;
+				//Вставить картинку
+				RAbilityPanel[i - 1]->CountText->SetText(FText::AsNumber(RAbilityPanel[i - 1]->Count));
+				RAbilityPanel[i - 1]->InArrayIndex = i - 1;
+				LastRAbilityIndex++;
+			}
+		}
+		if (LastRAbilityIndex < (RAbilityPanel.Num() - 1))
+		{
+			RAbilityPanel[LastRAbilityIndex + 1]->Count = 0;
+		}
+		if (LastRAbilityIndex < RAbilityTypeIndex)
+			RAbilityTypeIndex = LastRAbilityIndex;
+		RAbilityPanel[LastRAbilityIndex + 1]->SetVisibility(ESlateVisibility::Hidden);
+	}
+}
+
+bool AChel::NewRAbility(int32 NewAbility)
+{
+	if (LastRAbilityIndex == -1)
+	{
+		RAbilityTypeIndex = 0;
+	}
+	if (LastRAbilityIndex != 2)
+	{
+		LastRAbilityIndex++;
+		RAbilityPanel[LastRAbilityIndex]->AbilityType = NewAbility;
+		RAbilityPanel[LastRAbilityIndex]->InArrayIndex = LastRAbilityIndex;
+		RAbilityPanel[LastRAbilityIndex]->Count = 1;
+		RAbilityPanel[LastRAbilityIndex]->CountText->SetText(FText::AsNumber(1));
+		//Вставить картинку
+		RAbilityPanel[LastRAbilityIndex]->SetVisibility(ESlateVisibility::Visible);
+
+		return true;
+	}
+	return false;
 }

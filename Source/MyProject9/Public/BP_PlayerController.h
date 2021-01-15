@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerController.h"
 #include "UI/FinalMenu.h"
+#include "UI/Tab.h"
 
 #include "BP_PlayerController.generated.h"
 
@@ -19,7 +20,11 @@ class MYPROJECT9_API ABP_PlayerController : public APlayerController
 	GENERATED_BODY()
 	
 public:
+	virtual void SetupInputComponent() override;
+
 	ABP_PlayerController();
+	void ShowTab();
+	void UnShowTab();
 
 	UFUNCTION(Client, Reliable)
 		void AddFinalMenu();
@@ -60,4 +65,6 @@ public:
 	UFinalMenu* FinalMenu;
 	UPROPERTY(BlueprintReadOnly)
 		int32 Index;
+
+	UTab* TabWidget;
 };

@@ -4,6 +4,7 @@
 #include "BP_PlayerController.h"
 #include "GI.h"
 #include "GS.h"
+#include "Chel.h"
 #include "Kismet/GameplayStatics.h"
 
 ABP_PlayerController::ABP_PlayerController()
@@ -24,6 +25,39 @@ void ABP_PlayerController::RefreshPlayersVoteCount_Implementation(int32 Agreed, 
 {
 	FText NewText = FText::Format(FText::FromString(TEXT("Play More {0}/{1}")), Agreed, Amount);
 	FinalMenu->TB_PlayMore->SetText(NewText);
+}
+
+void ABP_PlayerController::SetupInputComponent()
+{
+	Super::SetupInputComponent();
+
+	InputComponent->BindAction("TabStat", IE_Pressed, this, &ABP_PlayerController::ShowTab);
+	InputComponent->BindAction("TabStat", IE_Released, this, &ABP_PlayerController::UnShowTab);
+}
+
+//KillFeed --------------------
+void ABP_PlayerController::ShowTab()
+{
+	bShowMouseCursor = true;
+	TabWidget->SetVisibility(ESlateVisibility::Visible);
+	FInputModeGameAndUI InputUI;
+	InputUI.SetWidgetToFocus(Cast<AChel>(GetPawn())->MyInventory->TakeWidget());
+	InputUI.SetLockMouseToViewportBehavior(EMouseLockMode::LockAlways);
+	SetInputMode(InputUI);
+	if (Cast<AChel>(GetPawn())) {
+		Cast<AChel>(GetPawn())->ShowInventory();
+	}
+}
+
+void ABP_PlayerController::UnShowTab()
+{
+	bShowMouseCursor = false;
+	TabWidget->SetVisibility(ESlateVisibility::Hidden);
+	FInputModeGameOnly GameUI;
+	SetInputMode(GameUI);
+	if (Cast<AChel>(GetPawn())) {
+		Cast<AChel>(GetPawn())->UnShowInventory();
+	}
 }
 
 void ABP_PlayerController::AddFinalMenu_Implementation()

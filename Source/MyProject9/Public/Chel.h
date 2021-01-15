@@ -7,7 +7,7 @@
 #include "Net/UnrealNetwork.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Blueprint/WidgetLayoutLibrary.h"
-#include "UI/Tab.h"
+#include "UI/RAbilitySlot.h"
 #include "UI/KDA_Stat.h"
 #include "Spectator.h"
 #include "FinalMenuPawn.h"
@@ -19,6 +19,7 @@
 #include "WebCamLocker.h"
 #include "ClickButton.h"
 #include "UI/KillFeed.h"
+#include "UI/Tab.h"
 #include "Components/SceneComponent.h"
 #include "ItemPromtArrow_MainExis.h"
 #include "GI.h"
@@ -34,6 +35,7 @@
 #include "UI/GeneratorWidget.h"
 #include "Components/TimelineComponent.h"
 #include "UI/NoteWidget.h"
+#include "UI/Inventory.h"
 #include "UI/TargetArrow.h"
 #include "Components/CapsuleComponent.h"
 
@@ -70,8 +72,6 @@ protected:
 	void MyJump();
 	void StartSprint();
 	void StopSprint();
-	void ShowTab();
-	void UnShowTab();
 
 	void EnableRentgen();
 	void DisableRentgen();
@@ -95,9 +95,12 @@ protected:
 	UFUNCTION(Server, Reliable, WithValidation)
 		void UpdateSpectating_Right_Server();
 public:
+	void ShowInventory();
+	void UnShowInventory();
 	void SpawnPlayer();
 	void PossessedBy(AController* NewController) override;
-
+	void UseRAbility();
+	bool NewRAbility(int32 NewAbility);
 
 	void UpdateTargetArrowPosition(AActor* TargetObj, UTargetArrow* ArrowWidget); //обновляем позицию стрелки-подсказки на экране
 	void AddTargetArrowStatic(AActor* TargetObj); //добавляет стрелку-подсказку на экран(стрелка прикрепляется к определенному объекту)
@@ -427,7 +430,9 @@ public:
 	UPROPERTY(EditAnywhere, Category = "UI HUD")
 		TSubclassOf<UKDA_Stat> KDA_Stat_class;
 	UPROPERTY(EditAnywhere, Category = "UI HUD")
-		TSubclassOf<UTab> Tab_class;
+		TSubclassOf<UTab> Tab_Stat_class;
+	UPROPERTY(EditAnywhere, Category = "UI HUD")
+		TSubclassOf<UInventory> Inventory_class;
 	UPROPERTY(EditAnywhere, Category = "UI HUD")
 		TSubclassOf<UKillFeed> KillFeed_class;
 	UPROPERTY(EditAnywhere, Category = "UI HUD") //класс стрелки подсказки
@@ -437,6 +442,7 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite) //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 		UUserView* UserView;
 	UKillFeed* KillFeed;
+	UInventory* MyInventory;
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	UWebCamWidget* WebCamUI;
 	//GameInstance + GameState
@@ -519,7 +525,7 @@ public:
 	int KillerIndex;
 
 	int32 QAbilityType;
-	int32 RAbilityType;
+	int32 RAbilityTypeIndex;
 
 	int32 ShieldsCount;
 	int32 StoneDamageBuffCount;
@@ -568,10 +574,11 @@ public:
 	TArray<AActor*> TargetItemsDynamic; //массив с предметами, к которым привязаны стрелки-подсказки
 
 	TArray<UKDA_Stat*>MyKDA_Stat;
-	UTab* TabWidget;
-
+	TArray<URAbilitySlot*>RAbilityPanel;
 	FTransform MeshTrans;
 	FRotator BaseRotation;
+
+	int32 LastRAbilityIndex;
 
 	AGeneratorArea* GenAreaObj;
 	UGeneratorWidget* GeneratorView;
@@ -579,6 +586,8 @@ public:
 	APickableItem* LastOutlineItem;
 
 	AWebCamLocker* LastWebCamLocker;
+
+	ABP_PlayerController* MyController;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	UNoteWidget* Widget_Note;
@@ -595,4 +604,5 @@ public:
 		bool IsRentgenRender;
 
 	bool DoubleArmThrowing;
+	bool IsAlreadyCreated;
 };
