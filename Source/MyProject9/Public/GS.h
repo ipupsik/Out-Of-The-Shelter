@@ -154,6 +154,7 @@ public:
 	int CurrentKeyShelter;
 	int CurrentBoltorez;
 	int32 VentilaciaRubilnickCount;
+	int32 CanalizaciaNasosCount;
 
 	int CurrentButtonCount;
 

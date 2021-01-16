@@ -8,6 +8,7 @@
 #include "AreaCollision.h"
 #include "GM.h"
 #include "Cache_Key.h"
+#include "DezinfectorNasos.h"
 #include "WebCamPoint.h"
 #include "BP_VentilaciaRubilnick.h"
 #include "PromptCollisionArea.h"
@@ -95,6 +96,10 @@ void AGS::BeginPlay()
 		TArray<AActor*>VentilaciaRubilnick;
 		UGameplayStatics::GetAllActorsOfClass(GetWorld(), ABP_VentilaciaRubilnick::StaticClass(), VentilaciaRubilnick);
 		VentilaciaRubilnickCount = VentilaciaRubilnick.Num();
+
+		TArray<AActor*>CanalizaciaNasos;
+		UGameplayStatics::GetAllActorsOfClass(GetWorld(), ADezinfectorNasos::StaticClass(), CanalizaciaNasos);
+		CanalizaciaNasosCount = CanalizaciaNasos.Num();
 
 		//----------------------------Cache Items
 
