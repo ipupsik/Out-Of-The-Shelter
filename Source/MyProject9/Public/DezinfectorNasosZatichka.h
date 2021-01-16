@@ -6,8 +6,9 @@
 #include "GameFramework/Actor.h"
 #include "Components/StaticMeshComponent.h"
 #include "Runtime/Engine/Classes/Particles/ParticleSystemComponent.h"
-#include "DezinfectorNasos.h"
 #include "DezinfectorNasosZatichka.generated.h"
+
+class ADezinfectorNasos;
 
 UCLASS()
 class MYPROJECT9_API ADezinfectorNasosZatichka : public AActor
@@ -20,9 +21,9 @@ public:
 
 	void Interact();
 
-	UFUNCTION(BlueprintImplementation)
+	UFUNCTION(BlueprintImplementableEvent)
 		void SwitchAnimUp();
-	UFUNCTION(BlueprintImplementation)
+	UFUNCTION(BlueprintImplementableEvent)
 		void SwitchAnimDown();
 
 public:	

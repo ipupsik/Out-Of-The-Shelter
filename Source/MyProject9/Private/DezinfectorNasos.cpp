@@ -40,7 +40,7 @@ void ADezinfectorNasos::TurnOn()
 	TurnOnMulticast();
 }
 
-void ADezinfectorNasos::TurnOnMulticast()
+void ADezinfectorNasos::TurnOnMulticast_Implementation()
 {
 	bIsAvaliable = false;
 	Lampochka->SetMaterial(0, MaterialLampochkaOn);

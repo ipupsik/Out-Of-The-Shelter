@@ -2,6 +2,7 @@
 
 
 #include "DezinfectorNasosZatichka.h"
+#include "DezinfectorNasos.h"
 
 // Sets default values
 ADezinfectorNasosZatichka::ADezinfectorNasosZatichka()
