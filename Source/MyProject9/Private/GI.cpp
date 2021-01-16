@@ -5,6 +5,5 @@
 
 void UGI::Init() {
 	Super::Init();
-
 }
 

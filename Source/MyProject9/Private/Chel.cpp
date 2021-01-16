@@ -515,7 +515,10 @@ void AChel::MyBeginPlay()
 	}
 
 	if (IsServerAuth && IsPlayerOwner)
+	{
 		MyController->IsHost = true;
+		GS->MaxPlayersCount = GI->MaxPlayersCount;
+	}
 }
 
 void AChel::PossessedBy(AController* NewController)
@@ -1322,6 +1325,8 @@ void AChel::PlaySpawnAnimationSleep_Implementation() {
 	{
 		RemoveTargetArrowDynamic(TargetArrowsDynamic[i]);
 	}
+	UserView->RadiationPoints->SetPercent(1.0f);
+	UserView->DarkScreen->SetRenderOpacity(1.0f);
 	ResetCacheKeys();
 	if (bCanPossessWebCam)
 		CanThrowStone = false;
@@ -3092,7 +3097,7 @@ void AChel::UseRAbility()
 			{
 				RAbilityPanel[i - 1]->Count = RAbilityPanel[i]->Count;
 				RAbilityPanel[i - 1]->AbilityType = RAbilityPanel[i]->AbilityType;
-				//Вставить картинку
+				RAbilityPanel[i - 1]->AbilityImage->SetBrush(RAbilityPanel[i]->AbilityImage->Brush);
 				RAbilityPanel[i - 1]->CountText->SetText(FText::AsNumber(RAbilityPanel[i - 1]->Count));
 				RAbilityPanel[i - 1]->InArrayIndex = i - 1;
 				LastRAbilityIndex++;
@@ -3103,7 +3108,10 @@ void AChel::UseRAbility()
 			RAbilityPanel[LastRAbilityIndex + 1]->Count = 0;
 		}
 		if (LastRAbilityIndex < RAbilityTypeIndex)
+		{
 			RAbilityTypeIndex = LastRAbilityIndex;
+			SetCurRAbilityUserView();
+		}
 		RAbilityPanel[LastRAbilityIndex + 1]->SetVisibility(ESlateVisibility::Hidden);
 	}
 }
@@ -3121,10 +3129,30 @@ bool AChel::NewRAbility(int32 NewAbility)
 		RAbilityPanel[LastRAbilityIndex]->InArrayIndex = LastRAbilityIndex;
 		RAbilityPanel[LastRAbilityIndex]->Count = 1;
 		RAbilityPanel[LastRAbilityIndex]->CountText->SetText(FText::AsNumber(1));
-		//Вставить картинку
+		FSlateBrush NewBrush;
+		// Сюда надо вставить картинку, предмета, который мы подобрали NewBrush.SetResourceObject();
+		RAbilityPanel[LastRAbilityIndex]->AbilityImage->SetBrush(NewBrush);
 		RAbilityPanel[LastRAbilityIndex]->SetVisibility(ESlateVisibility::Visible);
 
+		if (LastRAbilityIndex == 0)
+		{
+			SetCurRAbilityUserView();
+		}
 		return true;
 	}
 	return false;
+}
+
+void AChel::SetCurRAbilityUserView()
+{
+	if (RAbilityTypeIndex != -1) {
+		UserView->CurRSlot->AbilityImage->SetBrush(RAbilityPanel[RAbilityTypeIndex]->AbilityImage->Brush);
+		UserView->CurRSlot->CountText->SetText(FText::AsNumber(RAbilityPanel[RAbilityTypeIndex]->Count));
+	}
+	else
+	{
+		//FSlateBrush NewBrush = Дефолтная картинка для R Способности;
+		//UserView->CurRSlot->AbilityImage->SetBrush(NewBrush);
+		UserView->CurRSlot->CountText->SetText(FText::AsNumber(0));
+	}
 }

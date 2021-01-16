@@ -101,6 +101,7 @@ public:
 	void PossessedBy(AController* NewController) override;
 	void UseRAbility();
 	bool NewRAbility(int32 NewAbility);
+	void SetCurRAbilityUserView();
 
 	void UpdateTargetArrowPosition(AActor* TargetObj, UTargetArrow* ArrowWidget); //обновляем позицию стрелки-подсказки на экране
 	void AddTargetArrowStatic(AActor* TargetObj); //добавляет стрелку-подсказку на экран(стрелка прикрепляется к определенному объекту)
@@ -574,6 +575,7 @@ public:
 	TArray<AActor*> TargetItemsDynamic; //массив с предметами, к которым привязаны стрелки-подсказки
 
 	TArray<UKDA_Stat*>MyKDA_Stat;
+	UPROPERTY(BlueprintReadWrite)
 	TArray<URAbilitySlot*>RAbilityPanel;
 	FTransform MeshTrans;
 	FRotator BaseRotation;

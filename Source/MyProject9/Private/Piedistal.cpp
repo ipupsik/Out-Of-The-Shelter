@@ -35,7 +35,7 @@ void APiedistal::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* Oth
 			++PlayersCount;
 			if (PlayersCount == 1) {
 				GS->AcceptPiedistalAmount++;
-				if (GS->AcceptPiedistalAmount == MAX_PLAYER_COUNT) {
+				if (GS->AcceptPiedistalAmount == GS->MaxPlayersCount) {
 					//UE_LOG(LogTemp, Warning, TEXT("11"));
 					GS->GameBegin();
 				}
@@ -55,7 +55,7 @@ void APiedistal::OnOverlapEnd(UPrimitiveComponent* OverlappedComp, AActor* Other
 			if (PlayersCount == 0)
 				GS->AcceptPiedistalAmount--;
 			else if (PlayersCount == 1)
-				if (GS->AcceptPiedistalAmount == MAX_PLAYER_COUNT) {
+				if (GS->AcceptPiedistalAmount == GS->MaxPlayersCount) {
 					UE_LOG(LogTemp, Warning, TEXT(""));
 					GS->GameBegin();
 				}

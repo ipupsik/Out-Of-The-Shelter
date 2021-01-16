@@ -9,6 +9,7 @@
 #include "Components/Image.h"
 #include "Components/WidgetSwitcher.h"
 #include "Components/VerticalBox.h"
+#include "UI/RAbilitySlot.h"
 #include "Components/HorizontalBox.h"
 #include "Animation/WidgetAnimation.h"
 #include "Components/HorizontalBoxSlot.h"
@@ -114,6 +115,9 @@ public:
 	
 	UPROPERTY(EditAnywhere, Category = "UI HUD")
 		TSubclassOf<UUserWidget> FreezeImage;
+
+	UPROPERTY(meta = (BindWidget))
+		URAbilitySlot* CurRSlot;
 
 	void NativeConstruct() override;
 

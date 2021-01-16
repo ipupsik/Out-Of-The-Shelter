@@ -18,8 +18,6 @@
 
 class ASpectator;
 
-#define MAX_PLAYER_COUNT 1
-
 #define MIN_COUNT_KeyShelter 4
 #define MIN_COUNT_Boltorez 4
 #define MIN_COUNT_Otvertka 4
@@ -200,4 +198,5 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		TArray<FTransform> RentgenGlassTransform;
 
+	int32 MaxPlayersCount;
 };

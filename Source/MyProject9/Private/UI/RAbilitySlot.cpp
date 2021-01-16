@@ -16,6 +16,7 @@ void URAbilitySlot::NativeConstruct() {
 
 void URAbilitySlot::SelectRAbility()
 {
-	Cast<AChel>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0))->RAbilityTypeIndex = InArrayIndex;
-	UE_LOG(LogTemp, Warning, TEXT("AbilityType - %d"), AbilityType)
+	AChel* MyChel = Cast<AChel>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
+	MyChel->RAbilityTypeIndex = InArrayIndex;
+	MyChel->SetCurRAbilityUserView();
 }

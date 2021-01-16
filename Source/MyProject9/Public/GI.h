@@ -26,4 +26,6 @@ public:
 		float Sensetivity;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		FText NickName;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		int32 MaxPlayersCount;
 };

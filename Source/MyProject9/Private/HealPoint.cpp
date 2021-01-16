@@ -21,21 +21,6 @@ AHealPoint::AHealPoint()
 	IsEnabled = true;
 }
 
-// Called when the game starts or when spawned
-void AHealPoint::BeginPlay()
-{
-	Super::BeginPlay();
-	
-}
-
-// Called every frame
-void AHealPoint::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-
-	AddActorLocalRotation({ 0.0f, DeltaTime * 50, 0.0f});
-}
-
 void AHealPoint::HiddenMulticast_Implementation(bool NewHidden)
 {
 	SetActorHiddenInGame(NewHidden);

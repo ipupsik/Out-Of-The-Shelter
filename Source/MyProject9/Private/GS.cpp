@@ -142,47 +142,51 @@ void AGS::BeginPlay()
 			CacheItems_Stuff_IsAvaliable[ArrayIndex] = false;
 		}
 		
-		CurrentBoltorez = MIN_COUNT_Boltorez + FMath::Rand() % (MAX_COUNT_Boltorez - MIN_COUNT_Boltorez + 1);
-		for (int i = 0; i < CurrentBoltorez; ++i) {
-			int ArrayIndex = FMath::Rand() % CacheItems_Stuff_IsAvaliable.Num();
-			while (!CacheItems_Stuff_IsAvaliable[ArrayIndex])
-			{
-				ArrayIndex = FMath::Rand() % CacheItems_Stuff_IsAvaliable.Num();
+		if (MaxPlayersCount == 4) {
+			CurrentBoltorez = MIN_COUNT_Boltorez + FMath::Rand() % (MAX_COUNT_Boltorez - MIN_COUNT_Boltorez + 1);
+			for (int i = 0; i < CurrentBoltorez; ++i) {
+				int ArrayIndex = FMath::Rand() % CacheItems_Stuff_IsAvaliable.Num();
+				while (!CacheItems_Stuff_IsAvaliable[ArrayIndex])
+				{
+					ArrayIndex = FMath::Rand() % CacheItems_Stuff_IsAvaliable.Num();
+				}
+				AActor* NewItem = GetWorld()->SpawnActor<AActor>(Boltorez);
+				FAttachmentTransformRules AttachmentRules = FAttachmentTransformRules(EAttachmentRule::KeepRelative, true);
+				NewItem->AttachToActor(Caches[ArrayIndex], AttachmentRules);
+				NewItem->SetActorScale3D(BoltorezTransform[Caches[ArrayIndex]->CacheIndex].GetScale3D());
+				FVector NewLocation;
+				NewLocation.X = BoltorezTransform[Caches[ArrayIndex]->CacheIndex].GetLocation().X / abs(Caches[ArrayIndex]->GetActorScale3D().X);
+				NewLocation.Y = BoltorezTransform[Caches[ArrayIndex]->CacheIndex].GetLocation().Y / abs(Caches[ArrayIndex]->GetActorScale3D().Y);
+				NewLocation.Z = BoltorezTransform[Caches[ArrayIndex]->CacheIndex].GetLocation().Z / abs(Caches[ArrayIndex]->GetActorScale3D().Z);
+				NewItem->AddActorLocalOffset(NewLocation);
+				NewItem->AddActorLocalRotation(BoltorezTransform[Caches[ArrayIndex]->CacheIndex].GetRotation());
+				Cast<APickableItem>(NewItem)->EnabledArrayIndex = ArrayIndex;
+				CacheItems_Stuff_IsAvaliable[ArrayIndex] = false;
 			}
-			AActor* NewItem = GetWorld()->SpawnActor<AActor>(Boltorez);
-			FAttachmentTransformRules AttachmentRules = FAttachmentTransformRules(EAttachmentRule::KeepRelative, true);
-			NewItem->AttachToActor(Caches[ArrayIndex], AttachmentRules);
-			NewItem->SetActorScale3D(BoltorezTransform[Caches[ArrayIndex]->CacheIndex].GetScale3D());
-			FVector NewLocation;
-			NewLocation.X = BoltorezTransform[Caches[ArrayIndex]->CacheIndex].GetLocation().X / abs(Caches[ArrayIndex]->GetActorScale3D().X);
-			NewLocation.Y = BoltorezTransform[Caches[ArrayIndex]->CacheIndex].GetLocation().Y / abs(Caches[ArrayIndex]->GetActorScale3D().Y);
-			NewLocation.Z = BoltorezTransform[Caches[ArrayIndex]->CacheIndex].GetLocation().Z / abs(Caches[ArrayIndex]->GetActorScale3D().Z);
-			NewItem->AddActorLocalOffset(NewLocation);
-			NewItem->AddActorLocalRotation(BoltorezTransform[Caches[ArrayIndex]->CacheIndex].GetRotation());
-			Cast<APickableItem>(NewItem)->EnabledArrayIndex = ArrayIndex;
-			CacheItems_Stuff_IsAvaliable[ArrayIndex] = false;
 		}
 
-		CurrentOtvertka = MIN_COUNT_Otvertka + FMath::Rand() % (MAX_COUNT_Otvertka - MIN_COUNT_Otvertka + 1);
-		for (int i = 0; i < CurrentOtvertka; ++i) {
-			int ArrayIndex = FMath::Rand() % CacheItems_Stuff_IsAvaliable.Num();
-			while (!CacheItems_Stuff_IsAvaliable[ArrayIndex])
-			{
-				ArrayIndex = FMath::Rand() % CacheItems_Stuff_IsAvaliable.Num();
-			}
+		if (MaxPlayersCount >= 3) {
+			CurrentOtvertka = MIN_COUNT_Otvertka + FMath::Rand() % (MAX_COUNT_Otvertka - MIN_COUNT_Otvertka + 1);
+			for (int i = 0; i < CurrentOtvertka; ++i) {
+				int ArrayIndex = FMath::Rand() % CacheItems_Stuff_IsAvaliable.Num();
+				while (!CacheItems_Stuff_IsAvaliable[ArrayIndex])
+				{
+					ArrayIndex = FMath::Rand() % CacheItems_Stuff_IsAvaliable.Num();
+				}
 
-			AActor* NewItem = GetWorld()->SpawnActor<AActor>(Otvertka);
-			FAttachmentTransformRules AttachmentRules = FAttachmentTransformRules(EAttachmentRule::KeepRelative, true);
-			NewItem->AttachToActor(Caches[ArrayIndex], AttachmentRules);
-			NewItem->SetActorScale3D(OtvertkaTransform[Caches[ArrayIndex]->CacheIndex].GetScale3D());
-			FVector NewLocation;
-			NewLocation.X = OtvertkaTransform[Caches[ArrayIndex]->CacheIndex].GetLocation().X / abs(Caches[ArrayIndex]->GetActorScale3D().X);
-			NewLocation.Y = OtvertkaTransform[Caches[ArrayIndex]->CacheIndex].GetLocation().Y / abs(Caches[ArrayIndex]->GetActorScale3D().Y);
-			NewLocation.Z = OtvertkaTransform[Caches[ArrayIndex]->CacheIndex].GetLocation().Z / abs(Caches[ArrayIndex]->GetActorScale3D().Z);
-			NewItem->AddActorLocalOffset(NewLocation);
-			NewItem->AddActorLocalRotation(OtvertkaTransform[Caches[ArrayIndex]->CacheIndex].GetRotation());
-			Cast<APickableItem>(NewItem)->EnabledArrayIndex = ArrayIndex;
-			CacheItems_Stuff_IsAvaliable[ArrayIndex] = false;
+				AActor* NewItem = GetWorld()->SpawnActor<AActor>(Otvertka);
+				FAttachmentTransformRules AttachmentRules = FAttachmentTransformRules(EAttachmentRule::KeepRelative, true);
+				NewItem->AttachToActor(Caches[ArrayIndex], AttachmentRules);
+				NewItem->SetActorScale3D(OtvertkaTransform[Caches[ArrayIndex]->CacheIndex].GetScale3D());
+				FVector NewLocation;
+				NewLocation.X = OtvertkaTransform[Caches[ArrayIndex]->CacheIndex].GetLocation().X / abs(Caches[ArrayIndex]->GetActorScale3D().X);
+				NewLocation.Y = OtvertkaTransform[Caches[ArrayIndex]->CacheIndex].GetLocation().Y / abs(Caches[ArrayIndex]->GetActorScale3D().Y);
+				NewLocation.Z = OtvertkaTransform[Caches[ArrayIndex]->CacheIndex].GetLocation().Z / abs(Caches[ArrayIndex]->GetActorScale3D().Z);
+				NewItem->AddActorLocalOffset(NewLocation);
+				NewItem->AddActorLocalRotation(OtvertkaTransform[Caches[ArrayIndex]->CacheIndex].GetRotation());
+				Cast<APickableItem>(NewItem)->EnabledArrayIndex = ArrayIndex;
+				CacheItems_Stuff_IsAvaliable[ArrayIndex] = false;
+			}
 		}
 
 		int32 CurrentRentgen = MIN_COUNT_Rentgen + FMath::Rand() % (MAX_COUNT_Rentgen - MIN_COUNT_Rentgen + 1);
