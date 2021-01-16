@@ -7,6 +7,7 @@
 #include "Materials/Material.h"
 #include "Components/StaticMeshComponent.h"
 #include "DezinfectorNasosZatichka.h"
+#include "Components/SceneComponent.h"
 #include "DezinfectorNasos.generated.h"
 
 UCLASS()
@@ -28,9 +29,12 @@ public:
 		UStaticMeshComponent* Nasos;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Player")
+		USceneComponent* Scene;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Player")
 		UStaticMeshComponent* Lampochka;
 
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(EditAnywhere)
 		UMaterial* MaterialLampochkaOn;
 
 	UPROPERTY(EditAnywhere)

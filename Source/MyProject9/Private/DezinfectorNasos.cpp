@@ -10,22 +10,33 @@ ADezinfectorNasos::ADezinfectorNasos()
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 	bIsAvaliable = true;
+
+	Scene = CreateDefaultSubobject<USceneComponent>(TEXT("Scene"));
+	Scene->SetupAttachment(RootComponent);
+
+	Nasos = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Nasos"));
+	Nasos->SetupAttachment(Scene);
+
+	Lampochka = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Lampochka"));
+	Lampochka->SetupAttachment(Scene);
 }
 
 void ADezinfectorNasos::BeginPlay()
 {
-	CurTurnOffCount = 1 + FMath::Rand() % ArrayOfZatichki.Num();
-	for (int i = 0; i < CurTurnOffCount; i++)
-	{
-		int32 NewIndex = FMath::Rand() % ArrayOfZatichki.Num();
-		while (!ArrayOfZatichki[NewIndex]->DoesLock)
+	if (GetLocalRole() == ROLE_Authority) {
+		CurTurnOffCount = 1 + FMath::Rand() % ArrayOfZatichki.Num();
+		for (int i = 0; i < CurTurnOffCount; i++)
 		{
-			NewIndex++;
-			if (NewIndex == ArrayOfZatichki.Num())
-				NewIndex = 0;
+			int32 NewIndex = FMath::Rand() % ArrayOfZatichki.Num();
+			while (!ArrayOfZatichki[NewIndex]->DoesLock)
+			{
+				NewIndex++;
+				if (NewIndex == ArrayOfZatichki.Num())
+					NewIndex = 0;
+			}
+			ArrayOfZatichki[NewIndex]->DoesLock = false;
+			ArrayOfZatichki[NewIndex]->SwitchAnimUp();
 		}
-		ArrayOfZatichki[NewIndex]->DoesLock = false;
-		ArrayOfZatichki[NewIndex]->SwitchAnimUp();
 	}
 }
 

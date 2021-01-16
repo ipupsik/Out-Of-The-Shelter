@@ -10,6 +10,7 @@
 #include "UI/RAbilitySlot.h"
 #include "UI/KDA_Stat.h"
 #include "Spectator.h"
+#include "DezinfectorNasosZatichka.h"
 #include "FinalMenuPawn.h"
 #include "AmmoPoint.h"
 #include "Cache.h"
@@ -582,6 +583,7 @@ public:
 
 	int32 LastRAbilityIndex;
 
+	ADezinfectorNasosZatichka* LastZatichka;
 	AGeneratorArea* GenAreaObj;
 	UGeneratorWidget* GeneratorView;
 

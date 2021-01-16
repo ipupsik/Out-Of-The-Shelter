@@ -51,6 +51,7 @@ enum PickUpType {
 	VentilaciaRubilnick,
 	StoneDamageBuffTemp,
 	ImmortalPotion,
+	NasosZatichka,
 };
 
 enum CacheType {
@@ -702,8 +703,18 @@ void AChel::Tick(float DeltaTime)
 										LastWebCamLocker = TracedWebCamLocker;
 									}
 									else
-										isTracedBad = true; //Мы не попали в нужный нам предмет
-
+									{
+										ADezinfectorNasosZatichka* TracedNasosZatichka = Cast<ADezinfectorNasosZatichka>(HittableActor);
+										if (TracedNasosZatichka)
+										{
+											bLineTrace_is_need_refresh = true;
+											ItemCodePickUp = NasosZatichka;
+											UserView->E_Mark->SetVisibility(ESlateVisibility::Visible);
+											LastZatichka = TracedNasosZatichka;
+										}
+										else
+											isTracedBad = true; //Мы не попали в нужный нам предмет
+									}
 								}
 							}
 						}
@@ -1677,6 +1688,11 @@ void AChel::PickUp() {
 					}
 					break;
 				}
+				case NasosZatichka:
+				{
+					NewHaveItemServer(NasosZatichka);
+					break;
+				}
 				}
 			}
 		}
@@ -1754,6 +1770,11 @@ void AChel::NewHaveItemServer_Implementation(int32 ItemType, int32 ReplaceItemTy
 	World->LineTraceSingleByChannel(OutHit, StartLocation, EndLocation, ECC_Visibility, CollisionParams);
 	if (OutHit.GetActor()) {
 		APickableItem* TempItem = Cast<APickableItem>(OutHit.GetActor());
+		ADezinfectorNasosZatichka* Zatichka = Cast<ADezinfectorNasosZatichka>(OutHit.GetActor());
+		if (Zatichka)
+		{
+			Zatichka->Interact();
+		}
 		if (TempItem)
 		{
 			ACache_Key* CacheKey = Cast<ACache_Key>(TempItem);
@@ -1933,7 +1954,6 @@ void AChel::NewHaveItemServer_Implementation(int32 ItemType, int32 ReplaceItemTy
 			}
 		}
 	}
-	
 }
 
 void AChel::ReplaceQAbilityItem(int32 Type, int32 ItemIndex)

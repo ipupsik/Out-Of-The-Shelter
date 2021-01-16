@@ -6,6 +6,7 @@
 #include "GameFramework/Actor.h"
 #include "Components/StaticMeshComponent.h"
 #include "Runtime/Engine/Classes/Particles/ParticleSystemComponent.h"
+#include "Components/SceneComponent.h"
 #include "DezinfectorNasosZatichka.generated.h"
 
 class ADezinfectorNasos;
@@ -31,7 +32,10 @@ public:
 		UParticleSystemComponent* PS;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Player")
-		UStaticMeshComponent* Lampochka;
+		USceneComponent* Scene;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Player")
+		UStaticMeshComponent* Zatichka;
 
 	UPROPERTY(EditAnywhere)
 		ADezinfectorNasos* Nasos;

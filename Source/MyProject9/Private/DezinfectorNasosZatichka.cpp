@@ -11,6 +11,15 @@ ADezinfectorNasosZatichka::ADezinfectorNasosZatichka()
 	PrimaryActorTick.bCanEverTick = true;
 	DoesLock = true;
 	DoesPlayAnim = false;
+
+	Scene = CreateDefaultSubobject<USceneComponent>(TEXT("Scene"));
+	Scene->SetupAttachment(RootComponent);
+
+	Zatichka = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Zatichka"));
+	Zatichka->SetupAttachment(Scene);
+
+	PS = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("PS"));
+	PS->SetupAttachment(Scene);
 }
 
 void ADezinfectorNasosZatichka::Interact()
@@ -19,11 +28,15 @@ void ADezinfectorNasosZatichka::Interact()
 	{
 		if (DoesLock) 
 		{
+			DoesLock = false;
+			DoesPlayAnim = true;
 			SwitchAnimUp();
 			Nasos->CurTurnOffCount++;
 		}
 		else
 		{
+			DoesLock = true;
+			DoesPlayAnim = true;
 			SwitchAnimDown();
 			Nasos->CurTurnOffCount--;
 			if (Nasos->CurTurnOffCount == 0)
