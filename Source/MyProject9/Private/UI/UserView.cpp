@@ -9,6 +9,15 @@
 void UUserView::NativeConstruct() {
 	Super::NativeConstruct();
 	IsAwake = true;
+	ArraySwitcher.Init(nullptr, 3);
+	ArraySwitcher[0] = WS_Boltorez;
+	ArraySwitcher[1] = WS_KeyShelter;
+	ArraySwitcher[2] = WS_Otvertka;
+
+	ArrayCacheKey.Init(nullptr, 3);
+	ArrayCacheKey[0] = KeyLeft_Bronze;
+	ArrayCacheKey[1] = KeyLeft_Silver;
+	ArrayCacheKey[2] = KeyLeft_Gold;
 }
 
 void UUserView::OnAnimationFinished_Implementation(const UWidgetAnimation* Animation)

@@ -52,6 +52,8 @@ public:
 	UPROPERTY(meta = (BindWidget))
 		UTextBlock* AmmoLabel;
 
+	TArray<UTextBlock*> ArrayCacheKey;
+
 	UPROPERTY(meta = (BindWidget))
 		UTextBlock* KeyLeft_Bronze;
 
@@ -59,10 +61,11 @@ public:
 		UTextBlock* KeyLeft_Silver;
 
 	UPROPERTY(meta = (BindWidget))
-		UTextBlock* AmmoMax;
+		UTextBlock* KeyLeft_Gold;
 
 	UPROPERTY(meta = (BindWidget))
-		UTextBlock* KeyLeft_Gold;
+		UTextBlock* AmmoMax;
+	
 	//---------------------------
 	UPROPERTY(meta = (BindWidget)) //!!!!!!!!!!!!!!!!!!!!!!!
 		UTextBlock* TimeLeft;
@@ -85,6 +88,8 @@ public:
 	UPROPERTY(meta = (BindWidget))
 		UImage* Marker;
 	//---------------------------
+
+	TArray<UWidgetSwitcher*> ArraySwitcher;
 	UPROPERTY(meta = (BindWidget))
 		UWidgetSwitcher* WS_Boltorez;
 	
