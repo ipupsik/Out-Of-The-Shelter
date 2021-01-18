@@ -28,6 +28,10 @@ public:
 	UFUNCTION(BlueprintImplementableEvent)
 	void AnimationThrowReverse();
 
+
+	UFUNCTION(BlueprintImplementableEvent)
+		void PlaySoundThrow();
+
 	UFUNCTION(BlueprintCallable)
 	void AnimationThrow_Finished();
 	UFUNCTION(BlueprintCallable)

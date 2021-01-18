@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "GameFramework/ProjectileMovementComponent.h"
 #include "Weapon_Projectile.generated.h"
 
 UCLASS()
@@ -17,4 +18,9 @@ public:
 
 	int32 IndexOwner;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UProjectileMovementComponent* ProjectMovement;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		float Damage;
 };
