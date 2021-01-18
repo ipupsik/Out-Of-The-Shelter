@@ -43,6 +43,7 @@ class ASpectator;
  */
 
 class AAreaCollision;
+class AInteractiveItem;
 
 UCLASS()
 class MYPROJECT9_API AGS : public AGameStateBase
@@ -125,28 +126,28 @@ public:
 		
 
 	UPROPERTY(EditAnywhere, Category = "ItemClasses")
-		TSubclassOf<APickableItem> KeyShelter;
+		TSubclassOf<AInteractiveItem> KeyShelter;
 	UPROPERTY(EditAnywhere, Category = "ItemClasses")
-		TSubclassOf<APickableItem> Boltorez;
+		TSubclassOf<AInteractiveItem> Boltorez;
 	UPROPERTY(EditAnywhere, Category = "ItemClasses")
-		TSubclassOf<APickableItem> Otvertka;
+		TSubclassOf<AInteractiveItem> Otvertka;
 	UPROPERTY(EditAnywhere, Category = "ItemClasses")
-		TSubclassOf<APickableItem> ChelDetector_class;
+		TSubclassOf<AInteractiveItem> ChelDetector_class;
 	UPROPERTY(EditAnywhere, Category = "ItemClasses")
-		TSubclassOf<APickableItem> RentgenGlass_class;
+		TSubclassOf<AInteractiveItem> RentgenGlass_class;
 
 	UPROPERTY(EditAnywhere, Category = "ItemClasses")
 		TSubclassOf<AActor> InvisiblePotion;
 
 	UPROPERTY(EditAnywhere, Category = "ItemClasses")
-		TSubclassOf<APickableItem> BronzeKey;
+		TSubclassOf<AInteractiveItem> BronzeKey;
 	UPROPERTY(EditAnywhere, Category = "ItemClasses")
-		TSubclassOf<APickableItem> SilverKey;
+		TSubclassOf<AInteractiveItem> SilverKey;
 	UPROPERTY(EditAnywhere, Category = "ItemClasses")
-		TSubclassOf<APickableItem> GoldKey;
+		TSubclassOf<AInteractiveItem> GoldKey;
 
 	UPROPERTY(EditAnywhere, Category = "ItemClasses")
-		TSubclassOf<APickableItem> CodeNoteClass;
+		TSubclassOf<AInteractiveItem> CodeNoteClass;
 	UPROPERTY(EditAnywhere, Category = "ItemClasses")
 		TSubclassOf<ANumberTerminal> NumberTerminalClass;
 

@@ -4,11 +4,14 @@
 #include "CollectableItem.h"
 
 ACollectableItem::ACollectableItem() {
+	Scene = CreateDefaultSubobject<USceneComponent>("Scene");
+	Scene->SetupAttachment(RootComponent);
+
 	Collision = CreateDefaultSubobject<UBoxComponent>("Collision");
-	Collision->SetupAttachment(RootComponent);
+	Collision->SetupAttachment(Scene);
 
 	Mesh = CreateDefaultSubobject<UStaticMeshComponent>("Mesh");
-	Mesh->SetupAttachment(Collision);
+	Mesh->SetupAttachment(Scene);
 }
 
 void ACollectableItem::ToggleCustomDepth(bool NewIsOutliningNow) {
