@@ -5,11 +5,7 @@
 #include "Weapon_Character.h"
 
 AWeapon_Level::AWeapon_Level() {
-	Collision = CreateDefaultSubobject<UBoxComponent>(TEXT("Collision"));
-	Collision->SetupAttachment(RootComponent);
-
-	Mesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
-	Mesh->SetupAttachment(Collision);
+	
 }
 
 void AWeapon_Level::PickUpEventClient(AChel* Player) {

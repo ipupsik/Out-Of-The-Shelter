@@ -19,6 +19,7 @@
 #include "BP_VentilaciaRubilnick.h"
 #include "CoreItem.h"
 #include "Weapon_Character.h"
+#include "ConsumableAbility.h"
 
 enum AreaType
 {
@@ -84,13 +85,13 @@ AChel::AChel()
 	SenseCollision->SetupAttachment(RootComponent);
 
 	WeaponPosition = CreateDefaultSubobject<USceneComponent>(TEXT("WeaponPosition"));
-	StoneRight->SetupAttachment(CameraComp);
+	WeaponPosition->SetupAttachment(CameraComp);
 
 	StoneRight = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("StoneRight"));
-	StoneRight->SetupAttachment(CameraComp);
+	StoneRight->SetupAttachment(WeaponPosition);
 
 	StoneLeft = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("StoneLeft"));
-	StoneLeft->SetupAttachment(CameraComp);
+	StoneLeft->SetupAttachment(WeaponPosition);
 
 	TimeLine_Stone_First = CreateDefaultSubobject<UTimelineComponent>(TEXT("ThrowStoneFirst"));
 	TimeLine_Stone_Second = CreateDefaultSubobject<UTimelineComponent>(TEXT("ThrowStoneSecond"));
@@ -3144,7 +3145,7 @@ void AChel::UseRAbility()
 	}
 }
 
-bool AChel::NewRAbility(int32 NewAbility)
+bool AChel::NewRAbility(TSubclassOf<UConsumableAbility>& Ability_class)
 {
 	if (LastRAbilityIndex == -1)
 	{
@@ -3152,15 +3153,27 @@ bool AChel::NewRAbility(int32 NewAbility)
 	}
 	if (LastRAbilityIndex != 2)
 	{
-		LastRAbilityIndex++;
-		RAbilityPanel[LastRAbilityIndex]->AbilityType = NewAbility;
-		RAbilityPanel[LastRAbilityIndex]->InArrayIndex = LastRAbilityIndex;
-		RAbilityPanel[LastRAbilityIndex]->Count = 1;
-		RAbilityPanel[LastRAbilityIndex]->CountText->SetText(FText::AsNumber(1));
-		FSlateBrush NewBrush;
-		//NewBrush.SetResourceObject();
-		RAbilityPanel[LastRAbilityIndex]->AbilityImage->SetBrush(NewBrush);
-		RAbilityPanel[LastRAbilityIndex]->SetVisibility(ESlateVisibility::Visible);
+		for (int i = 0; i < RAbilityPanel.Num(); i++)
+		{
+			if (RAbilityPanel[LastRAbilityIndex]) {
+				if (RAbilityPanel[LastRAbilityIndex]->StaticClass() == Ability_class)
+				{
+					if (RAbilityPanel[LastRAbilityIndex]->CurCount + 1 <= RAbilityPanel[LastRAbilityIndex]->MaxCountToStack)
+					{
+						RAbilityPanel[LastRAbilityIndex]->CurCount++;
+						RAbilityPanel[LastRAbilityIndex]->UpdateCount();
+						return true;
+					}
+					else
+					{
+						LastRAbilityIndex++;
+						RAbilityPanel[LastRAbilityIndex] = NewObject<UConsumableAbility>(Ability_class);
+						RAbilityPanel[LastRAbilityIndex]->UserViewSlot = Cast<URAbilitySlot>(MyInventory->RAbilityPanel->GetChildAt(LastRAbilityIndex));
+						RAbilityPanel[LastRAbilityIndex]->SetAbilityToSlot();
+					}
+				}
+			}
+		}
 
 		if (LastRAbilityIndex == 0)
 		{

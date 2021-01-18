@@ -46,6 +46,7 @@ class UPoseableMeshComponent;
 class UStaticMeshComponent;
 class UUserWidget;
 class AWeapon_Character;
+class UConsumableAbility;
 
 UCLASS()
 class MYPROJECT9_API AChel : public ACharacter
@@ -101,7 +102,7 @@ public:
 	void SpawnPlayer();
 	void PossessedBy(AController* NewController) override;
 	void UseRAbility();
-	bool NewRAbility(int32 NewAbility);
+	bool NewRAbility(TSubclassOf<UConsumableAbility>& Ability_class);
 	void SetCurRAbilityUserView();
 
 	void UpdateTargetArrowPosition(AActor* TargetObj, UTargetArrow* ArrowWidget); //обновл€ем позицию стрелки-подсказки на экране
@@ -577,7 +578,7 @@ public:
 
 	TArray<UKDA_Stat*>MyKDA_Stat;
 	UPROPERTY(BlueprintReadWrite)
-	TArray<URAbilitySlot*>RAbilityPanel;
+	TArray<UConsumableAbility*>RAbilityPanel;
 	FTransform MeshTrans;
 	FRotator BaseRotation;
 

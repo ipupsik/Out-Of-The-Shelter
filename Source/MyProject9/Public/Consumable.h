@@ -6,6 +6,7 @@
 #include "CollectableItem.h"
 #include "Consumable.generated.h"
 
+class UConsumableAbility;
 /**
  * 
  */
@@ -15,4 +16,10 @@ class MYPROJECT9_API AConsumable : public ACollectableItem
 	GENERATED_BODY()
 public:
 	AConsumable();
+
+	virtual void PickUpEventServer(AChel* Player) override;
+	virtual void PickUpEventClient(AChel* Player) override;
+
+	UPROPERTY(EditAnywhere, Category = "Main_Vars")
+		TSubclassOf<UConsumableAbility> Ability_class;
 };
