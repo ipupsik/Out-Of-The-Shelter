@@ -3150,7 +3150,7 @@ bool AChel::NewRAbility(int32 NewAbility)
 		RAbilityPanel[LastRAbilityIndex]->Count = 1;
 		RAbilityPanel[LastRAbilityIndex]->CountText->SetText(FText::AsNumber(1));
 		FSlateBrush NewBrush;
-		// —юда надо вставить картинку, предмета, который мы подобрали NewBrush.SetResourceObject();
+		//NewBrush.SetResourceObject();
 		RAbilityPanel[LastRAbilityIndex]->AbilityImage->SetBrush(NewBrush);
 		RAbilityPanel[LastRAbilityIndex]->SetVisibility(ESlateVisibility::Visible);
 

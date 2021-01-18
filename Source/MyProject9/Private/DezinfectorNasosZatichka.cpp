@@ -28,15 +28,11 @@ void ADezinfectorNasosZatichka::Interact()
 	{
 		if (DoesLock) 
 		{
-			DoesLock = false;
-			DoesPlayAnim = true;
 			SwitchAnimUp();
 			Nasos->CurTurnOffCount++;
 		}
 		else
 		{
-			DoesLock = true;
-			DoesPlayAnim = true;
 			SwitchAnimDown();
 			Nasos->CurTurnOffCount--;
 			if (Nasos->CurTurnOffCount == 0)

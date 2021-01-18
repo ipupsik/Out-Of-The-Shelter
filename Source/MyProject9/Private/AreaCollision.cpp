@@ -28,6 +28,8 @@ void AAreaCollision::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor*
 						return;
 					if (AreaType == 2 && !Player->GS->IsVentilaciaAvaliable)
 						return;
+					if (AreaType == 0 && !Player->GS->IsCanalizaciaAvaliable)
+						return;
 					Player->AreaCode = AreaType;
 					if (!Player->GS->AreaAvaliables[AreaType])
 					{

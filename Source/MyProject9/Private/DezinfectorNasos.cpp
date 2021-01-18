@@ -34,7 +34,6 @@ void ADezinfectorNasos::BeginPlay()
 				if (NewIndex == ArrayOfZatichki.Num())
 					NewIndex = 0;
 			}
-			ArrayOfZatichki[NewIndex]->DoesLock = false;
 			ArrayOfZatichki[NewIndex]->SwitchAnimUp();
 		}
 	}
