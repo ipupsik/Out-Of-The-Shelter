@@ -4,9 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "CollectableItem.h"
+#include "ConsumableAbility.h"
 #include "Consumable.generated.h"
-
-class UConsumableAbility;
 /**
  * 
  */

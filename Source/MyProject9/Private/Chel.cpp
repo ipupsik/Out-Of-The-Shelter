@@ -307,13 +307,13 @@ void AChel::RAbilityEnable_Client()
 	{
 		RAbilityPanel[RAbilityTypeIndex]->UseAbilityClient(this);
 		RAbilityEnable_Server(RAbilityPanel[RAbilityTypeIndex]->GetClass());
+		UseRAbility();
 	}
 }
 
 void AChel::RAbilityEnable_Server_Implementation(const UClass* Ability_class)
 {
-	UObject* NewItem = nullptr;
-	NewObject<UConsumableAbility>(NewItem, Ability_class);
+	UConsumableAbility* NewItem = NewObject<UConsumableAbility>(this, Ability_class);
 	Cast<UConsumableAbility>(NewItem)->UseAbilityServer(this);
 }
 
@@ -2481,25 +2481,27 @@ void AChel::UseRAbility()
 		LastRAbilityIndex = RAbilityTypeIndex - 1;
 		for (int i = RAbilityTypeIndex + 1; i < RAbilityPanel.Num(); i++)
 		{
-			if (RAbilityPanel[i]->CurCount > 0) 
+			if (RAbilityPanel[i]) 
 			{
-				RAbilityPanel[i - 1] = RAbilityPanel[i];
-				auto temp = RAbilityPanel[i - 1]->UserViewSlot;
-				RAbilityPanel[i - 1]->UserViewSlot = RAbilityPanel[i]->UserViewSlot;
-				RAbilityPanel[i]->UserViewSlot = temp;
+				RAbilityPanel[i - 1]->CurCount = RAbilityPanel[i]->CurCount;
+				RAbilityPanel[i - 1]->MaxCountToStack = RAbilityPanel[i]->MaxCountToStack;
+				RAbilityPanel[i - 1]->Icon = RAbilityPanel[i]->Icon;
+				RAbilityPanel[i - 1]->ResetAbility();
 				LastRAbilityIndex++;
 			}
-		}
-		if (LastRAbilityIndex < (RAbilityPanel.Num() - 1))
-		{
-			RAbilityPanel[LastRAbilityIndex + 1]->CurCount = 0;
 		}
 		if (LastRAbilityIndex < RAbilityTypeIndex)
 		{
 			RAbilityTypeIndex = LastRAbilityIndex;
-			SetCurRAbilityUserView();
 		}
+		SetCurRAbilityUserView();
 		RAbilityPanel[LastRAbilityIndex + 1]->UserViewSlot->SetVisibility(ESlateVisibility::Hidden);
+		RAbilityPanel[LastRAbilityIndex + 1] = nullptr;
+	}
+	else
+	{
+		RAbilityPanel[RAbilityTypeIndex]->UpdateCount();
+		UserView->CurRSlot->CountText->SetText(FText::AsNumber(RAbilityPanel[RAbilityTypeIndex]->CurCount));
 	}
 }
 
@@ -2511,6 +2513,8 @@ bool AChel::NewRAbility(const UClass* Ability_class)
 	}
 	if (LastRAbilityIndex != 2)
 	{
+		int32 IndexOfAddToStuck = -1;
+		bool IsStackOverflow = false;
 		for (int i = 0; i < RAbilityPanel.Num(); i++)
 		{
 			if (RAbilityPanel[i]) {
@@ -2518,29 +2522,40 @@ bool AChel::NewRAbility(const UClass* Ability_class)
 				{
 					if (RAbilityPanel[i]->CurCount + 1 <= RAbilityPanel[i]->MaxCountToStack)
 					{
-						RAbilityPanel[i]->CurCount++;
-						RAbilityPanel[i]->UpdateCount();
-						return true;
+						IndexOfAddToStuck = i;
 					}
 					else
 					{
-						LastRAbilityIndex++;
-						NewObject<UConsumableAbility>(RAbilityPanel[LastRAbilityIndex], Ability_class);
-						RAbilityPanel[LastRAbilityIndex]->UserViewSlot = Cast<URAbilitySlot>(MyInventory->RAbilityPanel->GetChildAt(LastRAbilityIndex));
-						RAbilityPanel[LastRAbilityIndex]->SetAbilityToSlot();
-
-						if (LastRAbilityIndex == 0)
-						{
-							SetCurRAbilityUserView();
-						}
-						return true;
+						IsStackOverflow = true;
 					}
 				}
 			}
 		}
+		if (IndexOfAddToStuck != -1) {
+			RAbilityPanel[IndexOfAddToStuck]->CurCount++;
+			RAbilityPanel[IndexOfAddToStuck]->UpdateCount();
+			if (IndexOfAddToStuck == RAbilityTypeIndex)
+			{
+				UserView->CurRSlot->CountText->SetText(FText::AsNumber(RAbilityPanel[IndexOfAddToStuck]->CurCount));
+			}
+			return true;
+		}
+		else if (IsStackOverflow)
+		{
+			LastRAbilityIndex++;
+			RAbilityPanel[LastRAbilityIndex] = NewObject<UConsumableAbility>(this, Ability_class);
+			RAbilityPanel[LastRAbilityIndex]->UserViewSlot = Cast<URAbilitySlot>(MyInventory->RAbilityPanel->GetChildAt(LastRAbilityIndex));
+			RAbilityPanel[LastRAbilityIndex]->SetAbilityToSlot();
+
+			if (LastRAbilityIndex == 0)
+			{
+				SetCurRAbilityUserView();
+			}
+			return true;
+		}
 
 		LastRAbilityIndex++;
-		NewObject<UConsumableAbility>(RAbilityPanel[LastRAbilityIndex], Ability_class);
+		RAbilityPanel[LastRAbilityIndex] = NewObject<UConsumableAbility>(this, Ability_class);
 		RAbilityPanel[LastRAbilityIndex]->UserViewSlot = Cast<URAbilitySlot>(MyInventory->RAbilityPanel->GetChildAt(LastRAbilityIndex));
 		RAbilityPanel[LastRAbilityIndex]->SetAbilityToSlot();
 
@@ -2556,7 +2571,7 @@ bool AChel::NewRAbility(const UClass* Ability_class)
 
 void AChel::SetCurRAbilityUserView()
 {
-	if (RAbilityTypeIndex != -1) {
+	if (LastRAbilityIndex != -1) {
 		RAbilityPanel[RAbilityTypeIndex]->SetCurRAbilityUserView(this);
 	}
 	else

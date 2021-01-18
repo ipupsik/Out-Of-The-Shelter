@@ -23,6 +23,10 @@ public:
 	void SetAbilityToSlot();
 	void UpdateCount();
 	void SetCurRAbilityUserView(AChel* Player);
+	UFUNCTION(BlueprintCallable)
+		void ResetAbility();
+	UFUNCTION(BlueprintCallable)
+		void ResetCurRAbilityUserView(AChel* Player);
 
 	int32 CurCount;
 	UPROPERTY(EditAnywhere)

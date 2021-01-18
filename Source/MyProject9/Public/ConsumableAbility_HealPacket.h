@@ -17,4 +17,5 @@ class MYPROJECT9_API UConsumableAbility_HealPacket : public UConsumableAbility
 public:
 	UConsumableAbility_HealPacket();
 	void UseAbilityServer(AChel* Player) override;
+	void UseAbilityClient(AChel* Player) override;
 };
