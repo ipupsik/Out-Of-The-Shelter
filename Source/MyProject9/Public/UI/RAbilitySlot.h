@@ -28,7 +28,7 @@ public:
 
 	void NativeConstruct() override;
 	
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		int32 InArrayIndex;
 
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))

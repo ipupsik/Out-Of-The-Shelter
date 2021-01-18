@@ -6,11 +6,12 @@
 
 void UConsumableAbility::UseAbilityClient(AChel* Player)
 {
-
+	
 }
 
 void UConsumableAbility::UseAbilityServer(AChel* Player)
 {
+
 }
 
 void UConsumableAbility::SetAbilityToSlot()

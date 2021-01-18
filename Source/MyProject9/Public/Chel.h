@@ -47,6 +47,7 @@ class UStaticMeshComponent;
 class UUserWidget;
 class AWeapon_Character;
 class UConsumableAbility;
+class AInteractiveItem;
 
 UCLASS()
 class MYPROJECT9_API AChel : public ACharacter
@@ -68,8 +69,10 @@ protected:
 	void LookRight(float);
 	void QAbilityEnable();
 	void QAbilityDisable();
-	void RAbilityEnable();
-	void RAbilityDisable();
+	void RAbilityEnable_Client();
+
+	UFUNCTION(Server, Reliable, WithValidation)
+		void RAbilityEnable_Server(const UClass* Ability_class);
 	// Actions functions
 	void MyJump();
 	void StartSprint();
@@ -102,7 +105,7 @@ public:
 	void SpawnPlayer();
 	void PossessedBy(AController* NewController) override;
 	void UseRAbility();
-	bool NewRAbility(TSubclassOf<UConsumableAbility>& Ability_class);
+	bool NewRAbility(const UClass* Ability_class);
 	void SetCurRAbilityUserView();
 
 	void UpdateTargetArrowPosition(AActor* TargetObj, UTargetArrow* ArrowWidget); //обновл€ем позицию стрелки-подсказки на экране
@@ -183,7 +186,7 @@ public:
 		void ThrowStoneMulticast(bool Type);
 
 	UFUNCTION(Server, Reliable, WithValidation)
-		void NewHaveItemServer(int32 ItemType, int32 ReplaceItemType = -1);
+		void PickUp_Server();
 
 	UFUNCTION(Client, Reliable)
 		void NewHaveItemClient(int32 ItemType);
@@ -461,14 +464,12 @@ public:
 	//InGameVariables
 	UPROPERTY(EditAnywhere, Replicated, Category = "InGameVariables")
 		bool IsInGame;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Vars")
-	int32 ItemCodePickUp;
 	int32 AreaCode;
 	UPROPERTY(Replicated)
 		TArray<bool>DoesHave;
 	TArray<int32>KeysCount;
 	bool DoesHave_Owner;
-	APickableItem* LastItem;
+	AInteractiveItem* LastInteractiveItem;
 	ACache* LastCache;
 	AButtonCanalization* LastButton;
 	//GlobalSettings

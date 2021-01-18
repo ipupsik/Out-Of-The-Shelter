@@ -11,10 +11,13 @@ ACollectableItem::ACollectableItem() {
 	Mesh->SetupAttachment(Collision);
 }
 
-void ACollectableItem::ToggleCustomDepth(bool IsOutliningNow) {
+void ACollectableItem::ToggleCustomDepth(bool NewIsOutliningNow) {
 	if (bCanInterract) {
-		Mesh->SetRenderCustomDepth(IsOutliningNow);
-		Mesh->MarkRenderStateDirty();
+		if (this->IsOutliningNow != NewIsOutliningNow) {
+			Mesh->SetRenderCustomDepth(NewIsOutliningNow);
+			Mesh->MarkRenderStateDirty();
+			this->IsOutliningNow = NewIsOutliningNow;
+		}
 	}
 }
 

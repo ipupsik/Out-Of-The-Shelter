@@ -21,8 +21,9 @@ public:
 	bool bCanInterract;
 	UPROPERTY(EditAnywhere)
 	int32 colorOutlineType;
-
-	virtual void ToggleCustomDepth(bool IsOutliningNow);
+	UPROPERTY(EditAnywhere)
+	bool IsOutliningNow;
+	virtual void ToggleCustomDepth(bool NewIsOutliningNow);
 	virtual void SetOutlineColor(int32 ColorOutline);
 
 	virtual void PickUpEventServer(AChel* Player );

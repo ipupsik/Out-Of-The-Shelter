@@ -10,7 +10,7 @@ AInteractiveItem::AInteractiveItem()
 	bCanInterract = true;
 }
 
-void AInteractiveItem::ToggleCustomDepth(bool IsOutliningNow)
+void AInteractiveItem::ToggleCustomDepth(bool NewIsOutliningNow)
 {
 }
 

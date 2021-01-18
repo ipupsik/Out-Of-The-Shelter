@@ -29,5 +29,6 @@ public:
 		int32 MaxCountToStack;
 	UPROPERTY(EditAnywhere)
 		UObject* Icon;
-	URAbilitySlot* UserViewSlot;
+	UPROPERTY(BlueprintReadWrite)
+		URAbilitySlot* UserViewSlot;
 };

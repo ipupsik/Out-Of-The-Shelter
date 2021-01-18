@@ -20,6 +20,7 @@
 #include "CoreItem.h"
 #include "Weapon_Character.h"
 #include "ConsumableAbility.h"
+#include "InteractiveItem.h"
 
 enum AreaType
 {
@@ -128,7 +129,6 @@ AChel::AChel()
 	Ammo = MaxAmmoCount;
 	bLineTrace_is_need_refresh = false;
 	DoesHave_Owner = false;
-	ItemCodePickUp = -1;
 	IsNotInWebCam = true;
 	CanThrowStone = true;
 	CanFireWeapon = true;
@@ -300,56 +300,26 @@ void AChel::QAbilityDisable()
 	}
 }
 
-void AChel::RAbilityEnable()
+void AChel::RAbilityEnable_Client()
 {
-	//if (RAbilityTypeIndex != -1)
-	//{
-	//	switch (RAbilityPanel[RAbilityTypeIndex]->AbilityType)
-	//	{
-	//	case HealthPacket:
-	//	{
-	//		UseRAbility();
-	//		RAbility_HealPacket();
-	//		break;
-	//	}
-	//	case SpeedBust:
-	//	{
-	//		UseRAbility();
-	//		UseSpeedBust_Server();
-	//		SpeedBustValue = 300;
-	//		GetCharacterMovement()->MaxWalkSpeed = 800.f + SpeedBustValue;
-	//		CurrentSpeedBustCount++;
-	//		FTimerHandle FuzeTimerHandle;
-	//		GetWorld()->GetTimerManager().SetTimer(FuzeTimerHandle, this, &AChel::StopUseSpeedBust, 20, false);
-	//		break;
-	//	}
-	//	case StoneDamageBuffTemp:
-	//	{
-	//		UseRAbility();
-	//		AddStoneDamageBuffTemp();
-	//		break;
-	//	}
-	//	case ImmortalPotion:
-	//	{
-	//		UseRAbility();
-	//		AddImmortalServer();
-	//		break;
-	//	}
-	//	}
-
-	//}
+	if (RAbilityTypeIndex != -1)
+	{
+		RAbilityPanel[RAbilityTypeIndex]->UseAbilityClient(this);
+		RAbilityEnable_Server(RAbilityPanel[RAbilityTypeIndex]->GetClass());
+	}
 }
 
-/*void AChel::RAbilityDisable()
+void AChel::RAbilityEnable_Server_Implementation(const UClass* Ability_class)
 {
-	if (RAbilityType != -1)
-	{
-		switch (RAbilityType)
-		{
+	UObject* NewItem = nullptr;
+	NewObject<UConsumableAbility>(NewItem, Ability_class);
+	Cast<UConsumableAbility>(NewItem)->UseAbilityServer(this);
+}
 
-		}
-	}
-}*/
+bool AChel::RAbilityEnable_Server_Validate(const UClass* Ability_class)
+{
+	return true;
+}
 
 void AChel::RAbility_HealPacket_Implementation()
 {
@@ -600,123 +570,14 @@ void AChel::Tick(float DeltaTime)
 				{
 					AActor* HittableActor = OutHit.GetActor();
 					if (HittableActor) { //Если мы стукнулись в какой-то актор, а не в пустоту
-						APickableItem* TracedItem = Cast<APickableItem>(HittableActor);
+						AInteractiveItem* TracedItem = Cast<AInteractiveItem>(HittableActor);
 						if (TracedItem) { //Если мы стукнулись в нужный нам предмет
-							ItemCodePickUp = TracedItem->Type;
-							if (TracedItem->Type != ClickButton && TracedItem->Type != VentilaciaRubilnick)
-								UserView->E_Mark->SetVisibility(ESlateVisibility::Visible);
-							if (LastItem && LastItem != TracedItem) {
-								LastItem->Item->SetRenderCustomDepth(false);
-								LastItem->Item->MarkRenderStateDirty();
+							if (LastInteractiveItem && LastInteractiveItem != TracedItem) {
+								LastInteractiveItem->ToggleCustomDepth(false);
 							}
-							if (LastItem != TracedItem) {
-								LastItem = TracedItem;
-								bLineTrace_is_need_refresh = true;
-								if (TracedItem->Type == OpenArea) {
-									AOpenArea* MyOpenArea = Cast<AOpenArea>(TracedItem);
-									if (!MyOpenArea->bIsAvaliable) {
-										UserView->E_Mark->SetVisibility(ESlateVisibility::Hidden);
-									}
-									else {
-										LastItem->Item->SetRenderCustomDepth(true);
-										LastItem->Item->MarkRenderStateDirty();
-									}
-								}
-								else if (TracedItem->Type == VentilaciaRubilnick) {
-									ABP_VentilaciaRubilnick* MyVentilaciaRubilnick = Cast<ABP_VentilaciaRubilnick>(TracedItem);
-									UE_LOG(LogTemp, Warning, TEXT("Enable - %d"), (int)MyVentilaciaRubilnick->is_Avaliable);
-									if (MyVentilaciaRubilnick->is_Avaliable) {
-										UserView->E_Mark->SetVisibility(ESlateVisibility::Visible);
-										LastItem->Item->SetRenderCustomDepth(true);
-										LastItem->Item->MarkRenderStateDirty();
-									}
-								}
-								else if (TracedItem->Type >= 0 && TracedItem->Type <= 2)
-								{
-									if (DoesHave[LastItem->Type]) {
-										LastItem->Item->SetRenderCustomDepth(true);
-										LastItem->Item->SetCustomDepthStencilValue(1);
-										LastItem->Item->MarkRenderStateDirty();
-									}
-									else
-									{
-										LastItem->Item->SetRenderCustomDepth(true);
-										LastItem->Item->SetCustomDepthStencilValue(2);
-										LastItem->Item->MarkRenderStateDirty();
-									}
-								}
-								else if (TracedItem->Type == ClickButton)
-								{
-									if (GS->IsShelterAvaliable) {
-										UserView->E_Mark->SetVisibility(ESlateVisibility::Visible);
-										LastItem->Item->SetRenderCustomDepth(true);
-										LastItem->Item->MarkRenderStateDirty();
-									}
-								}
-								else
-								{
-									LastItem->Item->SetRenderCustomDepth(true);
-									LastItem->Item->MarkRenderStateDirty();
-								}
-							}
-						}
-						else
-						{
-							ACache* TracedCache = Cast<ACache>(HittableActor);
-							if (TracedCache) {
-								if (LastItem) {
-									LastItem->Item->SetRenderCustomDepth(false);
-									LastItem->Item->MarkRenderStateDirty();
-								}
-								if (TracedCache->IsEnabled && KeysCount[TracedCache->CacheType] > 0) {
-									bLineTrace_is_need_refresh = true;
-									ItemCodePickUp = Cache;
-									UserView->E_Mark->SetVisibility(ESlateVisibility::Visible);
-
-									LastCache = TracedCache;
-								}
-								else
-								{
-									UserView->E_Mark->SetVisibility(ESlateVisibility::Hidden);
-								}
-							}
-							else
-							{
-								AButtonCanalization* TracedButton = Cast<AButtonCanalization>(HittableActor);
-								if (TracedButton) {
-									bLineTrace_is_need_refresh = true;
-									ItemCodePickUp = CanalizationButton;
-									UserView->E_Mark->SetVisibility(ESlateVisibility::Visible);
-
-									LastButton = TracedButton;
-								}
-								else
-								{
-									AWebCamLocker* TracedWebCamLocker = Cast<AWebCamLocker>(HittableActor);
-									if (TracedWebCamLocker)
-									{
-										bLineTrace_is_need_refresh = true;
-										ItemCodePickUp = WebCamLocker;
-										UserView->E_Mark->SetVisibility(ESlateVisibility::Visible);
-										TracedWebCamLocker->Mesh->SetRenderCustomDepth(true);
-										TracedWebCamLocker->Mesh->SetCustomDepthStencilValue(2);
-										TracedWebCamLocker->Mesh->MarkRenderStateDirty();
-										LastWebCamLocker = TracedWebCamLocker;
-									}
-									else
-									{
-										ADezinfectorNasosZatichka* TracedNasosZatichka = Cast<ADezinfectorNasosZatichka>(HittableActor);
-										if (TracedNasosZatichka)
-										{
-											bLineTrace_is_need_refresh = true;
-											ItemCodePickUp = NasosZatichka;
-											UserView->E_Mark->SetVisibility(ESlateVisibility::Visible);
-											LastZatichka = TracedNasosZatichka;
-										}
-										else
-											isTracedBad = true; //Мы не попали в нужный нам предмет
-									}
-								}
+							if (LastInteractiveItem != TracedItem) {
+								LastInteractiveItem = TracedItem;
+								LastInteractiveItem->ToggleCustomDepth(true);
 							}
 						}
 					}
@@ -730,38 +591,20 @@ void AChel::Tick(float DeltaTime)
 				isTracedBad = true;   //Мы не попали в нужный нам предмет
 
 			if (isTracedBad && bLineTrace_is_need_refresh) {
-				//Если мы не попали в нужный нам предмет, но на прошлом кадре мы отрисовали виджет,
-				// то для оптимизации мы скрываем все виджеты до первого удачного столкновения с нужным предметом
 				bLineTrace_is_need_refresh = false;
 				UE_LOG(LogTemp, Warning, TEXT("Widget Update"));
-				ItemCodePickUp = -1;
-				if (LastItem)
+				if (LastInteractiveItem)
 				{
-					if (LastItem->Type <= 2 && !IsRentgenRender) {
-						LastItem->Item->SetRenderCustomDepth(false);
-						LastItem->Item->MarkRenderStateDirty();
-					}
-					else if (LastItem->Type > 2)
-					{
-						LastItem->Item->SetRenderCustomDepth(false);
-						LastItem->Item->MarkRenderStateDirty();
-					}
+					LastInteractiveItem->ToggleCustomDepth(false);
 				}
 
-				if (LastWebCamLocker)
-				{
-					LastWebCamLocker->Mesh->SetRenderCustomDepth(false);
-					LastWebCamLocker->Mesh->MarkRenderStateDirty();
-				}
-
-				if (LastItem && Cast<AOpenArea>(LastItem))
+				if (LastInteractiveItem && Cast<AOpenArea>(LastInteractiveItem))
 				{
 					PickUp_Released();
 				}
 				UserView->StopAllAnimations();
 				UserView->E_Mark->SetVisibility(ESlateVisibility::Hidden);
-				LastItem = nullptr;
-				LastWebCamLocker = nullptr;
+				LastInteractiveItem = nullptr;
 			}
 		}
 	}
@@ -822,7 +665,7 @@ void AChel::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 	PlayerInputComponent->BindAction("UpdateSpectating_Right", IE_Released, this, &AChel::UpdateSpectating_Right);
 	PlayerInputComponent->BindAction("QAbility", IE_Pressed, this, &AChel::QAbilityEnable);
 	PlayerInputComponent->BindAction("QAbility", IE_Released, this, &AChel::QAbilityDisable);
-	PlayerInputComponent->BindAction("RAbility", IE_Pressed, this, &AChel::RAbilityEnable);
+	PlayerInputComponent->BindAction("RAbility", IE_Pressed, this, &AChel::RAbilityEnable_Client);
 }
 
 void AChel::UpdateSpectating_Right()
@@ -1403,6 +1246,14 @@ void AChel::PlaySpawnAnimationAwake_Implementation() {
 void AChel::PickUp() {
 	if (!bInEscMenu) {
 		if (IsNotInWebCam) {
+			if (LastInteractiveItem)
+			{
+				LastInteractiveItem->PickUpEventClient(this);
+			}
+		}
+	}
+	/*if (!bInEscMenu) {
+		if (IsNotInWebCam) {
 			if (ItemCodePickUp != -1) {
 				UE_LOG(LogTemp, Warning, TEXT("ItemCode - %d"), ItemCodePickUp);
 				IsSuccessOpening = true;
@@ -1412,9 +1263,9 @@ void AChel::PickUp() {
 					if (!DoesHave[Boltorez]) {
 						UserView->WS_Boltorez->SetActiveWidgetIndex(1);
 						DoesHave_Owner = true;
-						LastItem->Item->SetRenderCustomDepth(false);
-						LastItem->Item->MarkRenderStateDirty();
-						LastItem = nullptr;
+						LastInteractiveItem->Item->SetRenderCustomDepth(false);
+						LastInteractiveItem->Item->MarkRenderStateDirty();
+						LastInteractiveItem = nullptr;
 						NewHaveItemServer(Boltorez);
 						MainExis_Canalizacia->Mesh->SetRenderCustomDepth(true);
 						MainExis_Canalizacia->Mesh->MarkRenderStateDirty();
@@ -1427,9 +1278,9 @@ void AChel::PickUp() {
 					if (!DoesHave[KeyShelter]) {
 						UserView->WS_KeyShelter->SetActiveWidgetIndex(1);
 						DoesHave_Owner = true;
-						LastItem->Item->SetRenderCustomDepth(false);
-						LastItem->Item->MarkRenderStateDirty();
-						LastItem = nullptr;
+						LastInteractiveItem->Item->SetRenderCustomDepth(false);
+						LastInteractiveItem->Item->MarkRenderStateDirty();
+						LastInteractiveItem = nullptr;
 						NewHaveItemServer(KeyShelter);
 						MainExis_Shelter->Mesh->SetRenderCustomDepth(true);
 						MainExis_Shelter->Mesh->MarkRenderStateDirty();
@@ -1442,9 +1293,9 @@ void AChel::PickUp() {
 					if (!DoesHave[Otvertka]) {
 						UserView->WS_Otvertka->SetActiveWidgetIndex(1);
 						DoesHave_Owner = true;
-						LastItem->Item->SetRenderCustomDepth(false);
-						LastItem->Item->MarkRenderStateDirty();
-						LastItem = nullptr;
+						LastInteractiveItem->Item->SetRenderCustomDepth(false);
+						LastInteractiveItem->Item->MarkRenderStateDirty();
+						LastInteractiveItem = nullptr;
 						NewHaveItemServer(Otvertka);
 						MainExis_Ventilacia->Mesh->SetRenderCustomDepth(true);
 						MainExis_Ventilacia->Mesh->MarkRenderStateDirty();
@@ -1454,7 +1305,7 @@ void AChel::PickUp() {
 				}
 				case CacheKey:
 				{
-					int KeyType = Cast<ACache_Key>(LastItem)->KeyType;
+					int KeyType = Cast<ACache_Key>(LastInteractiveItem)->KeyType;
 					switch (KeyType)
 					{
 					case KeyBronze:
@@ -1475,9 +1326,9 @@ void AChel::PickUp() {
 					}
 					KeysCount[KeyType]++;
 					DoesHave_Owner = true;
-					LastItem->Item->SetRenderCustomDepth(false);
-					LastItem->Item->MarkRenderStateDirty();
-					LastItem = nullptr;
+					LastInteractiveItem->Item->SetRenderCustomDepth(false);
+					LastInteractiveItem->Item->MarkRenderStateDirty();
+					LastInteractiveItem = nullptr;
 					NewHaveItemServer(ItemCodePickUp);
 					PickUpSound();
 					break;
@@ -1533,7 +1384,7 @@ void AChel::PickUp() {
 				case InvisiblePotion:
 				{
 					AddInvisibleServer();
-					LastItem = nullptr;
+					LastInteractiveItem = nullptr;
 					break;
 				}
 				case CodeNote:
@@ -1555,7 +1406,7 @@ void AChel::PickUp() {
 				}
 				case ClickButton:
 				{
-					AClickButton* CurButton = Cast<AClickButton>(LastItem);
+					AClickButton* CurButton = Cast<AClickButton>(LastInteractiveItem);
 					if (GS->IsShelterAvaliable && !GS->ButtonPlayAnim && CurButton)
 					{
 						if (CurButton->ButtonType <= 9) {
@@ -1582,7 +1433,7 @@ void AChel::PickUp() {
 				}
 				case OpenArea:
 				{
-					AOpenArea* CurOpArea = Cast<AOpenArea>(LastItem);
+					AOpenArea* CurOpArea = Cast<AOpenArea>(LastInteractiveItem);
 					if (!CurOpArea->bIsUsed)
 					{
 						if (CurOpArea != nullptr && CurOpArea->bIsAvaliable) {
@@ -1660,11 +1511,11 @@ void AChel::PickUp() {
 				}
 				case VentilaciaRubilnick:
 				{
-					if (Cast<ABP_VentilaciaRubilnick>(LastItem)->is_Avaliable) {
+					if (Cast<ABP_VentilaciaRubilnick>(LastInteractiveItem)->is_Avaliable) {
 						UserView->E_Mark->SetVisibility(ESlateVisibility::Hidden);
-						LastItem->Item->SetRenderCustomDepth(false);
-						LastItem->Item->MarkRenderStateDirty();
-						Cast<ABP_VentilaciaRubilnick>(LastItem)->is_Avaliable = false;
+						LastInteractiveItem->Item->SetRenderCustomDepth(false);
+						LastInteractiveItem->Item->MarkRenderStateDirty();
+						Cast<ABP_VentilaciaRubilnick>(LastInteractiveItem)->is_Avaliable = false;
 						NewHaveItemServer(VentilaciaRubilnick);
 					}
 					break;
@@ -1698,7 +1549,7 @@ void AChel::PickUp() {
 			TimeLine_FOV_WebCam->Play();
 			CameraZoomIn();
 		}
-	}
+	}*/
 }
 
 void AChel::PickUp_Released()
@@ -1706,7 +1557,7 @@ void AChel::PickUp_Released()
 	if (bCanWalkingAndWatching) {
 		if (IsNotInWebCam) {
 			IsSuccessOpening = false;
-			if (Cast<AOpenArea>(LastItem))
+			if (Cast<AOpenArea>(LastInteractiveItem))
 			{
 				GoToServerOpenArea(false);
 			}
@@ -1747,15 +1598,15 @@ bool AChel::ChangeIsAvaliableCache_Validate()
 	return true;
 }
 
-void AChel::NewHaveItemServer_Implementation(int32 ItemType, int32 ReplaceItemType = -1)
+void AChel::PickUp_Server_Implementation()
 {
-	if (ItemType >= 0 && ItemType <= 2) {
+	/*if (ItemType >= 0 && ItemType <= 2) {
 		DoesHave[ItemType] = true;
 		TArray<AActor*>Players;
 		UGameplayStatics::GetAllActorsOfClass(GetWorld(), AChel::StaticClass(), Players);
 		for (auto& Player : Players)
 			Cast<AChel>(Player)->NewHaveItemClient(ItemType);
-	}
+	}*/
 
 	FHitResult OutHit;
 
@@ -1766,6 +1617,13 @@ void AChel::NewHaveItemServer_Implementation(int32 ItemType, int32 ReplaceItemTy
 
 	World->LineTraceSingleByChannel(OutHit, StartLocation, EndLocation, ECC_Visibility, CollisionParams);
 	if (OutHit.GetActor()) {
+		AInteractiveItem* TracedItem = Cast<AInteractiveItem>(OutHit.GetActor());
+		if (TracedItem)
+		{
+			TracedItem->PickUpEventServer(this);
+		}
+	}
+	/*if (OutHit.GetActor()) {
 		APickableItem* TempItem = Cast<APickableItem>(OutHit.GetActor());
 		ADezinfectorNasosZatichka* Zatichka = Cast<ADezinfectorNasosZatichka>(OutHit.GetActor());
 		if (Zatichka)
@@ -1950,7 +1808,12 @@ void AChel::NewHaveItemServer_Implementation(int32 ItemType, int32 ReplaceItemTy
 				}
 			}
 		}
-	}
+	}*/
+}
+
+bool AChel::PickUp_Server_Validate()
+{
+	return true;
 }
 
 void AChel::ReplaceQAbilityItem(int32 Type, int32 ItemIndex)
@@ -1997,11 +1860,6 @@ void AChel::ReplaceQAbilityItem(int32 Type, int32 ItemIndex)
 	NewItem->AddActorLocalRotation(NewRotation);
 	Cast<APickableItem>(NewItem)->EnabledArrayIndex = ItemIndex;
 	GS->CacheItems_Stuff_IsAvaliable[ItemIndex] = false;
-}
-
-bool AChel::NewHaveItemServer_Validate(int32 ItemType, int32 ReplaceItemType = -1)
-{
-	return true;
 }
 
 void AChel::NewHaveItemClient_Implementation(int32 ItemType)
@@ -2478,7 +2336,7 @@ bool AChel::ChangeGeneratorStas_Validate()
 
 void AChel::CallDoThomethinkArea_Implementation()
 {
-	Cast<AOpenArea>(LastItem)->DoSomethink();
+	Cast<AOpenArea>(LastInteractiveItem)->DoSomethink();
 }
 bool AChel::CallDoThomethinkArea_Validate()
 {
@@ -2767,7 +2625,7 @@ void AChel::DoTraceOpenArea()
 
 	if (World->LineTraceSingleByChannel(OutHit, StartLocation, EndLocation, ECC_Visibility, CollisionParams))
 	{
-		LastItem = Cast<AOpenArea>(OutHit.GetActor());
+		//LastInteractiveItem = Cast<AOpenArea>(OutHit.GetActor());
 	}
 
 }
@@ -2777,20 +2635,20 @@ void AChel::GoToServerOpenArea_Implementation(bool IsStart)
 	if (IsStart) 
 	{
 		DoTraceOpenArea();
-		AOpenArea* CurArea = Cast<AOpenArea>(LastItem);
+		AOpenArea* CurArea = Cast<AOpenArea>(LastInteractiveItem);
 		CurArea->bIsUsed = true;
 		CurArea->RotateVentilServer();
 	}
 	else
 	{
-		AOpenArea* CurArea = Cast<AOpenArea>(LastItem);
+		AOpenArea* CurArea = Cast<AOpenArea>(LastInteractiveItem);
 		if (CurArea) {
 			CurArea->bIsUsed = false;
-			if (Cast<AOpenArea>(LastItem)->CurTimeVentil != 10.f)
+			if (Cast<AOpenArea>(LastInteractiveItem)->CurTimeVentil != 10.f)
 			{
-				Cast<AOpenArea>(LastItem)->RotateVentilServerReverse();
+				Cast<AOpenArea>(LastInteractiveItem)->RotateVentilServerReverse();
 			}
-			LastItem = nullptr;
+			LastInteractiveItem = nullptr;
 		}
 	}
 }
@@ -3105,37 +2963,35 @@ void AChel::UnShowInventory()
 
 void AChel::UseRAbility()
 {
-	/*RAbilityPanel[RAbilityTypeIndex]->Count--;
-	RAbilityPanel[RAbilityTypeIndex]->CountText->SetText(FText::AsNumber(RAbilityPanel[LastRAbilityIndex]->Count));
-	if (RAbilityPanel[RAbilityTypeIndex]->Count == 0)
+	RAbilityPanel[RAbilityTypeIndex]->CurCount--;
+	if (RAbilityPanel[RAbilityTypeIndex]->CurCount == 0)
 	{
 		LastRAbilityIndex = RAbilityTypeIndex - 1;
 		for (int i = RAbilityTypeIndex + 1; i < RAbilityPanel.Num(); i++)
 		{
-			if (RAbilityPanel[i]->Count > 0) 
+			if (RAbilityPanel[i]->CurCount > 0) 
 			{
-				RAbilityPanel[i - 1]->Count = RAbilityPanel[i]->Count;
-				RAbilityPanel[i - 1]->AbilityType = RAbilityPanel[i]->AbilityType;
-				RAbilityPanel[i - 1]->AbilityImage->SetBrush(RAbilityPanel[i]->AbilityImage->Brush);
-				RAbilityPanel[i - 1]->CountText->SetText(FText::AsNumber(RAbilityPanel[i - 1]->Count));
-				RAbilityPanel[i - 1]->InArrayIndex = i - 1;
+				RAbilityPanel[i - 1] = RAbilityPanel[i];
+				auto temp = RAbilityPanel[i - 1]->UserViewSlot;
+				RAbilityPanel[i - 1]->UserViewSlot = RAbilityPanel[i]->UserViewSlot;
+				RAbilityPanel[i]->UserViewSlot = temp;
 				LastRAbilityIndex++;
 			}
 		}
 		if (LastRAbilityIndex < (RAbilityPanel.Num() - 1))
 		{
-			RAbilityPanel[LastRAbilityIndex + 1]->Count = 0;
+			RAbilityPanel[LastRAbilityIndex + 1]->CurCount = 0;
 		}
 		if (LastRAbilityIndex < RAbilityTypeIndex)
 		{
 			RAbilityTypeIndex = LastRAbilityIndex;
 			SetCurRAbilityUserView();
 		}
-		RAbilityPanel[LastRAbilityIndex + 1]->SetVisibility(ESlateVisibility::Hidden);
-	}*/
+		RAbilityPanel[LastRAbilityIndex + 1]->UserViewSlot->SetVisibility(ESlateVisibility::Hidden);
+	}
 }
 
-bool AChel::NewRAbility(TSubclassOf<UConsumableAbility>& Ability_class)
+bool AChel::NewRAbility(const UClass* Ability_class)
 {
 	if (LastRAbilityIndex == -1)
 	{
@@ -3146,7 +3002,7 @@ bool AChel::NewRAbility(TSubclassOf<UConsumableAbility>& Ability_class)
 		for (int i = 0; i < RAbilityPanel.Num(); i++)
 		{
 			if (RAbilityPanel[LastRAbilityIndex]) {
-				if (RAbilityPanel[LastRAbilityIndex]->StaticClass() == Ability_class)
+				if (RAbilityPanel[LastRAbilityIndex]->GetClass() == Ability_class)
 				{
 					if (RAbilityPanel[LastRAbilityIndex]->CurCount + 1 <= RAbilityPanel[LastRAbilityIndex]->MaxCountToStack)
 					{
@@ -3157,7 +3013,7 @@ bool AChel::NewRAbility(TSubclassOf<UConsumableAbility>& Ability_class)
 					else
 					{
 						LastRAbilityIndex++;
-						RAbilityPanel[LastRAbilityIndex] = NewObject<UConsumableAbility>(Ability_class);
+						NewObject<UConsumableAbility>(RAbilityPanel[LastRAbilityIndex], Ability_class);
 						RAbilityPanel[LastRAbilityIndex]->UserViewSlot = Cast<URAbilitySlot>(MyInventory->RAbilityPanel->GetChildAt(LastRAbilityIndex));
 						RAbilityPanel[LastRAbilityIndex]->SetAbilityToSlot();
 
@@ -3172,7 +3028,7 @@ bool AChel::NewRAbility(TSubclassOf<UConsumableAbility>& Ability_class)
 		}
 
 		LastRAbilityIndex++;
-		RAbilityPanel[LastRAbilityIndex] = NewObject<UConsumableAbility>(Ability_class);
+		NewObject<UConsumableAbility>(RAbilityPanel[LastRAbilityIndex], Ability_class);
 		RAbilityPanel[LastRAbilityIndex]->UserViewSlot = Cast<URAbilitySlot>(MyInventory->RAbilityPanel->GetChildAt(LastRAbilityIndex));
 		RAbilityPanel[LastRAbilityIndex]->SetAbilityToSlot();
 

@@ -56,9 +56,9 @@ void UUserView::OnAnimationFinished_Implementation(const UWidgetAnimation* Anima
 		PB_Opening->SetPercent(0);
 		PB_Opening->SetVisibility(ESlateVisibility::Hidden);
 		TimeLeft->SetVisibility(ESlateVisibility::Hidden);
-		if (Cast<AOpenArea>(Player->LastItem) && Player->IsSuccessOpening) {
-			Player->CallDoThomethinkArea();
-		}
+//		if (Cast<AOpenArea>(Player->LastItem) && Player->IsSuccessOpening) {
+//			Player->CallDoThomethinkArea();
+//		}
 	}
 	PB_Opening->SetVisibility(ESlateVisibility::Hidden);
 	TimeLeft->SetVisibility(ESlateVisibility::Hidden);
