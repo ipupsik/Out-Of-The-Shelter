@@ -39,13 +39,13 @@
 #include "UI/Inventory.h"
 #include "UI/TargetArrow.h"
 #include "Components/CapsuleComponent.h"
-
 #include "Chel.generated.h"
 
 class UCameraComponent;
 class UPoseableMeshComponent;
 class UStaticMeshComponent;
 class UUserWidget;
+class AWeapon_Character;
 
 UCLASS()
 class MYPROJECT9_API AChel : public ACharacter
@@ -609,4 +609,38 @@ public:
 
 	bool DoubleArmThrowing;
 	bool IsAlreadyCreated;
+
+
+
+	void DropCoreItems(); //вываливает из себя имеющиеся ключевые предметы при смерти
+
+	TArray<AWeapon_Character*> CurrentWeapons; //текущие оружия(камень + особое)
+	USceneComponent* WeaponPosition; //Позиция, на которую установится оружие
+	int32 CurrentIndex; //индекс в массиве CurrentWeapons
+	void SetWeaponToSlot(int32 IndexWeapon); //когда мы на клиенте и нужно поменять оружие в слоте клиента
+
+	UFUNCTION(NetMulticast, Reliable)
+		void SetWeaponToSlotMulticast(int32 IndexWeapon); //когда нужно с сервера установить у всех оружие в слот
+	
+	void SwitchToFreeWeapon(); //вызывается из Multicasat`а
+
+	UFUNCTION(Client, Reliable)
+	void ClearWeaponInfoClient(); //вызывается из выстрела оружия с сервера
+
+	void ClearWeaponInfo();
+
+	UFUNCTION(Client, Reliable)
+	void ChangeAmmoOwner(int32 NewLeftAmmo); //меняет кол-во патронов у клиента-хозяина в оружии(игрока)
+
+	UFUNCTION(Client, Reliable)
+		void RefreshWidgetAmmoOwningClient(int32 NewLeftAmmo, int32 NewMaxAmmo, int32 NewCurIndex); //когда с сервера нужно поменять виджет у хозина hud
+	void RefreshWidgetAmmoOwning(int32 NewLeftAmmo, int32 NewMaxAmmo, int32 NewCurIndex);
+
+	UFUNCTION(NetMulticast, Reliable)
+		void StartAnimInCurSlot();
+	UFUNCTION(NetMulticast, Reliable)
+		void StartAnimInCurSlotReverse(bool HaveAmmo);
+
+
+	bool CanFireWeapon;
 };

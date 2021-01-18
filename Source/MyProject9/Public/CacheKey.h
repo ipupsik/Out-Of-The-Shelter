@@ -3,22 +3,24 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "PickableItem.h"
-#include "Cache_Key.generated.h"
+#include "CollectableItem.h"
+#include "CacheKey.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class MYPROJECT9_API ACache_Key : public APickableItem
+class MYPROJECT9_API ACacheKey : public ACollectableItem
 {
 	GENERATED_BODY()
-	
 public:
-	ACache_Key();
+	ACacheKey();
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Type")
-		int KeyType;
+	void PickUpEventServer(AChel* Player) override;
+	void PickUpEventClient(AChel* Player) override;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int32 TypeKey;
 
 	void RemoveAndRefreshTimer();
 
@@ -29,7 +31,6 @@ public:
 
 	UFUNCTION(NetMulticast, Reliable)
 		void RefreshMulticast();
-public:
-	//Vars
+
 	int ArrayIndex;
 };

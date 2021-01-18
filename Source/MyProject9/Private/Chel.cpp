@@ -17,6 +17,8 @@
 #include "CanalizationDamageCollision.h"
 #include "Code_Note.h"
 #include "BP_VentilaciaRubilnick.h"
+#include "CoreItem.h"
+#include "Weapon_Character.h"
 
 enum AreaType
 {
@@ -81,6 +83,9 @@ AChel::AChel()
 	SenseCollision = CreateDefaultSubobject<USphereComponent>(TEXT("SenseCollision"));
 	SenseCollision->SetupAttachment(RootComponent);
 
+	WeaponPosition = CreateDefaultSubobject<USceneComponent>(TEXT("WeaponPosition"));
+	StoneRight->SetupAttachment(CameraComp);
+
 	StoneRight = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("StoneRight"));
 	StoneRight->SetupAttachment(CameraComp);
 
@@ -125,6 +130,7 @@ AChel::AChel()
 	ItemCodePickUp = -1;
 	IsNotInWebCam = true;
 	CanThrowStone = true;
+	CanFireWeapon = true;
 	WebCamIterator = -1;
 	DoubleArmThrowing = false;
 	bIsAlreadyThrowingLeft = false;
@@ -2128,6 +2134,8 @@ void AChel::KillPlayer()
 	TArray<AActor*>Players;
 	UGameplayStatics::GetAllActorsOfClass(World, AChel::StaticClass(), Players);
 
+	DropCoreItems();
+
 	for (auto& Player : Players)
 	{
 		AChel* Chel = Cast<AChel>(Player);
@@ -3176,3 +3184,110 @@ void AChel::SetCurRAbilityUserView()
 		UserView->CurRSlot->CountText->SetText(FText::AsNumber(0));
 	}
 }
+
+void AChel::DropCoreItems()
+{
+	if (DoesHave[0]) {
+		FTransform Trsfrm;
+		Trsfrm.SetLocation(DamageCollision->GetComponentLocation());
+		Trsfrm.SetRotation(FQuat(FRotator(DamageCollision->GetComponentRotation())));
+		Trsfrm.SetScale3D(FVector(1.0f, 1.0f, 1.0f));
+		ACoreItem* DroppedItm = World->SpawnActor<ACoreItem>(GS->Boltorez, Trsfrm);
+		DroppedItm->Collision->SetPhysicsLinearVelocity(FVector(CameraComp->GetForwardVector() * 200.f));
+	}
+	if (DoesHave[1]) {
+		FTransform Trsfrm;
+		Trsfrm.SetLocation(DamageCollision->GetComponentLocation());
+		Trsfrm.SetRotation(FQuat(FRotator(DamageCollision->GetComponentRotation())));
+		Trsfrm.SetScale3D(FVector(1.0f, 1.0f, 1.0f));
+		ACoreItem* DroppedItm = World->SpawnActor<ACoreItem>(GS->KeyShelter, Trsfrm);
+		DroppedItm->Collision->SetPhysicsLinearVelocity(FVector(CameraComp->GetForwardVector() * 200.f));
+	}
+	if (DoesHave[2]) {
+		FTransform Trsfrm;
+		Trsfrm.SetLocation(DamageCollision->GetComponentLocation());
+		Trsfrm.SetRotation(FQuat(FRotator(DamageCollision->GetComponentRotation())));
+		Trsfrm.SetScale3D(FVector(1.0f, 1.0f, 1.0f));
+		ACoreItem* DroppedItm = World->SpawnActor<ACoreItem>(GS->Otvertka, Trsfrm);
+		DroppedItm->Collision->SetPhysicsLinearVelocity(FVector(CameraComp->GetForwardVector() * 200.f));
+	}
+}
+
+void AChel::SetWeaponToSlot(int32 IndexWeapon) //вызывается из мультикастового события
+{
+	CurrentWeapons[IndexWeapon]->GunMesh->SetVisibility(true);
+	CurrentWeapons[(IndexWeapon + 1) % 2]->GunMesh->SetVisibility(false);
+	CurrentIndex = IndexWeapon;
+	if (IsPlayerOwner) {
+		RefreshWidgetAmmoOwning(CurrentWeapons[CurrentIndex]->LeftAmmo, CurrentWeapons[CurrentIndex]->MaxAmmo, CurrentIndex);
+	}
+}
+
+void AChel::SwitchToFreeWeapon() {
+	if (CurrentWeapons[0]->LeftAmmo == 0) {
+		if (CurrentWeapons[1]->LeftAmmo == 0) {
+			CurrentIndex = 0;
+			if (IsPlayerOwner) {
+				ClearWeaponInfo();
+			}
+		}
+		else {
+			SetWeaponToSlot(1);
+		}
+	}
+	else {
+		SetWeaponToSlot(0);
+	}
+}
+void AChel::RefreshWidgetAmmoOwning(int32 NewLeftAmmo, int32 NewMaxAmmo, int32 NewCurIndex) {
+	CurrentIndex = NewCurIndex;
+	UserView->AmmoLabel->SetVisibility(ESlateVisibility::Visible);
+	UserView->AmmoMax->SetVisibility(ESlateVisibility::Visible);
+	UserView->AmmoLabel->SetText(FText::AsNumber(CurrentWeapons[CurrentIndex]->LeftAmmo));
+	UserView->AmmoLabel->SetText(FText::AsNumber(CurrentWeapons[CurrentIndex]->LeftAmmo));
+}
+
+void AChel::RefreshWidgetAmmoOwningClient_Implementation(int32 NewLeftAmmo, int32 NewMaxAmmo, int32 NewCurIndex)
+{
+	RefreshWidgetAmmoOwning(NewLeftAmmo, NewMaxAmmo, NewCurIndex);
+}
+
+void AChel::SetWeaponToSlotMulticast_Implementation(int32 IndexWeapon)
+{
+	SetWeaponToSlot(IndexWeapon);
+}
+void AChel::ChangeAmmoOwner_Implementation(int32 NewLeftAmmo)
+{
+	CurrentWeapons[CurrentIndex]->LeftAmmo = NewLeftAmmo;
+}
+void AChel::StartAnimInCurSlot_Implementation()
+{
+	if (IsPlayerOwner) {
+		CanFireWeapon = false;
+	}
+	CurrentWeapons[CurrentIndex]->AnimationThrow();
+}
+
+void AChel::StartAnimInCurSlotReverse_Implementation(bool HaveAmmo)
+{
+	int32 idx = CurrentIndex; //на случай, еслы мы вызовем switchToFreeWeapon
+	if (!HaveAmmo) {
+		if (IsPlayerOwner) {
+			CanFireWeapon = true;
+		}
+		
+		CurrentWeapons[CurrentIndex]->GunMesh->SetVisibility(false);
+		SwitchToFreeWeapon();
+	}
+	CurrentWeapons[idx]->AnimationThrowReverse();
+
+}
+void AChel::ClearWeaponInfo() {
+	UserView->AmmoLabel->SetVisibility(ESlateVisibility::Hidden);
+	UserView->AmmoMax->SetVisibility(ESlateVisibility::Hidden);
+}
+
+void AChel::ClearWeaponInfoClient_Implementation() {
+	ClearWeaponInfo();
+}
+
