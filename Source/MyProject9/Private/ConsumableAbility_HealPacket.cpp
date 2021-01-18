@@ -8,6 +8,7 @@ UConsumableAbility_HealPacket::UConsumableAbility_HealPacket()
 {
 	ConstructorHelpers::FObjectFinder<UTexture2D> BarFillObj(TEXT("/Game/Assets/Images/circle-cropped__1_"));
 	Icon = BarFillObj.Object;
+	MaxCountToStack = 3;
 }
 
 void UConsumableAbility_HealPacket::UseAbilityServer(AChel* Player)
