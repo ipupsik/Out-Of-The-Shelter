@@ -645,6 +645,7 @@ public:
 	UFUNCTION(NetMulticast, Reliable)
 		void StartAnimInCurSlotReverse(bool HaveAmmo);
 
+	void InvertMovement(float timeToOff); // инвертированное управление при попадании бутылки, которое снимается через timeToOff
 
 	bool CanFireWeapon;
 };

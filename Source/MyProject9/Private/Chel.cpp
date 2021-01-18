@@ -3262,6 +3262,10 @@ void AChel::RefreshWidgetAmmoOwning(int32 NewLeftAmmo, int32 NewMaxAmmo, int32 N
 	UserView->AmmoLabel->SetText(FText::AsNumber(CurrentWeapons[CurrentIndex]->LeftAmmo));
 }
 
+void AChel::InvertMovement(float timeToOff)
+{
+}
+
 void AChel::RefreshWidgetAmmoOwningClient_Implementation(int32 NewLeftAmmo, int32 NewMaxAmmo, int32 NewCurIndex)
 {
 	RefreshWidgetAmmoOwning(NewLeftAmmo, NewMaxAmmo, NewCurIndex);
@@ -3280,6 +3284,7 @@ void AChel::StartAnimInCurSlot_Implementation()
 	if (IsPlayerOwner) {
 		CanFireWeapon = false;
 	}
+	CurrentWeapons[CurrentIndex]->PlaySoundThrow();
 	CurrentWeapons[CurrentIndex]->AnimationThrow();
 }
 
