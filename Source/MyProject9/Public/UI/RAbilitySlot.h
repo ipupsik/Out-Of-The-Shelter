@@ -18,13 +18,6 @@ class MYPROJECT9_API URAbilitySlot : public UUserWidget
 	GENERATED_BODY()
 	
 public:
-	UPROPERTY(BlueprintReadWrite)
-	int32 AbilityType;
-	UPROPERTY(BlueprintReadWrite)
-	int32 Count;
-	UPROPERTY(BlueprintReadWrite)
-	int32 InArrayIndex;
-	
 	UFUNCTION()
 		void SelectRAbility();
 
@@ -34,7 +27,9 @@ public:
 		UImage* AbilityImage;
 
 	void NativeConstruct() override;
-
+	
+	UPROPERTY(EditAnywhere)
+		int32 InArrayIndex;
 
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
 		UButton* BTN_Select;

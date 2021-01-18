@@ -601,6 +601,9 @@ public:
 	AItemPromtArrow_MainExis* MainExis_Ventilacia;
 	AItemPromtArrow_MainExis* MainExis_Canalizacia;
 
+	UPROPERTY(EditAnywhere)
+		UObject* DefaultRAbilityImage;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	bool bInEscMenu;
 	bool TickEnableGeneratorWidget;

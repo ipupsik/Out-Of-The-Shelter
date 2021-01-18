@@ -9,8 +9,6 @@ void URAbilitySlot::NativeConstruct() {
 	Super::NativeConstruct();
 
 	BTN_Select->OnClicked.AddDynamic(this, &URAbilitySlot::SelectRAbility);
-	AbilityType = -1;
-	Count = 0;
 	InArrayIndex = -1;
 }
 

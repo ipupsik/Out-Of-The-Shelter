@@ -17,12 +17,12 @@ class MYPROJECT9_API UConsumableAbility : public UObject
 	GENERATED_BODY()
 	
 public:
-	virtual void UseAbilityClient(AChel*);
-	virtual void UseAbilityServer(AChel*);
+	virtual void UseAbilityClient(AChel* Player);
+	virtual void UseAbilityServer(AChel* Player);
 
 	void SetAbilityToSlot();
 	void UpdateCount();
-	void SetCurRAbilityUserView(AChel*);
+	void SetCurRAbilityUserView(AChel* Player);
 
 	int32 CurCount;
 	UPROPERTY(EditAnywhere)

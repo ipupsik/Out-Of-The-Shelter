@@ -302,42 +302,42 @@ void AChel::QAbilityDisable()
 
 void AChel::RAbilityEnable()
 {
-	if (RAbilityTypeIndex != -1)
-	{
-		switch (RAbilityPanel[RAbilityTypeIndex]->AbilityType)
-		{
-		case HealthPacket:
-		{
-			UseRAbility();
-			RAbility_HealPacket();
-			break;
-		}
-		case SpeedBust:
-		{
-			UseRAbility();
-			UseSpeedBust_Server();
-			SpeedBustValue = 300;
-			GetCharacterMovement()->MaxWalkSpeed = 800.f + SpeedBustValue;
-			CurrentSpeedBustCount++;
-			FTimerHandle FuzeTimerHandle;
-			GetWorld()->GetTimerManager().SetTimer(FuzeTimerHandle, this, &AChel::StopUseSpeedBust, 20, false);
-			break;
-		}
-		case StoneDamageBuffTemp:
-		{
-			UseRAbility();
-			AddStoneDamageBuffTemp();
-			break;
-		}
-		case ImmortalPotion:
-		{
-			UseRAbility();
-			AddImmortalServer();
-			break;
-		}
-		}
+	//if (RAbilityTypeIndex != -1)
+	//{
+	//	switch (RAbilityPanel[RAbilityTypeIndex]->AbilityType)
+	//	{
+	//	case HealthPacket:
+	//	{
+	//		UseRAbility();
+	//		RAbility_HealPacket();
+	//		break;
+	//	}
+	//	case SpeedBust:
+	//	{
+	//		UseRAbility();
+	//		UseSpeedBust_Server();
+	//		SpeedBustValue = 300;
+	//		GetCharacterMovement()->MaxWalkSpeed = 800.f + SpeedBustValue;
+	//		CurrentSpeedBustCount++;
+	//		FTimerHandle FuzeTimerHandle;
+	//		GetWorld()->GetTimerManager().SetTimer(FuzeTimerHandle, this, &AChel::StopUseSpeedBust, 20, false);
+	//		break;
+	//	}
+	//	case StoneDamageBuffTemp:
+	//	{
+	//		UseRAbility();
+	//		AddStoneDamageBuffTemp();
+	//		break;
+	//	}
+	//	case ImmortalPotion:
+	//	{
+	//		UseRAbility();
+	//		AddImmortalServer();
+	//		break;
+	//	}
+	//	}
 
-	}
+	//}
 }
 
 /*void AChel::RAbilityDisable()
@@ -479,12 +479,6 @@ void AChel::MyBeginPlay()
 
 		UserView->Player = this;
 		UserView->AmmoLabel->SetText(FText::AsNumber((int32)Ammo));
-
-		TArray<UWidget*>InventoryRArray = MyInventory->RAbilityPanel->GetAllChildren();;
-		for (auto& it : InventoryRArray)
-		{
-			RAbilityPanel.Add(Cast<URAbilitySlot>(it));
-		}
 
 		TArray<AActor*>MainExis;
 		UGameplayStatics::GetAllActorsOfClass(World, AItemPromtArrow_MainExis::StaticClass(), MainExis);
@@ -1628,7 +1622,6 @@ void AChel::PickUp() {
 				{
 					if (LastRAbilityIndex < 2)
 					{
-						NewRAbility(HealthPacket);
 						NewHaveItemServer(HealthPacket);
 					}
 					break;
@@ -1661,7 +1654,6 @@ void AChel::PickUp() {
 				{
 					if (LastRAbilityIndex < 2)
 					{
-						NewRAbility(SpeedBust);
 						NewHaveItemServer(RadiationAntidot);
 					}
 					break;
@@ -1681,7 +1673,6 @@ void AChel::PickUp() {
 				{
 					if (LastRAbilityIndex < 2)
 					{
-						NewRAbility(StoneDamageBuffTemp);
 						NewHaveItemServer(StoneDamageBuffTemp);
 					}
 					break;
@@ -1690,7 +1681,6 @@ void AChel::PickUp() {
 				{
 					if (LastRAbilityIndex < 2)
 					{
-						NewRAbility(ImmortalPotion);
 						NewHaveItemServer(ImmortalPotion);
 					}
 					break;
@@ -3115,7 +3105,7 @@ void AChel::UnShowInventory()
 
 void AChel::UseRAbility()
 {
-	RAbilityPanel[RAbilityTypeIndex]->Count--;
+	/*RAbilityPanel[RAbilityTypeIndex]->Count--;
 	RAbilityPanel[RAbilityTypeIndex]->CountText->SetText(FText::AsNumber(RAbilityPanel[LastRAbilityIndex]->Count));
 	if (RAbilityPanel[RAbilityTypeIndex]->Count == 0)
 	{
@@ -3142,7 +3132,7 @@ void AChel::UseRAbility()
 			SetCurRAbilityUserView();
 		}
 		RAbilityPanel[LastRAbilityIndex + 1]->SetVisibility(ESlateVisibility::Hidden);
-	}
+	}*/
 }
 
 bool AChel::NewRAbility(TSubclassOf<UConsumableAbility>& Ability_class)
@@ -3170,10 +3160,21 @@ bool AChel::NewRAbility(TSubclassOf<UConsumableAbility>& Ability_class)
 						RAbilityPanel[LastRAbilityIndex] = NewObject<UConsumableAbility>(Ability_class);
 						RAbilityPanel[LastRAbilityIndex]->UserViewSlot = Cast<URAbilitySlot>(MyInventory->RAbilityPanel->GetChildAt(LastRAbilityIndex));
 						RAbilityPanel[LastRAbilityIndex]->SetAbilityToSlot();
+
+						if (LastRAbilityIndex == 0)
+						{
+							SetCurRAbilityUserView();
+						}
+						return true;
 					}
 				}
 			}
 		}
+
+		LastRAbilityIndex++;
+		RAbilityPanel[LastRAbilityIndex] = NewObject<UConsumableAbility>(Ability_class);
+		RAbilityPanel[LastRAbilityIndex]->UserViewSlot = Cast<URAbilitySlot>(MyInventory->RAbilityPanel->GetChildAt(LastRAbilityIndex));
+		RAbilityPanel[LastRAbilityIndex]->SetAbilityToSlot();
 
 		if (LastRAbilityIndex == 0)
 		{
@@ -3181,20 +3182,21 @@ bool AChel::NewRAbility(TSubclassOf<UConsumableAbility>& Ability_class)
 		}
 		return true;
 	}
+
 	return false;
 }
 
 void AChel::SetCurRAbilityUserView()
 {
 	if (RAbilityTypeIndex != -1) {
-		UserView->CurRSlot->AbilityImage->SetBrush(RAbilityPanel[RAbilityTypeIndex]->AbilityImage->Brush);
-		UserView->CurRSlot->CountText->SetText(FText::AsNumber(RAbilityPanel[RAbilityTypeIndex]->Count));
+		RAbilityPanel[RAbilityTypeIndex]->SetCurRAbilityUserView(this);
 	}
 	else
 	{
-		//FSlateBrush NewBrush = Дефолтная картинка для R Способности;
-		//UserView->CurRSlot->AbilityImage->SetBrush(NewBrush);
-		UserView->CurRSlot->CountText->SetText(FText::AsNumber(0));
+		FSlateBrush NewBrush;
+		NewBrush.SetResourceObject(DefaultRAbilityImage);
+		UserView->CurRSlot->AbilityImage->SetBrush(NewBrush);
+		UserView->CurRSlot->CountText->SetText(FText::FromString(""));
 	}
 }
 
