@@ -29,4 +29,6 @@ public:
 		USceneComponent* Scene;
 	void ToggleCustomDepth(bool IsOutliningNow) override;
 	void SetOutlineColor(int32 ColorOutline) override;
+
+	int32 EnabledArrayIndex;
 };
