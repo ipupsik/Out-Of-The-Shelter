@@ -22,10 +22,13 @@ public:
 	void PlayPickUpSound();
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Collision")
-	UBoxComponent* Collision;
+		UBoxComponent* Collision;
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Mesh")
-	UStaticMeshComponent* Mesh;
-	
+		UStaticMeshComponent* Mesh;
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Scene")
+		USceneComponent* Scene;
 	void ToggleCustomDepth(bool IsOutliningNow) override;
 	void SetOutlineColor(int32 ColorOutline) override;
+
+	int32 EnabledArrayIndex;
 };

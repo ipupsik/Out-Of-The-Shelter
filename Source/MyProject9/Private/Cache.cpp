@@ -32,4 +32,3 @@ void ACache::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimePr
 	DOREPLIFETIME(ACache, IsEnabled);
 }
 
-

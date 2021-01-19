@@ -21,7 +21,12 @@
 #include "Weapon_Character.h"
 #include "ConsumableAbility.h"
 #include "InteractiveItem.h"
+<<<<<<< HEAD
 #include "Weapon_Level.h"
+=======
+#include "QAbility.h"
+#include "QAbilityItem.h"
+>>>>>>> 80dff1d7d34d67d606e1606dc3c49a7a3b796c47
 
 enum AreaType
 {
@@ -313,13 +318,13 @@ void AChel::RAbilityEnable_Client()
 	{
 		RAbilityPanel[RAbilityTypeIndex]->UseAbilityClient(this);
 		RAbilityEnable_Server(RAbilityPanel[RAbilityTypeIndex]->GetClass());
+		UseRAbility();
 	}
 }
 
 void AChel::RAbilityEnable_Server_Implementation(const UClass* Ability_class)
 {
-	UObject* NewItem = nullptr;
-	NewObject<UConsumableAbility>(NewItem, Ability_class);
+	UConsumableAbility* NewItem = NewObject<UConsumableAbility>(this, Ability_class);
 	Cast<UConsumableAbility>(NewItem)->UseAbilityServer(this);
 }
 
@@ -1403,49 +1408,20 @@ bool AChel::PickUp_Server_Validate()
 	return true;
 }
 
-void AChel::ReplaceQAbilityItem(int32 Type, int32 ItemIndex)
+void AChel::ReplaceQAbilityItem(const UClass* QAbilityclass, int32 ItemIndex)
 {
-	if (Type == -1)
-		return;
-	TSubclassOf<APickableItem> ReplaceClass;
-	FVector NewLocation;
-	FVector NewScale;
-	FRotator NewRotation;
-	switch (Type)
-	{
-	case ChelsDetector:
-	{
-		ReplaceClass = GS->ChelDetector_class;
-
-		NewLocation.X = GS->ChelDetectorTransform[GS->Caches[ItemIndex]->CacheIndex].GetLocation().X / abs(GS->Caches[ItemIndex]->GetActorScale3D().X);
-		NewLocation.Y = GS->ChelDetectorTransform[GS->Caches[ItemIndex]->CacheIndex].GetLocation().Y / abs(GS->Caches[ItemIndex]->GetActorScale3D().Y);
-		NewLocation.Z = GS->ChelDetectorTransform[GS->Caches[ItemIndex]->CacheIndex].GetLocation().Z / abs(GS->Caches[ItemIndex]->GetActorScale3D().Z);
-
-		NewRotation = FRotator(GS->ChelDetectorTransform[GS->Caches[ItemIndex]->CacheIndex].GetRotation());
-		NewScale = GS->ChelDetectorTransform[GS->Caches[ItemIndex]->CacheIndex].GetScale3D();
-		break;
-	}
-	case RentgenGlasses:
-	{
-		ReplaceClass = GS->RentgenGlass_class;
-
-		NewLocation.X = GS->RentgenGlassTransform[GS->Caches[ItemIndex]->CacheIndex].GetLocation().X / abs(GS->Caches[ItemIndex]->GetActorScale3D().X);
-		NewLocation.Y = GS->RentgenGlassTransform[GS->Caches[ItemIndex]->CacheIndex].GetLocation().Y / abs(GS->Caches[ItemIndex]->GetActorScale3D().Y);
-		NewLocation.Z = GS->RentgenGlassTransform[GS->Caches[ItemIndex]->CacheIndex].GetLocation().Z / abs(GS->Caches[ItemIndex]->GetActorScale3D().Z);
-
-		NewRotation = FRotator(GS->RentgenGlassTransform[GS->Caches[ItemIndex]->CacheIndex].GetRotation());
-		NewScale = GS->RentgenGlassTransform[GS->Caches[ItemIndex]->CacheIndex].GetScale3D();
-		break;
-	}
-	}
-
-	AActor* NewItem = GetWorld()->SpawnActor<AActor>(ReplaceClass);
+	UQAbility* QAbilityInterface = NewObject<UQAbility>(this, QAbilityclass);
+	FVector NewLocation = QAbilityInterface->GetCacheLocation();
+	FVector NewScale = QAbilityInterface->GetCacheScale3D();
+	FRotator NewRotation = QAbilityInterface->GetCacheRotation();
+	
+	AActor* NewItem = GetWorld()->SpawnActor<AActor>(QAbilityInterface->QAbilityitem_class);
 	FAttachmentTransformRules AttachmentRules = FAttachmentTransformRules(EAttachmentRule::KeepRelative, true);
 	NewItem->AttachToActor(GS->Caches[ItemIndex], AttachmentRules);
 	NewItem->SetActorScale3D(NewScale);
 	NewItem->AddActorLocalOffset(NewLocation);
 	NewItem->AddActorLocalRotation(NewRotation);
-	Cast<APickableItem>(NewItem)->EnabledArrayIndex = ItemIndex;
+	Cast<AQAbilityItem>(NewItem)->EnabledArrayIndex = ItemIndex;
 	GS->CacheItems_Stuff_IsAvaliable[ItemIndex] = false;
 }
 
@@ -2556,25 +2532,27 @@ void AChel::UseRAbility()
 		LastRAbilityIndex = RAbilityTypeIndex - 1;
 		for (int i = RAbilityTypeIndex + 1; i < RAbilityPanel.Num(); i++)
 		{
-			if (RAbilityPanel[i]->CurCount > 0) 
+			if (RAbilityPanel[i]) 
 			{
-				RAbilityPanel[i - 1] = RAbilityPanel[i];
-				auto temp = RAbilityPanel[i - 1]->UserViewSlot;
-				RAbilityPanel[i - 1]->UserViewSlot = RAbilityPanel[i]->UserViewSlot;
-				RAbilityPanel[i]->UserViewSlot = temp;
+				RAbilityPanel[i - 1]->CurCount = RAbilityPanel[i]->CurCount;
+				RAbilityPanel[i - 1]->MaxCountToStack = RAbilityPanel[i]->MaxCountToStack;
+				RAbilityPanel[i - 1]->Icon = RAbilityPanel[i]->Icon;
+				RAbilityPanel[i - 1]->ResetAbility();
 				LastRAbilityIndex++;
 			}
-		}
-		if (LastRAbilityIndex < (RAbilityPanel.Num() - 1))
-		{
-			RAbilityPanel[LastRAbilityIndex + 1]->CurCount = 0;
 		}
 		if (LastRAbilityIndex < RAbilityTypeIndex)
 		{
 			RAbilityTypeIndex = LastRAbilityIndex;
-			SetCurRAbilityUserView();
 		}
+		SetCurRAbilityUserView();
 		RAbilityPanel[LastRAbilityIndex + 1]->UserViewSlot->SetVisibility(ESlateVisibility::Hidden);
+		RAbilityPanel[LastRAbilityIndex + 1] = nullptr;
+	}
+	else
+	{
+		RAbilityPanel[RAbilityTypeIndex]->UpdateCount();
+		UserView->CurRSlot->CountText->SetText(FText::AsNumber(RAbilityPanel[RAbilityTypeIndex]->CurCount));
 	}
 }
 
@@ -2586,6 +2564,8 @@ bool AChel::NewRAbility(const UClass* Ability_class)
 	}
 	if (LastRAbilityIndex != 2)
 	{
+		int32 IndexOfAddToStuck = -1;
+		bool IsStackOverflow = false;
 		for (int i = 0; i < RAbilityPanel.Num(); i++)
 		{
 			if (RAbilityPanel[i]) {
@@ -2593,29 +2573,40 @@ bool AChel::NewRAbility(const UClass* Ability_class)
 				{
 					if (RAbilityPanel[i]->CurCount + 1 <= RAbilityPanel[i]->MaxCountToStack)
 					{
-						RAbilityPanel[i]->CurCount++;
-						RAbilityPanel[i]->UpdateCount();
-						return true;
+						IndexOfAddToStuck = i;
 					}
 					else
 					{
-						LastRAbilityIndex++;
-						NewObject<UConsumableAbility>(RAbilityPanel[LastRAbilityIndex], Ability_class);
-						RAbilityPanel[LastRAbilityIndex]->UserViewSlot = Cast<URAbilitySlot>(MyInventory->RAbilityPanel->GetChildAt(LastRAbilityIndex));
-						RAbilityPanel[LastRAbilityIndex]->SetAbilityToSlot();
-
-						if (LastRAbilityIndex == 0)
-						{
-							SetCurRAbilityUserView();
-						}
-						return true;
+						IsStackOverflow = true;
 					}
 				}
 			}
 		}
+		if (IndexOfAddToStuck != -1) {
+			RAbilityPanel[IndexOfAddToStuck]->CurCount++;
+			RAbilityPanel[IndexOfAddToStuck]->UpdateCount();
+			if (IndexOfAddToStuck == RAbilityTypeIndex)
+			{
+				UserView->CurRSlot->CountText->SetText(FText::AsNumber(RAbilityPanel[IndexOfAddToStuck]->CurCount));
+			}
+			return true;
+		}
+		else if (IsStackOverflow)
+		{
+			LastRAbilityIndex++;
+			RAbilityPanel[LastRAbilityIndex] = NewObject<UConsumableAbility>(this, Ability_class);
+			RAbilityPanel[LastRAbilityIndex]->UserViewSlot = Cast<URAbilitySlot>(MyInventory->RAbilityPanel->GetChildAt(LastRAbilityIndex));
+			RAbilityPanel[LastRAbilityIndex]->SetAbilityToSlot();
+
+			if (LastRAbilityIndex == 0)
+			{
+				SetCurRAbilityUserView();
+			}
+			return true;
+		}
 
 		LastRAbilityIndex++;
-		NewObject<UConsumableAbility>(RAbilityPanel[LastRAbilityIndex], Ability_class);
+		RAbilityPanel[LastRAbilityIndex] = NewObject<UConsumableAbility>(this, Ability_class);
 		RAbilityPanel[LastRAbilityIndex]->UserViewSlot = Cast<URAbilitySlot>(MyInventory->RAbilityPanel->GetChildAt(LastRAbilityIndex));
 		RAbilityPanel[LastRAbilityIndex]->SetAbilityToSlot();
 
@@ -2631,7 +2622,7 @@ bool AChel::NewRAbility(const UClass* Ability_class)
 
 void AChel::SetCurRAbilityUserView()
 {
-	if (RAbilityTypeIndex != -1) {
+	if (LastRAbilityIndex != -1) {
 		RAbilityPanel[RAbilityTypeIndex]->SetCurRAbilityUserView(this);
 	}
 	else

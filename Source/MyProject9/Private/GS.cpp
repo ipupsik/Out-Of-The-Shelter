@@ -12,6 +12,7 @@
 #include "WebCamPoint.h"
 #include "BP_VentilaciaRubilnick.h"
 #include "PromptCollisionArea.h"
+#include "CollectableItem.h"
 
 AGS::AGS() {
 	NickNames.Init(FText::FromString(TEXT(" ")), 4);
@@ -143,7 +144,7 @@ void AGS::BeginPlay()
 			NewLocation.Z = KeyShelterTransform[Caches[ArrayIndex]->CacheIndex].GetLocation().Z / abs(Caches[ArrayIndex]->GetActorScale3D().Z);
 			NewItem->AddActorLocalOffset(NewLocation);
 			NewItem->AddActorLocalRotation(KeyShelterTransform[Caches[ArrayIndex]->CacheIndex].GetRotation());
-			Cast<APickableItem>(NewItem)->EnabledArrayIndex = ArrayIndex;
+			Cast<ACollectableItem>(NewItem)->EnabledArrayIndex = ArrayIndex;
 			CacheItems_Stuff_IsAvaliable[ArrayIndex] = false;
 		}
 		
@@ -165,7 +166,7 @@ void AGS::BeginPlay()
 				NewLocation.Z = BoltorezTransform[Caches[ArrayIndex]->CacheIndex].GetLocation().Z / abs(Caches[ArrayIndex]->GetActorScale3D().Z);
 				NewItem->AddActorLocalOffset(NewLocation);
 				NewItem->AddActorLocalRotation(BoltorezTransform[Caches[ArrayIndex]->CacheIndex].GetRotation());
-				Cast<APickableItem>(NewItem)->EnabledArrayIndex = ArrayIndex;
+				Cast<ACollectableItem>(NewItem)->EnabledArrayIndex = ArrayIndex;
 				CacheItems_Stuff_IsAvaliable[ArrayIndex] = false;
 			}
 		}
@@ -189,7 +190,7 @@ void AGS::BeginPlay()
 				NewLocation.Z = OtvertkaTransform[Caches[ArrayIndex]->CacheIndex].GetLocation().Z / abs(Caches[ArrayIndex]->GetActorScale3D().Z);
 				NewItem->AddActorLocalOffset(NewLocation);
 				NewItem->AddActorLocalRotation(OtvertkaTransform[Caches[ArrayIndex]->CacheIndex].GetRotation());
-				Cast<APickableItem>(NewItem)->EnabledArrayIndex = ArrayIndex;
+				Cast<ACollectableItem>(NewItem)->EnabledArrayIndex = ArrayIndex;
 				CacheItems_Stuff_IsAvaliable[ArrayIndex] = false;
 			}
 		}
@@ -212,7 +213,7 @@ void AGS::BeginPlay()
 			NewLocation.Z = RentgenGlassTransform[Caches[ArrayIndex]->CacheIndex].GetLocation().Z / abs(Caches[ArrayIndex]->GetActorScale3D().Z);
 			NewItem->AddActorLocalOffset(NewLocation);
 			NewItem->AddActorLocalRotation(RentgenGlassTransform[Caches[ArrayIndex]->CacheIndex].GetRotation());
-			Cast<APickableItem>(NewItem)->EnabledArrayIndex = ArrayIndex;
+			Cast<ACollectableItem>(NewItem)->EnabledArrayIndex = ArrayIndex;
 			CacheItems_Stuff_IsAvaliable[ArrayIndex] = false;
 		}
 
@@ -234,7 +235,7 @@ void AGS::BeginPlay()
 			NewLocation.Z = ChelDetectorTransform[Caches[ArrayIndex]->CacheIndex].GetLocation().Z / abs(Caches[ArrayIndex]->GetActorScale3D().Z);
 			NewItem->AddActorLocalOffset(NewLocation);
 			NewItem->AddActorLocalRotation(ChelDetectorTransform[Caches[ArrayIndex]->CacheIndex].GetRotation());
-			Cast<APickableItem>(NewItem)->EnabledArrayIndex = ArrayIndex;
+			Cast<ACollectableItem>(NewItem)->EnabledArrayIndex = ArrayIndex;
 			CacheItems_Stuff_IsAvaliable[ArrayIndex] = false;
 		}
 
@@ -273,7 +274,7 @@ void AGS::BeginPlay()
 					NewItem = GetWorld()->SpawnActor<AActor>(GoldKey, Keys_Transform[ArrayIndex]);
 				}
 				if (NewItem) {
-					Cast<ACache_Key>(NewItem)->ArrayIndex = ArrayIndex;
+					Cast<ACollectableItem>(NewItem)->EnabledArrayIndex = ArrayIndex;
 					Keys_IsAvaliable[ArrayIndex] = false;
 				}
 			}
@@ -331,7 +332,7 @@ void AGS::SpawnPlayers()
 void AGS::ResetGame() {
 	TArray<AActor*>Stuff;
 
-	UGameplayStatics::GetAllActorsOfClass(GetWorld(), APickableItem::StaticClass(), Stuff);
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AInteractiveItem::StaticClass(), Stuff);
 
 	for (auto Obj : Stuff)
 		Obj->Destroy();
