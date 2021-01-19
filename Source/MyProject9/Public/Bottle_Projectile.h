@@ -18,10 +18,10 @@ class MYPROJECT9_API ABottle_Projectile : public AWeapon_Projectile
 public:
 	ABottle_Projectile();
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 		UBoxComponent* MyCollision;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 		UStaticMeshComponent* MyGunMesh;
 
 	UFUNCTION(BlueprintImplementableEvent)

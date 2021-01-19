@@ -6,12 +6,13 @@
 
 ABottle_Projectile::ABottle_Projectile() {
 	MyCollision = CreateDefaultSubobject<UBoxComponent>("MyCollision");
-	MyCollision->SetupAttachment(RootComponent);
+	RootComponent = MyCollision;
 
 	MyGunMesh = CreateDefaultSubobject<UStaticMeshComponent>("MyGunMesh");
 	MyGunMesh->SetupAttachment(MyCollision);
 
 	ProjectMovement = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("ProjectileMovement"));
+	ProjectMovement->SetUpdatedComponent(MyCollision);
 
 	MyCollision->OnComponentBeginOverlap.AddDynamic(this, &ABottle_Projectile::OnOverlapBegin);
 	MyCollision->OnComponentHit.AddDynamic(this, &ABottle_Projectile::OnHit);

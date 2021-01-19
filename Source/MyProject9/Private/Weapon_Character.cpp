@@ -14,9 +14,10 @@ AWeapon_Character::AWeapon_Character()
 
 void AWeapon_Character::SpawnProjectile()
 {
+	
 	FTransform Trsfrm;
-	Trsfrm.SetLocation(WeaponOwner->DamageCollision->GetComponentLocation());
-	Trsfrm.SetRotation(FQuat(FRotator(WeaponOwner->DamageCollision->GetComponentRotation()) + RotationProjectile));
+	Trsfrm.SetLocation(WeaponOwner->CurrentWeapons[WeaponOwner->CurrentIndex]->GetActorLocation());
+	Trsfrm.SetRotation(FQuat(FRotator(WeaponOwner->Scene->GetComponentRotation()) + RotationProjectile));
 	Trsfrm.SetScale3D(FVector(1.0f, 1.0f, 1.0f));
 	AWeapon_Projectile* DroppedItm = WeaponOwner->World->SpawnActorDeferred<AWeapon_Projectile>(WeaponProjectileClass, Trsfrm);
 	if (DroppedItm) {
@@ -27,18 +28,19 @@ void AWeapon_Character::SpawnProjectile()
 
 void AWeapon_Character::DropItem_Implementation()
 {
+	
 	FTransform Trsfrm;
 	Trsfrm.SetLocation(WeaponOwner->DamageCollision->GetComponentLocation());
 	Trsfrm.SetRotation(FQuat(FRotator(WeaponOwner->DamageCollision->GetComponentRotation()) + RotationDroppedItem));
 	Trsfrm.SetScale3D(FVector(1.0f, 1.0f, 1.0f));
 	AWeapon_Level* DroppedItm = WeaponOwner->World->SpawnActor<AWeapon_Level>(WeaponLevelClass, Trsfrm);
-	DroppedItm->Collision->SetPhysicsLinearVelocity(FVector(WeaponOwner->CameraComp->GetForwardVector() * 200.f));
+	DroppedItm->Collision->SetPhysicsLinearVelocity(FVector(WeaponOwner->Scene->GetForwardVector() * 200.f));
 }
 
 void AWeapon_Character::Throw() { //גûחûגאועסÿ ס סונגונא
 	if (LeftAmmo > 0) {
 		LeftAmmo -= 1;
-		WeaponOwner->ChangeAmmoOwner(LeftAmmo);
+		WeaponOwner->ChangeAmmoClients(LeftAmmo);
 		WeaponOwner->StartAnimInCurSlot();
 	}
 }

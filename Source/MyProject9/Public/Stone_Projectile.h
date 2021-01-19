@@ -18,10 +18,10 @@ class MYPROJECT9_API AStone_Projectile : public AWeapon_Projectile
 public:
 	AStone_Projectile();
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 		USphereComponent* MyCollision;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 		UStaticMeshComponent* MyGunMesh;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)

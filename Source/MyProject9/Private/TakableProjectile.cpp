@@ -7,7 +7,7 @@
 
 ATakableProjectile::ATakableProjectile() {
 	MyCollision = CreateDefaultSubobject<UBoxComponent>("MyCollision");
-	MyCollision->SetupAttachment(RootComponent);
+	RootComponent = MyCollision;
 
 	MyGunMesh = CreateDefaultSubobject<UStaticMeshComponent>("MyGunMesh");
 	MyGunMesh->SetupAttachment(MyCollision);
@@ -15,7 +15,7 @@ ATakableProjectile::ATakableProjectile() {
 	ProjectMovement = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("ProjectileMovement"));
 
 	MyCollision->OnComponentBeginOverlap.AddDynamic(this, &ATakableProjectile::OnOverlapBegin);
-	MyCollision->OnComponentHit.AddDynamic(this, &ATakableProjectile::OnHit);
+	MyGunMesh->OnComponentHit.AddDynamic(this, &ATakableProjectile::OnHit);
 
 }
 
@@ -25,6 +25,7 @@ void ATakableProjectile::OnOverlapBegin(class UPrimitiveComponent* OverlappedCom
 	Player = Cast<AChel>(OtherActor);
 	if (Player) {
 		if (Player->Index != IndexOwner) {
+			UE_LOG(LogTemp, Warning, TEXT("Weapon hit chel"));
 			if (GetLocalRole() == ROLE_Authority) {
 				Player->Health -= Damage;
 			}
@@ -40,8 +41,15 @@ void ATakableProjectile::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherA
 	if (!Player) {
 		PlaySoundHitNotChel();
 		if (GetLocalRole() == ROLE_Authority) {
-			AWeapon_Level* CreatedWeaponLevel = GetWorld()->SpawnActor<AWeapon_Level>(WeaponLevel_Class, GetTransform());
-			CreatedWeaponLevel->Collision->SetPhysicsLinearVelocity(GetVelocity() / 2);
+			UE_LOG(LogTemp, Warning, TEXT("WeaponWasSpawned"));
+			SpawnWeapLevel();
+			/*FTransform transfrm;
+			transfrm.SetLocation(GetActorLocation());
+			transfrm.SetRotation(FQuat(GetActorRotation()));
+			transfrm.SetScale3D({ 1.0f, 1.0f, 1.0f });
+			FActorSpawnParameters SpwnParam;
+			AWeapon_Level* CreatedWeaponLevel = GetWorld()->SpawnActor<AWeapon_Level>(WeaponLevel_Class, transfrm, SpwnParam);
+			//CreatedWeaponLevel->Collision->SetPhysicsLinearVelocity(GetVelocity() / 2);*/
 		}
 		Destroy();
 	}

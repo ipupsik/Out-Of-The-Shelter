@@ -321,7 +321,7 @@ void AGS::SpawnPlayers()
 
 		Player->PlaySpawnAnimationAwake();
 		Player->SetActorLocation(SpawnPoints[i]->GetActorLocation());
-		Player->ShowStoneMulticast();
+		//Player->ShowStoneMulticast();
 		Player->Ammo = Player->MaxAmmoCount;
 		Player->IsInGame = true;
 		Player->Health = 0;

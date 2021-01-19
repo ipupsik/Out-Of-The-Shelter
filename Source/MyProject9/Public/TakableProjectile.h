@@ -20,11 +20,14 @@ class MYPROJECT9_API ATakableProjectile : public AWeapon_Projectile
 public:
 	ATakableProjectile();
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	UBoxComponent* MyCollision;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 		UStaticMeshComponent* MyGunMesh;
+
+	UFUNCTION(BlueprintImplementableEvent)
+		void SpawnWeapLevel();
 
 	UFUNCTION(BlueprintImplementableEvent)
 		void PlaySoundHitChel();

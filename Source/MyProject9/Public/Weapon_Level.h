@@ -22,13 +22,11 @@ public:
 	void PickUpEventServer(AChel* Player) override;
 	void PickUpEventClient(AChel* Player) override;
 
-	UFUNCTION(NetMulticast, Reliable)
-	void CreateWeapon(int32 IndexPlayer);
 
 	UFUNCTION(NetMulticast, Reliable)
 	void ChangeAmount(int32 NewAmount);
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "WeaponClass")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon_Class")
 		TSubclassOf<AWeapon_Character> WeaponClass;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)

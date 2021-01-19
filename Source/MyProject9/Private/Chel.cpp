@@ -21,6 +21,7 @@
 #include "Weapon_Character.h"
 #include "ConsumableAbility.h"
 #include "InteractiveItem.h"
+#include "Weapon_Level.h"
 
 enum AreaType
 {
@@ -88,7 +89,12 @@ AChel::AChel()
 	WeaponPosition = CreateDefaultSubobject<USceneComponent>(TEXT("WeaponPosition"));
 	WeaponPosition->SetupAttachment(CameraComp);
 
-	StoneRight = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("StoneRight"));
+
+	TimeLine_FOV_WebCam = CreateDefaultSubobject<UTimelineComponent>(TEXT("FOV_WebCam"));
+	InterpFunction_FOV_WebCam.BindUFunction(this, FName("TimelineFloatReturn_FOV_WebCam"));
+
+
+	/*StoneRight = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("StoneRight"));
 	StoneRight->SetupAttachment(WeaponPosition);
 
 	StoneLeft = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("StoneLeft"));
@@ -98,21 +104,20 @@ AChel::AChel()
 	TimeLine_Stone_Second = CreateDefaultSubobject<UTimelineComponent>(TEXT("ThrowStoneSecond"));
 	TimeLine_Stone_First_Left = CreateDefaultSubobject<UTimelineComponent>(TEXT("TimeLine_Stone_First_Left"));
 	TimeLine_Stone_Second_Left = CreateDefaultSubobject<UTimelineComponent>(TEXT("TimeLine_Stone_Second_Left"));
-	TimeLine_FOV_WebCam = CreateDefaultSubobject<UTimelineComponent>(TEXT("FOV_WebCam"));
+	
 
 	//√оворим делегатам, какую функцию подцепить дл€ Update и дл€ OnFinished
 	InterpFunction_Stone.BindUFunction(this, FName("TimelineVectorReturn_Stone"));
 	InterpFunction_Stone_Left.BindUFunction(this, FName("TimelineVectorReturn_Stone_Left"));
 
-	InterpFunction_FOV_WebCam.BindUFunction(this, FName("TimelineFloatReturn_FOV_WebCam"));
 
 	TimelineFinished_Stone_First.BindUFunction(this, FName("OnTimelineFinished_Stone_First"));
 	TimelineFinished_Stone_Second.BindUFunction(this, FName("OnTimelineFinished_Stone_Second"));
 
 	TimelineFinished_Stone_First_Left.BindUFunction(this, FName("OnTimelineFinished_Stone_First_Left"));
 	TimelineFinished_Stone_Second_Left.BindUFunction(this, FName("OnTimelineFinished_Stone_Second_Left"));
-
-	DamageCollision->OnComponentBeginOverlap.AddDynamic(this, &AChel::OnOverlapBegin);
+	*/
+	//DamageCollision->OnComponentBeginOverlap.AddDynamic(this, &AChel::OnOverlapBegin);
 
 	IsAlreadyCreated = false;
 	LastRAbilityIndex = -1;
@@ -154,6 +159,7 @@ AChel::AChel()
 	TargetItemsDynamic.Init(nullptr, 0);
 	RAbilityPanel.Init(nullptr, 3);
 	MyKDA_Stat.Init(nullptr, 4);
+	CurrentWeapons.Init(nullptr, 2);
 	IsRentgenRender = false;
 }
 
@@ -348,14 +354,14 @@ void AChel::MyBeginPlay()
 	MyController = Cast<ABP_PlayerController>(GetController());
 	IsServerAuth = GetLocalRole() == ROLE_Authority;
 	IsPlayerOwner = UGameplayStatics::GetPlayerController(GetWorld(), 0) == MyController;
-	StonePositionRight = StoneRight->GetRelativeLocation();
-	StonePositionLeft = StoneLeft->GetRelativeLocation();
+	/*StonePositionRight = StoneRight->GetRelativeLocation();
+	StonePositionLeft = StoneLeft->GetRelativeLocation();*/
 	World = GetWorld();
 	GI = World->GetGameInstance<UGI>();
-
+	
 	Cast<AChel>(UGameplayStatics::GetPlayerCharacter(World, 0))->PlayersArray.Add(this);
 
-	if (vCurveStone) {
+	/*if (vCurveStone) {
 		//ѕодцепл€ем эти функции дл€ TimeLine
 		TimeLine_Stone_First->AddInterpVector(vCurveStone, InterpFunction_Stone);
 		TimeLine_Stone_First->SetTimelineFinishedFunc(TimelineFinished_Stone_First);
@@ -380,7 +386,7 @@ void AChel::MyBeginPlay()
 
 		TimeLine_Stone_Second_Left->SetLooping(false);
 		TimeLine_Stone_Second_Left->SetIgnoreTimeDilation(true);
-	}
+	}*/
 
 	if (vCurveFOV_WebCam)
 	{
@@ -492,6 +498,10 @@ void AChel::MyBeginPlay()
 		MyController->IsHost = true;
 		GS->MaxPlayersCount = GI->MaxPlayersCount;
 	}
+
+	//---------------------добавление начального камн€-------------------------------------------------
+	CreateWeapon(Stone_Class, 20, 0);
+	//---------------------добавление начального камн€ End-------------------------------------------------
 }
 
 void AChel::PossessedBy(AController* NewController)
@@ -535,8 +545,9 @@ void AChel::Tick(float DeltaTime)
 				return;
 			}
 		}
-
+		
 		if (IsPlayerOwner) {
+			//----------------------------------------------------дл€ генератора Start--------------------------------------
 			if (TickEnableGeneratorWidget) {
 				if (bToRight) {
 					GeneratorView->PB_Repair->SetPercent(GeneratorView->PB_Repair->Percent + (GeneratorView->curSpeed) * DeltaTime);
@@ -551,7 +562,7 @@ void AChel::Tick(float DeltaTime)
 					}
 				}
 			}
-
+			//----------------------------------------------------дл€ генератора End--------------------------------------
 			UserView->RadiationPoints->SetPercent(Health);
 			UserView->DarkScreen->SetRenderOpacity(Health);
 
@@ -580,16 +591,50 @@ void AChel::Tick(float DeltaTime)
 								LastInteractiveItem = TracedItem;
 								bLineTrace_is_need_refresh = true;
 								LastInteractiveItem->ToggleCustomDepth(true);
+
+								//----------------------------------дл€ подсветки оружи€ красным Start------------------------
+								 AWeapon_Level* WeaponLookingAt = Cast<AWeapon_Level>(TracedItem);
+								if (WeaponLookingAt) {
+									if (CurrentWeapons[1]) {
+										if (WeaponLookingAt->GetClass() == CurrentWeapons[1]->GetClass() && CurrentWeapons[1]->LeftAmmo == CurrentWeapons[1]->MaxAmmo) {
+											WeaponLookingAt->SetOutlineColor(2);
+										}
+										else {
+											WeaponLookingAt->SetOutlineColor(1);
+										}
+									}
+									else {
+										WeaponLookingAt->SetOutlineColor(1);
+									}
+								}
+								//----------------------------------дл€ подсветки оружи€ красным End------------------------
 								if (LastInteractiveItem->bCanInterract)
 									UserView->E_Mark->SetVisibility(ESlateVisibility::Visible);
 							}
 						}
+						else {
+							if (LastInteractiveItem) {
+								LastInteractiveItem->ToggleCustomDepth(false);
+								LastInteractiveItem = nullptr;
+								UserView->E_Mark->SetVisibility(ESlateVisibility::Hidden);
+							}
+						}
 					}
-					else
+					else {
+						if (LastInteractiveItem) {
+							LastInteractiveItem->ToggleCustomDepth(false);
+							LastInteractiveItem = nullptr;
+						}
 						isTracedBad = true;  //ћы не попали в нужный нам предмет
+					}
 				}
-				else
+				else {
+					if (LastInteractiveItem) {
+						LastInteractiveItem->ToggleCustomDepth(false);
+						LastInteractiveItem = nullptr;
+					}
 					isTracedBad = true;  //ћы не попали в нужный нам предмет
+				}
 			}
 			else
 				isTracedBad = true;   //ћы не попали в нужный нам предмет
@@ -659,8 +704,10 @@ void AChel::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &AChel::MyJump);
 	PlayerInputComponent->BindAction("Sprint", IE_Pressed, this, &AChel::StartSprint);
 	PlayerInputComponent->BindAction("Sprint", IE_Released, this, &AChel::StopSprint);
-	PlayerInputComponent->BindAction("ThrowStoneRight", IE_Pressed, this, &AChel::ThrowStoneRight);
-	PlayerInputComponent->BindAction("ThrowStoneLeft", IE_Pressed, this, &AChel::ThrowStoneLeft);
+	PlayerInputComponent->BindAction("Fire", IE_Pressed, this, &AChel::FireEvent);
+	PlayerInputComponent->BindAction("WeaponSwitchUP", IE_Pressed, this, &AChel::WeaponSwitch);
+	PlayerInputComponent->BindAction("WeaponSwitchDown", IE_Pressed, this, &AChel::WeaponSwitch);
+	/*PlayerInputComponent->BindAction("ThrowStoneLeft", IE_Pressed, this, &AChel::ThrowStoneLeft);*/
 	PlayerInputComponent->BindAction("PickUp", IE_Pressed, this, &AChel::PickUp);
 	PlayerInputComponent->BindAction("PickUp", IE_Released, this, &AChel::PickUp_Released);
 	PlayerInputComponent->BindAction("Opening", IE_Pressed, this, &AChel::OpenAreaPressed);
@@ -839,7 +886,7 @@ void AChel::AddChromaticAbberationClient_Implementation()
 }
 
 //TimelineAnimation
-void AChel::OnTimelineFinished_Stone_First() {
+/*void AChel::OnTimelineFinished_Stone_First() {
 	TimeLine_Stone_Second->ReverseFromEnd();
 	if (IsPlayerOwner)
 	{
@@ -859,9 +906,9 @@ void AChel::OnTimelineFinished_Stone_First() {
 	if (Ammo == 0) {
 		HideStoneMulticast();
 	}
-}
+}StoneRight*/
 
-void AChel::OnTimelineFinished_Stone_First_Left()
+/*void AChel::OnTimelineFinished_Stone_First_Left()
 {
 	TimeLine_Stone_Second_Left->ReverseFromEnd();
 	if (IsPlayerOwner)
@@ -882,9 +929,9 @@ void AChel::OnTimelineFinished_Stone_First_Left()
 	if (Ammo == 0) {
 		HideStoneMulticast();
 	}
-}
+}StoneLeft*/
 
-void AChel::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+/*void AChel::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	AStone* OverStone = Cast<AStone>(OtherActor);
 	if (IsServerAuth) {
@@ -914,9 +961,9 @@ void AChel::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherAct
 			OverStone->Destroy();
 		}
 	}
-}
+}*/
 
-void AChel::StoneCountUpdate_Implementation(int32 Count)
+/*void AChel::StoneCountUpdate_Implementation(int32 Count)
 {
 	if (IsPlayerOwner)
 		UserView->AmmoLabel->SetText(FText::AsNumber(Count));
@@ -929,23 +976,23 @@ void AChel::TimelineVectorReturn_Stone(FVector value) {
 void AChel::TimelineVectorReturn_Stone_Left(FVector value) {
 	StoneLeft->SetRelativeLocation(StonePositionLeft + value);
 }
-
+*/
 void AChel::TimelineFloatReturn_FOV_WebCam(float value)
 {
 	CameraComp->SetFieldOfView(value);
 }
 
-void AChel::OnTimelineFinished_Stone_Second() {
+/*void AChel::OnTimelineFinished_Stone_Second() {
 	bIsAlreadyThrowing = false;
 }
 
 void AChel::OnTimelineFinished_Stone_Second_Left() {
 	bIsAlreadyThrowingLeft = false;
-}
+}*/
 //-----------------------------
 
 //AttackInput------------------
-void AChel::ThrowStoneRight() {
+/*void AChel::ThrowStoneRight() {
 	if (DoubleArmThrowing) {
 		if (Ammo > 0 && IsNotInWebCam && bCanWalkingAndWatching && !bInEscMenu && CanThrowStone) {
 			if (!bIsAlreadyThrowing) {
@@ -956,9 +1003,13 @@ void AChel::ThrowStoneRight() {
 		}
 	}
 }
+StoneLeft*/
+void AChel::FireEvent() {
+	if (IsNotInWebCam && !bInEscMenu && CanFireWeapon && CurrentWeapons[CurrentIndex] && CurrentWeapons[CurrentIndex]->LeftAmmo > 0 ) {
+		FireEvent_Server();
+	}
 
-void AChel::ThrowStoneLeft() {
-	if (!DoubleArmThrowing) {
+	/*if (!DoubleArmThrowing) {
 		if (Ammo > 0 && IsNotInWebCam && bCanWalkingAndWatching && !bInEscMenu && CanThrowStone) {
 			if (!bIsAlreadyThrowing) {
 				bIsAlreadyThrowing = true;
@@ -976,10 +1027,33 @@ void AChel::ThrowStoneLeft() {
 				ThrowStoneServer(false);
 			}
 		}
+	}StoneLeft*/
+}
+
+void AChel::FireEvent_Server_Implementation() {
+	CurrentWeapons[CurrentIndex]->Throw();
+}
+
+bool AChel::FireEvent_Server_Validate() {
+	return true;
+}
+
+void AChel::WeaponSwitch() {
+	if (CurrentWeapons[(CurrentIndex + 1) % 2] && CurrentWeapons[(CurrentIndex + 1) % 2]->LeftAmmo > 0 && 
+		IsNotInWebCam && !bInEscMenu && CanFireWeapon) {
+		WeaponSwitch_Server((CurrentIndex + 1) % 2);
 	}
 }
 
-void AChel::ThrowStoneMulticast_Implementation(bool Type)
+void AChel::WeaponSwitch_Server_Implementation(int32 SlotIndex) {
+	SetWeaponToSlotMulticast(SlotIndex);
+}
+
+bool AChel::WeaponSwitch_Server_Validate(int32 SlotIndex) {
+	return true;
+}
+
+/*void AChel::ThrowStoneMulticast_Implementation(bool Type)
 {
 	if (!IsPlayerOwner)
 	{
@@ -992,8 +1066,8 @@ void AChel::ThrowStoneMulticast_Implementation(bool Type)
 		}
 	}
 }
-
-void AChel::ThrowStoneServer_Implementation(bool Type)
+*/
+/*void AChel::ThrowStoneServer_Implementation(bool Type)
 {
 	--Ammo;
 	ThrowStoneMulticast(Type);
@@ -1013,9 +1087,9 @@ void AChel::ThrowStoneServer_Implementation(bool Type)
 bool AChel::ThrowStoneServer_Validate(bool Type)
 {
 	return true;
-}
+}*/
 
-void AChel::HideStoneMulticast_Implementation() {
+/*void AChel::HideStoneMulticast_Implementation() {
 	StoneRight->SetHiddenInGame(true);
 	if (DoubleArmThrowing)
 		StoneLeft->SetHiddenInGame(true);
@@ -1025,7 +1099,7 @@ void AChel::ShowStoneMulticast_Implementation() {
 	StoneRight->SetHiddenInGame(false);
 	if (DoubleArmThrowing)
 		StoneLeft->SetHiddenInGame(false);
-}
+}*/
 //----------------------------
 
 //KeyBoardInput----------------
@@ -1237,7 +1311,7 @@ void AChel::PlaySpawnAnimationAwake_Implementation() {
 	if (bCanPossessWebCam)
 		CameraTurnOff();
 	CameraComp->SetFieldOfView(90.0f);
-	StoneCountUpdate(MaxAmmoCount);
+	//StoneCountUpdate(MaxAmmoCount);
 
 	WebCamUI->SetVisibility(ESlateVisibility::Hidden);
 
@@ -1253,6 +1327,7 @@ void AChel::PickUp() {
 			if (LastInteractiveItem)
 			{
 				LastInteractiveItem->PickUpEventClient(this);
+				PickUp_Server();
 			}
 		}
 	}
@@ -1411,7 +1486,7 @@ void AChel::RemoveHitMarker()
 	UserView->Marker->SetVisibility(ESlateVisibility::Hidden);
 }
 
-void AChel::StoneAttack(int StoneIndex, float StoneDamage)
+/*void AChel::StoneAttack(int StoneIndex, float StoneDamage)
 {
 	if (IsInGame) 
 	{
@@ -1440,7 +1515,7 @@ void AChel::StoneAttack(int StoneIndex, float StoneDamage)
 			KillPlayer();
 		}
 	}
-}
+}*/
 
 void AChel::RefreshWidgets_Implementation(const TArray<bool>& whatToUpdate, int KillerNickIndex, int VictimNickIndex)
 {
@@ -1551,7 +1626,7 @@ void AChel::SpawnPlayer()
 
 	HideCustomItems(false);
 	EnableCollisionEverywhere();
-	ShowStoneMulticast();
+	//ShowStoneMulticast();
 	SetActorHiddenInGame(false);
 	IsNotInWebCam = true;
 	IsInGame = true;
@@ -2372,7 +2447,7 @@ bool AChel::UseSpeedBust_Server_Validate()
 	return true;
 }
 
-void AChel::AddStoneDamageBuffTemp_Implementation()
+/*void AChel::AddStoneDamageBuffTemp_Implementation()
 {
 	StoneDamageBuffTempValue = 2.0f;
 	CurrentStoneDamageBuffTempCount++;
@@ -2383,16 +2458,16 @@ void AChel::AddStoneDamageBuffTemp_Implementation()
 bool AChel::AddStoneDamageBuffTemp_Validate()
 {
 	return true;
-}
+}*/
 
-void AChel::RemoveStoneDamageBuffTemp()
+/*void AChel::RemoveStoneDamageBuffTemp()
 {
 	CurrentStoneDamageBuffTempCount--;
 	if (CurrentStoneDamageBuffTempCount == 0)
 	{
 		StoneDamageBuffTempValue = 1.0f;
 	}
-}
+}*/
 
 void AChel::AddImmortalServer_Implementation()
 {
@@ -2595,11 +2670,43 @@ void AChel::DropCoreItems()
 		DroppedItm->Collision->SetPhysicsLinearVelocity(FVector(CameraComp->GetForwardVector() * 200.f));
 	}
 }
+//----------------оружи€------------------------
+void AChel::CreateWeaponMulticast_Implementation(UClass* WeaponCreatedClass, int32 Amount, int32 IndexSlot) {
+	CreateWeapon(WeaponCreatedClass, Amount, IndexSlot);
+}
+
+void AChel::CreateWeapon(UClass* WeaponCreatedClass, int32 Amount, int32 IndexSlot) {
+	UE_LOG(LogTemp, Warning, TEXT("I`m in Multicast"));
+	AChel* Player = nullptr;
+
+	AWeapon_Character* CreatedWeapon = World->SpawnActor<AWeapon_Character>(WeaponCreatedClass);
+	CreatedWeapon->WeaponOwner = this;
+	CreatedWeapon->LeftAmmo = Amount;
+
+	FAttachmentTransformRules AttachmentRules = FAttachmentTransformRules(EAttachmentRule::KeepRelative, true);
+	CreatedWeapon->AttachToComponent(WeaponPosition, AttachmentRules);
+
+	if (CurrentWeapons[IndexSlot])
+		CurrentWeapons[IndexSlot]->Destroy();
+	CurrentWeapons[IndexSlot] = CreatedWeapon;
+	if (IndexSlot == 0) { //на случай, если устанавливаем камень
+		SetWeaponToSlot(0);
+	}
+	else {
+		if (CurrentIndex == 0 && CurrentWeapons[0]->LeftAmmo == 0 || CurrentIndex == 1) {
+			SetWeaponToSlot(1);
+		}
+		else {
+			CreatedWeapon->GunMesh->SetVisibility(false);
+		}
+	}
+}
 
 void AChel::SetWeaponToSlot(int32 IndexWeapon) //вызываетс€ из мультикастового событи€
 {
 	CurrentWeapons[IndexWeapon]->GunMesh->SetVisibility(true);
-	CurrentWeapons[(IndexWeapon + 1) % 2]->GunMesh->SetVisibility(false);
+	if(CurrentWeapons[(IndexWeapon + 1) % 2]) //условие нужно при старте игры, когда второго оружи€ нет
+		CurrentWeapons[(IndexWeapon + 1) % 2]->GunMesh->SetVisibility(false);
 	CurrentIndex = IndexWeapon;
 	if (IsPlayerOwner) {
 		RefreshWidgetAmmoOwning(CurrentWeapons[CurrentIndex]->LeftAmmo, CurrentWeapons[CurrentIndex]->MaxAmmo, CurrentIndex);
@@ -2608,17 +2715,25 @@ void AChel::SetWeaponToSlot(int32 IndexWeapon) //вызываетс€ из мультикастового с
 
 void AChel::SwitchToFreeWeapon() {
 	if (CurrentWeapons[0]->LeftAmmo == 0) {
-		if (CurrentWeapons[1]->LeftAmmo == 0) {
+		if (CurrentWeapons[1]){//если у нас валидно второе оружие
+			if (CurrentWeapons[1]->LeftAmmo == 0) { //нет второго оружи€ и нет первого оружи€
+				CurrentIndex = 0;
+				if (IsPlayerOwner) {
+					ClearWeaponInfo();
+				}
+			}
+			else { //нет первого оружи€ и есть второе оружие
+				SetWeaponToSlot(1);
+			}
+		}
+		else {//нет первого оружи€ и не валидно второе оружие
 			CurrentIndex = 0;
 			if (IsPlayerOwner) {
 				ClearWeaponInfo();
 			}
 		}
-		else {
-			SetWeaponToSlot(1);
-		}
 	}
-	else {
+	else {//есть первое оружие
 		SetWeaponToSlot(0);
 	}
 }
@@ -2626,8 +2741,11 @@ void AChel::RefreshWidgetAmmoOwning(int32 NewLeftAmmo, int32 NewMaxAmmo, int32 N
 	CurrentIndex = NewCurIndex;
 	UserView->AmmoLabel->SetVisibility(ESlateVisibility::Visible);
 	UserView->AmmoMax->SetVisibility(ESlateVisibility::Visible);
+	UserView->WeaponName->SetVisibility(ESlateVisibility::Visible);
+	UserView->AmmoSlash->SetVisibility(ESlateVisibility::Visible);
 	UserView->AmmoLabel->SetText(FText::AsNumber(CurrentWeapons[CurrentIndex]->LeftAmmo));
-	UserView->AmmoLabel->SetText(FText::AsNumber(CurrentWeapons[CurrentIndex]->LeftAmmo));
+	UserView->AmmoMax->SetText(FText::AsNumber(CurrentWeapons[CurrentIndex]->MaxAmmo));
+	UserView->WeaponName->SetText(CurrentWeapons[CurrentIndex]->WeaponName);
 }
 
 void AChel::InvertMovement(float timeToOff)
@@ -2643,9 +2761,10 @@ void AChel::SetWeaponToSlotMulticast_Implementation(int32 IndexWeapon)
 {
 	SetWeaponToSlot(IndexWeapon);
 }
-void AChel::ChangeAmmoOwner_Implementation(int32 NewLeftAmmo)
+void AChel::ChangeAmmoClients_Implementation(int32 NewLeftAmmo)
 {
-	CurrentWeapons[CurrentIndex]->LeftAmmo = NewLeftAmmo;
+	if(GetLocalRole() != ROLE_Authority)
+		CurrentWeapons[CurrentIndex]->LeftAmmo = NewLeftAmmo;
 }
 void AChel::StartAnimInCurSlot_Implementation()
 {
@@ -2673,6 +2792,8 @@ void AChel::StartAnimInCurSlotReverse_Implementation(bool HaveAmmo)
 void AChel::ClearWeaponInfo() {
 	UserView->AmmoLabel->SetVisibility(ESlateVisibility::Hidden);
 	UserView->AmmoMax->SetVisibility(ESlateVisibility::Hidden);
+	UserView->WeaponName->SetVisibility(ESlateVisibility::Hidden);
+	UserView->AmmoSlash->SetVisibility(ESlateVisibility::Hidden);
 }
 
 void AChel::ClearWeaponInfoClient_Implementation() {

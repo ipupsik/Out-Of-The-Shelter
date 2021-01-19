@@ -85,8 +85,7 @@ protected:
 
 	void StopUseSpeedBust();
 
-	void ThrowStoneLeft();
-	void ThrowStoneRight();
+	/*void ThrowStoneLeft();*/
 	void PickUp();
 	void PickUp_Released();
 	void OpenAreaPressed();
@@ -134,16 +133,16 @@ public:
 		void DeleteLAstNumServer();
 	UFUNCTION(Server, Reliable, WithValidation)
 		void CheckCodeServer();
-	UFUNCTION(Server, Reliable, WithValidation)
-		void AddStoneDamageBuffTemp();
+	/*UFUNCTION(Server, Reliable, WithValidation)
+		void AddStoneDamageBuffTemp();*/
 
 	void RemoveStoneDamageBuffTemp();
 
 	UFUNCTION(Client, Reliable)
 		void RefreshGeneratorArea();
 
-	UFUNCTION(Client, Reliable)
-		void StoneCountUpdate(int32 Count);
+	/*UFUNCTION(Client, Reliable)
+		void StoneCountUpdate(int32 Count);*/
 
 	UFUNCTION(NetMulticast, Reliable)
 		void DisableCollisionEverywhere();
@@ -175,15 +174,15 @@ public:
 	UFUNCTION(Server, Reliable, WithValidation)
 		void DeliverNicknameToServer(const FText& newNickName);
 	//StoneThrowReplication
-	UFUNCTION(Server, Reliable, WithValidation)
-		void ThrowStoneServer(bool Type);
+	/*UFUNCTION(Server, Reliable, WithValidation)
+		void ThrowStoneServer(bool Type);*/
 
 	UFUNCTION(Server, Reliable, WithValidation)
 		void AddImmortalServer();
 	void RemoveImmortalServer();
 
-	UFUNCTION(NetMulticast, Reliable)
-		void ThrowStoneMulticast(bool Type);
+	/*UFUNCTION(NetMulticast, Reliable)
+		void ThrowStoneMulticast(bool Type);*/
 
 	UFUNCTION(Server, Reliable, WithValidation)
 		void PickUp_Server();
@@ -322,11 +321,11 @@ public:
 	UFUNCTION(Client, Reliable)
 		void DisableDoubleRadiationWidget();
 
-	UFUNCTION(NetMulticast, Reliable)
-		void HideStoneMulticast();
+	/*UFUNCTION(NetMulticast, Reliable)
+		void HideStoneMulticast();*/
 
-	UFUNCTION(NetMulticast, Reliable)
-		void ShowStoneMulticast();
+	/*UFUNCTION(NetMulticast, Reliable)
+		void ShowStoneMulticast();*/
 
 	UFUNCTION(NetMulticast, Reliable)
 		void HideCustomItems(bool NewHide);
@@ -355,26 +354,26 @@ public:
 	UFUNCTION(Client, Reliable)
 		void RefreshTabWidget(int32 VictimIndex, int32 newKillerIndex);
 
-	UFUNCTION()
-		void OnTimelineFinished_Stone_First();
-	UFUNCTION()
-		void OnTimelineFinished_Stone_First_Left();
+	/*UFUNCTION()
+		void OnTimelineFinished_Stone_First();*/
+	/*UFUNCTION()
+		void OnTimelineFinished_Stone_First_Left();*/
 
-	UFUNCTION()
+	/*UFUNCTION()
 		void OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
-
-	UFUNCTION()
-		void TimelineVectorReturn_Stone(FVector value);
-	UFUNCTION()
-		void TimelineVectorReturn_Stone_Left(FVector value);
+		*/
+	/*UFUNCTION()
+		void TimelineVectorReturn_Stone(FVector value);*/
+	/*UFUNCTION()
+		void TimelineVectorReturn_Stone_Left(FVector value);*/
 
 	UFUNCTION()
 		void TimelineFloatReturn_FOV_WebCam(float value);
 
-	UFUNCTION()
+	/*UFUNCTION()
 		void OnTimelineFinished_Stone_Second();
 	UFUNCTION()
-		void OnTimelineFinished_Stone_Second_Left();
+		void OnTimelineFinished_Stone_Second_Left();*/
 
 	UFUNCTION()
 		void SleepAnimation_End();
@@ -616,10 +615,24 @@ public:
 	bool IsAlreadyCreated;
 
 
+	//--------------------------------------------------------------------------------------------------оружие---------------------------------
+	UPROPERTY(EditAnywhere, Category = "Stone_Class")
+		TSubclassOf<AWeapon_Character> Stone_Class;
+	void FireEvent(); //нажатие на левую кнопку мыши
+	UFUNCTION(Server, Reliable, WithValidation)
+	void FireEvent_Server(); //выстреливаем из оружия на сервере
 
+	UFUNCTION(NetMulticast, Reliable)
+		void CreateWeaponMulticast(UClass* WeaponCreatedClass, int32 Amount, int32 IdexSlot);
+	void CreateWeapon(UClass* WeaponCreatedClass, int32 Amount, int32 IndexSlot);
+
+	void WeaponSwitch();
+	UFUNCTION(Server, Reliable, WithValidation)
+	void WeaponSwitch_Server(int32 SlotIndex);
 	void DropCoreItems(); //вываливает из себя имеющиеся ключевые предметы при смерти
 
 	TArray<AWeapon_Character*> CurrentWeapons; //текущие оружия(камень + особое)
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	USceneComponent* WeaponPosition; //Позиция, на которую установится оружие
 	int32 CurrentIndex; //индекс в массиве CurrentWeapons
 	void SetWeaponToSlot(int32 IndexWeapon); //когда мы на клиенте и нужно поменять оружие в слоте клиента
@@ -634,8 +647,8 @@ public:
 
 	void ClearWeaponInfo();
 
-	UFUNCTION(Client, Reliable)
-	void ChangeAmmoOwner(int32 NewLeftAmmo); //меняет кол-во патронов у клиента-хозяина в оружии(игрока)
+	UFUNCTION(NetMulticast, Reliable)
+	void ChangeAmmoClients(int32 NewLeftAmmo); //меняет кол-во патронов у клиента-хозяина в оружии(игрока)
 
 	UFUNCTION(Client, Reliable)
 		void RefreshWidgetAmmoOwningClient(int32 NewLeftAmmo, int32 NewMaxAmmo, int32 NewCurIndex); //когда с сервера нужно поменять виджет у хозина hud
@@ -648,5 +661,7 @@ public:
 
 	void InvertMovement(float timeToOff); // инвертированное управление при попадании бутылки, которое снимается через timeToOff
 
-	bool CanFireWeapon;
+	bool CanFireWeapon; // может ли чел стрелять из оружия
+
+	//--------------------------------------------------------------------------------------------------оружиеEnd---------------------------------
 };
