@@ -4,7 +4,14 @@
 #include "CoreItem.h"
 
 ACoreItem::ACoreItem() {
+	Scene = CreateDefaultSubobject<USceneComponent>("Scene");
+	Scene->SetupAttachment(RootComponent);
 
+	Collision = CreateDefaultSubobject<UBoxComponent>("Collision");
+	Collision->SetupAttachment(Scene);
+
+	Mesh = CreateDefaultSubobject<UStaticMeshComponent>("Mesh");
+	Mesh->SetupAttachment(Scene);
 }
 
 void ACoreItem::PickUpEventServer(AChel* Player) {

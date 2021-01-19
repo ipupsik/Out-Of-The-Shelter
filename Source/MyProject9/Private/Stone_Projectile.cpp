@@ -8,14 +8,14 @@ AStone_Projectile::AStone_Projectile() {
 	LastTimeHited = 0.f;
 	LastHitedActor = nullptr;
 
-	MyCollision = CreateDefaultSubobject<USphereComponent>("MyCollision");
-	RootComponent = MyCollision;
-
 	MyGunMesh = CreateDefaultSubobject<UStaticMeshComponent>("MyGunMesh");
-	MyGunMesh->SetupAttachment(MyCollision);
+	MyGunMesh->SetupAttachment(RootComponent);
+
+	MyCollision = CreateDefaultSubobject<USphereComponent>("MyCollision");
+	MyCollision->SetupAttachment(MyGunMesh);
 
 	ProjectMovement = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("ProjectileMovement"));
-	ProjectMovement->SetUpdatedComponent(MyCollision);
+	ProjectMovement->SetUpdatedComponent(MyGunMesh);
 
 	MyCollision->OnComponentBeginOverlap.AddDynamic(this, &AStone_Projectile::OnOverlapBegin);
 	MyGunMesh->OnComponentHit.AddDynamic(this, &AStone_Projectile::OnHit);

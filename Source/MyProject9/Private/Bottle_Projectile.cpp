@@ -5,17 +5,17 @@
 #include "Chel.h"
 
 ABottle_Projectile::ABottle_Projectile() {
-	MyCollision = CreateDefaultSubobject<UBoxComponent>("MyCollision");
-	RootComponent = MyCollision;
-
 	MyGunMesh = CreateDefaultSubobject<UStaticMeshComponent>("MyGunMesh");
-	MyGunMesh->SetupAttachment(MyCollision);
+	MyGunMesh->SetupAttachment(RootComponent);
+
+	MyCollision = CreateDefaultSubobject<UBoxComponent>("MyCollision");
+	MyCollision->SetupAttachment(MyGunMesh);
 
 	ProjectMovement = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("ProjectileMovement"));
 	ProjectMovement->SetUpdatedComponent(MyCollision);
 
 	MyCollision->OnComponentBeginOverlap.AddDynamic(this, &ABottle_Projectile::OnOverlapBegin);
-	MyCollision->OnComponentHit.AddDynamic(this, &ABottle_Projectile::OnHit);
+	MyGunMesh->OnComponentHit.AddDynamic(this, &ABottle_Projectile::OnHit);
 }
 
 void ABottle_Projectile::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp,

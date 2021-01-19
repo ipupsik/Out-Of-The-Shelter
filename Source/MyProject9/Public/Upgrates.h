@@ -13,5 +13,6 @@ UCLASS()
 class MYPROJECT9_API AUpgrates : public ACollectableItem
 {
 	GENERATED_BODY()
-	
+public:
+	AUpgrates();
 };

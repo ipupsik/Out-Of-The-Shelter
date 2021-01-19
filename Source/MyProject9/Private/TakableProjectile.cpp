@@ -6,17 +6,17 @@
 #include "Chel.h"
 
 ATakableProjectile::ATakableProjectile() {
-	MyCollision = CreateDefaultSubobject<UBoxComponent>("MyCollision");
-	RootComponent = MyCollision;
-
 	MyGunMesh = CreateDefaultSubobject<UStaticMeshComponent>("MyGunMesh");
-	MyGunMesh->SetupAttachment(MyCollision);
+	MyGunMesh->SetupAttachment(RootComponent);
+
+	MyCollision = CreateDefaultSubobject<UBoxComponent>("MyCollision");
+	MyCollision->SetupAttachment(MyGunMesh);
 
 	ProjectMovement = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("ProjectileMovement"));
+	ProjectMovement->SetUpdatedComponent(MyGunMesh);
 
 	MyCollision->OnComponentBeginOverlap.AddDynamic(this, &ATakableProjectile::OnOverlapBegin);
 	MyGunMesh->OnComponentHit.AddDynamic(this, &ATakableProjectile::OnHit);
-
 }
 
 void ATakableProjectile::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp,
@@ -42,14 +42,13 @@ void ATakableProjectile::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherA
 		PlaySoundHitNotChel();
 		if (GetLocalRole() == ROLE_Authority) {
 			UE_LOG(LogTemp, Warning, TEXT("WeaponWasSpawned"));
-			SpawnWeapLevel();
-			/*FTransform transfrm;
+			FTransform transfrm;
 			transfrm.SetLocation(GetActorLocation());
 			transfrm.SetRotation(FQuat(GetActorRotation()));
 			transfrm.SetScale3D({ 1.0f, 1.0f, 1.0f });
 			FActorSpawnParameters SpwnParam;
 			AWeapon_Level* CreatedWeaponLevel = GetWorld()->SpawnActor<AWeapon_Level>(WeaponLevel_Class, transfrm, SpwnParam);
-			//CreatedWeaponLevel->Collision->SetPhysicsLinearVelocity(GetVelocity() / 2);*/
+			CreatedWeaponLevel->Collision->SetPhysicsLinearVelocity(GetVelocity() / 2);
 		}
 		Destroy();
 	}

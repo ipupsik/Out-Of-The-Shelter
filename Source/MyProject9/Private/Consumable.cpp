@@ -4,6 +4,14 @@
 #include "Consumable.h"
 
 AConsumable::AConsumable() {
+	Scene = CreateDefaultSubobject<USceneComponent>("Scene");
+	Scene->SetupAttachment(RootComponent);
+
+	Collision = CreateDefaultSubobject<UBoxComponent>("Collision");
+	Collision->SetupAttachment(Scene);
+
+	Mesh = CreateDefaultSubobject<UStaticMeshComponent>("Mesh");
+	Mesh->SetupAttachment(Scene);
 }
 
 void AConsumable::PickUpEventServer(AChel* Player)

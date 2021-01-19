@@ -4,6 +4,17 @@
 #include "QAbilityItem.h"
 #include "QAbility.h"
 
+AQAbilityItem::AQAbilityItem() {
+	Scene = CreateDefaultSubobject<USceneComponent>("Scene");
+	Scene->SetupAttachment(RootComponent);
+
+	Collision = CreateDefaultSubobject<UBoxComponent>("Collision");
+	Collision->SetupAttachment(Scene);
+
+	Mesh = CreateDefaultSubobject<UStaticMeshComponent>("Mesh");
+	Mesh->SetupAttachment(Scene);
+}
+
 void AQAbilityItem::PickUpEventServer(AChel* Player)
 {
 	if (Player->CurQAbility) {

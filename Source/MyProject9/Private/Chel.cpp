@@ -21,12 +21,9 @@
 #include "Weapon_Character.h"
 #include "ConsumableAbility.h"
 #include "InteractiveItem.h"
-<<<<<<< HEAD
 #include "Weapon_Level.h"
-=======
 #include "QAbility.h"
 #include "QAbilityItem.h"
->>>>>>> 80dff1d7d34d67d606e1606dc3c49a7a3b796c47
 
 enum AreaType
 {
@@ -602,14 +599,14 @@ void AChel::Tick(float DeltaTime)
 								if (WeaponLookingAt) {
 									if (CurrentWeapons[1]) {
 										if (WeaponLookingAt->GetClass() == CurrentWeapons[1]->GetClass() && CurrentWeapons[1]->LeftAmmo == CurrentWeapons[1]->MaxAmmo) {
-											WeaponLookingAt->SetOutlineColor(2);
+											WeaponLookingAt->SetOutlineColor(1);
 										}
 										else {
-											WeaponLookingAt->SetOutlineColor(1);
+											WeaponLookingAt->SetOutlineColor(2);
 										}
 									}
 									else {
-										WeaponLookingAt->SetOutlineColor(1);
+										WeaponLookingAt->SetOutlineColor(2);
 									}
 								}
 								//----------------------------------для подсветки оружия красным End------------------------
