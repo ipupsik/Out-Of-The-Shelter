@@ -13,6 +13,7 @@
 #include "BP_VentilaciaRubilnick.h"
 #include "PromptCollisionArea.h"
 #include "CollectableItem.h"
+#include "InteractiveCache.h"
 
 AGS::AGS() {
 	NickNames.Init(FText::FromString(TEXT(" ")), 4);
@@ -105,27 +106,13 @@ void AGS::BeginPlay()
 		//----------------------------Cache Items
 
 		TArray<AActor*>TargetPoints_CacheItems;
-		UGameplayStatics::GetAllActorsOfClass(GetWorld(), ACache::StaticClass(), TargetPoints_CacheItems);
+		UGameplayStatics::GetAllActorsOfClass(GetWorld(), AInteractiveCache::StaticClass(), TargetPoints_CacheItems);
 		
 		for (int i = 0; i < TargetPoints_CacheItems.Num(); ++i)
 		{
 			CacheItems_Stuff_IsAvaliable.Add(true);
-			Caches.Add(Cast<ACache>(TargetPoints_CacheItems[i]));
+			Caches.Add(Cast<AInteractiveCache>(TargetPoints_CacheItems[i]));
 		}
-
-		/*for (int i = 0; i < 4; i++)
-		{
-			int ArrayIndex = FMath::Rand() % CacheItems_Stuff_IsAvaliable.Num();
-			while (!CacheItems_Stuff_IsAvaliable[ArrayIndex])
-			{
-				ArrayIndex = FMath::Rand() % CacheItems_Stuff_IsAvaliable.Num();
-			}
-
-			AActor* NewItem = GetWorld()->SpawnActor<AActor>(InvisiblePotion, Caches[ArrayIndex]->GetActorTransform());
-
-			if (NewItem)
-				CacheItems_Stuff_IsAvaliable[ArrayIndex] = false;
-		}*/
 
 		CurrentKeyShelter = MIN_COUNT_KeyShelter + FMath::Rand() % (MAX_COUNT_KeySHelter - MIN_COUNT_KeyShelter + 1);
 		for (int i = 0; i < CurrentKeyShelter; ++i) {

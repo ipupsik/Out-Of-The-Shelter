@@ -11,7 +11,7 @@ class URAbilitySlot;
 /**
  * 
  */
-UCLASS()
+UCLASS(Blueprintable)
 class MYPROJECT9_API UConsumableAbility : public UObject
 {
 	GENERATED_BODY()

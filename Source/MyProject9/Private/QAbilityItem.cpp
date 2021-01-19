@@ -20,10 +20,16 @@ void AQAbilityItem::PickUpEventServer(AChel* Player)
 	if (Player->CurQAbility) {
 		Player->ReplaceQAbilityItem(Player->CurQAbility->QAbilityitem_class, EnabledArrayIndex);
 	}
+	Player->CurQAbility = NewObject<UQAbility>(Player, QAbility_class);
 	Destroy();
 }
 
 void AQAbilityItem::PickUpEventClient(AChel* Player)
 {
-	Player->CurQAbility = NewObject<UQAbility>(Player, QAbility_class);
+	UQAbility* TempAbility = NewObject<UQAbility>(Player, QAbility_class);
+	if (GetLocalRole() != ROLE_Authority)
+		Player->CurQAbility = TempAbility;
+	FSlateBrush NewBrush;
+	NewBrush.SetResourceObject(TempAbility->Icon);
+	Player->UserView->CurQSlot->AbilityImage->SetBrush(NewBrush);
 }

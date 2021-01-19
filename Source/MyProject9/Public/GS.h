@@ -44,6 +44,7 @@ class ASpectator;
 
 class AAreaCollision;
 class AInteractiveItem;
+class AInteractiveCache;
 
 UCLASS()
 class MYPROJECT9_API AGS : public AGameStateBase
@@ -173,7 +174,7 @@ public:
 	TArray<FTransform>Keys_Transform;
 	TArray<bool>Keys_IsAvaliable;
 
-	TArray<ACache*>Caches;
+	TArray<AInteractiveCache*>Caches;
 	TArray<bool>CacheItems_Stuff_IsAvaliable;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)

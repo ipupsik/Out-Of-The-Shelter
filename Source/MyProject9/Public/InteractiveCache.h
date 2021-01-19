@@ -41,4 +41,7 @@ public:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Scene")
 		USceneComponent* Scene;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Scene")
+		USceneComponent* MainScene;
 };
