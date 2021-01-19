@@ -14,7 +14,8 @@
 #include "Animation/WidgetAnimation.h"
 #include "Components/HorizontalBoxSlot.h"
 #include "UI/RadiationWidget.h"
-
+#include "UI/QAbilitySlot.h"
+#include "UI/RAbilitySlot.h"
 #include "UserView.generated.h"
 
 
@@ -123,6 +124,9 @@ public:
 
 	UPROPERTY(meta = (BindWidget))
 		URAbilitySlot* CurRSlot;
+
+	UPROPERTY(meta = (BindWidget))
+		UQAbilitySlot* CurQSlot;
 
 	void NativeConstruct() override;
 

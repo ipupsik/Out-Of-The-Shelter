@@ -6,6 +6,7 @@
 #include "CollectableItem.h"
 #include "QAbilityItem.generated.h"
 
+class UQAbility;
 /**
  * 
  */
@@ -13,5 +14,10 @@ UCLASS()
 class MYPROJECT9_API AQAbilityItem : public ACollectableItem
 {
 	GENERATED_BODY()
-	
+public:
+	virtual void PickUpEventServer(AChel* Player) override;
+	virtual void PickUpEventClient(AChel* Player) override;
+
+	UPROPERTY(EditAnywhere, Category = "Main_Vars")
+		TSubclassOf<UQAbility> QAbility_class;
 };

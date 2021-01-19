@@ -8,6 +8,7 @@
 #include "Kismet/KismetMathLibrary.h"
 #include "Blueprint/WidgetLayoutLibrary.h"
 #include "UI/RAbilitySlot.h"
+#include "UI/QAbilitySlot.h"
 #include "UI/KDA_Stat.h"
 #include "Spectator.h"
 #include "DezinfectorNasosZatichka.h"
@@ -39,6 +40,7 @@
 #include "UI/Inventory.h"
 #include "UI/TargetArrow.h"
 #include "Components/CapsuleComponent.h"
+#include "QAbility.h"
 #include "Chel.generated.h"
 
 class UCameraComponent;
@@ -297,7 +299,7 @@ public:
 	void DeleteArrowDelayBoltorez();
 	void DeleteArrowDelayOtvertka();
 
-	void ReplaceQAbilityItem(int32 Type, int32 ItemIndex);
+	void ReplaceQAbilityItem(const UClass* QAbilityclass, int32 ItemIndex);
 
 	UFUNCTION(Server, Reliable, WithValidation)
 		void LockWebCam_Server();
@@ -580,6 +582,7 @@ public:
 	TArray<UKDA_Stat*>MyKDA_Stat;
 	UPROPERTY(BlueprintReadWrite)
 	TArray<UConsumableAbility*>RAbilityPanel;
+	UQAbility* CurQAbility;
 	FTransform MeshTrans;
 	FRotator BaseRotation;
 

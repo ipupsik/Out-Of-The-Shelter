@@ -21,6 +21,8 @@
 #include "Weapon_Character.h"
 #include "ConsumableAbility.h"
 #include "InteractiveItem.h"
+#include "QAbility.h"
+#include "QAbilityItem.h"
 
 enum AreaType
 {
@@ -1328,49 +1330,20 @@ bool AChel::PickUp_Server_Validate()
 	return true;
 }
 
-void AChel::ReplaceQAbilityItem(int32 Type, int32 ItemIndex)
+void AChel::ReplaceQAbilityItem(const UClass* QAbilityclass, int32 ItemIndex)
 {
-	if (Type == -1)
-		return;
-	TSubclassOf<APickableItem> ReplaceClass;
-	FVector NewLocation;
-	FVector NewScale;
-	FRotator NewRotation;
-	switch (Type)
-	{
-	case ChelsDetector:
-	{
-		ReplaceClass = GS->ChelDetector_class;
-
-		NewLocation.X = GS->ChelDetectorTransform[GS->Caches[ItemIndex]->CacheIndex].GetLocation().X / abs(GS->Caches[ItemIndex]->GetActorScale3D().X);
-		NewLocation.Y = GS->ChelDetectorTransform[GS->Caches[ItemIndex]->CacheIndex].GetLocation().Y / abs(GS->Caches[ItemIndex]->GetActorScale3D().Y);
-		NewLocation.Z = GS->ChelDetectorTransform[GS->Caches[ItemIndex]->CacheIndex].GetLocation().Z / abs(GS->Caches[ItemIndex]->GetActorScale3D().Z);
-
-		NewRotation = FRotator(GS->ChelDetectorTransform[GS->Caches[ItemIndex]->CacheIndex].GetRotation());
-		NewScale = GS->ChelDetectorTransform[GS->Caches[ItemIndex]->CacheIndex].GetScale3D();
-		break;
-	}
-	case RentgenGlasses:
-	{
-		ReplaceClass = GS->RentgenGlass_class;
-
-		NewLocation.X = GS->RentgenGlassTransform[GS->Caches[ItemIndex]->CacheIndex].GetLocation().X / abs(GS->Caches[ItemIndex]->GetActorScale3D().X);
-		NewLocation.Y = GS->RentgenGlassTransform[GS->Caches[ItemIndex]->CacheIndex].GetLocation().Y / abs(GS->Caches[ItemIndex]->GetActorScale3D().Y);
-		NewLocation.Z = GS->RentgenGlassTransform[GS->Caches[ItemIndex]->CacheIndex].GetLocation().Z / abs(GS->Caches[ItemIndex]->GetActorScale3D().Z);
-
-		NewRotation = FRotator(GS->RentgenGlassTransform[GS->Caches[ItemIndex]->CacheIndex].GetRotation());
-		NewScale = GS->RentgenGlassTransform[GS->Caches[ItemIndex]->CacheIndex].GetScale3D();
-		break;
-	}
-	}
-
-	AActor* NewItem = GetWorld()->SpawnActor<AActor>(ReplaceClass);
+	UQAbility* QAbilityInterface = NewObject<UQAbility>(this, QAbilityclass);
+	FVector NewLocation = QAbilityInterface->GetCacheLocation();
+	FVector NewScale = QAbilityInterface->GetCacheScale3D();
+	FRotator NewRotation = QAbilityInterface->GetCacheRotation();
+	
+	AActor* NewItem = GetWorld()->SpawnActor<AActor>(QAbilityInterface->QAbilityitem_class);
 	FAttachmentTransformRules AttachmentRules = FAttachmentTransformRules(EAttachmentRule::KeepRelative, true);
 	NewItem->AttachToActor(GS->Caches[ItemIndex], AttachmentRules);
 	NewItem->SetActorScale3D(NewScale);
 	NewItem->AddActorLocalOffset(NewLocation);
 	NewItem->AddActorLocalRotation(NewRotation);
-	Cast<APickableItem>(NewItem)->EnabledArrayIndex = ItemIndex;
+	Cast<AQAbilityItem>(NewItem)->EnabledArrayIndex = ItemIndex;
 	GS->CacheItems_Stuff_IsAvaliable[ItemIndex] = false;
 }
 

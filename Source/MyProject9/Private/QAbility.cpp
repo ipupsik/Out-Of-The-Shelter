@@ -3,3 +3,17 @@
 
 #include "QAbility.h"
 
+FRotator UQAbility::GetCacheRotation()
+{
+	return FRotator();
+}
+
+FVector UQAbility::GetCacheLocation()
+{
+	return FVector();
+}
+
+FVector UQAbility::GetCacheScale3D()
+{
+	return FVector();
+}
