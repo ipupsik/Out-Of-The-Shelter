@@ -26,9 +26,28 @@ void ATakableProjectile::OnOverlapBegin(class UPrimitiveComponent* OverlappedCom
 	if (Player) {
 		if (Player->Index != IndexOwner) {
 			if (Player->DamageCollision == OtherComp) {
-				UE_LOG(LogTemp, Warning, TEXT("Weapon hit chel"));
-				if (GetLocalRole() == ROLE_Authority) {
-					Player->Health -= Damage;
+				if (Player->IsInGame)
+				{
+					UE_LOG(LogTemp, Warning, TEXT("Weapon hit chel"));
+					if (Player->GetLocalRole() == ROLE_Authority) {
+						Player->Health += Damage / (1 + 0.2 * Player->ShieldsCount) * Player->DoesNotImmortal;
+						if (Player->Health + DeltaRadiation >= 1.0f)
+						{
+							Player->KillerIndex = IndexOwner;
+						}
+
+						if (Player->Health >= 1.0f)
+						{
+
+							TArray<AActor*>Players;
+							UGameplayStatics::GetAllActorsOfClass(Player->World, Player->GetClass(), Players);
+							for (auto& it : Players)
+								Cast<AChel>(it)->RefreshWidgets(Player->DoesHave, Player->KillerIndex, Player->Index);
+							Player->DoesHave.Init(false, 3);
+							Player->bCanWalkingAndWatching = true;
+							Player->KillPlayer();
+						}
+					}
 				}
 				PlaySoundHitChel();
 				Destroy();
