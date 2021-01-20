@@ -5,8 +5,11 @@
 
 AInteractiveCache::AInteractiveCache()
 {
+	MainScene = CreateDefaultSubobject<USceneComponent>("MainScene");
+	MainScene->SetupAttachment(RootComponent);
+
 	Scene = CreateDefaultSubobject<USceneComponent>("Scene");
-	Scene->SetupAttachment(RootComponent);
+	Scene->SetupAttachment(MainScene);
 
 	Collision = CreateDefaultSubobject<UBoxComponent>("Collision");
 	Collision->SetupAttachment(Scene);

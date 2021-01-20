@@ -24,6 +24,7 @@
 #include "Weapon_Level.h"
 #include "QAbility.h"
 #include "QAbilityItem.h"
+#include "InteractiveCache.h"
 
 enum AreaType
 {
@@ -1406,14 +1407,13 @@ bool AChel::PickUp_Server_Validate()
 	return true;
 }
 
-void AChel::ReplaceQAbilityItem(const UClass* QAbilityclass, int32 ItemIndex)
+void AChel::ReplaceQAbilityItem(UClass* QAbilityItemclass, int32 ItemIndex)
 {
-	UQAbility* QAbilityInterface = NewObject<UQAbility>(this, QAbilityclass);
-	FVector NewLocation = QAbilityInterface->GetCacheLocation();
-	FVector NewScale = QAbilityInterface->GetCacheScale3D();
-	FRotator NewRotation = QAbilityInterface->GetCacheRotation();
+	FVector NewLocation = CurQAbility->GetCacheLocation();
+	FVector NewScale = CurQAbility->GetCacheScale3D();
+	FRotator NewRotation = CurQAbility->GetCacheRotation();
 	
-	AActor* NewItem = GetWorld()->SpawnActor<AActor>(QAbilityInterface->QAbilityitem_class);
+	AActor* NewItem = GetWorld()->SpawnActor<AActor>(QAbilityItemclass);
 	FAttachmentTransformRules AttachmentRules = FAttachmentTransformRules(EAttachmentRule::KeepRelative, true);
 	NewItem->AttachToActor(GS->Caches[ItemIndex], AttachmentRules);
 	NewItem->SetActorScale3D(NewScale);

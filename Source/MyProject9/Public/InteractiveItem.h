@@ -17,7 +17,7 @@ class MYPROJECT9_API AInteractiveItem : public AActor
 public:	
 	AInteractiveItem();
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	bool bCanInterract;
 	UPROPERTY(EditAnywhere)
 	int32 colorOutlineType;

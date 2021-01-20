@@ -10,7 +10,7 @@ class AQAbilityItem;
 /**
  * 
  */
-UCLASS()
+UCLASS(Blueprintable)
 class MYPROJECT9_API UQAbility : public UObject
 {
 	GENERATED_BODY()
@@ -21,4 +21,6 @@ public:
 
 	UPROPERTY(EditAnywhere, Category = "Main_Vars")
 		TSubclassOf<AQAbilityItem> QAbilityitem_class;
+	UPROPERTY(EditAnywhere)
+		UObject* Icon;
 };

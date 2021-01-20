@@ -298,7 +298,7 @@ public:
 	void DeleteArrowDelayBoltorez();
 	void DeleteArrowDelayOtvertka();
 
-	void ReplaceQAbilityItem(const UClass* QAbilityclass, int32 ItemIndex);
+	void ReplaceQAbilityItem(UClass* QAbilityItemclass, int32 ItemIndex);
 
 	UFUNCTION(Server, Reliable, WithValidation)
 		void LockWebCam_Server();
