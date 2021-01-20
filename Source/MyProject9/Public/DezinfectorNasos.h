@@ -6,8 +6,8 @@
 #include "GameFramework/Actor.h"
 #include "Materials/Material.h"
 #include "Components/StaticMeshComponent.h"
-#include "DezinfectorNasosZatichka.h"
 #include "Components/SceneComponent.h"
+#include "DezinfectorNasosZatichka.h"
 #include "DezinfectorNasos.generated.h"
 
 UCLASS()

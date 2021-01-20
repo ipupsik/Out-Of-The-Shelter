@@ -3,23 +3,54 @@
 
 #include "BP_VentilaciaRubilnick.h"
 #include "GS.h"
+#include "Chel.h"
 #include "Kismet/GameplayStatics.h"
 #include "VentilaciaGenerator.h"
 
 ABP_VentilaciaRubilnick::ABP_VentilaciaRubilnick()
 {
-	is_Avaliable = true;
+	bCanInterract = true;
+	Scene = CreateDefaultSubobject<USceneComponent>("Scene");
+	Scene->SetupAttachment(RootComponent);
+
+	Collision = CreateDefaultSubobject<UBoxComponent>("Collision");
+	Collision->SetupAttachment(Scene);
+
+	Item = CreateDefaultSubobject<UStaticMeshComponent>("Item");
+	Item->SetupAttachment(Scene);
 }
 
-void ABP_VentilaciaRubilnick::CheckVentilaciaAvaliable()
+void ABP_VentilaciaRubilnick::ToggleCustomDepth(bool NewIsOutliningNow)
 {
-	AGS* MyGS = GetWorld()->GetGameState<AGS>();
-	MyGS->VentilaciaRubilnickCount--;
+	if (bCanInterract) {
+		if (this->IsOutliningNow != NewIsOutliningNow) {
+			Item->SetRenderCustomDepth(NewIsOutliningNow);
+			Item->MarkRenderStateDirty();
+			this->IsOutliningNow = NewIsOutliningNow;
+		}
+	}
+}
+
+bool ABP_VentilaciaRubilnick::PickUpEventClient(AChel* Player)
+{
+	if (bCanInterract)
+	{
+		ToggleCustomDepth(false);
+		Player->UserView->E_Mark->SetVisibility(ESlateVisibility::Hidden);
+		bCanInterract = false;
+		return true;
+	}
+	return false;
+}
+
+void ABP_VentilaciaRubilnick::PickUpEventServer(AChel* Player)
+{
+	Player->GS->VentilaciaRubilnickCount--;
 	Open();
 	ChangeAvaliable();
-	if (MyGS->VentilaciaRubilnickCount == 0)
+	if (Player->GS->VentilaciaRubilnickCount == 0)
 	{
-		MyGS->IsVentilaciaAvaliable = true;
+		Player->GS->IsVentilaciaAvaliable = true;
 		TArray<AActor*>VentilaciaGenerator;
 		UGameplayStatics::GetAllActorsOfClass(GetWorld(), AVentilaciaGenerator::StaticClass(), VentilaciaGenerator);
 		if (VentilaciaGenerator.Num() > 0)
@@ -29,5 +60,14 @@ void ABP_VentilaciaRubilnick::CheckVentilaciaAvaliable()
 
 void ABP_VentilaciaRubilnick::ChangeAvaliable_Implementation()
 {
-	is_Avaliable = false;
+	bCanInterract = false;
+}
+
+void ABP_VentilaciaRubilnick::OnLineTraced(AChel* Player)
+{
+	if (bCanInterract) {
+		ToggleCustomDepth(true);
+		if (!Player->UserView->E_Mark->IsVisible())
+			Player->UserView->E_Mark->SetVisibility(ESlateVisibility::Visible);
+	}
 }

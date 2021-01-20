@@ -3,14 +3,14 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "PickableItem.h"
+#include "InteractiveItem.h"
 #include "BP_VentilaciaRubilnick.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class MYPROJECT9_API ABP_VentilaciaRubilnick : public APickableItem
+class MYPROJECT9_API ABP_VentilaciaRubilnick : public AInteractiveItem
 {
 	GENERATED_BODY()
 	
@@ -25,5 +25,19 @@ public:
 	UFUNCTION(NetMulticast, Reliable)
 		void ChangeAvaliable();
 
-	bool is_Avaliable;
+	void PickUpEventServer(AChel* Player) override;
+	bool PickUpEventClient(AChel* Player) override;
+	void ToggleCustomDepth(bool NewIsOutliningNow) override;
+
+	void OnLineTraced(AChel* Player) override;
+
+public:
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Player")
+		UStaticMeshComponent* Item;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Player")
+		UBoxComponent* Collision;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Player")
+		USceneComponent* Scene;
 };

@@ -3,6 +3,7 @@
 
 #include "DezinfectorNasosZatichka.h"
 #include "DezinfectorNasos.h"
+#include "Chel.h"
 
 // Sets default values
 ADezinfectorNasosZatichka::ADezinfectorNasosZatichka()
@@ -22,7 +23,7 @@ ADezinfectorNasosZatichka::ADezinfectorNasosZatichka()
 	PS->SetupAttachment(Scene);
 }
 
-void ADezinfectorNasosZatichka::Interact()
+void ADezinfectorNasosZatichka::PickUpEventServer(AChel* Player)
 {
 	if (!DoesPlayAnim && Nasos->bIsAvaliable)
 	{
@@ -39,6 +40,33 @@ void ADezinfectorNasosZatichka::Interact()
 			{
 				Nasos->TurnOn();
 			}
+		}
+	}
+}
+
+bool ADezinfectorNasosZatichka::PickUpEventClient(AChel* Player)
+{
+	if (Nasos->bIsAvaliable)
+		return true;
+	return false;
+}
+
+void ADezinfectorNasosZatichka::OnLineTraced(AChel* Player)
+{
+	if (Nasos->bIsAvaliable) {
+		ToggleCustomDepth(true);
+		if (!Player->UserView->E_Mark->IsVisible())
+			Player->UserView->E_Mark->SetVisibility(ESlateVisibility::Visible);
+	}
+}
+
+void ADezinfectorNasosZatichka::ToggleCustomDepth(bool NewIsOutliningNow)
+{
+	if (Nasos->bIsAvaliable) {
+		if (this->IsOutliningNow != NewIsOutliningNow) {
+			Zatichka->SetRenderCustomDepth(NewIsOutliningNow);
+			Zatichka->MarkRenderStateDirty();
+			this->IsOutliningNow = NewIsOutliningNow;
 		}
 	}
 }

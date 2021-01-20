@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/Actor.h"
+#include "InteractiveItem.h"
 #include "Components/StaticMeshComponent.h"
 #include "Runtime/Engine/Classes/Particles/ParticleSystemComponent.h"
 #include "Components/SceneComponent.h"
@@ -12,7 +12,7 @@
 class ADezinfectorNasos;
 
 UCLASS()
-class MYPROJECT9_API ADezinfectorNasosZatichka : public AActor
+class MYPROJECT9_API ADezinfectorNasosZatichka : public AInteractiveItem
 {
 	GENERATED_BODY()
 	
@@ -27,6 +27,10 @@ public:
 	UFUNCTION(BlueprintImplementableEvent)
 		void SwitchAnimDown();
 
+	void PickUpEventServer(AChel* Player) override;
+	bool PickUpEventClient(AChel* Player) override;
+	void OnLineTraced(AChel* Player) override;
+	void ToggleCustomDepth(bool NewIsOutliningNow) override;
 public:	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Particle")
 		UParticleSystemComponent* PS;

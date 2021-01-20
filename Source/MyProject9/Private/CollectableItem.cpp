@@ -2,6 +2,7 @@
 
 
 #include "CollectableItem.h"
+#include "Chel.h"
 
 ACollectableItem::ACollectableItem() {
 	
@@ -29,7 +30,7 @@ void ACollectableItem::OnLineTraced(AChel* Player)
 {
 	if (bCanInterract) {
 		ToggleCustomDepth(true);
-		if (Player->UserView->E_Mark->IsVisible())
+		if (!Player->UserView->E_Mark->IsVisible())
 			Player->UserView->E_Mark->SetVisibility(ESlateVisibility::Visible);
 	}
 }

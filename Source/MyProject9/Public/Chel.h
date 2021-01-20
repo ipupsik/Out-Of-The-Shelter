@@ -587,7 +587,7 @@ public:
 
 	int32 LastRAbilityIndex;
 
-	ADezinfectorNasosZatichka* LastZatichka;
+	//ADezinfectorNasosZatichka* LastZatichka;
 	AGeneratorArea* GenAreaObj;
 	UGeneratorWidget* GeneratorView;
 
