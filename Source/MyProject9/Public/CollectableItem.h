@@ -29,6 +29,7 @@ public:
 		USceneComponent* Scene;
 	void ToggleCustomDepth(bool IsOutliningNow) override;
 	void SetOutlineColor(int32 ColorOutline) override;
+	virtual void OnLineTraced(AChel* Player) override;
 
 	int32 EnabledArrayIndex;
 };

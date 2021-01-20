@@ -27,6 +27,6 @@ public:
 	virtual void SetOutlineColor(int32 ColorOutline);
 
 	virtual void PickUpEventServer(AChel* Player );
-	virtual void PickUpEventClient(AChel* Player);
-
+	virtual bool PickUpEventClient(AChel* Player);
+	virtual void OnLineTraced(AChel* Player);
 };

@@ -24,7 +24,7 @@ void AQAbilityItem::PickUpEventServer(AChel* Player)
 	Destroy();
 }
 
-void AQAbilityItem::PickUpEventClient(AChel* Player)
+bool AQAbilityItem::PickUpEventClient(AChel* Player)
 {
 	UQAbility* TempAbility = NewObject<UQAbility>(Player, QAbility_class);
 	if (GetLocalRole() != ROLE_Authority)
@@ -32,4 +32,5 @@ void AQAbilityItem::PickUpEventClient(AChel* Player)
 	FSlateBrush NewBrush;
 	NewBrush.SetResourceObject(TempAbility->Icon);
 	Player->UserView->CurQSlot->AbilityImage->SetBrush(NewBrush);
+	return true;
 }

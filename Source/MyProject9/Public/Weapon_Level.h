@@ -20,8 +20,8 @@ public:
 	AWeapon_Level();
 
 	void PickUpEventServer(AChel* Player) override;
-	void PickUpEventClient(AChel* Player) override;
-
+	bool PickUpEventClient(AChel* Player) override;
+	virtual void OnLineTraced(AChel* Player) override;
 
 	UFUNCTION(NetMulticast, Reliable)
 	void ChangeAmount(int32 NewAmount);

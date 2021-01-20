@@ -18,7 +18,7 @@ public:
 	AQAbilityItem();
 
 	virtual void PickUpEventServer(AChel* Player) override;
-	virtual void PickUpEventClient(AChel* Player) override;
+	virtual bool PickUpEventClient(AChel* Player) override;
 
 	UPROPERTY(EditAnywhere, Category = "Main_Vars")
 		TSubclassOf<UQAbility> QAbility_class;

@@ -15,7 +15,8 @@ class MYPROJECT9_API AInteractiveCache : public AInteractiveItem
 	GENERATED_BODY()
 public:
 	virtual void PickUpEventServer(AChel* Player) override;
-	virtual void PickUpEventClient(AChel* Player) override;
+	virtual bool PickUpEventClient(AChel* Player) override;
+	virtual void OnLineTraced(AChel* Player) override;
 public:
 	AInteractiveCache();
 

@@ -19,8 +19,9 @@ void AConsumable::PickUpEventServer(AChel* Player)
 	Destroy();
 }
 
-void AConsumable::PickUpEventClient(AChel* Player)
+bool AConsumable::PickUpEventClient(AChel* Player)
 {
 	Player->NewRAbility(Ability_class);
 	Destroy();
+	return true;
 }

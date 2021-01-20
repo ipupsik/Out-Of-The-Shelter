@@ -6,7 +6,7 @@
 // Sets default values
 AInteractiveItem::AInteractiveItem()
 {
-	colorOutlineType = 1;
+	colorOutlineType = -1;
 	bCanInterract = true;
 }
 
@@ -22,6 +22,11 @@ void AInteractiveItem::PickUpEventServer(AChel * Player)
 {
 }
 
-void AInteractiveItem::PickUpEventClient(AChel * Player)
+bool AInteractiveItem::PickUpEventClient(AChel * Player)
+{
+	return true;
+}
+
+void AInteractiveItem::OnLineTraced(AChel* Player)
 {
 }

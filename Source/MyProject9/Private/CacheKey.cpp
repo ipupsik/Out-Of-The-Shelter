@@ -20,10 +20,11 @@ void ACacheKey::PickUpEventServer(AChel* Player) {
 	RemoveAndRefreshTimer();
 }
 
-void ACacheKey::PickUpEventClient(AChel* Player) {
+bool ACacheKey::PickUpEventClient(AChel* Player) {
 	Player->UserView->ArrayCacheKey[TypeKey]->SetText(FText::AsNumber(Player->KeysCount[TypeKey] + 1));
 	Player->KeysCount[TypeKey]++;
 	Destroy();
+	return true;
 }
 
 void ACacheKey::RemoveAndRefreshTimer()

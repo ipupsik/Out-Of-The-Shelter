@@ -17,7 +17,7 @@ public:
 	ACacheKey();
 
 	void PickUpEventServer(AChel* Player) override;
-	void PickUpEventClient(AChel* Player) override;
+	bool PickUpEventClient(AChel* Player) override;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	int32 TypeKey;

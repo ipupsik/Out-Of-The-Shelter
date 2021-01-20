@@ -525,7 +525,7 @@ void AChel::ChangeCorretcaPosition(int32 TypeChange) {
 void AChel::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	
+
 	if (IsInGame == true) {
 		if (IsServerAuth) {
 			Health += DeltaTime * 2 * 0.01f * RadCoeff * CanalizationDamage / 1.5f * DoesRadiationAntidot * DoesNotImmortal;
@@ -548,7 +548,7 @@ void AChel::Tick(float DeltaTime)
 				return;
 			}
 		}
-		
+
 		if (IsPlayerOwner) {
 			//----------------------------------------------------для генератора Start--------------------------------------
 			if (TickEnableGeneratorWidget) {
@@ -576,90 +576,51 @@ void AChel::Tick(float DeltaTime)
 
 			FCollisionQueryParams CollisionParams;
 
-			//DrawDebugLine(World, StartLocation, EndLocation, FColor::Red, false, 1, 0, 1);
-
-			isTracedBad = false; //Предположим, что мы нашли лайн трейсом нужные нам предметы
 			if (World->LineTraceSingleByChannel(OutHit, StartLocation, EndLocation, ECC_Visibility, CollisionParams))
 			{
-				if (OutHit.bBlockingHit)
-				{
-					AActor* HittableActor = OutHit.GetActor();
-					if (HittableActor) { //Если мы стукнулись в какой-то актор, а не в пустоту
-						AInteractiveItem* TracedItem = Cast<AInteractiveItem>(HittableActor);
-						if (TracedItem) { //Если мы стукнулись в нужный нам предмет
-							if (LastInteractiveItem && LastInteractiveItem != TracedItem) {
-								LastInteractiveItem->ToggleCustomDepth(false);
-							}
-							if (LastInteractiveItem != TracedItem) {
-								LastInteractiveItem = TracedItem;
-								bLineTrace_is_need_refresh = true;
-								LastInteractiveItem->ToggleCustomDepth(true);
-
-								//----------------------------------для подсветки оружия красным Start------------------------
-								AWeapon_Level* WeaponLookingAt = Cast<AWeapon_Level>(LastInteractiveItem);
-								if (WeaponLookingAt) {
-									UE_LOG(LogTemp, Warning, TEXT("I`m looking at weapon_level"));
-									if (CurrentWeapons[1]) {
-										if (WeaponLookingAt->GetClass() == CurrentWeapons[1]->GetClass() && CurrentWeapons[1]->LeftAmmo == CurrentWeapons[1]->MaxAmmo) {
-											WeaponLookingAt->SetOutlineColor(1);
-										}
-										else {
-											WeaponLookingAt->SetOutlineColor(2);
-										}
-									}
-									else {
-										WeaponLookingAt->SetOutlineColor(2);
-									}
-								}
-								//----------------------------------для подсветки оружия красным End------------------------
-								if (LastInteractiveItem->bCanInterract)
-									UserView->E_Mark->SetVisibility(ESlateVisibility::Visible);
-							}
-						}
-						else {
-							if (LastInteractiveItem) {
-								LastInteractiveItem->ToggleCustomDepth(false);
-								LastInteractiveItem = nullptr;
-								UserView->E_Mark->SetVisibility(ESlateVisibility::Hidden);
-							}
-						}
+				AInteractiveItem* TracedItem = Cast<AInteractiveItem>(OutHit.GetActor());
+				if (TracedItem) { //Если мы стукнулись в нужный нам предмет
+					if (LastInteractiveItem && LastInteractiveItem != TracedItem) {
+						LastInteractiveItem->ToggleCustomDepth(false);
 					}
-					else {
-						if (LastInteractiveItem) {
-							LastInteractiveItem->ToggleCustomDepth(false);
-							LastInteractiveItem = nullptr;
-						}
-						isTracedBad = true;  //Мы не попали в нужный нам предмет
+					TracedItem->OnLineTraced(this);
+					if (LastInteractiveItem != TracedItem) {
+						LastInteractiveItem = TracedItem;
 					}
 				}
 				else {
 					if (LastInteractiveItem) {
 						LastInteractiveItem->ToggleCustomDepth(false);
 						LastInteractiveItem = nullptr;
+						UserView->E_Mark->SetVisibility(ESlateVisibility::Hidden);
 					}
-					isTracedBad = true;  //Мы не попали в нужный нам предмет
 				}
 			}
-			else
-				isTracedBad = true;   //Мы не попали в нужный нам предмет
-
-			if (isTracedBad && bLineTrace_is_need_refresh) {
-				bLineTrace_is_need_refresh = false;
-				UE_LOG(LogTemp, Warning, TEXT("Widget Update"));
-				if (LastInteractiveItem)
-				{
+			else {
+				if (LastInteractiveItem) {
 					LastInteractiveItem->ToggleCustomDepth(false);
+					LastInteractiveItem = nullptr;
+					UserView->E_Mark->SetVisibility(ESlateVisibility::Hidden);
 				}
-
-				if (LastInteractiveItem && Cast<AOpenArea>(LastInteractiveItem))
-				{
-					PickUp_Released();
-				}
-				UserView->StopAllAnimations();
-				UserView->E_Mark->SetVisibility(ESlateVisibility::Hidden);
-				LastInteractiveItem = nullptr;
 			}
 		}
+
+		/*if (isTracedBad && bLineTrace_is_need_refresh) {
+			bLineTrace_is_need_refresh = false;
+			UE_LOG(LogTemp, Warning, TEXT("Widget Update"));
+			if (LastInteractiveItem)
+			{
+				LastInteractiveItem->ToggleCustomDepth(false);
+			}
+
+			if (LastInteractiveItem && Cast<AOpenArea>(LastInteractiveItem))
+			{
+				PickUp_Released();
+			}
+			UserView->StopAllAnimations();
+			UserView->E_Mark->SetVisibility(ESlateVisibility::Hidden);
+			LastInteractiveItem = nullptr;
+		}*/
 	}
 
 	if (IsPlayerOwner) {
@@ -1330,8 +1291,8 @@ void AChel::PickUp() {
 		if (IsNotInWebCam) {
 			if (LastInteractiveItem)
 			{
-				LastInteractiveItem->PickUpEventClient(this);
-				PickUp_Server();
+				if(LastInteractiveItem->PickUpEventClient(this))
+					PickUp_Server();
 			}
 		}
 	}

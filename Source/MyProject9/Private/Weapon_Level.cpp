@@ -14,12 +14,32 @@ AWeapon_Level::AWeapon_Level() {
 	Collision->SetupAttachment(Mesh);
 }
 
-void AWeapon_Level::PickUpEventClient(AChel* Player) {
+bool AWeapon_Level::PickUpEventClient(AChel* Player) {
+	return true;
 }
 
 void AWeapon_Level::ChangeAmount_Implementation(int32 NewAmount)
 {
-		Amount = NewAmount;
+	Amount = NewAmount;
+}
+
+void AWeapon_Level::OnLineTraced(AChel* Player) {
+	if (bCanInterract) {
+		if (!Player->UserView->E_Mark->IsVisible())
+			Player->UserView->E_Mark->SetVisibility(ESlateVisibility::Visible);
+		ToggleCustomDepth(true);
+		if (Player->CurrentWeapons[1]) {
+			if (GetClass() == Player->CurrentWeapons[1]->WeaponLevelClass && Player->CurrentWeapons[1]->LeftAmmo == Player->CurrentWeapons[1]->MaxAmmo) {
+				SetOutlineColor(1);
+			}
+			else {
+				SetOutlineColor(2);
+			}
+		}
+		else {
+			SetOutlineColor(2);
+		}
+	}
 }
 
 void AWeapon_Level::PickUpEventServer(AChel* Player) { //Вызывается из PickUp серверовского чела

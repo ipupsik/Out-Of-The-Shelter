@@ -20,7 +20,8 @@ void ACoreItem::PickUpEventServer(AChel* Player) {
 	Destroy();
 }
 
-void ACoreItem::PickUpEventClient(AChel * Player)
+bool ACoreItem::PickUpEventClient(AChel * Player)
 {
 	Player->UserView->ArraySwitcher[TypeItem]->SetActiveWidgetIndex(1);
+	return true;
 }
