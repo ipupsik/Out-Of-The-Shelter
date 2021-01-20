@@ -34,25 +34,28 @@ void AWeapon_Character::DropItem_Implementation()
 	Trsfrm.SetRotation(FQuat(FRotator(WeaponOwner->DamageCollision->GetComponentRotation()) + RotationDroppedItem));
 	Trsfrm.SetScale3D(FVector(1.0f, 1.0f, 1.0f));
 	AWeapon_Level* DroppedItm = WeaponOwner->World->SpawnActor<AWeapon_Level>(WeaponLevelClass, Trsfrm);
-	DroppedItm->Collision->SetPhysicsLinearVelocity(FVector(WeaponOwner->Scene->GetForwardVector() * 200.f));
+	DroppedItm->Amount = LeftAmmo;
+	DroppedItm->Mesh->SetPhysicsLinearVelocity(FVector(WeaponOwner->Scene->GetForwardVector() * 200.f));
 }
 
 void AWeapon_Character::Throw() { //גûחûגאועסÿ ס סונגונא
 	if (LeftAmmo > 0) {
 		LeftAmmo -= 1;
-		WeaponOwner->ChangeAmmoClients(LeftAmmo);
+		WeaponOwner->ChangeAmmoClients(LeftAmmo, WeaponOwner->CurrentIndex);
 		WeaponOwner->StartAnimInCurSlot();
 	}
 }
 
 void AWeapon_Character::AnimationThrow_Finished() {
 	SpawnProjectile();
-	if (GetLocalRole() == ROLE_Authority) {
+	if (WeaponOwner->GetLocalRole() == ROLE_Authority) {
 		if (LeftAmmo == 0) {
-			WeaponOwner->ClearWeaponInfo();
+			WeaponOwner->ClearWeaponInfoClient();
 			WeaponOwner->StartAnimInCurSlotReverse(false);
 		}
 		else {
+
+			UE_LOG(LogTemp, Warning, TEXT("I am Refreshing Widgets"));
 			WeaponOwner->RefreshWidgetAmmoOwningClient(LeftAmmo, MaxAmmo, WeaponOwner->CurrentIndex);
 			WeaponOwner->StartAnimInCurSlotReverse(true);
 		}

@@ -12,7 +12,7 @@ ABottle_Projectile::ABottle_Projectile() {
 	MyCollision->SetupAttachment(MyGunMesh);
 
 	ProjectMovement = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("ProjectileMovement"));
-	ProjectMovement->SetUpdatedComponent(MyCollision);
+	ProjectMovement->SetUpdatedComponent(MyGunMesh);
 
 	MyCollision->OnComponentBeginOverlap.AddDynamic(this, &ABottle_Projectile::OnOverlapBegin);
 	MyGunMesh->OnComponentHit.AddDynamic(this, &ABottle_Projectile::OnHit);
@@ -24,14 +24,16 @@ void ABottle_Projectile::OnOverlapBegin(class UPrimitiveComponent* OverlappedCom
 	Player = Cast<AChel>(OtherActor);
 	if (Player) {
 		if (Player->Index != IndexOwner) {
-			if (GetLocalRole() == ROLE_Authority) {
-				Player->Health -= Damage;
+			if(Player->DamageCollision == OtherComp){
+				if (Player->GetLocalRole() == ROLE_Authority) {
+					Player->Health -= Damage;
+				}
+				if (Player->IsPlayerOwner) {
+					Player->InvertMovement(TimeEffect);
+				}
+				PlaySoundBroke();
+				Destroy();
 			}
-			if (Player->IsPlayerOwner) {
-				Player->InvertMovement(TimeEffect);
-			}
-			PlaySoundBroke();
-			Destroy();
 		}
 	}
 }

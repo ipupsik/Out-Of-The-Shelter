@@ -27,11 +27,13 @@ void AStone_Projectile::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp
 	Player = Cast<AChel>(OtherActor);
 	if (Player) {
 		if (Player->Index != IndexOwner) {
-			if (GetLocalRole() == ROLE_Authority) {
-				Player->Health -= Damage;
+			if (Player->DamageCollision == OtherComp) {
+				if (Player->GetLocalRole() == ROLE_Authority) {
+					Player->Health -= Damage;
+				}
+				PlaySoundHitChel();
+				Destroy();
 			}
-			PlaySoundHitChel();
-			Destroy();
 		}
 	}
 }

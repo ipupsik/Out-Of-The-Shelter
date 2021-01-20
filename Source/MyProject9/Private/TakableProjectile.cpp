@@ -25,12 +25,14 @@ void ATakableProjectile::OnOverlapBegin(class UPrimitiveComponent* OverlappedCom
 	Player = Cast<AChel>(OtherActor);
 	if (Player) {
 		if (Player->Index != IndexOwner) {
-			UE_LOG(LogTemp, Warning, TEXT("Weapon hit chel"));
-			if (GetLocalRole() == ROLE_Authority) {
-				Player->Health -= Damage;
+			if (Player->DamageCollision == OtherComp) {
+				UE_LOG(LogTemp, Warning, TEXT("Weapon hit chel"));
+				if (GetLocalRole() == ROLE_Authority) {
+					Player->Health -= Damage;
+				}
+				PlaySoundHitChel();
+				Destroy();
 			}
-			PlaySoundHitChel();
-			Destroy();
 		}
 	}
 }
@@ -39,17 +41,19 @@ void ATakableProjectile::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherA
 	AChel* Player = nullptr;
 	Player = Cast<AChel>(OtherActor);
 	if (!Player) {
-		PlaySoundHitNotChel();
-		if (GetLocalRole() == ROLE_Authority) {
-			UE_LOG(LogTemp, Warning, TEXT("WeaponWasSpawned"));
-			FTransform transfrm;
-			transfrm.SetLocation(GetActorLocation());
-			transfrm.SetRotation(FQuat(GetActorRotation()));
-			transfrm.SetScale3D({ 1.0f, 1.0f, 1.0f });
-			FActorSpawnParameters SpwnParam;
-			AWeapon_Level* CreatedWeaponLevel = GetWorld()->SpawnActor<AWeapon_Level>(WeaponLevel_Class, transfrm, SpwnParam);
-			CreatedWeaponLevel->Collision->SetPhysicsLinearVelocity(GetVelocity() / 2);
+		if (OtherActor) {
+			PlaySoundHitNotChel();
+			if (OtherActor->GetLocalRole() == ROLE_Authority) {
+				UE_LOG(LogTemp, Warning, TEXT("WeaponWasSpawned"));
+				FTransform transfrm;
+				transfrm.SetLocation(GetActorLocation());
+				transfrm.SetRotation(FQuat(GetActorRotation()));
+				transfrm.SetScale3D({ 1.0f, 1.0f, 1.0f });
+				FActorSpawnParameters SpwnParam;
+				AWeapon_Level* CreatedWeaponLevel = GetWorld()->SpawnActor<AWeapon_Level>(WeaponLevel_Class, transfrm, SpwnParam);
+				CreatedWeaponLevel->Mesh->SetPhysicsLinearVelocity(GetVelocity() / 5);
+			}
+			Destroy();
 		}
-		Destroy();
 	}
 }

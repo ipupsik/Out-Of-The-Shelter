@@ -184,7 +184,7 @@ void AChel::EnableChelDetector()
 	for (auto& it : PlayersArray)
 	{
 		if (!it->IsPlayerOwner) {
-			UE_LOG(LogTemp, Warning, TEXT("lla"))
+			UE_LOG(LogTemp, Warning, TEXT("lla"));
 			it->PoseableMeshComp->SetRenderCustomDepth(true);
 			it->PoseableMeshComp->MarkRenderStateDirty();
 		}
@@ -595,8 +595,9 @@ void AChel::Tick(float DeltaTime)
 								LastInteractiveItem->ToggleCustomDepth(true);
 
 								//----------------------------------для подсветки оружия красным Start------------------------
-								 AWeapon_Level* WeaponLookingAt = Cast<AWeapon_Level>(TracedItem);
+								AWeapon_Level* WeaponLookingAt = Cast<AWeapon_Level>(LastInteractiveItem);
 								if (WeaponLookingAt) {
+									UE_LOG(LogTemp, Warning, TEXT("I`m looking at weapon_level"));
 									if (CurrentWeapons[1]) {
 										if (WeaponLookingAt->GetClass() == CurrentWeapons[1]->GetClass() && CurrentWeapons[1]->LeftAmmo == CurrentWeapons[1]->MaxAmmo) {
 											WeaponLookingAt->SetOutlineColor(1);
@@ -2749,17 +2750,16 @@ void AChel::SetWeaponToSlotMulticast_Implementation(int32 IndexWeapon)
 {
 	SetWeaponToSlot(IndexWeapon);
 }
-void AChel::ChangeAmmoClients_Implementation(int32 NewLeftAmmo)
+void AChel::ChangeAmmoClients_Implementation(int32 NewLeftAmmo, int32 indexWeapon)
 {
 	if(GetLocalRole() != ROLE_Authority)
-		CurrentWeapons[CurrentIndex]->LeftAmmo = NewLeftAmmo;
+		CurrentWeapons[indexWeapon]->LeftAmmo = NewLeftAmmo;
 }
 void AChel::StartAnimInCurSlot_Implementation()
 {
 	if (IsPlayerOwner) {
 		CanFireWeapon = false;
 	}
-	CurrentWeapons[CurrentIndex]->PlaySoundThrow();
 	CurrentWeapons[CurrentIndex]->AnimationThrow();
 }
 
