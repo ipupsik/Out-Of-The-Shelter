@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "GameFramework/ProjectileMovementComponent.h"
+#include "Kismet/GameplayStatics.h"
 #include "Weapon_Projectile.generated.h"
 
 UCLASS()
@@ -17,6 +18,8 @@ public:
 	AWeapon_Projectile();
 
 	int32 IndexOwner;
+
+
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	UProjectileMovementComponent* ProjectMovement;

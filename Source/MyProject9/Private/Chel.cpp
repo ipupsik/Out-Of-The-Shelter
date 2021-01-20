@@ -502,11 +502,14 @@ void AChel::MyBeginPlay()
 		GS->MaxPlayersCount = GI->MaxPlayersCount;
 	}
 
-	//---------------------добавление начального камня-------------------------------------------------
+	//---------------------добавление начального камня ( у себя)-------------------------------------------------
 	CreateWeapon(Stone_Class, 20, 0);
-	//---------------------добавление начального камня End-------------------------------------------------
-}
+	//---------------------добавление начального камня End( у себя)-------------------------------------------------
 
+	//---------------------обновление патронов у камня-------------------------------------------------
+	GetAmmo_Server();
+	//---------------------обновление патронов у камня-------------------------------------------------
+}
 void AChel::PossessedBy(AController* NewController)
 {
 	Super::PossessedBy(NewController);
@@ -1507,6 +1510,15 @@ void AChel::KillPlayer()
 
 	DropCoreItems();
 
+	CurrentWeapons[0]->LeftAmmo = 0;
+	ChangeAmmoClients(0, 0);
+	if (CurrentWeapons[1]) {
+		CurrentWeapons[1]->LeftAmmo = 0;
+		ChangeAmmoClients(0, 1);
+	}
+	HideCurrentWeapon();
+	
+
 	for (auto& Player : Players)
 	{
 		AChel* Chel = Cast<AChel>(Player);
@@ -1567,6 +1579,10 @@ void AChel::SpawnPlayer()
 	IsInGame = true;
 	Health = 0;
 	Ammo = MaxAmmoCount;
+
+	CurrentWeapons[0]->LeftAmmo = CurrentWeapons[0]->MaxAmmo;
+	ChangeAmmoClients(CurrentWeapons[0]->MaxAmmo, 0);
+	SwitchToFreeWeapon_Multicast();
 
 	TArray<AActor*> TargetPoints;
 	UGameplayStatics::GetAllActorsOfClassWithTag(World, ATargetPoint::StaticClass(), TEXT("spawn"), TargetPoints);
@@ -2713,7 +2729,7 @@ void AChel::SetWeaponToSlotMulticast_Implementation(int32 IndexWeapon)
 }
 void AChel::ChangeAmmoClients_Implementation(int32 NewLeftAmmo, int32 indexWeapon)
 {
-	if(GetLocalRole() != ROLE_Authority)
+	if(GetLocalRole() != ROLE_Authority && CurrentWeapons[indexWeapon])
 		CurrentWeapons[indexWeapon]->LeftAmmo = NewLeftAmmo;
 }
 void AChel::StartAnimInCurSlot_Implementation()
@@ -2721,7 +2737,9 @@ void AChel::StartAnimInCurSlot_Implementation()
 	if (IsPlayerOwner) {
 		CanFireWeapon = false;
 	}
-	CurrentWeapons[CurrentIndex]->AnimationThrow();
+	if (CurrentWeapons[CurrentIndex]) {
+		CurrentWeapons[CurrentIndex]->AnimationThrow();
+	}
 }
 
 void AChel::StartAnimInCurSlotReverse_Implementation(bool HaveAmmo)
@@ -2731,11 +2749,13 @@ void AChel::StartAnimInCurSlotReverse_Implementation(bool HaveAmmo)
 		if (IsPlayerOwner) {
 			CanFireWeapon = true;
 		}
-		
-		CurrentWeapons[CurrentIndex]->GunMesh->SetVisibility(false);
-		SwitchToFreeWeapon();
+		if (CurrentWeapons[CurrentIndex]) {
+			CurrentWeapons[CurrentIndex]->GunMesh->SetVisibility(false);
+			SwitchToFreeWeapon();
+		}
 	}
-	CurrentWeapons[idx]->AnimationThrowReverse();
+	if(CurrentWeapons[idx])
+		CurrentWeapons[idx]->AnimationThrowReverse();
 
 }
 void AChel::ClearWeaponInfo() {
@@ -2749,3 +2769,26 @@ void AChel::ClearWeaponInfoClient_Implementation() {
 	ClearWeaponInfo();
 }
 
+void AChel::GetAmmo_Server_Implementation() {
+	GetAmmo_Multicast(CurrentWeapons[0]->LeftAmmo);
+}
+
+bool AChel::GetAmmo_Server_Validate() {
+	return true;
+}
+
+void AChel::GetAmmo_Multicast_Implementation(int32 Ammmmmmo) {
+	if (CurrentWeapons[0]) {
+		CurrentWeapons[0]->LeftAmmo = Ammmmmmo;
+		if (Ammmmmmo == 0) {
+			CurrentWeapons[0]->GunMesh->SetVisibility(false);
+		}
+	}
+}
+void AChel::SwitchToFreeWeapon_Multicast_Implementation() {
+	SwitchToFreeWeapon();
+}
+
+void AChel::HideCurrentWeapon_Implementation() {
+	CurrentWeapons[CurrentIndex]->GunMesh->SetVisibility(false);
+}

@@ -631,7 +631,8 @@ public:
 
 	void WeaponSwitch();
 	UFUNCTION(Server, Reliable, WithValidation)
-	void WeaponSwitch_Server(int32 SlotIndex);
+		void WeaponSwitch_Server(int32 SlotIndex);
+
 	void DropCoreItems(); //вываливает из себ€ имеющиес€ ключевые предметы при смерти
 
 	TArray<AWeapon_Character*> CurrentWeapons; //текущие оружи€(камень + особое)
@@ -643,12 +644,17 @@ public:
 	UFUNCTION(NetMulticast, Reliable)
 		void SetWeaponToSlotMulticast(int32 IndexWeapon); //когда нужно с сервера установить у всех оружие в слот
 	
+	UFUNCTION(NetMulticast, Reliable)
+		void SwitchToFreeWeapon_Multicast();
 	void SwitchToFreeWeapon(); //вызываетс€ из Multicasat`а
 
 	UFUNCTION(Client, Reliable)
 	void ClearWeaponInfoClient(); //вызываетс€ из выстрела оружи€ с сервера
 
 	void ClearWeaponInfo();
+
+	UFUNCTION(NetMulticast, Reliable)
+		void HideCurrentWeapon();
 
 	UFUNCTION(NetMulticast, Reliable)
 	void ChangeAmmoClients(int32 NewLeftAmmmo, int32 indexWeapon); //мен€ет кол-во патронов у клиента-хоз€ина в оружии(игрока)
@@ -666,5 +672,11 @@ public:
 
 	bool CanFireWeapon; // может ли чел стрел€ть из оружи€
 
+
+	UFUNCTION(Server, Reliable, WithValidation)
+		void GetAmmo_Server(); // дл€ обновление€ патронов камн€ в начале игры
+
+	UFUNCTION(NetMulticast, Reliable)
+		void GetAmmo_Multicast(int32 Ammmmmmo); // дл€ обновление€ патронов камн€ в начале игры
 	//--------------------------------------------------------------------------------------------------оружиеEnd---------------------------------
 };
