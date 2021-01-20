@@ -5,9 +5,9 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "Components/BoxComponent.h"
-#include "Chel.h"
 #include "InteractiveItem.generated.h"
 
+class AChel;
 
 UCLASS()
 class MYPROJECT9_API AInteractiveItem : public AActor
