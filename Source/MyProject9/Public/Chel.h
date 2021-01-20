@@ -39,6 +39,7 @@
 #include "UI/NoteWidget.h"
 #include "UI/Inventory.h"
 #include "UI/TargetArrow.h"
+#include "UI/VerstakWidget.h"
 #include "Components/CapsuleComponent.h"
 #include "QAbility.h"
 #include "Chel.generated.h"
@@ -417,6 +418,9 @@ public:
 	UPROPERTY(EditAnywhere, Category = "UI HUD")
 		TSubclassOf<UUserView> UserViewClass;
 
+	UPROPERTY(EditAnywhere, Category = "UI HUD")
+		TSubclassOf<UVerstakWidget> VerstakViewClass;
+
 	void ChangeCorretcaPosition(int32 TypeChange);
 
 	UPROPERTY(EditAnywhere, Category = "Spectator")
@@ -448,6 +452,8 @@ public:
 	//HUD Variables
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite) //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 		UUserView* UserView;
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+		UVerstakWidget* VerstakViewWidget;
 	UKillFeed* KillFeed;
 	UInventory* MyInventory;
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
@@ -617,6 +623,8 @@ public:
 	bool DoubleArmThrowing;
 	bool IsAlreadyCreated;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	int32 AmountDetails;
 
 	//--------------------------------------------------------------------------------------------------оружие---------------------------------
 	UPROPERTY(EditAnywhere, Category = "Stone_Class")
@@ -627,11 +635,16 @@ public:
 
 	UFUNCTION(NetMulticast, Reliable)
 		void CreateWeaponMulticast(UClass* WeaponCreatedClass, int32 Amount, int32 IdexSlot);
+	UFUNCTION(Server, Reliable, WithValidation)
+		void CreateWeaponServer(UClass* WeaponCreatedClass, int32 Amount, int32 IdexSlot);
 	void CreateWeapon(UClass* WeaponCreatedClass, int32 Amount, int32 IndexSlot);
 
 	void WeaponSwitch();
 	UFUNCTION(Server, Reliable, WithValidation)
 		void WeaponSwitch_Server(int32 SlotIndex);
+
+	UFUNCTION(Server, Reliable, WithValidation)
+		void DropSpecialGun_Server();
 
 	void DropCoreItems(); //вываливает из себя имеющиеся ключевые предметы при смерти
 
@@ -643,6 +656,8 @@ public:
 
 	UFUNCTION(NetMulticast, Reliable)
 		void SetWeaponToSlotMulticast(int32 IndexWeapon); //когда нужно с сервера установить у всех оружие в слот
+	UFUNCTION(Server, Reliable, WithValidation)
+	void SetWeaponToSlotServer(int32 IndexWeapon);
 	
 	UFUNCTION(NetMulticast, Reliable)
 		void SwitchToFreeWeapon_Multicast();
@@ -656,6 +671,8 @@ public:
 	UFUNCTION(NetMulticast, Reliable)
 		void HideCurrentWeapon();
 
+	UFUNCTION(Server, Reliable, WithValidation)
+	void ChangeAmmoServer(int32 NewLeftAmmmo, int32 indexWeapon);
 	UFUNCTION(NetMulticast, Reliable)
 	void ChangeAmmoClients(int32 NewLeftAmmmo, int32 indexWeapon); //меняет кол-во патронов у клиента-хозяина в оружии(игрока)
 

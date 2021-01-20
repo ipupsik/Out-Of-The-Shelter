@@ -153,6 +153,7 @@ AChel::AChel()
 	IsAwake = true;
 	Index = -1;
 	bInEscMenu = false;
+	AmountDetails = 0;
 //	OpenAreaObj = nullptr;
 	TickEnableGeneratorWidget = false;
 	KeysCount.Init(0, 3);
@@ -440,6 +441,7 @@ void AChel::MyBeginPlay()
 
 	if (IsPlayerOwner) {
 		UserView = Cast<UUserView>(CreateWidget(World, UserViewClass));
+		VerstakViewWidget = Cast<UVerstakWidget>(CreateWidget(World, VerstakViewClass));
 		GeneratorView = Cast<UGeneratorWidget>(CreateWidget(World, GeneratorView_class));
 		KillFeed = Cast<UKillFeed>(CreateWidget(World, KillFeed_class));
 		Widget_Note = Cast<UNoteWidget>(CreateWidget(World, NoteWidget_class));
@@ -455,6 +457,9 @@ void AChel::MyBeginPlay()
 		GeneratorView->SetVisibility(ESlateVisibility::Hidden);
 		Widget_Note->AddToViewport();
 		Widget_Note->SetVisibility(ESlateVisibility::Hidden);
+		VerstakViewWidget->AddToViewport();
+		VerstakViewWidget->WidgetOwner = this;
+		VerstakViewWidget->SetVisibility(ESlateVisibility::Hidden);
 		KillFeed->AddToViewport();
 
 		UserView->Player = this;
@@ -2791,4 +2796,37 @@ void AChel::SwitchToFreeWeapon_Multicast_Implementation() {
 
 void AChel::HideCurrentWeapon_Implementation() {
 	CurrentWeapons[CurrentIndex]->GunMesh->SetVisibility(false);
+}
+
+void AChel::SetWeaponToSlotServer_Implementation(int32 IndexWeapon) {
+	SetWeaponToSlotMulticast(IndexWeapon);
+}
+
+bool AChel::SetWeaponToSlotServer_Validate(int32 IndexWeapon) {
+	return true;
+}
+
+void AChel::CreateWeaponServer_Implementation(UClass* WeaponCreatedClass, int32 Amount, int32 IdexSlot) {
+	CreateWeaponMulticast(WeaponCreatedClass, Amount, IdexSlot);
+}
+
+bool AChel::CreateWeaponServer_Validate(UClass* WeaponCreatedClass, int32 Amount, int32 IdexSlot) {
+	return true;
+}
+
+void AChel::DropSpecialGun_Server_Implementation() {
+	CurrentWeapons[1]->DropItem();
+}
+
+bool AChel::DropSpecialGun_Server_Validate() {
+	return true;
+}
+
+void AChel::ChangeAmmoServer_Implementation(int32 NewLeftAmmmo, int32 indexWeapon) {
+	CurrentWeapons[indexWeapon]->LeftAmmo = NewLeftAmmmo;
+	ChangeAmmoClients(NewLeftAmmmo, indexWeapon);
+}
+
+bool AChel::ChangeAmmoServer_Validate(int32 NewLeftAmmmo, int32 indexWeapon) {
+	return true;
 }
