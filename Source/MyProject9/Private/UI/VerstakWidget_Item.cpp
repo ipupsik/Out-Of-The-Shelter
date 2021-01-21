@@ -11,7 +11,7 @@ void UVerstakWidget_Item::NativeConstruct() {
 }
 
 void UVerstakWidget_Item::CreateEvent(AChel* Creator){
-	if (CreatedItemClass->IsChildOf(AWeapon_Level::StaticClass())) {
+	if (CreatedItemClass->IsChildOf(AWeapon_Character::StaticClass())) {
 		if (Creator->CurrentWeapons[1]) {
 			if (Creator->CurrentWeapons[1]->GetClass() == CreatedItemClass) {
 				if (Creator->CurrentWeapons[1]->LeftAmmo == Creator->CurrentWeapons[1]->MaxAmmo)
