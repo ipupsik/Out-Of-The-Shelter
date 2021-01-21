@@ -28,10 +28,11 @@ void AQAbilityItem::PickUpEventServer(AChel* Player)
 
 bool AQAbilityItem::PickUpEventClient(AChel* Player)
 {
-	if (Player->CurQAbility->GetClass() == QAbility_class)
-		return false;
-	if (Player->CurQAbility)
+	if (Player->CurQAbility) {
+		if (Player->CurQAbility->GetClass() == QAbility_class)
+			return false;
 		Player->CurQAbility->ConditionalBeginDestroy();
+	}
 	UQAbility* TempAbility = NewObject<UQAbility>(Player, QAbility_class);
 	if (GetLocalRole() != ROLE_Authority)
 		Player->CurQAbility = TempAbility;
