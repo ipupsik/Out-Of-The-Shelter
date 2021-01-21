@@ -2,6 +2,7 @@
 
 
 #include "InteractiveCache.h"
+#include "Chel.h"
 
 AInteractiveCache::AInteractiveCache()
 {
@@ -51,9 +52,9 @@ void AInteractiveCache::PickUpEventServer(AChel* Player)
 void AInteractiveCache::OnLineTraced(AChel* Player)
 {
 	if (bCanInterract) {
-		if (Player->KeysCount[CacheType] == 0) {
-			if (Player->UserView->E_Mark->IsVisible())
-				Player->UserView->E_Mark->SetVisibility(ESlateVisibility::Hidden);
+		if (Player->KeysCount[CacheType] > 0) {
+			if (!Player->UserView->E_Mark->IsVisible())
+				Player->UserView->E_Mark->SetVisibility(ESlateVisibility::Visible);
 		}
 	}
 }

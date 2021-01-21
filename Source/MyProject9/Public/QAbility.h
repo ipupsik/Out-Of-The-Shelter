@@ -15,9 +15,9 @@ class MYPROJECT9_API UQAbility : public UObject
 {
 	GENERATED_BODY()
 public:
-	virtual FVector GetCacheScale3D();
-	virtual FRotator GetCacheRotation();
-	virtual FVector GetCacheLocation();
+	virtual FVector GetCacheScale3D(int32 CacheIndex);
+	virtual FRotator GetCacheRotation(int32 CacheIndex);
+	virtual FVector GetCacheLocation(int32 CacheIndex);
 
 	UPROPERTY(EditAnywhere, Category = "Main_Vars")
 		TSubclassOf<AQAbilityItem> QAbilityitem_class;

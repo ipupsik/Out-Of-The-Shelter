@@ -1378,9 +1378,9 @@ bool AChel::PickUp_Server_Validate()
 
 void AChel::ReplaceQAbilityItem(UClass* QAbilityItemclass, int32 ItemIndex)
 {
-	FVector NewLocation = CurQAbility->GetCacheLocation();
-	FVector NewScale = CurQAbility->GetCacheScale3D();
-	FRotator NewRotation = CurQAbility->GetCacheRotation();
+	FVector NewLocation = CurQAbility->GetCacheLocation(ItemIndex);
+	FVector NewScale = CurQAbility->GetCacheScale3D(ItemIndex);
+	FRotator NewRotation = CurQAbility->GetCacheRotation(ItemIndex);
 	
 	AActor* NewItem = GetWorld()->SpawnActor<AActor>(QAbilityItemclass);
 	FAttachmentTransformRules AttachmentRules = FAttachmentTransformRules(EAttachmentRule::KeepRelative, true);
@@ -2542,49 +2542,35 @@ bool AChel::NewRAbility(const UClass* Ability_class)
 	{
 		RAbilityTypeIndex = 0;
 	}
-	if (LastRAbilityIndex != 2)
+	int32 IndexOfAddToStuck = -1;
+	bool IsStackOverflow = false;
+	for (int i = 0; i < RAbilityPanel.Num(); i++)
 	{
-		int32 IndexOfAddToStuck = -1;
-		bool IsStackOverflow = false;
-		for (int i = 0; i < RAbilityPanel.Num(); i++)
-		{
-			if (RAbilityPanel[i]) {
-				if (RAbilityPanel[i]->GetClass() == Ability_class)
+		if (RAbilityPanel[i]) {
+			if (RAbilityPanel[i]->GetClass() == Ability_class)
+			{
+				if (RAbilityPanel[i]->CurCount + 1 <= RAbilityPanel[i]->MaxCountToStack)
 				{
-					if (RAbilityPanel[i]->CurCount + 1 <= RAbilityPanel[i]->MaxCountToStack)
-					{
-						IndexOfAddToStuck = i;
-					}
-					else
-					{
-						IsStackOverflow = true;
-					}
+					IndexOfAddToStuck = i;
+				}
+				else
+				{
+					IsStackOverflow = true;
 				}
 			}
 		}
-		if (IndexOfAddToStuck != -1) {
-			RAbilityPanel[IndexOfAddToStuck]->CurCount++;
-			RAbilityPanel[IndexOfAddToStuck]->UpdateCount();
-			if (IndexOfAddToStuck == RAbilityTypeIndex)
-			{
-				UserView->CurRSlot->CountText->SetText(FText::AsNumber(RAbilityPanel[IndexOfAddToStuck]->CurCount));
-			}
-			return true;
-		}
-		else if (IsStackOverflow)
+	}
+	if (IndexOfAddToStuck != -1) {
+		RAbilityPanel[IndexOfAddToStuck]->CurCount++;
+		RAbilityPanel[IndexOfAddToStuck]->UpdateCount();
+		if (IndexOfAddToStuck == RAbilityTypeIndex)
 		{
-			LastRAbilityIndex++;
-			RAbilityPanel[LastRAbilityIndex] = NewObject<UConsumableAbility>(this, Ability_class);
-			RAbilityPanel[LastRAbilityIndex]->UserViewSlot = Cast<URAbilitySlot>(MyInventory->RAbilityPanel->GetChildAt(LastRAbilityIndex));
-			RAbilityPanel[LastRAbilityIndex]->SetAbilityToSlot();
-
-			if (LastRAbilityIndex == 0)
-			{
-				SetCurRAbilityUserView();
-			}
-			return true;
+			UserView->CurRSlot->CountText->SetText(FText::AsNumber(RAbilityPanel[IndexOfAddToStuck]->CurCount));
 		}
-
+		return true;
+	}
+	else if (IsStackOverflow && LastRAbilityIndex != 2)
+	{
 		LastRAbilityIndex++;
 		RAbilityPanel[LastRAbilityIndex] = NewObject<UConsumableAbility>(this, Ability_class);
 		RAbilityPanel[LastRAbilityIndex]->UserViewSlot = Cast<URAbilitySlot>(MyInventory->RAbilityPanel->GetChildAt(LastRAbilityIndex));
@@ -2596,8 +2582,20 @@ bool AChel::NewRAbility(const UClass* Ability_class)
 		}
 		return true;
 	}
+	else
+		return false;
 
-	return false;
+	LastRAbilityIndex++;
+	RAbilityPanel[LastRAbilityIndex] = NewObject<UConsumableAbility>(this, Ability_class);
+	RAbilityPanel[LastRAbilityIndex]->UserViewSlot = Cast<URAbilitySlot>(MyInventory->RAbilityPanel->GetChildAt(LastRAbilityIndex));
+	RAbilityPanel[LastRAbilityIndex]->SetAbilityToSlot();
+
+	if (LastRAbilityIndex == 0)
+	{
+		SetCurRAbilityUserView();
+	}
+	
+	return true;
 }
 
 void AChel::SetCurRAbilityUserView()

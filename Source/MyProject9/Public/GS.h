@@ -17,6 +17,7 @@
 #include "GS.generated.h"
 
 class ASpectator;
+class ACollectableItem;
 
 #define MIN_COUNT_KeyShelter 4
 #define MIN_COUNT_Boltorez 4
@@ -136,6 +137,10 @@ public:
 		TSubclassOf<AInteractiveItem> ChelDetector_class;
 	UPROPERTY(EditAnywhere, Category = "ItemClasses")
 		TSubclassOf<AInteractiveItem> RentgenGlass_class;
+	UPROPERTY(EditAnywhere, Category = "ItemClasses")
+		TSubclassOf<AInteractiveItem> HealPacket_class;
+	UPROPERTY(EditAnywhere, Category = "ItemClasses")
+		TSubclassOf<AInteractiveItem> InvisiblePotion_class;
 
 	UPROPERTY(EditAnywhere, Category = "ItemClasses")
 		TSubclassOf<AActor> InvisiblePotion;
@@ -188,6 +193,12 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		TArray<FTransform> KeyShelterTransform;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		TArray<FTransform> HealPacketTransform;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		TArray<FTransform> InvisiblePotionTransform;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		TArray<FTransform> BoltorezTransform;

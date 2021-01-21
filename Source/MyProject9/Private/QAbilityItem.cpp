@@ -3,6 +3,7 @@
 
 #include "QAbilityItem.h"
 #include "QAbility.h"
+#include "Chel.h"
 
 AQAbilityItem::AQAbilityItem() {
 	Scene = CreateDefaultSubobject<USceneComponent>("Scene");
@@ -19,6 +20,7 @@ void AQAbilityItem::PickUpEventServer(AChel* Player)
 {
 	if (Player->CurQAbility) {
 		Player->ReplaceQAbilityItem(Player->CurQAbility->QAbilityitem_class, EnabledArrayIndex);
+		Player->CurQAbility->ConditionalBeginDestroy();
 	}
 	Player->CurQAbility = NewObject<UQAbility>(Player, QAbility_class);
 	Destroy();
@@ -26,6 +28,10 @@ void AQAbilityItem::PickUpEventServer(AChel* Player)
 
 bool AQAbilityItem::PickUpEventClient(AChel* Player)
 {
+	if (Player->CurQAbility->GetClass() == QAbility_class)
+		return false;
+	if (Player->CurQAbility)
+		Player->CurQAbility->ConditionalBeginDestroy();
 	UQAbility* TempAbility = NewObject<UQAbility>(Player, QAbility_class);
 	if (GetLocalRole() != ROLE_Authority)
 		Player->CurQAbility = TempAbility;

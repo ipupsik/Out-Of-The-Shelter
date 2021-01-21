@@ -114,8 +114,7 @@ void AGS::BeginPlay()
 			Caches.Add(Cast<AInteractiveCache>(TargetPoints_CacheItems[i]));
 		}
 
-		CurrentKeyShelter = MIN_COUNT_KeyShelter + FMath::Rand() % (MAX_COUNT_KeySHelter - MIN_COUNT_KeyShelter + 1);
-		for (int i = 0; i < CurrentKeyShelter; ++i) {
+		for (int i = 0; i < 1; ++i) {
 			int ArrayIndex = FMath::Rand() % CacheItems_Stuff_IsAvaliable.Num();
 			while (!CacheItems_Stuff_IsAvaliable[ArrayIndex])
 			{
@@ -125,19 +124,14 @@ void AGS::BeginPlay()
 			FAttachmentTransformRules AttachmentRules = FAttachmentTransformRules(EAttachmentRule::KeepRelative, true);
 			NewItem->AttachToActor(Caches[ArrayIndex], AttachmentRules);
 			NewItem->SetActorScale3D(KeyShelterTransform[Caches[ArrayIndex]->CacheIndex].GetScale3D());
-			FVector NewLocation;
-			NewLocation.X = KeyShelterTransform[Caches[ArrayIndex]->CacheIndex].GetLocation().X;
-			NewLocation.Y = KeyShelterTransform[Caches[ArrayIndex]->CacheIndex].GetLocation().Y;
-			NewLocation.Z = KeyShelterTransform[Caches[ArrayIndex]->CacheIndex].GetLocation().Z;
-			NewItem->AddActorLocalOffset(NewLocation);
+			NewItem->AddActorLocalOffset(KeyShelterTransform[Caches[ArrayIndex]->CacheIndex].GetLocation());
 			NewItem->AddActorLocalRotation(KeyShelterTransform[Caches[ArrayIndex]->CacheIndex].GetRotation());
 			Cast<ACollectableItem>(NewItem)->EnabledArrayIndex = ArrayIndex;
 			CacheItems_Stuff_IsAvaliable[ArrayIndex] = false;
 		}
-		
+
 		if (MaxPlayersCount == 4) {
-			CurrentBoltorez = MIN_COUNT_Boltorez + FMath::Rand() % (MAX_COUNT_Boltorez - MIN_COUNT_Boltorez + 1);
-			for (int i = 0; i < CurrentBoltorez; ++i) {
+			for (int i = 0; i < 1; ++i) {
 				int ArrayIndex = FMath::Rand() % CacheItems_Stuff_IsAvaliable.Num();
 				while (!CacheItems_Stuff_IsAvaliable[ArrayIndex])
 				{
@@ -147,11 +141,7 @@ void AGS::BeginPlay()
 				FAttachmentTransformRules AttachmentRules = FAttachmentTransformRules(EAttachmentRule::KeepRelative, true);
 				NewItem->AttachToActor(Caches[ArrayIndex], AttachmentRules);
 				NewItem->SetActorScale3D(BoltorezTransform[Caches[ArrayIndex]->CacheIndex].GetScale3D());
-				FVector NewLocation;
-				NewLocation.X = BoltorezTransform[Caches[ArrayIndex]->CacheIndex].GetLocation().X;
-				NewLocation.Y = BoltorezTransform[Caches[ArrayIndex]->CacheIndex].GetLocation().Y;
-				NewLocation.Z = BoltorezTransform[Caches[ArrayIndex]->CacheIndex].GetLocation().Z;
-				NewItem->AddActorLocalOffset(NewLocation);
+				NewItem->AddActorLocalOffset(BoltorezTransform[Caches[ArrayIndex]->CacheIndex].GetLocation());
 				NewItem->AddActorLocalRotation(BoltorezTransform[Caches[ArrayIndex]->CacheIndex].GetRotation());
 				Cast<ACollectableItem>(NewItem)->EnabledArrayIndex = ArrayIndex;
 				CacheItems_Stuff_IsAvaliable[ArrayIndex] = false;
@@ -159,8 +149,7 @@ void AGS::BeginPlay()
 		}
 
 		if (MaxPlayersCount >= 3) {
-			CurrentOtvertka = MIN_COUNT_Otvertka + FMath::Rand() % (MAX_COUNT_Otvertka - MIN_COUNT_Otvertka + 1);
-			for (int i = 0; i < CurrentOtvertka; ++i) {
+			for (int i = 0; i < 1; ++i) {
 				int ArrayIndex = FMath::Rand() % CacheItems_Stuff_IsAvaliable.Num();
 				while (!CacheItems_Stuff_IsAvaliable[ArrayIndex])
 				{
@@ -171,61 +160,44 @@ void AGS::BeginPlay()
 				FAttachmentTransformRules AttachmentRules = FAttachmentTransformRules(EAttachmentRule::KeepRelative, true);
 				NewItem->AttachToActor(Caches[ArrayIndex], AttachmentRules);
 				NewItem->SetActorScale3D(OtvertkaTransform[Caches[ArrayIndex]->CacheIndex].GetScale3D());
-				FVector NewLocation;
-				NewLocation.X = OtvertkaTransform[Caches[ArrayIndex]->CacheIndex].GetLocation().X;
-				NewLocation.Y = OtvertkaTransform[Caches[ArrayIndex]->CacheIndex].GetLocation().Y;
-				NewLocation.Z = OtvertkaTransform[Caches[ArrayIndex]->CacheIndex].GetLocation().Z;
-				NewItem->AddActorLocalOffset(NewLocation);
+				NewItem->AddActorLocalOffset(OtvertkaTransform[Caches[ArrayIndex]->CacheIndex].GetLocation());
 				NewItem->AddActorLocalRotation(OtvertkaTransform[Caches[ArrayIndex]->CacheIndex].GetRotation());
 				Cast<ACollectableItem>(NewItem)->EnabledArrayIndex = ArrayIndex;
 				CacheItems_Stuff_IsAvaliable[ArrayIndex] = false;
 			}
 		}
 
-		int32 CurrentRentgen = MIN_COUNT_Rentgen + FMath::Rand() % (MAX_COUNT_Rentgen - MIN_COUNT_Rentgen + 1);
-		for (int i = 0; i < CurrentRentgen; ++i) {
+		for (int i = 0; i < 6; ++i) {
 			int ArrayIndex = FMath::Rand() % CacheItems_Stuff_IsAvaliable.Num();
 			while (!CacheItems_Stuff_IsAvaliable[ArrayIndex])
 			{
 				ArrayIndex = FMath::Rand() % CacheItems_Stuff_IsAvaliable.Num();
 			}
+			AActor* NewItem = GetWorld()->SpawnActor<AActor>(HealPacket_class);
+			FAttachmentTransformRules AttachmentRules = FAttachmentTransformRules(EAttachmentRule::KeepRelative, true);
+			NewItem->AttachToActor(Caches[ArrayIndex], AttachmentRules);
+			NewItem->SetActorScale3D(HealPacketTransform[Caches[ArrayIndex]->CacheIndex].GetScale3D());
+			NewItem->AddActorLocalOffset(HealPacketTransform[Caches[ArrayIndex]->CacheIndex].GetLocation());
+			NewItem->AddActorLocalRotation(HealPacketTransform[Caches[ArrayIndex]->CacheIndex].GetRotation());
+			Cast<ACollectableItem>(NewItem)->EnabledArrayIndex = ArrayIndex;
+			CacheItems_Stuff_IsAvaliable[ArrayIndex] = false;
+		}
 
+		for (int i = 0; i < 2; ++i) {
+			int ArrayIndex = FMath::Rand() % CacheItems_Stuff_IsAvaliable.Num();
+			while (!CacheItems_Stuff_IsAvaliable[ArrayIndex])
+			{
+				ArrayIndex = FMath::Rand() % CacheItems_Stuff_IsAvaliable.Num();
+			}
 			AActor* NewItem = GetWorld()->SpawnActor<AActor>(RentgenGlass_class);
 			FAttachmentTransformRules AttachmentRules = FAttachmentTransformRules(EAttachmentRule::KeepRelative, true);
 			NewItem->AttachToActor(Caches[ArrayIndex], AttachmentRules);
 			NewItem->SetActorScale3D(RentgenGlassTransform[Caches[ArrayIndex]->CacheIndex].GetScale3D());
-			FVector NewLocation;
-			NewLocation.X = RentgenGlassTransform[Caches[ArrayIndex]->CacheIndex].GetLocation().X;
-			NewLocation.Y = RentgenGlassTransform[Caches[ArrayIndex]->CacheIndex].GetLocation().Y;
-			NewLocation.Z = RentgenGlassTransform[Caches[ArrayIndex]->CacheIndex].GetLocation().Z;
-			NewItem->AddActorLocalOffset(NewLocation);
+			NewItem->AddActorLocalOffset(RentgenGlassTransform[Caches[ArrayIndex]->CacheIndex].GetLocation());
 			NewItem->AddActorLocalRotation(RentgenGlassTransform[Caches[ArrayIndex]->CacheIndex].GetRotation());
 			Cast<ACollectableItem>(NewItem)->EnabledArrayIndex = ArrayIndex;
 			CacheItems_Stuff_IsAvaliable[ArrayIndex] = false;
 		}
-
-		int32 CurrentChelDetector = MIN_COUNT_ChelDetector + FMath::Rand() % (MAX_COUNT_ChelDetector - MIN_COUNT_ChelDetector + 1);
-		for (int i = 0; i < CurrentChelDetector; ++i) {
-			int ArrayIndex = FMath::Rand() % CacheItems_Stuff_IsAvaliable.Num();
-			while (!CacheItems_Stuff_IsAvaliable[ArrayIndex])
-			{
-				ArrayIndex = FMath::Rand() % CacheItems_Stuff_IsAvaliable.Num();
-			}
-
-			AActor* NewItem = GetWorld()->SpawnActor<AActor>(ChelDetector_class);
-			FAttachmentTransformRules AttachmentRules = FAttachmentTransformRules(EAttachmentRule::KeepRelative, true);
-			NewItem->AttachToActor(Caches[ArrayIndex], AttachmentRules);
-			NewItem->SetActorScale3D(ChelDetectorTransform[Caches[ArrayIndex]->CacheIndex].GetScale3D());
-			FVector NewLocation;
-			NewLocation.X = ChelDetectorTransform[Caches[ArrayIndex]->CacheIndex].GetLocation().X;
-			NewLocation.Y = ChelDetectorTransform[Caches[ArrayIndex]->CacheIndex].GetLocation().Y;
-			NewLocation.Z = ChelDetectorTransform[Caches[ArrayIndex]->CacheIndex].GetLocation().Z;
-			NewItem->AddActorLocalOffset(NewLocation);
-			NewItem->AddActorLocalRotation(ChelDetectorTransform[Caches[ArrayIndex]->CacheIndex].GetRotation());
-			Cast<ACollectableItem>(NewItem)->EnabledArrayIndex = ArrayIndex;
-			CacheItems_Stuff_IsAvaliable[ArrayIndex] = false;
-		}
-
 
 		//------------------------------------Cache Keys
 		TArray<AActor*>TargetPoints_CacheKey;
