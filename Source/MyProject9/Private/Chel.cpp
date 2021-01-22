@@ -2543,19 +2543,16 @@ bool AChel::NewRAbility(const UClass* Ability_class)
 		RAbilityTypeIndex = 0;
 	}
 	int32 IndexOfAddToStuck = -1;
-	bool IsStackOverflow = false;
+	bool IsStackOverflow = true;
 	for (int i = 0; i < RAbilityPanel.Num(); i++)
 	{
 		if (RAbilityPanel[i]) {
 			if (RAbilityPanel[i]->GetClass() == Ability_class)
 			{
-				if (RAbilityPanel[i]->CurCount + 1 <= RAbilityPanel[i]->MaxCountToStack)
+				if (RAbilityPanel[i]->CurCount + 1 <= RAbilityPanel[i]->MaxCountToStack && IsStackOverflow)
 				{
 					IndexOfAddToStuck = i;
-				}
-				else
-				{
-					IsStackOverflow = true;
+					IsStackOverflow = false;
 				}
 			}
 		}
