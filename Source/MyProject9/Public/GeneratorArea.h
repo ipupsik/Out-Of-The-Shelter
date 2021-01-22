@@ -11,6 +11,7 @@
 #include "GeneratorArea.generated.h"
 
 class APromptCollisionArea;
+class AChel;
 
 UCLASS()
 class MYPROJECT9_API AGeneratorArea : public AActor
@@ -30,6 +31,17 @@ public:
 
 	UFUNCTION(NetMulticast, Reliable)
 	void ChangeLampochka(int32 type);
+
+	void PressedEGenerator(AChel* Player);
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		FText PromptGenNotRepairing;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		FText PromptGenTextRepairing;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		FText PromptGenTextNotActive;
 
 	UFUNCTION()
 		void OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);

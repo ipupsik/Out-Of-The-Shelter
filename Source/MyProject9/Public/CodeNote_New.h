@@ -4,15 +4,16 @@
 
 #include "CoreMinimal.h"
 #include "InteractiveItem.h"
-#include "Code_Note.generated.h"
+#include "CodeNote_New.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class MYPROJECT9_API ACode_Note : public AInteractiveItem
+class MYPROJECT9_API ACodeNote_New : public AInteractiveItem
 {
 	GENERATED_BODY()
 public:
-	ACode_Note();
+	ACodeNote_New();
+	
 };

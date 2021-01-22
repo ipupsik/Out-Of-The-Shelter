@@ -327,7 +327,8 @@ void AGS::EventSpawnNote() {
 	CodeGenerator = (1 + FMath::Rand() % 9) * 10000 + FMath::Rand() % 10 * 1000 + FMath::Rand() % 10 * 100 + FMath::Rand() % 10 * 10 + FMath::Rand() % 10;
 	TArray<AActor*> GettingTagActors;
 	UGameplayStatics::GetAllActorsOfClassWithTag(GetWorld(), ATargetPoint::StaticClass(), "NoteSpawn", GettingTagActors);
-	GetWorld()->SpawnActor<ACode_Note>(CodeNoteClass, GettingTagActors[FMath::Rand() % GettingTagActors.Num()]->GetTransform());
+	GetWorld()->SpawnActor<ACodeNote_New>(CodeNoteClass, GettingTagActors[FMath::Rand() % GettingTagActors.Num()]->GetTransform());
+	UE_LOG(LogTemp, Warning, TEXT("Note was spawned"));
 }
 
 void AGS::AddNumToTerminal(int32 Number) {

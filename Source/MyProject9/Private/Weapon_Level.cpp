@@ -3,6 +3,7 @@
 
 #include "Weapon_Level.h"
 #include "Weapon_Character.h"
+#include "Chel.h"
 
 AWeapon_Level::AWeapon_Level() {
 	Amount = 1;
@@ -25,18 +26,30 @@ void AWeapon_Level::ChangeAmount_Implementation(int32 NewAmount)
 
 void AWeapon_Level::OnLineTraced(AChel* Player) {
 	if (bCanInterract) {
-		if (!Player->UserView->E_Mark->IsVisible())
-			Player->UserView->E_Mark->SetVisibility(ESlateVisibility::Visible);
 		ToggleCustomDepth(true);
 		if (Player->CurrentWeapons[1]) {
 			if (GetClass() == Player->CurrentWeapons[1]->WeaponLevelClass && Player->CurrentWeapons[1]->LeftAmmo == Player->CurrentWeapons[1]->MaxAmmo) {
 				SetOutlineColor(1);
 			}
 			else {
+				if (Player->GI->bIsEnabledPrompt)
+					Player->UserView->PropmptTextInterract->SetText(PromptText);
+				if (!Player->UserView->E_Mark->IsVisible()) {
+					Player->UserView->E_Mark->SetVisibility(ESlateVisibility::Visible);
+					if (Player->GI->bIsEnabledPrompt)
+						Player->UserView->PropmptTextInterract->SetVisibility(ESlateVisibility::Visible);
+				}
 				SetOutlineColor(2);
 			}
 		}
 		else {
+			if (Player->GI->bIsEnabledPrompt)
+				Player->UserView->PropmptTextInterract->SetText(PromptText);
+			if (!Player->UserView->E_Mark->IsVisible()) {
+				Player->UserView->E_Mark->SetVisibility(ESlateVisibility::Visible);
+				if (Player->GI->bIsEnabledPrompt)
+					Player->UserView->PropmptTextInterract->SetVisibility(ESlateVisibility::Visible);
+			}
 			SetOutlineColor(2);
 		}
 	}

@@ -23,6 +23,8 @@ public:
 	int32 colorOutlineType;
 	UPROPERTY(EditAnywhere)
 	bool IsOutliningNow;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		FText PromptText;
 	virtual void ToggleCustomDepth(bool NewIsOutliningNow);
 	virtual void SetOutlineColor(int32 ColorOutline);
 
