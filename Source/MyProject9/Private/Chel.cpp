@@ -153,6 +153,7 @@ AChel::AChel()
 	IsAwake = true;
 	Index = -1;
 	bInEscMenu = false;
+	bInShopMenu = false;
 	AmountDetails = 5;
 //	OpenAreaObj = nullptr;
 	TickEnableGeneratorWidget = false;
@@ -273,7 +274,7 @@ void AChel::DisableRentgen()
 
 void AChel::QAbilityEnable()
 {
-	if (QAbilityType != -1)
+	if (QAbilityType != -1 && !bInShopMenu && !bInEscMenu && bCanWalkingAndWatching)
 	{
 		switch (QAbilityType)
 		{
@@ -313,7 +314,7 @@ void AChel::QAbilityDisable()
 
 void AChel::RAbilityEnable_Client()
 {
-	if (RAbilityTypeIndex != -1)
+	if (RAbilityTypeIndex != -1 && !bInShopMenu && !bInEscMenu && bCanWalkingAndWatching)
 	{
 		RAbilityPanel[RAbilityTypeIndex]->UseAbilityClient(this);
 		RAbilityEnable_Server(RAbilityPanel[RAbilityTypeIndex]->GetClass());
@@ -978,7 +979,7 @@ void AChel::OnTimelineFinished_Stone_Second_Left() {
 }
 StoneLeft*/
 void AChel::FireEvent() {
-	if (IsNotInWebCam && !bInEscMenu && CanFireWeapon && CurrentWeapons[CurrentIndex] && CurrentWeapons[CurrentIndex]->LeftAmmo > 0 ) {
+	if (IsNotInWebCam && bCanWalkingAndWatching && !bInEscMenu && !bInShopMenu && CanFireWeapon && CurrentWeapons[CurrentIndex] && CurrentWeapons[CurrentIndex]->LeftAmmo > 0 ) {
 		FireEvent_Server();
 	}
 
@@ -1077,7 +1078,7 @@ void AChel::ShowStoneMulticast_Implementation() {
 
 //KeyBoardInput----------------
 void AChel::GoForward(float input) {
-	if (bCanWalkingAndWatching && !bInEscMenu) {
+	if (bCanWalkingAndWatching && !bInEscMenu && !bInShopMenu) {
 		if (input != 0.0f && IsNotInWebCam && CanThrowStone) {
 			AddMovementInput(GetActorForwardVector(), input * MoveCoeff);
 		}
@@ -1085,7 +1086,7 @@ void AChel::GoForward(float input) {
 }
 
 void AChel::GoRight(float input) {
-	if (bCanWalkingAndWatching && !bInEscMenu) {
+	if (bCanWalkingAndWatching && !bInEscMenu && !bInShopMenu) {
 		if (input != 0.0f && IsNotInWebCam && CanThrowStone) {
 			AddMovementInput(GetActorRightVector(), input * MoveCoeff);
 		}
@@ -1115,7 +1116,7 @@ bool AChel::MeshCompRepServer_Validate(float RotationRoll)
 //MouseInput-------------------
 void AChel::LookUp(float input)
 {
-	if (bCanWalkingAndWatching && !bInEscMenu) {
+	if (bCanWalkingAndWatching && !bInEscMenu && !bInShopMenu) {
 		if (IsNotInWebCam) {
 			if (input != 0.0f)
 			{
@@ -1156,7 +1157,7 @@ void AChel::LookUp(float input)
 
 void AChel::LookRight(float input)
 {
-	if (bCanWalkingAndWatching && !bInEscMenu) {
+	if (bCanWalkingAndWatching && !bInEscMenu && !bInShopMenu) {
 		if (IsNotInWebCam) {
 			if (input != 0.0f) {
 				input *= Sensetivity;
@@ -1182,7 +1183,7 @@ void AChel::LookRight(float input)
 //Jump-------------------------
 void AChel::MyJump()
 {
-	if (bCanWalkingAndWatching) {
+	if (bCanWalkingAndWatching && !bInShopMenu && !bInEscMenu) {
 		if (IsNotInWebCam)
 			Jump();
 	}
@@ -1236,14 +1237,24 @@ void AChel::PlaySpawnAnimationSleep_Implementation() {
 	ResetCacheKeys();
 	if (bCanPossessWebCam)
 		CanThrowStone = false;
+	VerstakViewWidget->SetVisibility(ESlateVisibility::Hidden);
+	Widget_Note->SetVisibility(ESlateVisibility::Hidden);
 	SpawnDeadSound();
 	UserView->PlayAnimation(UserView->Shading);
+
+	LastInteractiveItem = nullptr;
+	//na vsyakii
+	MyController->bShowMouseCursor = false;
+	MyController->SetInputMode(FInputModeGameOnly());
+
 	FTimerHandle FuzeTimerHandle;
 	World->GetTimerManager().SetTimer(FuzeTimerHandle, this, &AChel::SleepAnimation_End, 2.0f, false);
 }
 
 void AChel::SleepAnimation_End()
 {
+	bInShopMenu = false;
+	bCanWalkingAndWatching = true;
 	if (bCanPossessWebCam) {
 		UserView->SetVisibility(ESlateVisibility::Hidden);
 		IsNotInWebCam = false;
@@ -1295,13 +1306,18 @@ void AChel::PlaySpawnAnimationAwake_Implementation() {
 
 //-----------------------------
 void AChel::PickUp() {
-	if (!bInEscMenu) {
+	if (!bInEscMenu && !bInShopMenu) {
 		if (IsNotInWebCam) {
 			if (LastInteractiveItem)
 			{
 				if(LastInteractiveItem->PickUpEventClient(this))
 					PickUp_Server();
 			}
+		}
+		else
+		{
+			TimeLine_FOV_WebCam->Play();
+			CameraZoomIn();
 		}
 	}
 }
@@ -1537,8 +1553,6 @@ void AChel::KillPlayer()
 	DisableCollisionEverywhere();
 	HideCustomItems(true);
 	SetActorHiddenInGame(true);
-	if (Widget_Note)
-		Widget_Note->SetVisibility(ESlateVisibility::Hidden);
 	IsInGame = false;
 	PlaySpawnAnimationSleep();
 	KillerIndex = -1;

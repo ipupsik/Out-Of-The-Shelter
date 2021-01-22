@@ -551,7 +551,7 @@ public:
 	int32 DoesNotImmortalCount;
 	UPROPERTY(BlueprintReadWrite)
 	FRotator BaseWebCamRotation;
-
+	
 public:
 	//Logic Boolean Variables
 	bool bLineTrace_is_need_refresh;
@@ -617,6 +617,8 @@ public:
 	bool bInEscMenu;
 	bool TickEnableGeneratorWidget;
 	bool bToRight;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		bool bInShopMenu;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		bool IsRentgenRender;
 

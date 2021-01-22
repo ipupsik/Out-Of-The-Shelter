@@ -2,6 +2,7 @@
 
 
 #include "Verstak.h"
+#include "Chel.h"
 
 AVerstak::AVerstak() {
 	Scene = CreateDefaultSubobject<USceneComponent>("Scene");
@@ -19,6 +20,8 @@ bool AVerstak::PickUpEventClient(AChel * Player)
 	Player->VerstakViewWidget->SetVisibility(ESlateVisibility::Visible);
 	Player->VerstakViewWidget->CallRefreshItemsBlueprint();
 	Player->MyController->bShowMouseCursor = true;
+	Player->MyController->SetInputMode(FInputModeGameAndUI());
+	Player->bInShopMenu = true;
 	return false;
 }
 

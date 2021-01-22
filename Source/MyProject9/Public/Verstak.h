@@ -11,6 +11,7 @@
 /**
  * 
  */
+class AChel;
 UCLASS()
 class MYPROJECT9_API AVerstak : public AInteractiveItem
 {
