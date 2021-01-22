@@ -32,5 +32,5 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		UClass* CreatedItemClass;
 	UFUNCTION(BlueprintCallable)
-		void CreateEvent(AChel* Creator);
+		void CreateEvent(AChel* Creator, int32 CostItem);
 };

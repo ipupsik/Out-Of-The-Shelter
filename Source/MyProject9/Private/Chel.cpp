@@ -153,7 +153,7 @@ AChel::AChel()
 	IsAwake = true;
 	Index = -1;
 	bInEscMenu = false;
-	AmountDetails = 0;
+	AmountDetails = 5;
 //	OpenAreaObj = nullptr;
 	TickEnableGeneratorWidget = false;
 	KeysCount.Init(0, 3);
