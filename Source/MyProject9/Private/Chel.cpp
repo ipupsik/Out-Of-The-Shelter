@@ -13,16 +13,13 @@
 #include "Components/SkinnedMeshComponent.h"
 #include "AreaCollision.h"
 #include "BP_PlayerController.h"
-#include "Cache_Key.h"
-#include "CanalizationDamageCollision.h"
-#include "Code_Note.h"
-#include "BP_VentilaciaRubilnick.h"
 #include "CoreItem.h"
 #include "Weapon_Character.h"
 #include "ConsumableAbility.h"
 #include "InteractiveItem.h"
 #include "Weapon_Level.h"
 #include "QAbility.h"
+#include "PromptCollisionArea.h"
 #include "QAbilityItem.h"
 #include "InteractiveCache.h"
 
@@ -205,44 +202,42 @@ void AChel::DisableChelDetector()
 	}
 }
 
-void AChel::EnableRentgen()
-{
-	IsRentgenRender = true;
-	SenseCollision->SetRenderCustomDepth(true);
-	SenseCollision->MarkRenderStateDirty();
+//void AChel::EnableRentgen()
+//{
+//	IsRentgenRender = true;
+//	SenseCollision->SetRenderCustomDepth(true);
+//	SenseCollision->MarkRenderStateDirty();
+//
+//	TArray<AActor*>RentgenItems1;
+//	SenseCollision->GetOverlappingActors(RentgenItems1, GS->Boltorez);
+//	for (auto& it : RentgenItems1)
+//	{
+//		APickableItem* RentgenOverlappItem = Cast<APickableItem>(it);
+//		RentgenOverlappItem->Item->SetRenderCustomDepth(true);
+//		RentgenOverlappItem->Item->MarkRenderStateDirty();
+//		UE_LOG(LogTemp, Warning, TEXT("Find Boltorez"));
+//	}
+//	TArray<AActor*>RentgenItems2;
+//	SenseCollision->GetOverlappingActors(RentgenItems2, GS->KeyShelter);
+//	for (auto& it : RentgenItems2)
+//	{
+//		APickableItem* RentgenOverlappItem = Cast<APickableItem>(it);
+//		RentgenOverlappItem->Item->SetRenderCustomDepth(true);
+//		RentgenOverlappItem->Item->MarkRenderStateDirty();
+//		UE_LOG(LogTemp, Warning, TEXT("Find KeyShelter"));
+//	}
+//	TArray<AActor*>RentgenItems3;
+//	SenseCollision->GetOverlappingActors(RentgenItems3, GS->Otvertka);
+//	for (auto& it : RentgenItems3)
+//	{
+//		APickableItem* RentgenOverlappItem = Cast<APickableItem>(it);
+//		RentgenOverlappItem->Item->SetRenderCustomDepth(true);
+//		RentgenOverlappItem->Item->MarkRenderStateDirty();
+//		UE_LOG(LogTemp, Warning, TEXT("Find Otvertka"));
+//	}
+//}
 
-	TArray<AActor*>RentgenItems1;
-	SenseCollision->GetOverlappingActors(RentgenItems1, GS->Boltorez);
-	for (auto& it : RentgenItems1)
-	{
-		APickableItem* RentgenOverlappItem = Cast<APickableItem>(it);
-		RentgenOverlappItem->Item->SetRenderCustomDepth(true);
-		RentgenOverlappItem->Item->MarkRenderStateDirty();
-		UE_LOG(LogTemp, Warning, TEXT("Find Boltorez"));
-	}
-	TArray<AActor*>RentgenItems2;
-	SenseCollision->GetOverlappingActors(RentgenItems2, GS->KeyShelter);
-	for (auto& it : RentgenItems2)
-	{
-		APickableItem* RentgenOverlappItem = Cast<APickableItem>(it);
-		RentgenOverlappItem->Item->SetRenderCustomDepth(true);
-		RentgenOverlappItem->Item->MarkRenderStateDirty();
-		UE_LOG(LogTemp, Warning, TEXT("Find KeyShelter"));
-	}
-	TArray<AActor*>RentgenItems3;
-	SenseCollision->GetOverlappingActors(RentgenItems3, GS->Otvertka);
-	for (auto& it : RentgenItems3)
-	{
-		APickableItem* RentgenOverlappItem = Cast<APickableItem>(it);
-		RentgenOverlappItem->Item->SetRenderCustomDepth(true);
-		RentgenOverlappItem->Item->MarkRenderStateDirty();
-		UE_LOG(LogTemp, Warning, TEXT("Find Otvertka"));
-	}
-}
-
-void AChel::DisableRentgen()
-{
-	IsRentgenRender = false;
+	/*IsRentgenRender = false;
 	SenseCollision->SetRenderCustomDepth(false);
 	SenseCollision->MarkRenderStateDirty();
 
@@ -269,47 +264,16 @@ void AChel::DisableRentgen()
 		APickableItem* RentgenOverlappItem = Cast<APickableItem>(it);
 		RentgenOverlappItem->Item->SetRenderCustomDepth(false);
 		RentgenOverlappItem->Item->MarkRenderStateDirty();
-	}
-}
+	}*/
 
 void AChel::QAbilityEnable()
 {
-	if (QAbilityType != -1 && !bInShopMenu && !bInEscMenu && bCanWalkingAndWatching)
-	{
-		switch (QAbilityType)
-		{
-		case RentgenGlasses:
-		{
-			EnableRentgen();
-			break;
-		}
-		case ChelsDetector:
-		{
-			EnableChelDetector();
-			break;
-		}
-		}
-	}
+
 }
 
 void AChel::QAbilityDisable()
 {
-	if (QAbilityType != -1)
-	{
-		switch (QAbilityType)
-		{
-		case RentgenGlasses:
-		{
-			DisableRentgen();
-			break;
-		}
-		case ChelsDetector:
-		{
-			DisableChelDetector();
-			break;
-		}
-		}
-	}
+
 }
 
 void AChel::RAbilityEnable_Client()
@@ -1349,7 +1313,7 @@ void AChel::PickUp_Released()
 			IsSuccessOpening = false;
 			if (Cast<AOpenArea>(LastInteractiveItem))
 			{
-				GoToServerOpenArea(false);
+				//GoToServerOpenArea(false);
 			}
 			UserView->StopAllAnimations();
 		}
@@ -1954,43 +1918,6 @@ void AChel::HideWidgetStas_Implementation()
 	TickEnableGeneratorWidget = false;
 }
 
-void AChel::ChangeButtonCount_Server_Implementation()
-{
-	FHitResult OutHit;
-
-	FVector StartLocation = CameraComp->GetComponentLocation();
-	FVector EndLocation = StartLocation + CameraComp->GetForwardVector() * 300;
-
-	FCollisionQueryParams CollisionParams;
-
-	World->LineTraceSingleByChannel(OutHit, StartLocation, EndLocation, ECC_Visibility, CollisionParams);
-	if (OutHit.GetActor()) {
-		AButtonCanalization* TempItem = Cast<AButtonCanalization>(OutHit.GetActor());
-		if (TempItem)
-		{
-			if (!TempItem->DoesRefresh)
-			{
-				TempItem->Open();
-				GS->CurrentButtonCount++;
-				if (GS->CurrentButtonCount == 3)
-				{
-					TArray<AActor*>CanalAreas;
-					UGameplayStatics::GetAllActorsOfClass(World, ACanalizationDamageCollision::StaticClass(), CanalAreas);
-					if (CanalAreas.Num() != 0)
-					{
-						Cast<ACanalizationDamageCollision>(CanalAreas[0])->StopRadiation();
-					}
-				}
-			}
-		}
-	}
-}
-
-bool AChel::ChangeButtonCount_Server_Validate()
-{
-	return true;
-}
-
 void AChel::RefreshOutline()
 {
 	Cast<AChel>(UGameplayStatics::GetPlayerCharacter(World, 0))->RemoveTargetArrowDynamic();
@@ -2037,23 +1964,12 @@ bool AChel::OutlineBad_Server_Validate()
 }
 
 void AChel::ShowRandomItem_Implementation() {
-	TArray<AActor*> Items;
-	UGameplayStatics::GetAllActorsOfClass(World, APickableItem::StaticClass(), Items);
-	TArray<APickableItem*> ImportantItems;
-	ImportantItems.Init(nullptr, 0);
-	for (auto& it : Items) 
-	{
-		if (Cast<APickableItem>(it)->Type <= 2) 
-		{
-			ImportantItems.Add(Cast<APickableItem>(it));
-		}
-	}
+	TArray<AActor*> ImportantItems;
+	UGameplayStatics::GetAllActorsOfClass(World, ACoreItem::StaticClass(), ImportantItems);
 	if (ImportantItems.Num() != 0)
 	{
-		LastOutlineItem = ImportantItems[FMath::Rand() % ImportantItems.Num()];
-		LastOutlineItem->Item->SetRenderCustomDepth(true);
-		LastOutlineItem->Item->SetCustomDepthStencilValue(2);
-		LastOutlineItem->Item->MarkRenderStateDirty();
+		LastOutlineItem = Cast<ACoreItem>(ImportantItems[FMath::Rand() % ImportantItems.Num()]);
+		LastOutlineItem->ToggleCustomDepth(true);
 		AddTargetArrowDynamic(LastOutlineItem);
 
 		FTimerHandle FuzeTimerHandle;
@@ -2065,8 +1981,7 @@ void AChel::ShowRandomItem_Implementation() {
 void AChel::HideRandomItem() {
 	if (LastOutlineItem) 
 	{
-		LastOutlineItem->Item->SetRenderCustomDepth(false);
-		LastOutlineItem->Item->MarkRenderStateDirty();
+		LastOutlineItem->ToggleCustomDepth(false);
 		LastOutlineItem = nullptr;
 		RemoveTargetArrowDynamic();
 	}
@@ -2075,49 +1990,6 @@ void AChel::HideRandomItem() {
 void AChel::ShowNoiseWebCamUI_Implementation(bool DoesNoise)
 {
 	ShowNoiseBlueprint(DoesNoise);
-}
-
-void AChel::LockWebCam_Server_Implementation()
-{
-	FHitResult OutHit;
-
-	FVector StartLocation = CameraComp->GetComponentLocation();
-	FVector EndLocation = StartLocation + CameraComp->GetForwardVector() * 300;
-
-	FCollisionQueryParams CollisionParams;
-
-	World->LineTraceSingleByChannel(OutHit, StartLocation, EndLocation, ECC_Visibility, CollisionParams);
-	if (OutHit.GetActor()) {
-		AWebCamLocker* TempItem = Cast<AWebCamLocker>(OutHit.GetActor());
-		if (TempItem)
-		{
-			if (TempItem->DoesLock && !TempItem->DoesPlayAnim)
-			{
-				TempItem->Close();
-				TempItem->DoesLock = false;
-				if (GS->WebCams[TempItem->Index]->is_Enabled == true)
-				{
-					GS->WebCams[TempItem->Index]->CurChelix->ShowNoiseWebCamUI(false);
-				}
-				GS->WebCams[TempItem->Index]->is_Enabled = true;
-			}
-			else if (!TempItem->DoesLock && !TempItem->DoesPlayAnim)
-			{
-				TempItem->Open();
-				TempItem->DoesLock = true;
-				if (GS->WebCams[TempItem->Index]->is_Enabled == false)
-				{
-					GS->WebCams[TempItem->Index]->CurChelix->ShowNoiseWebCamUI(true);
-				}
-				GS->WebCams[TempItem->Index]->is_Enabled = false;
-			} 
-		}
-	}
-}
-
-bool AChel::LockWebCam_Server_Validate()
-{
-	return true;
 }
 
 void AChel::AddInvisibleServer_Implementation()
@@ -2173,69 +2045,28 @@ bool AChel::CheckCodeServer_Validate()
 	return true;
 }
 
-void AChel::ButtonPressAnimationServer_Implementation() {
-	FHitResult OutHit;
-
-	FVector StartLocation = CameraComp->GetComponentLocation();
-	FVector EndLocation = StartLocation + CameraComp->GetForwardVector() * 300;
-
-	FCollisionQueryParams CollisionParams;
-
-	if (World->LineTraceSingleByChannel(OutHit, StartLocation, EndLocation, ECC_Visibility, CollisionParams))
-	{		
-		Cast<AClickButton>(OutHit.GetActor())->ButtonPressAnimation();
-	}
-	
-}
-
-bool AChel::ButtonPressAnimationServer_Validate()
-{
-	return true;
-}
-
-void AChel::DoTraceOpenArea() 
-{
-	FHitResult OutHit;
-
-	FVector StartLocation = CameraComp->GetComponentLocation();
-	FVector EndLocation = StartLocation + CameraComp->GetForwardVector() * 300;
-
-	FCollisionQueryParams CollisionParams;
-
-	if (World->LineTraceSingleByChannel(OutHit, StartLocation, EndLocation, ECC_Visibility, CollisionParams))
-	{
-		//LastInteractiveItem = Cast<AOpenArea>(OutHit.GetActor());
-	}
-
-}
-
-void AChel::GoToServerOpenArea_Implementation(bool IsStart) 
-{
-	if (IsStart) 
-	{
-		DoTraceOpenArea();
-		AOpenArea* CurArea = Cast<AOpenArea>(LastInteractiveItem);
-		CurArea->bIsUsed = true;
-		CurArea->RotateVentilServer();
-	}
-	else
-	{
-		AOpenArea* CurArea = Cast<AOpenArea>(LastInteractiveItem);
-		if (CurArea) {
-			CurArea->bIsUsed = false;
-			if (Cast<AOpenArea>(LastInteractiveItem)->CurTimeVentil != 10.f)
-			{
-				Cast<AOpenArea>(LastInteractiveItem)->RotateVentilServerReverse();
-			}
-			LastInteractiveItem = nullptr;
-		}
-	}
-}
-
-bool AChel::GoToServerOpenArea_Validate(bool IsStart)
-{
-	return true;
-}
+//void AChel::GoToServerOpenArea_Implementation(bool IsStart) 
+//{
+//	if (IsStart) 
+//	{
+//		DoTraceOpenArea();
+//		AOpenArea* CurArea = Cast<AOpenArea>(LastInteractiveItem);
+//		CurArea->bIsUsed = true;
+//		CurArea->RotateVentilServer();
+//	}
+//	else
+//	{
+//		AOpenArea* CurArea = Cast<AOpenArea>(LastInteractiveItem);
+//		if (CurArea) {
+//			CurArea->bIsUsed = false;
+//			if (Cast<AOpenArea>(LastInteractiveItem)->CurTimeVentil != 10.f)
+//			{
+//				Cast<AOpenArea>(LastInteractiveItem)->RotateVentilServerReverse();
+//			}
+//			LastInteractiveItem = nullptr;
+//		}
+//	}
+//}
 
 void AChel::UpdateTargetArrowPosition(AActor* TargetObj, UTargetArrow* ArrowWidget) {
 	if (ArrowWidget && TargetObj) {

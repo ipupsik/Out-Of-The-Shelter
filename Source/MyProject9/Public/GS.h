@@ -5,11 +5,10 @@
 #include "CoreMinimal.h"
 #include "GameFramework/GameStateBase.h"
 #include "Net/UnrealNetwork.h"
-#include "PickableItem.h"
+#include "CodeNote_New.h"
+#include "TerminalNumber.h"
 #include "BP_PlayerController.h"
 #include "TerminalLight.h"
-#include "NumberTerminal.h"
-#include "Code_Note.h"
 #include "CodeNote_New.h"
 #include "FinalMenuPawn.h"
 #include "Cache.h"
@@ -156,7 +155,7 @@ public:
 	UPROPERTY(EditAnywhere, Category = "ItemClasses")
 		TSubclassOf<AInteractiveItem> CodeNoteClass;
 	UPROPERTY(EditAnywhere, Category = "ItemClasses")
-		TSubclassOf<ANumberTerminal> NumberTerminalClass;
+		TSubclassOf<ATerminalNumber> NumberTerminalClass;
 
 	int CurrentOtvertka;
 	int CurrentKeyShelter;
@@ -188,7 +187,7 @@ public:
 	int32 CurrentCode;
 	ATerminalLight* LampObj;
 	UPROPERTY(Replicated)
-		TArray<ANumberTerminal*> NumbersOnPanel;
+		TArray<ATerminalNumber*> NumbersOnPanel;
 	UPROPERTY(EditAnywhere)
 		FName CodeNoteTargetTag;
 

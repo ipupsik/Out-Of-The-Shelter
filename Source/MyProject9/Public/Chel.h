@@ -17,9 +17,6 @@
 #include "Cache.h"
 #include "GeneratorArea.h"
 #include "UI/GeneratorWidget.h"
-#include "ButtonCanalization.h"
-#include "WebCamLocker.h"
-#include "ClickButton.h"
 #include "UI/KillFeed.h"
 #include "UI/Tab.h"
 #include "Components/SceneComponent.h"
@@ -27,7 +24,6 @@
 #include "GI.h"
 #include "GS.h"
 #include "Stone.h"
-#include "PickableItem.h"
 #include "OpenArea.h"
 #include "UI/UserView.h"
 #include "UI/PlayerKillPlayer.h"
@@ -51,6 +47,7 @@ class UUserWidget;
 class AWeapon_Character;
 class UConsumableAbility;
 class AInteractiveItem;
+class ACoreItem;
 
 UCLASS()
 class MYPROJECT9_API AChel : public ACharacter
@@ -81,8 +78,6 @@ protected:
 	void StartSprint();
 	void StopSprint();
 
-	void EnableRentgen();
-	void DisableRentgen();
 	void EnableChelDetector();
 	void DisableChelDetector();
 
@@ -120,10 +115,6 @@ public:
 	UFUNCTION(Client, Reliable)
 		void DeleteStrelkaBadOutline_Client(int32 ChelIndex);
 	void RemoveArrowBadOutline(int32 ChelIndex); //убирает стрелку-подсказку на экране, котора€ указывает на плохо обведенного чела(который щас подох)
-
-
-	UFUNCTION(Server, Reliable, WithValidation)
-		void ButtonPressAnimationServer();
 
 	UFUNCTION(Server, Reliable, WithValidation)
 		void StartSprint_Server();
@@ -163,9 +154,6 @@ public:
 
 	UFUNCTION(Server, Reliable, WithValidation)
 		void MeshCompRepServer(float RotationRoll);
-
-	UFUNCTION(Server, Reliable, WithValidation)
-		void GoToServerOpenArea(bool IsStart);
 
 	UFUNCTION(Server, Reliable, WithValidation)
 		void RAbility_HealPacket();
@@ -211,9 +199,6 @@ public:
 
 	UFUNCTION(Server, Reliable, WithValidation)
 		void ChangeIsAvaliableCache();
-
-	UFUNCTION(Server, Reliable, WithValidation)
-		void ChangeButtonCount_Server();
 
 	UFUNCTION(Server, Reliable, WithValidation)
 		void StuffAvaliableUpdate(int32 EscapeWay);
@@ -288,8 +273,6 @@ public:
 	UFUNCTION(Server, Reliable, WithValidation)
 		void UseSpeedBust_Server();
 
-	void DoTraceOpenArea();
-
 	UFUNCTION(NetMulticast, Reliable) //легендарна€ св€зќчка
 		void OutlineBad_Multicast();
 
@@ -300,9 +283,6 @@ public:
 	void DeleteArrowDelayOtvertka();
 
 	void ReplaceQAbilityItem(UClass* QAbilityItemclass, int32 ItemIndex);
-
-	UFUNCTION(Server, Reliable, WithValidation)
-		void LockWebCam_Server();
 
 	UFUNCTION(Client, Reliable)
 		void HideNoteWidget();
@@ -477,8 +457,7 @@ public:
 	TArray<int32>KeysCount;
 	bool DoesHave_Owner;
 	AInteractiveItem* LastInteractiveItem;
-	ACache* LastCache;
-	AButtonCanalization* LastButton;
+	ACoreItem* LastOutlineItem;
 	//GlobalSettings
 	bool IsServerAuth;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
@@ -596,10 +575,6 @@ public:
 	//ADezinfectorNasosZatichka* LastZatichka;
 	AGeneratorArea* GenAreaObj;
 	UGeneratorWidget* GeneratorView;
-
-	APickableItem* LastOutlineItem;
-
-	AWebCamLocker* LastWebCamLocker;
 
 	ABP_PlayerController* MyController;
 

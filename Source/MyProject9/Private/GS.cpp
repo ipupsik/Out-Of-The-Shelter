@@ -7,7 +7,6 @@
 #include "Engine/TargetPoint.h"
 #include "AreaCollision.h"
 #include "GM.h"
-#include "Cache_Key.h"
 #include "DezinfectorNasos.h"
 #include "WebCamPoint.h"
 #include "BP_VentilaciaRubilnick.h"
@@ -335,7 +334,7 @@ void AGS::AddNumToTerminal(int32 Number) {
 	FTransform Trans;
 	Trans.SetLocation(FVector(TransformOfFirstNum.GetLocation().X + 11 * NumbersOnPanel.Num(), TransformOfFirstNum.GetLocation().Y, TransformOfFirstNum.GetLocation().Z));
 	Trans.SetRotation(TransformOfFirstNum.GetRotation());
-	ANumberTerminal* Num = GetWorld()->SpawnActorDeferred<ANumberTerminal>(NumberTerminalClass, Trans);
+	ATerminalNumber* Num = GetWorld()->SpawnActorDeferred<ATerminalNumber>(NumberTerminalClass, Trans);
 	if (Num != nullptr)
 	{
 		Num->NumberType = Number;
@@ -390,10 +389,10 @@ void AGS::CheckCode(int Index) {
 			}
 
 			TArray<AActor*> GettingCodeNote;
-			UGameplayStatics::GetAllActorsOfClass(GetWorld(), ACode_Note::StaticClass(), GettingCodeNote);
+			UGameplayStatics::GetAllActorsOfClass(GetWorld(), ACodeNote_New::StaticClass(), GettingCodeNote);
 			for (auto& it : GettingCodeNote)
 			{
-				Cast<ACode_Note>(it)->Destroy();
+				Cast<ACodeNote_New>(it)->Destroy();
 			}
 			PlayGoodSoundTerminal(LampObj->GetActorLocation());
 

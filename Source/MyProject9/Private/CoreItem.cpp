@@ -2,6 +2,7 @@
 
 
 #include "CoreItem.h"
+#include "Chel.h"
 
 ACoreItem::ACoreItem() {
 	Scene = CreateDefaultSubobject<USceneComponent>("Scene");

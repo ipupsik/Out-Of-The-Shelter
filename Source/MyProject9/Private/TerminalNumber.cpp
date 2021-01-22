@@ -2,3 +2,15 @@
 
 
 #include "TerminalNumber.h"
+
+ATerminalNumber::ATerminalNumber()
+{
+	Decal = CreateDefaultSubobject<UDecalComponent>(TEXT("Decal"));
+	Decal->SetupAttachment(RootComponent);
+}
+
+void ATerminalNumber::BeginPlay()
+{
+	AActor::BeginPlay();
+	Decal->SetMaterial(0, MaterialsNum[NumberType]);
+}
