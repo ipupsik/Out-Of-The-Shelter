@@ -13,6 +13,7 @@
 #include "PromptCollisionArea.h"
 #include "CollectableItem.h"
 #include "InteractiveCache.h"
+#include "Weapon_Character.h"
 
 AGS::AGS() {
 	NickNames.Init(FText::FromString(TEXT(" ")), 4);
@@ -280,8 +281,14 @@ void AGS::SpawnPlayers()
 
 		Player->PlaySpawnAnimationAwake();
 		Player->SetActorLocation(SpawnPoints[i]->GetActorLocation());
+
+
+		Player->CurrentWeapons[0]->LeftAmmo = Player->CurrentWeapons[0]->MaxAmmo;
+		Player->ChangeAmmoClients(Player->CurrentWeapons[0]->MaxAmmo, 0);
+		Player->SwitchToFreeWeapon_Multicast();
+
 		//Player->ShowStoneMulticast();
-		Player->Ammo = Player->MaxAmmoCount;
+		//Player->Ammo = Player->MaxAmmoCount;
 		Player->IsInGame = true;
 		Player->Health = 0;
 	}

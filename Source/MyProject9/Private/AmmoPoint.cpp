@@ -2,9 +2,8 @@
 
 
 #include "AmmoPoint.h"
-
 #include "Chel.h"
-
+#include "Weapon_Character.h"
 // Sets default values
 AAmmoPoint::AAmmoPoint()
 {
@@ -30,9 +29,13 @@ void AAmmoPoint::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* Oth
 {
 	AChel* Player = Cast<AChel>(OtherActor);
 	if (Player) {
-		if (Player->IsServerAuth && Enable && Player->Ammo < Player->MaxAmmoCount)
+		if (Player->IsServerAuth && Enable && Player->CurrentWeapons[0]->LeftAmmo < Player->CurrentWeapons[0]->MaxAmmo)
 		{
-			Player->Ammo = Player->MaxAmmoCount;
+			Player->CurrentWeapons[0]->LeftAmmo = Player->CurrentWeapons[0]->MaxAmmo;
+			Player->ChangeAmmoClients(Player->CurrentWeapons[0]->MaxAmmo, 0);
+			if (Player->CurrentIndex == 0) {
+				Player->SetWeaponToSlotMulticast(0);
+			}
 			//Player->StoneCountUpdate(Player->MaxAmmoCount);
 			//Player->ShowStoneMulticast();
 
@@ -71,7 +74,7 @@ void AAmmoPoint::AmmoUpdate()
 			{
 				Chel = Cast<AChel>(Players[i]);
 				if (Chel) {
-					if (Chel->Ammo < Chel->MaxAmmoCount) {
+					if (Chel->CurrentWeapons[0]->LeftAmmo < Chel->CurrentWeapons[0]->MaxAmmo) {
 						UE_LOG(LogTemp, Warning, TEXT("FoundGoodChel: %d"), Players.Num());
 						break;
 					}
@@ -81,7 +84,11 @@ void AAmmoPoint::AmmoUpdate()
 			}
 			if (Chel) {
 
-				Chel->Ammo = Chel->MaxAmmoCount;
+				Chel->CurrentWeapons[0]->LeftAmmo = Chel->CurrentWeapons[0]->MaxAmmo;
+				Chel->ChangeAmmoClients(Chel->CurrentWeapons[0]->MaxAmmo, 0);
+				if (Chel->CurrentIndex == 0) {
+					Chel->SetWeaponToSlotMulticast(0);
+				}
 				//Chel->StoneCountUpdate(Chel->MaxAmmoCount);
 				//Chel->ShowStoneMulticast();
 
