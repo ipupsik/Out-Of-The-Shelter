@@ -1016,6 +1016,17 @@ void AChel::FireEvent() {
 
 void AChel::FireEvent_Server_Implementation() {
 	CurrentWeapons[CurrentIndex]->Throw();
+	if (CurrentIndex == 0) {
+		TArray<AActor*> OverlappngActors;
+		GetOverlappingActors(OverlappngActors, AAmmoPoint::StaticClass());
+		for (auto& it : OverlappngActors) {
+			AAmmoPoint* AmPt = Cast<AAmmoPoint>(it);
+			if (AmPt) {
+				AmPt->AmmoUpdate();
+				break;
+			}
+		}
+	}
 }
 
 bool AChel::FireEvent_Server_Validate() {
@@ -1054,7 +1065,7 @@ bool AChel::WeaponSwitch_Server_Validate(int32 SlotIndex) {
 /*void AChel::ThrowStoneServer_Implementation(bool Type)
 {
 	--Ammo;
-	ThrowStoneMulticast(Type);
+	ThrowStoneMulticast(Type);F
 	TArray<AActor*> OverlappngActors;
 	GetOverlappingActors(OverlappngActors, AAmmoPoint::StaticClass());
 	for (auto& it : OverlappngActors) {
