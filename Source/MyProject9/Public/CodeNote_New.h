@@ -16,4 +16,18 @@ class MYPROJECT9_API ACodeNote_New : public AInteractiveItem
 public:
 	ACodeNote_New();
 	
+	UFUNCTION(BlueprintImplementableEvent)
+		void PlayPickUpSound();
+
+	bool PickUpEventClient(AChel* Player) override;
+	void OnLineTraced(AChel* Player) override;
+	void ToggleCustomDepth(bool NewIsOutliningNow) override;
+
+public:
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Collision")
+		UBoxComponent* Collision;
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Mesh")
+		UStaticMeshComponent* Mesh;
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Scene")
+		USceneComponent* Scene;
 };
