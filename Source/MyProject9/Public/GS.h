@@ -10,6 +10,7 @@
 #include "TerminalLight.h"
 #include "NumberTerminal.h"
 #include "Code_Note.h"
+#include "CodeNote_New.h"
 #include "FinalMenuPawn.h"
 #include "Cache.h"
 #include "WebCamPoint.h"

@@ -523,9 +523,10 @@ void AChel::PossessedBy(AController* NewController)
 	MyBeginPlay();
 }
 
-void AChel::ChangeCorretcaPosition(int32 TypeChange) {
-	GeneratorView->Corretca->SetValue(GeneratorView->PositionX[TypeChange]);
-	GeneratorView->PB_Repair->SetPercent(0.0f);
+void AChel::ChangePBPosition(int32 TypeChange) {
+	//GeneratorView->Corretca->SetValue(GeneratorView->PositionX[TypeChange]);
+	GeneratorView->PB_Repair->SetPercent(GeneratorView->PositionX[TypeChange]);
+	GeneratorView->Corretca->SetValue(0.0f);
 	bToRight = true;
 	GeneratorView->curSpeed = GeneratorView->Speed[TypeChange];
 }
@@ -562,14 +563,16 @@ void AChel::Tick(float DeltaTime)
 			//----------------------------------------------------для генератора Start--------------------------------------
 			if (TickEnableGeneratorWidget) {
 				if (bToRight) {
-					GeneratorView->PB_Repair->SetPercent(GeneratorView->PB_Repair->Percent + (GeneratorView->curSpeed) * DeltaTime);
-					if (GeneratorView->PB_Repair->Percent >= 1.0f) {
+					GeneratorView->Corretca->SetValue(GeneratorView->Corretca->Value + (GeneratorView->curSpeed) * DeltaTime);
+					//GeneratorView->PB_Repair->SetPercent(GeneratorView->PB_Repair->Percent + (GeneratorView->curSpeed) * DeltaTime);
+					if (GeneratorView->Corretca->Value >= 1.0f) {
 						bToRight = false;
 					}
 				}
 				else {
-					GeneratorView->PB_Repair->SetPercent(GeneratorView->PB_Repair->Percent - (GeneratorView->curSpeed) * DeltaTime);
-					if (GeneratorView->PB_Repair->Percent <= 0.0f) {
+					//GeneratorView->PB_Repair->SetPercent(GeneratorView->PB_Repair->Percent - (GeneratorView->curSpeed) * DeltaTime);
+					GeneratorView->Corretca->SetValue(GeneratorView->Corretca->Value - (GeneratorView->curSpeed) * DeltaTime);
+					if (GeneratorView->Corretca->Value <= 0.0f) {
 						bToRight = true;
 					}
 				}
@@ -591,6 +594,9 @@ void AChel::Tick(float DeltaTime)
 				if (TracedItem) { //Если мы стукнулись в нужный нам предмет
 					if (LastInteractiveItem && LastInteractiveItem != TracedItem) {
 						LastInteractiveItem->ToggleCustomDepth(false);
+						UserView->E_Mark->SetVisibility(ESlateVisibility::Hidden);
+						if(GI->bIsEnabledPrompt)
+							UserView->PropmptTextInterract->SetVisibility(ESlateVisibility::Hidden);
 					}
 					TracedItem->OnLineTraced(this);
 					if (LastInteractiveItem != TracedItem) {
@@ -602,6 +608,8 @@ void AChel::Tick(float DeltaTime)
 						LastInteractiveItem->ToggleCustomDepth(false);
 						LastInteractiveItem = nullptr;
 						UserView->E_Mark->SetVisibility(ESlateVisibility::Hidden);
+						if(GI->bIsEnabledPrompt)
+							UserView->PropmptTextInterract->SetVisibility(ESlateVisibility::Hidden);
 					}
 				}
 			}
@@ -610,6 +618,8 @@ void AChel::Tick(float DeltaTime)
 					LastInteractiveItem->ToggleCustomDepth(false);
 					LastInteractiveItem = nullptr;
 					UserView->E_Mark->SetVisibility(ESlateVisibility::Hidden);
+					if(GI->bIsEnabledPrompt)
+						UserView->PropmptTextInterract->SetVisibility(ESlateVisibility::Hidden);
 				}
 			}
 		}
@@ -809,7 +819,7 @@ void AChel::OpenAreaPressed()
 				}
 				break;
 			}
-			case GeneratorArea:
+			/*case GeneratorArea:
 			{
 				if (GenAreaObj) {
 					if (GenAreaObj->IsAvalible) {
@@ -818,20 +828,20 @@ void AChel::OpenAreaPressed()
 								ChangeGeneratorStas();
 							}
 							else {
-								ChangeCorretcaPosition(GenAreaObj->Stadiya);
+								//ChangeCorretcaPosition(GenAreaObj->Stadiya);
 								OutlineBad_Server();//Здесь могла быть ваша логика с обводкой конкретного челика для всех остальных, но уже 12 часов ночи, сори, бб
 							}
 						}
 						else {
 							UserView->HoldText->SetVisibility(ESlateVisibility::Hidden);
-							ChangeCorretcaPosition(GenAreaObj->Stadiya);
+							//ChangeCorretcaPosition(GenAreaObj->Stadiya);
 							TickEnableGeneratorWidget = true;
 							GeneratorView->SetVisibility(ESlateVisibility::Visible);
 						}
 					}
 				}
 				break;
-			}
+			}*/
 			case ShelterOpener:
 			{
 				if (GS->AreaAvaliables[1]) {
@@ -1242,7 +1252,15 @@ void AChel::PlaySpawnAnimationSleep_Implementation() {
 	SpawnDeadSound();
 	UserView->PlayAnimation(UserView->Shading);
 
-	LastInteractiveItem = nullptr;
+	if (LastInteractiveItem)
+	{
+		LastInteractiveItem->ToggleCustomDepth(false);
+		LastInteractiveItem = nullptr;
+		UserView->E_Mark->SetVisibility(ESlateVisibility::Hidden);
+		if (GI->bIsEnabledPrompt)
+			UserView->PropmptTextInterract->SetVisibility(ESlateVisibility::Hidden);
+	}
+	
 	//na vsyakii
 	MyController->bShowMouseCursor = false;
 	MyController->SetInputMode(FInputModeGameOnly());
@@ -1310,9 +1328,11 @@ void AChel::PickUp() {
 		if (IsNotInWebCam) {
 			if (LastInteractiveItem)
 			{
-				if(LastInteractiveItem->PickUpEventClient(this))
+				if (LastInteractiveItem->PickUpEventClient(this))
 					PickUp_Server();
 			}
+			else if (GenAreaObj)
+				GenAreaObj->PressedEGenerator(this);
 		}
 		else
 		{
@@ -1873,7 +1893,7 @@ void AChel::ChangeGeneratorStas_Implementation()
 		GenAreaObj->GetOverlappingActors(Players, AChel::StaticClass());
 		for (auto& it : Players) {
 			Cast<AChel>(it)->HideWidgetStas();
-			Cast<AChel>(it)->ChangeCorretca_Client(0);
+			Cast<AChel>(it)->ChangePB_Client(0);
 		}
 		GS->EventSpawnNote();
 	}
@@ -1881,7 +1901,7 @@ void AChel::ChangeGeneratorStas_Implementation()
 		TArray<AActor*> Players;
 		GenAreaObj->GetOverlappingActors(Players, AChel::StaticClass());
 		for (auto& it: Players) {
-			Cast<AChel>(it)->ChangeCorretca_Client(GenAreaObj->Stadiya);
+			Cast<AChel>(it)->ChangePB_Client(GenAreaObj->Stadiya);
 		}
 	}
 }
@@ -1920,15 +1940,17 @@ void AChel::DisableDoubleRadiationWidget_Implementation()
 	UserView->DisableDoubleRadiationEffect();
 }
 
-void AChel::ChangeCorretca_Client_Implementation(int32 ValueV)
+void AChel::ChangePB_Client_Implementation(int32 ValueV)
 {
-	ChangeCorretcaPosition(ValueV);
+	ChangePBPosition(ValueV);
 }
 
 void AChel::HideWidgetStas_Implementation()
 {
-	UserView->AreaUsedText->SetVisibility(ESlateVisibility::Visible);
+	if(GI->bIsEnabledPrompt)
+		UserView->PropmptTextArea->SetText(GenAreaObj->PromptGenTextNotActive);
 	GeneratorView->SetVisibility(ESlateVisibility::Hidden);
+	UserView->E_Mark->SetVisibility(ESlateVisibility::Hidden);
 	TickEnableGeneratorWidget = false;
 }
 
@@ -2366,7 +2388,7 @@ void AChel::RemoveArrowBadOutline(int32 ChelIndex)
 
 void AChel::ShowUIAfterTerminalAndGenerator_Implementation(int32 NewAreaType, bool DoesEnabled)
 {
-	if (DoesEnabled) {
+	/*if (DoesEnabled) {
 		AreaCode = NewAreaType;
 		if (!GS->AreaAvaliables[NewAreaType])
 		{
@@ -2378,7 +2400,7 @@ void AChel::ShowUIAfterTerminalAndGenerator_Implementation(int32 NewAreaType, bo
 	{
 		AreaCode = -1;
 		UserView->HoldText->SetVisibility(ESlateVisibility::Hidden);
-	}
+	}*/
 }
 
 void AChel::ResetCacheKeys()

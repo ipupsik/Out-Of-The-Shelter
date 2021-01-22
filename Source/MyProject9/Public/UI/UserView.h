@@ -57,6 +57,12 @@ public:
 		UTextBlock* AmmoSlash;
 
 	UPROPERTY(meta = (BindWidget))
+		UTextBlock* PropmptTextInterract;
+
+	UPROPERTY(meta = (BindWidget))
+		UTextBlock* PropmptTextArea;
+
+	UPROPERTY(meta = (BindWidget))
 		UTextBlock* AmmoLabel;
 
 	TArray<UTextBlock*> ArrayCacheKey;

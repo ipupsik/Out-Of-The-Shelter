@@ -56,10 +56,21 @@ void AGeneratorArea::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, c
 			Player->GenAreaObj = this;
 			Player->AreaCode = 6;
 			if (IsAvalible) {
-				Player->UserView->HoldText->SetVisibility(ESlateVisibility::Visible);
+				if (Player->GI->bIsEnabledPrompt) {
+					Player->UserView->E_Mark->SetVisibility(ESlateVisibility::Visible);
+					if (Player->GI->bIsEnabledPrompt) {
+						Player->UserView->PropmptTextArea->SetText(PromptGenNotRepairing);
+						Player->UserView->PropmptTextArea->SetVisibility(ESlateVisibility::Visible);
+					}
+				}
 			}
 			else {
-				Player->UserView->AreaUsedText->SetVisibility(ESlateVisibility::Visible);
+				if (Player->GI->bIsEnabledPrompt) {
+					if (Player->GI->bIsEnabledPrompt) {
+						Player->UserView->PropmptTextArea->SetText(PromptGenTextNotActive);
+						Player->UserView->PropmptTextArea->SetVisibility(ESlateVisibility::Visible);
+					}
+				}
 			}
 
 		}
@@ -78,9 +89,12 @@ void AGeneratorArea::OnOverlapEnd(UPrimitiveComponent * OverlappedComp, AActor *
 			Player->GenAreaObj = nullptr;
 			Player->AreaCode = -1;
 			Player->TickEnableGeneratorWidget = false;
-			Player->UserView->HoldText->SetVisibility(ESlateVisibility::Hidden);
-			Player->UserView->AreaUsedText->SetVisibility(ESlateVisibility::Hidden);
-			Player->GeneratorView->SetVisibility(ESlateVisibility::Hidden);
+			if (Player->GI->bIsEnabledPrompt) {
+				Player->UserView->E_Mark->SetVisibility(ESlateVisibility::Hidden);
+				if (Player->GI->bIsEnabledPrompt)
+					Player->UserView->PropmptTextArea->SetVisibility(ESlateVisibility::Hidden);
+				Player->GeneratorView->SetVisibility(ESlateVisibility::Hidden);
+			}
 		}
 	}
 }
@@ -104,5 +118,28 @@ void AGeneratorArea::ChangeLampochka_Implementation(int32 type)
 		Lamp->LampochkaModel->SetMaterial(0, Lamp->MaterialOff);
 		break;
 	}
+	}
+}
+
+void AGeneratorArea::PressedEGenerator(AChel* Player) {
+	if (Player->GenAreaObj) {
+		if (Player->GenAreaObj->IsAvalible) {
+			if (Player->GeneratorView->IsVisible()) {
+				if (Player->GeneratorView->Corretca->Value >= Player->GeneratorView->PB_Repair->Percent) {
+					Player->ChangeGeneratorStas();
+				}
+				else {
+					Player->ChangePBPosition(Player->GenAreaObj->Stadiya);
+					Player->OutlineBad_Server();//Здесь могла быть ваша логика с обводкой конкретного челика для всех остальных, но уже 12 часов ночи, сори, бб
+				}
+			}
+			else {
+				Player->UserView->E_Mark->SetVisibility(ESlateVisibility::Hidden);
+				Player->UserView->PropmptTextArea->SetText(PromptGenTextRepairing);
+				Player->GeneratorView->SetVisibility(ESlateVisibility::Visible);
+				Player->ChangePBPosition(Player->GenAreaObj->Stadiya);
+				Player->TickEnableGeneratorWidget = true;
+			}
+		}
 	}
 }

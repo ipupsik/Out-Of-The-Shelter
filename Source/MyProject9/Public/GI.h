@@ -28,4 +28,6 @@ public:
 		FText NickName;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		int32 MaxPlayersCount;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		bool bIsEnabledPrompt;
 };

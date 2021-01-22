@@ -233,7 +233,7 @@ public:
 		void PlayerOpenAreaUpdate(int32 EscapeWay);
 
 	UFUNCTION(Client, Reliable)
-		void ChangeCorretca_Client(int32 ValueV);
+		void ChangePB_Client(int32 ValueV);
 
 	UFUNCTION(Server, Reliable, WithValidation)
 		void AddInvisibleServer();
@@ -421,7 +421,7 @@ public:
 	UPROPERTY(EditAnywhere, Category = "UI HUD")
 		TSubclassOf<UVerstakWidget> VerstakViewClass;
 
-	void ChangeCorretcaPosition(int32 TypeChange);
+	void ChangePBPosition(int32 TypeChange);
 
 	UPROPERTY(EditAnywhere, Category = "Spectator")
 		TSubclassOf<ASpectator> SpectatorClass;
