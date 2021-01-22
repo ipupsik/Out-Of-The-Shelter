@@ -2582,7 +2582,7 @@ bool AChel::NewRAbility(const UClass* Ability_class)
 		}
 		return true;
 	}
-	else
+	else if (LastRAbilityIndex == 2)
 		return false;
 
 	LastRAbilityIndex++;
