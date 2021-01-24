@@ -153,6 +153,9 @@ public:
 		TSubclassOf<AInteractiveItem> GoldKey;
 
 	UPROPERTY(EditAnywhere, Category = "ItemClasses")
+		TSubclassOf<AInteractiveItem> Details_class;
+
+	UPROPERTY(EditAnywhere, Category = "ItemClasses")
 		TSubclassOf<AInteractiveItem> CodeNoteClass;
 	UPROPERTY(EditAnywhere, Category = "ItemClasses")
 		TSubclassOf<ATerminalNumber> NumberTerminalClass;
@@ -178,6 +181,8 @@ public:
 
 	TArray<FTransform>Keys_Transform;
 	TArray<bool>Keys_IsAvaliable;
+	TArray<FTransform>Details_Transform;
+	TArray<bool>Details_IsAvaliable;
 
 	TArray<AInteractiveCache*>Caches;
 	TArray<bool>CacheItems_Stuff_IsAvaliable;

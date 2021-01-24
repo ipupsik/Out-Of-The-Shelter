@@ -538,6 +538,9 @@ public:
 
 	int8 TempAntiDotCount;
 	float TempAntiDotEffect;
+
+	int8 ProjectileDamageCount;
+	float ProjectileDamageEffect;
 	//RAbility
 
 	//Logic Boolean Variables
