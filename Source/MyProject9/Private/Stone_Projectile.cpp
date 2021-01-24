@@ -32,7 +32,7 @@ void AStone_Projectile::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp
 				{
 					UE_LOG(LogTemp, Warning, TEXT("Weapon hit chel"));
 					if (Player->GetLocalRole() == ROLE_Authority) {
-						Player->Health += Damage / (1 + 0.2 * Player->ShieldsCount) * Player->DoesNotImmortal;
+						Player->Health += GetDamage(Player);
 						if (Player->Health + DeltaRadiation >= 1.0f)
 						{
 							Player->KillerIndex = IndexOwner;
@@ -49,6 +49,7 @@ void AStone_Projectile::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp
 							Player->bCanWalkingAndWatching = true;
 							Player->KillPlayer();
 						}
+						CallAddMarker();
 					}
 				}
 				PlaySoundHitChel();

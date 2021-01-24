@@ -184,9 +184,9 @@ public:
 	UFUNCTION(Client, Reliable)
 		void DeleteGameHUD();
 
-	UFUNCTION(Client, Reliable)
-		void AddHitMarker();
 
+	UFUNCTION(Client, Reliable)
+	void AddHitMarker();
 	void RemoveHitMarker();
 
 	void PossessToSpectator();
@@ -532,6 +532,14 @@ public:
 	FRotator BaseWebCamRotation;
 	
 public:
+	//RAbility
+	int8 ArmoryZelieCount;
+	float ArmoryZelieEffect;
+
+	int8 TempAntiDotCount;
+	float TempAntiDotEffect;
+	//RAbility
+
 	//Logic Boolean Variables
 	bool bLineTrace_is_need_refresh;
 		bool bCanPossessWebCam;
@@ -609,6 +617,9 @@ public:
 	void FireEvent(); //нажатие на левую кнопку мыши
 	UFUNCTION(Server, Reliable, WithValidation)
 	void FireEvent_Server(); //выстреливаем из оружия на сервере
+
+	void SwitchToFirstWeapon();
+	void SwitchToSpecialWeapon();
 
 	UFUNCTION(NetMulticast, Reliable)
 		void CreateWeaponMulticast(UClass* WeaponCreatedClass, int32 Amount, int32 IdexSlot);

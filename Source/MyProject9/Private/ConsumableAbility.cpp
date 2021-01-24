@@ -5,9 +5,9 @@
 #include "Chel.h"
 #include "Kismet/GameplayStatics.h"
 
-void UConsumableAbility::UseAbilityClient(AChel* Player)
+bool UConsumableAbility::UseAbilityClient(AChel* Player)
 {
-	
+	return true;
 }
 
 void UConsumableAbility::UseAbilityServer(AChel* Player)

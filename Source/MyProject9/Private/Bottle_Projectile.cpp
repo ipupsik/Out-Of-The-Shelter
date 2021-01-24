@@ -29,7 +29,7 @@ void ABottle_Projectile::OnOverlapBegin(class UPrimitiveComponent* OverlappedCom
 				{
 					UE_LOG(LogTemp, Warning, TEXT("Weapon hit chel"));
 					if (Player->GetLocalRole() == ROLE_Authority) {
-						Player->Health += Damage / (1 + 0.2 * Player->ShieldsCount) * Player->DoesNotImmortal;
+						Player->Health += GetDamage(Player);
 						if (Player->Health + DeltaRadiation >= 1.0f)
 						{
 							Player->KillerIndex = IndexOwner;
@@ -44,11 +44,12 @@ void ABottle_Projectile::OnOverlapBegin(class UPrimitiveComponent* OverlappedCom
 								Cast<AChel>(it)->RefreshWidgets(Player->DoesHave, Player->KillerIndex, Player->Index);
 							Player->DoesHave.Init(false, 3);
 							Player->bCanWalkingAndWatching = true;
-							Player->KillPlayer();
+							Player->KillPlayer();	
 						}
+						CallAddMarker();
 					}
 				}
-				if (Player->IsPlayerOwner) {
+				if (Player->IsPlayerOwner && Player->Health < 1.f) {
 					Player->InvertMovement(TimeEffect);
 				}
 				PlaySoundBroke();
