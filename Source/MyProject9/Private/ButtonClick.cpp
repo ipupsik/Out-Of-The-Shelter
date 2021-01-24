@@ -21,46 +21,45 @@ AButtonClick::AButtonClick()
 
 void AButtonClick::ToggleCustomDepth(bool NewIsOutliningNow)
 {
-	if (bCanInterract) {
-		if (this->IsOutliningNow != NewIsOutliningNow) {
-			Mesh->SetRenderCustomDepth(NewIsOutliningNow);
-			Mesh->MarkRenderStateDirty();
-			this->IsOutliningNow = NewIsOutliningNow;
-		}
+	if (this->IsOutliningNow != NewIsOutliningNow) {
+		Mesh->SetRenderCustomDepth(NewIsOutliningNow);
+		Mesh->MarkRenderStateDirty();
+		this->IsOutliningNow = NewIsOutliningNow;
 	}
 }
 
 void AButtonClick::PickUpEventServer(AChel* Player)
 {
-	if (ButtonType <= 9) {
-		if (Player->GS->NumbersOnPanel.Num() <= 4) {
-			Player->GS->AddNumToTerminal(ButtonType);
-			bCanInterract = false;
-			ButtonPressAnimation();
-		}
-	}
-	else {
-		if (ButtonType == 10) {
-			if (Player->GS->NumbersOnPanel.Num() > 0) {
-				Player->GS->DeleteLastNumber();
+	if (bCanInterract) {
+		if (ButtonType <= 9) {
+			if (Player->GS->NumbersOnPanel.Num() <= 4) {
+				Player->GS->AddNumToTerminal(ButtonType);
 				bCanInterract = false;
 				ButtonPressAnimation();
 			}
 		}
-		else
-		{
-			Player->GS->CheckCode(Player->Index);
-			bCanInterract = false;
-			ButtonPressAnimation();
+		else {
+			if (ButtonType == 10) {
+				if (Player->GS->NumbersOnPanel.Num() > 0) {
+					Player->GS->DeleteLastNumber();
+					bCanInterract = false;
+					ButtonPressAnimation();
+				}
+			}
+			else
+			{
+				Player->GS->CheckCode(Player->Index);
+				bCanInterract = false;
+				ButtonPressAnimation();
+			}
 		}
 	}
 }
 
 bool AButtonClick::PickUpEventClient(AChel* Player)
 {
-	if (Player->GS->IsShelterAvaliable && bCanInterract)
+	if (Player->GS->IsShelterAvaliable)
 	{
-		bCanInterract = false;
 		return true;
 	}
 	return false;

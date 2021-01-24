@@ -19,9 +19,14 @@ class MYPROJECT9_API ATerminalNumber : public AActor
 public:
 	ATerminalNumber();
 
+	void GetLifetimeReplicatedProps(TArray < FLifetimeProperty >& OutLifetimeProps) const override;
+
 	void BeginPlay() override;
 
-	int32 NumberType;
+	UFUNCTION()
+		void OnRep_DecalInitial();
+	UPROPERTY(ReplicatedUsing = OnRep_DecalInitial)
+		int32 NumberType;
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Govno(Bagannoe)")
 		UDecalComponent* Decal;
 
