@@ -49,6 +49,7 @@ void AStone_Projectile::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp
 							Player->bCanWalkingAndWatching = true;
 							Player->KillPlayer();
 						}
+						CallAddMarker();
 					}
 				}
 				PlaySoundHitChel();

@@ -655,6 +655,8 @@ void AChel::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 	PlayerInputComponent->BindAction("Fire", IE_Pressed, this, &AChel::FireEvent);
 	PlayerInputComponent->BindAction("WeaponSwitchUP", IE_Pressed, this, &AChel::WeaponSwitch);
 	PlayerInputComponent->BindAction("WeaponSwitchDown", IE_Pressed, this, &AChel::WeaponSwitch);
+	PlayerInputComponent->BindAction("FirstWeapon", IE_Pressed, this, &AChel::SwitchToFirstWeapon);
+	PlayerInputComponent->BindAction("SpecialWeapon", IE_Pressed, this, &AChel::SwitchToSpecialWeapon);
 	/*PlayerInputComponent->BindAction("ThrowStoneLeft", IE_Pressed, this, &AChel::ThrowStoneLeft);*/
 	PlayerInputComponent->BindAction("PickUp", IE_Pressed, this, &AChel::PickUp);
 	PlayerInputComponent->BindAction("PickUp", IE_Released, this, &AChel::PickUp_Released);
@@ -2515,6 +2517,20 @@ void AChel::DropCoreItems()
 	}
 }
 //----------------оружия------------------------
+void AChel::SwitchToFirstWeapon() {
+	if (CurrentWeapons[0] && CurrentWeapons[0]->LeftAmmo > 0 &&
+		IsNotInWebCam && !bInEscMenu && CanFireWeapon && CurrentIndex != 0) {
+		WeaponSwitch_Server(0);
+	}
+}
+
+void AChel::SwitchToSpecialWeapon() {
+	if (CurrentWeapons[1] && CurrentWeapons[1]->LeftAmmo > 0 &&
+		IsNotInWebCam && !bInEscMenu && CanFireWeapon && CurrentIndex != 1) {
+		WeaponSwitch_Server(1);
+	}
+}
+
 void AChel::CreateWeaponMulticast_Implementation(UClass* WeaponCreatedClass, int32 Amount, int32 IndexSlot) {
 	CreateWeapon(WeaponCreatedClass, Amount, IndexSlot);
 }

@@ -47,6 +47,7 @@ void ATakableProjectile::OnOverlapBegin(class UPrimitiveComponent* OverlappedCom
 							Player->bCanWalkingAndWatching = true;
 							Player->KillPlayer();
 						}
+						CallAddMarker();
 					}
 				}
 				PlaySoundHitChel();

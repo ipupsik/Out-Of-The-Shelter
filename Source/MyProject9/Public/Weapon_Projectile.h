@@ -26,4 +26,6 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		float Damage;
+
+	void CallAddMarker();
 };

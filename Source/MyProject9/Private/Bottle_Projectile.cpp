@@ -44,11 +44,12 @@ void ABottle_Projectile::OnOverlapBegin(class UPrimitiveComponent* OverlappedCom
 								Cast<AChel>(it)->RefreshWidgets(Player->DoesHave, Player->KillerIndex, Player->Index);
 							Player->DoesHave.Init(false, 3);
 							Player->bCanWalkingAndWatching = true;
-							Player->KillPlayer();
+							Player->KillPlayer();	
 						}
+						CallAddMarker();
 					}
 				}
-				if (Player->IsPlayerOwner) {
+				if (Player->IsPlayerOwner && Player->Health < 1.f) {
 					Player->InvertMovement(TimeEffect);
 				}
 				PlaySoundBroke();
