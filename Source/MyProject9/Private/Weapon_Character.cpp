@@ -23,7 +23,7 @@ void AWeapon_Character::SpawnProjectile()
 	AWeapon_Projectile* DroppedItm = WeaponOwner->World->SpawnActorDeferred<AWeapon_Projectile>(WeaponProjectileClass, Trsfrm);
 	if (DroppedItm) {
 		DroppedItm->IndexOwner = WeaponOwner->Index;
-		DroppedItm->Damage *= WeaponOwner->ProjectileDamageEffect;
+		DroppedItm->Damage *= WeaponOwner->ProjectileDamageEffect * (1 + 0.1f * WeaponOwner->StoneDamageBuffCount);
 		UGameplayStatics::FinishSpawningActor(DroppedItm, Trsfrm);
 	}
 }
