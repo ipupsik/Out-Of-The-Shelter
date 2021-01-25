@@ -20,7 +20,7 @@ ABP_VentilaciaRubilnick::ABP_VentilaciaRubilnick()
 	Item->SetupAttachment(Scene);
 }
 
-void ABP_VentilaciaRubilnick::ToggleCustomDepth(bool NewIsOutliningNow)
+void ABP_VentilaciaRubilnick::ToggleCustomDepth(bool NewIsOutliningNow, AChel* Player)
 {
 	if (bCanInterract) {
 		if (this->IsOutliningNow != NewIsOutliningNow) {
@@ -35,7 +35,7 @@ bool ABP_VentilaciaRubilnick::PickUpEventClient(AChel* Player)
 {
 	if (bCanInterract)
 	{
-		ToggleCustomDepth(false);
+		ToggleCustomDepth(false, Player);
 		Player->UserView->E_Mark->SetVisibility(ESlateVisibility::Hidden);
 		bCanInterract = false;
 		return true;
@@ -66,7 +66,7 @@ void ABP_VentilaciaRubilnick::ChangeAvaliable_Implementation()
 void ABP_VentilaciaRubilnick::OnLineTraced(AChel* Player)
 {
 	if (bCanInterract) {
-		ToggleCustomDepth(true);
+		ToggleCustomDepth(true, Player);
 		if (!Player->UserView->E_Mark->IsVisible())
 			Player->UserView->E_Mark->SetVisibility(ESlateVisibility::Visible);
 	}

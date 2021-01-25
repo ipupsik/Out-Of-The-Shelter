@@ -20,7 +20,7 @@ public:
 public:
 	AInteractiveCache();
 
-	virtual void ToggleCustomDepth(bool NewIsOutliningNow) override;
+	virtual void ToggleCustomDepth(bool NewIsOutliningNow, AChel* Player) override;
 
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
 		void Open();

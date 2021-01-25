@@ -25,10 +25,13 @@ public:
 	bool IsOutliningNow;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		FText PromptText;
-	virtual void ToggleCustomDepth(bool NewIsOutliningNow);
+	virtual void ToggleCustomDepth(bool NewIsOutliningNow, AChel* Player);
 	virtual void SetOutlineColor(int32 ColorOutline);
 
 	virtual void PickUpEventServer(AChel* Player );
 	virtual bool PickUpEventClient(AChel* Player);
 	virtual void OnLineTraced(AChel* Player);
+
+	virtual bool PickUpEventReleaseClient(AChel* Player);
+	virtual void PickUpEventReleaseServer(AChel* Player);
 };

@@ -27,7 +27,7 @@ public:
 
 	void PickUpEventServer(AChel* Player) override;
 	bool PickUpEventClient(AChel* Player) override;
-	void ToggleCustomDepth(bool NewIsOutliningNow) override;
+	void ToggleCustomDepth(bool NewIsOutliningNow, AChel* Player) override;
 
 	void OnLineTraced(AChel* Player) override;
 

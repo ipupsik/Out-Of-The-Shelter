@@ -54,7 +54,7 @@ bool ADezinfectorNasosZatichka::PickUpEventClient(AChel* Player)
 void ADezinfectorNasosZatichka::OnLineTraced(AChel* Player)
 {
 	if (Nasos->bIsAvaliable) {
-		ToggleCustomDepth(true);
+		ToggleCustomDepth(true, Player);
 		if (!Player->UserView->E_Mark->IsVisible())
 			Player->UserView->E_Mark->SetVisibility(ESlateVisibility::Visible);
 	}
@@ -66,7 +66,7 @@ void ADezinfectorNasosZatichka::OnLineTraced(AChel* Player)
 	}
 }
 
-void ADezinfectorNasosZatichka::ToggleCustomDepth(bool NewIsOutliningNow)
+void ADezinfectorNasosZatichka::ToggleCustomDepth(bool NewIsOutliningNow, AChel* Player)
 {
 	if (this->IsOutliningNow != NewIsOutliningNow) {
 		Zatichka->SetRenderCustomDepth(NewIsOutliningNow);

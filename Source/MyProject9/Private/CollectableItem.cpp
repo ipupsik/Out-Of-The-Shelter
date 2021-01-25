@@ -8,7 +8,7 @@ ACollectableItem::ACollectableItem() {
 	
 }
 
-void ACollectableItem::ToggleCustomDepth(bool NewIsOutliningNow) {
+void ACollectableItem::ToggleCustomDepth(bool NewIsOutliningNow, AChel* Player) {
 	if (bCanInterract) {
 		if (this->IsOutliningNow != NewIsOutliningNow) {
 			Mesh->SetRenderCustomDepth(NewIsOutliningNow);
@@ -29,7 +29,7 @@ void ACollectableItem::SetOutlineColor(int32 ColorOutline) {
 void ACollectableItem::OnLineTraced(AChel* Player)
 {
 	if (bCanInterract) {
-		ToggleCustomDepth(true);
+		ToggleCustomDepth(true, Player);
 		if (Player->GI->bIsEnabledPrompt)
 			Player->UserView->PropmptTextInterract->SetText(PromptText);
 		if (!Player->UserView->E_Mark->IsVisible()) {

@@ -32,13 +32,13 @@ void AVerstak::PickUpEventServer(AChel * Player)
 void AVerstak::OnLineTraced(AChel * Player)
 {
 	if (bCanInterract) {
-		ToggleCustomDepth(true);
+		ToggleCustomDepth(true, Player);
 		if (!Player->UserView->E_Mark->IsVisible())
 			Player->UserView->E_Mark->SetVisibility(ESlateVisibility::Visible);
 	}
 }
 
-void AVerstak::ToggleCustomDepth(bool NewIsOutliningNow) {
+void AVerstak::ToggleCustomDepth(bool NewIsOutliningNow, AChel* Player) {
 	if (bCanInterract) {
 		if (this->IsOutliningNow != NewIsOutliningNow) {
 			Mesh->SetRenderCustomDepth(NewIsOutliningNow);

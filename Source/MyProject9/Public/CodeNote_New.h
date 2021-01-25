@@ -21,7 +21,7 @@ public:
 
 	bool PickUpEventClient(AChel* Player) override;
 	void OnLineTraced(AChel* Player) override;
-	void ToggleCustomDepth(bool NewIsOutliningNow) override;
+	void ToggleCustomDepth(bool NewIsOutliningNow, AChel* Player) override;
 
 public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Collision")

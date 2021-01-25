@@ -10,8 +10,11 @@ AInteractiveItem::AInteractiveItem()
 	bCanInterract = true;
 }
 
-void AInteractiveItem::ToggleCustomDepth(bool NewIsOutliningNow)
+void AInteractiveItem::ToggleCustomDepth(bool NewIsOutliningNow, AChel* Player)
 {
+	if (bCanInterract) {
+
+	}
 }
 
 void AInteractiveItem::SetOutlineColor(int32 ColorOutline)
@@ -29,4 +32,13 @@ bool AInteractiveItem::PickUpEventClient(AChel * Player)
 
 void AInteractiveItem::OnLineTraced(AChel* Player)
 {
+}
+
+bool AInteractiveItem::PickUpEventReleaseClient(AChel* Player) {
+	return false;
+}
+
+void AInteractiveItem::PickUpEventReleaseServer(AChel* Player)
+{
+
 }

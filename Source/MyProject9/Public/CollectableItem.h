@@ -27,7 +27,7 @@ public:
 		UStaticMeshComponent* Mesh;
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Scene")
 		USceneComponent* Scene;
-	void ToggleCustomDepth(bool IsOutliningNow) override;
+	void ToggleCustomDepth(bool IsOutliningNow, AChel* Player) override;
 	void SetOutlineColor(int32 ColorOutline) override;
 	virtual void OnLineTraced(AChel* Player) override;
 
