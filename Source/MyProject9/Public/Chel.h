@@ -439,6 +439,9 @@ public:
 	UPROPERTY(EditAnywhere, Category = "UI HUD") //класс стрелки подсказки
 		TSubclassOf<UTargetArrow> TargetArrowClass;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float InverseCoeff;
+
 	//HUD Variables
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite) //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 		UUserView* UserView;
@@ -688,6 +691,16 @@ public:
 		void StartAnimInCurSlotReverse(bool HaveAmmo);
 
 	void InvertMovement(float timeToOff); // инвертированное управление при попадании бутылки, которое снимается через timeToOff
+	void RemoveInvertMovement();
+	UFUNCTION(BlueprintImplementableEvent)
+		void AddChromaticInvet();
+	UFUNCTION(BlueprintImplementableEvent)
+		void RemoveChromaticInvet();
+
+	int32 AmountBottleEffects;
+
+
+
 
 	bool CanFireWeapon; // может ли чел стрелять из оружия
 

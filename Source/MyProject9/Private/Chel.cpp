@@ -128,6 +128,7 @@ AChel::AChel()
 	SpeedBustValue = 0;
 	DoesRadiationAntidot = 1;
 	StoneDamageBuffCount = 0;
+	AmountBottleEffects = 0;
 	ShieldsCount = 0;
 	Health = 0;
 	bIsAlreadyThrowing = false;
@@ -150,6 +151,7 @@ AChel::AChel()
 	bCanWalkingAndWatching = true;
 	IsAwake = true;
 	Index = -1;
+	InverseCoeff = 1.f;
 	bInEscMenu = false;
 	bInShopMenu = false;
 	TempAntiDotEffect = 1.0f;
@@ -1019,7 +1021,7 @@ void AChel::ShowStoneMulticast_Implementation() {
 void AChel::GoForward(float input) {
 	if (bCanWalkingAndWatching && !bInEscMenu && !bInShopMenu) {
 		if (input != 0.0f && IsNotInWebCam && CanThrowStone) {
-			AddMovementInput(GetActorForwardVector(), input * MoveCoeff);
+			AddMovementInput(GetActorForwardVector(), input * MoveCoeff * InverseCoeff);
 		}
 	}
 }
@@ -1027,7 +1029,7 @@ void AChel::GoForward(float input) {
 void AChel::GoRight(float input) {
 	if (bCanWalkingAndWatching && !bInEscMenu && !bInShopMenu) {
 		if (input != 0.0f && IsNotInWebCam && CanThrowStone) {
-			AddMovementInput(GetActorRightVector(), input * MoveCoeff);
+			AddMovementInput(GetActorRightVector(), input * MoveCoeff * InverseCoeff);
 		}
 	}
 }
@@ -1180,6 +1182,8 @@ void AChel::PlaySpawnAnimationSleep_Implementation() {
 	Widget_Note->SetVisibility(ESlateVisibility::Hidden);
 	SpawnDeadSound();
 	UserView->PlayAnimation(UserView->Shading);
+	AmountBottleEffects = 1;
+	RemoveInvertMovement();
 
 	if (LastInteractiveItem)
 	{
@@ -2611,6 +2615,21 @@ void AChel::RefreshWidgetAmmoOwning(int32 NewLeftAmmo, int32 NewMaxAmmo, int32 N
 
 void AChel::InvertMovement(float timeToOff)
 {
+	InverseCoeff = -1.f;
+	AddChromaticInvet();
+
+	AmountBottleEffects += 1;
+	FTimerHandle FuzeTimerHandle;
+	World->GetTimerManager().SetTimer(FuzeTimerHandle, this, &AChel::RemoveInvertMovement, timeToOff, false);
+}
+
+void AChel::RemoveInvertMovement()
+{
+	AmountBottleEffects -= 1;
+	if (InverseCoeff < 0 && AmountBottleEffects == 0) {
+		InverseCoeff = 1.f;
+		RemoveChromaticInvet();
+	}
 }
 
 void AChel::RefreshWidgetAmmoOwningClient_Implementation(int32 NewLeftAmmo, int32 NewMaxAmmo, int32 NewCurIndex)
