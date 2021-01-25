@@ -25,5 +25,6 @@ void UConAbility_ProjectileDamage::EndEffect()
 
 bool UConAbility_ProjectileDamage::UseAbilityClient(AChel* Player)
 {
+	UConsumableAbility::UseAbilityClient(Player);
 	return true;
 }
