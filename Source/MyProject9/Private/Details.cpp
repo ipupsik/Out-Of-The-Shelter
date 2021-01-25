@@ -25,6 +25,7 @@ void ADetails::PickUpEventServer(AChel* Player) {
 bool ADetails::PickUpEventClient(AChel* Player) {
 	Player->UserView->Details->SetText(FText::AsNumber(Player->AmountDetails + 1));
 	Player->AmountDetails++;
+	PlayPickUpSound();
 	if (GetLocalRole() != ROLE_Authority) {
 		SetActorEnableCollision(false);
 		SetActorHiddenInGame(true);

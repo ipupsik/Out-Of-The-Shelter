@@ -7,6 +7,7 @@
 
 bool UConsumableAbility::UseAbilityClient(AChel* Player)
 {
+	Player->PlayRAbilitySound(MySoundWave);
 	return true;
 }
 

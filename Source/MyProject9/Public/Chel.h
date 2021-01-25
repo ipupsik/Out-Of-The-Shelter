@@ -227,6 +227,9 @@ public:
 		void InvisibleEverywhere();
 
 	UFUNCTION(BlueprintImplementableEvent)
+		void PlayRAbilitySound(class USoundWave* SoundWave);
+
+	UFUNCTION(BlueprintImplementableEvent)
 		void CameraZoomIn();
 
 	UFUNCTION(BlueprintImplementableEvent)

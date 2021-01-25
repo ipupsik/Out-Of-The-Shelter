@@ -13,6 +13,7 @@ UConsumableAbility_HealPacket::UConsumableAbility_HealPacket()
 
 bool UConsumableAbility_HealPacket::UseAbilityClient(AChel* Player)
 {
+	UConsumableAbility::UseAbilityClient(Player);
 	return true;
 }
 

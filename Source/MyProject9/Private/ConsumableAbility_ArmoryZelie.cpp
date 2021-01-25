@@ -25,5 +25,6 @@ void UConsumableAbility_ArmoryZelie::EndEffect()
 
 bool UConsumableAbility_ArmoryZelie::UseAbilityClient(AChel* Player)
 {
+	UConsumableAbility::UseAbilityClient(Player);
 	return true;
 }

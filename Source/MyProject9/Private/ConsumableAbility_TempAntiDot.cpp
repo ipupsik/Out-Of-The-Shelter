@@ -25,5 +25,6 @@ void UConsumableAbility_TempAntiDot::EndEffect()
 
 bool UConsumableAbility_TempAntiDot::UseAbilityClient(AChel* Player)
 {
+	UConsumableAbility::UseAbilityClient(Player);
 	return true;
 }

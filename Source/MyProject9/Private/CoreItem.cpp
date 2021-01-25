@@ -24,6 +24,7 @@ void ACoreItem::PickUpEventServer(AChel* Player) {
 bool ACoreItem::PickUpEventClient(AChel * Player)
 {
 	Player->UserView->ArraySwitcher[TypeItem]->SetActiveWidgetIndex(1);
+	PlayPickUpSound();
 	if (GetLocalRole() != ROLE_Authority)
 		Destroy();
 	return true;

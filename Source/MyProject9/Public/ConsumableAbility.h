@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "UObject/NoExportTypes.h"
+#include "Sound/SoundWave.h"
 #include "ConsumableAbility.generated.h"
 
 class AChel;
@@ -19,6 +20,9 @@ class MYPROJECT9_API UConsumableAbility : public UObject
 public:
 	virtual bool UseAbilityClient(AChel* Player);
 	virtual void UseAbilityServer(AChel* Player);
+
+	UPROPERTY(EditAnywhere)
+		USoundWave* MySoundWave;
 
 	void SetAbilityToSlot();
 	void UpdateCount();

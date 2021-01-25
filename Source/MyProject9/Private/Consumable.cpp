@@ -22,8 +22,11 @@ void AConsumable::PickUpEventServer(AChel* Player)
 
 bool AConsumable::PickUpEventClient(AChel* Player)
 {
-	Player->NewRAbility(Ability_class);
-	if (GetLocalRole() != ROLE_Authority)
-		Destroy();
-	return true;
+	if (Player->NewRAbility(Ability_class))
+		PlayPickUpSound(); {
+		if (GetLocalRole() != ROLE_Authority)
+			Destroy();
+		return true;
+	}
+	return false;
 }
