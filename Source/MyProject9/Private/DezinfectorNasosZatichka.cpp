@@ -60,7 +60,7 @@ void ADezinfectorNasosZatichka::OnLineTraced(AChel* Player)
 	}
 	else
 	{
-		ToggleCustomDepth(false);
+		ToggleCustomDepth(false, Player);
 		if (Player->UserView->E_Mark->IsVisible())
 			Player->UserView->E_Mark->SetVisibility(ESlateVisibility::Hidden);
 	}

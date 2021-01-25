@@ -31,7 +31,7 @@ bool UQAbility_Rentgen::UseAbilityClient(AChel* Player)
 	Player->SenseCollision->GetOverlappingActors(RentgenItems, ACoreItem::StaticClass());
 	for (auto& it : RentgenItems)
 	{
-		Cast<ACoreItem>(it)->ToggleCustomDepth(true);
+		Cast<ACoreItem>(it)->ToggleCustomDepth(true, Player);
 	}
 	return false;
 }
@@ -43,7 +43,7 @@ bool UQAbility_Rentgen::DeUseAbilityClient(AChel* Player)
 	Player->SenseCollision->GetOverlappingActors(RentgenItems, ACoreItem::StaticClass());
 	for (auto& it : RentgenItems)
 	{
-		Cast<ACoreItem>(it)->ToggleCustomDepth(false);
+		Cast<ACoreItem>(it)->ToggleCustomDepth(false, Player);
 	}
 	return false;
 }
