@@ -11,7 +11,8 @@ UCLASS()
 class MYPROJECT9_API ADamageAreaCPP : public AActor
 {
 	GENERATED_BODY()
-	
+protected:
+	virtual void BeginPlay() override;
 public:	
 	// Sets default values for this actor's properties
 	ADamageAreaCPP();

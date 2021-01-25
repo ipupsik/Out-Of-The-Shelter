@@ -24,7 +24,7 @@ void AInteractiveCache::DisableEverywhere_Implementation()
 	bCanInterract = false;
 }
 
-void AInteractiveCache::ToggleCustomDepth(bool NewIsOutliningNow)
+void AInteractiveCache::ToggleCustomDepth(bool NewIsOutliningNow, AChel* Player)
 {
 	
 }

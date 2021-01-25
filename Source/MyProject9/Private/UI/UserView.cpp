@@ -2,9 +2,9 @@
 
 
 #include "UI/UserView.h"
-
 #include "Kismet/GameplayStatics.h"
 #include "Chel.h"
+#include "Ventil.h"
 
 void UUserView::NativeConstruct() {
 	Super::NativeConstruct();
@@ -56,6 +56,9 @@ void UUserView::OnAnimationFinished_Implementation(const UWidgetAnimation* Anima
 		PB_Opening->SetPercent(0);
 		PB_Opening->SetVisibility(ESlateVisibility::Hidden);
 		TimeLeft->SetVisibility(ESlateVisibility::Hidden);
+		if (Player->LastInteractiveItem && Player->IsSuccessOpening) {
+				Player->CallEnableGasVent();
+		}
 //		if (Cast<AOpenArea>(Player->LastItem) && Player->IsSuccessOpening) {
 //			Player->CallDoThomethinkArea();
 //		}

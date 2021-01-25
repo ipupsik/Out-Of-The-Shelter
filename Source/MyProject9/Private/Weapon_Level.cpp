@@ -26,7 +26,7 @@ void AWeapon_Level::ChangeAmount_Implementation(int32 NewAmount)
 
 void AWeapon_Level::OnLineTraced(AChel* Player) {
 	if (bCanInterract) {
-		ToggleCustomDepth(true);
+		ToggleCustomDepth(true, Player);
 		if (Player->CurrentWeapons[1]) {
 			if (GetClass() == Player->CurrentWeapons[1]->WeaponLevelClass && Player->CurrentWeapons[1]->LeftAmmo == Player->CurrentWeapons[1]->MaxAmmo) {
 				SetOutlineColor(1);

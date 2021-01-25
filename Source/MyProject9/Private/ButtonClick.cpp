@@ -19,7 +19,7 @@ AButtonClick::AButtonClick()
 	Decal->SetupAttachment(Scene);
 }
 
-void AButtonClick::ToggleCustomDepth(bool NewIsOutliningNow)
+void AButtonClick::ToggleCustomDepth(bool NewIsOutliningNow, AChel* Player)
 {
 	if (this->IsOutliningNow != NewIsOutliningNow) {
 		Mesh->SetRenderCustomDepth(NewIsOutliningNow);
@@ -68,7 +68,7 @@ bool AButtonClick::PickUpEventClient(AChel* Player)
 void AButtonClick::OnLineTraced(AChel* Player)
 {
 	if (bCanInterract && Player->GS->IsShelterAvaliable) {
-		ToggleCustomDepth(true);
+		ToggleCustomDepth(true, Player);
 		if (Player->GI->bIsEnabledPrompt)
 			Player->UserView->PropmptTextInterract->SetText(PromptText);
 		if (!Player->UserView->E_Mark->IsVisible()) {

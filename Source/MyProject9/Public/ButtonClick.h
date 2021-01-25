@@ -35,7 +35,7 @@ public:
 		USceneComponent* Scene;
 
 public:
-	virtual void ToggleCustomDepth(bool NewIsOutliningNow);
+	virtual void ToggleCustomDepth(bool NewIsOutliningNow, AChel* Player);
 
 	virtual void PickUpEventServer(AChel* Player);
 	virtual bool PickUpEventClient(AChel* Player);

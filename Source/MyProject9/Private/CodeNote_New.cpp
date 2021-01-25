@@ -37,7 +37,7 @@ bool ACodeNote_New::PickUpEventClient(AChel* Player)
 void ACodeNote_New::OnLineTraced(AChel* Player)
 {
 	if (bCanInterract) {
-		ToggleCustomDepth(true);
+		ToggleCustomDepth(true, Player);
 		if (Player->GI->bIsEnabledPrompt)
 			Player->UserView->PropmptTextInterract->SetText(PromptText);
 		if (!Player->UserView->E_Mark->IsVisible()) {
@@ -48,7 +48,7 @@ void ACodeNote_New::OnLineTraced(AChel* Player)
 	}
 }
 
-void ACodeNote_New::ToggleCustomDepth(bool NewIsOutliningNow)
+void ACodeNote_New::ToggleCustomDepth(bool NewIsOutliningNow, AChel* Player)
 {
 	if (bCanInterract) {
 		if (this->IsOutliningNow != NewIsOutliningNow) {

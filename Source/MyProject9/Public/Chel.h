@@ -89,6 +89,7 @@ protected:
 	void OpenAreaPressed();
 	void OpenAreaReleased();
 
+
 	void UpdateSpectating_Left();
 	void UpdateSpectating_Right();
 
@@ -97,6 +98,12 @@ protected:
 	UFUNCTION(Server, Reliable, WithValidation)
 		void UpdateSpectating_Right_Server();
 public:
+	UFUNCTION(Server, Reliable, WithValidation)
+		void CallEnableGasVent();
+	UFUNCTION(Server, Reliable, WithValidation)
+		void PickUp_Released_Server();
+
+
 	void ShowInventory();
 	void UnShowInventory();
 	void SpawnPlayer();
@@ -457,6 +464,7 @@ public:
 	TArray<int32>KeysCount;
 	bool DoesHave_Owner;
 	AInteractiveItem* LastInteractiveItem;
+	AInteractiveItem* LastInteractiveItem_Server;
 	ACoreItem* LastOutlineItem;
 	//GlobalSettings
 	bool IsServerAuth;

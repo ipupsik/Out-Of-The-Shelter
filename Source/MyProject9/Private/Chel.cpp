@@ -21,6 +21,7 @@
 #include "QAbility.h"
 #include "PromptCollisionArea.h"
 #include "QAbilityItem.h"
+#include "Ventil.h"
 #include "InteractiveCache.h"
 
 enum AreaType
@@ -557,7 +558,7 @@ void AChel::Tick(float DeltaTime)
 				AInteractiveItem* TracedItem = Cast<AInteractiveItem>(OutHit.GetActor());
 				if (TracedItem) { //Если мы стукнулись в нужный нам предмет
 					if (LastInteractiveItem && LastInteractiveItem != TracedItem) {
-						LastInteractiveItem->ToggleCustomDepth(false);
+						LastInteractiveItem->ToggleCustomDepth(false, this);
 						UserView->E_Mark->SetVisibility(ESlateVisibility::Hidden);
 						if(GI->bIsEnabledPrompt)
 							UserView->PropmptTextInterract->SetVisibility(ESlateVisibility::Hidden);
@@ -569,7 +570,7 @@ void AChel::Tick(float DeltaTime)
 				}
 				else {
 					if (LastInteractiveItem) {
-						LastInteractiveItem->ToggleCustomDepth(false);
+						LastInteractiveItem->ToggleCustomDepth(false, this);
 						LastInteractiveItem = nullptr;
 						UserView->E_Mark->SetVisibility(ESlateVisibility::Hidden);
 						if(GI->bIsEnabledPrompt)
@@ -579,7 +580,7 @@ void AChel::Tick(float DeltaTime)
 			}
 			else {
 				if (LastInteractiveItem) {
-					LastInteractiveItem->ToggleCustomDepth(false);
+					LastInteractiveItem->ToggleCustomDepth(false, this);
 					LastInteractiveItem = nullptr;
 					UserView->E_Mark->SetVisibility(ESlateVisibility::Hidden);
 					if(GI->bIsEnabledPrompt)
@@ -822,11 +823,15 @@ void AChel::OpenAreaPressed()
 
 void AChel::OpenAreaReleased()
 {
-	if (AreaCode != -1) {
+	/*if (AreaCode != -1) {
 		if (IsSuccessOpening) {
 			IsSuccessOpening = false;
 			UserView->StopAllAnimations();
 		}
+	}*/
+	if (LastInteractiveItem || AreaCode != -1) {
+		IsSuccessOpening = false;
+		UserView->StopAllAnimations();
 	}
 }
 
@@ -1231,7 +1236,7 @@ void AChel::PlaySpawnAnimationSleep_Implementation() {
 
 	if (LastInteractiveItem)
 	{
-		LastInteractiveItem->ToggleCustomDepth(false);
+		LastInteractiveItem->ToggleCustomDepth(false, this);
 		LastInteractiveItem = nullptr;
 		UserView->E_Mark->SetVisibility(ESlateVisibility::Hidden);
 		if (GI->bIsEnabledPrompt)
@@ -1277,6 +1282,15 @@ void AChel::AwakeAnimation_End()
 	}
 }
 
+void AChel::CallEnableGasVent_Implementation() {
+	AVentil* CurVent = Cast<AVentil>(LastInteractiveItem_Server);
+	if(CurVent)
+		CurVent->CreateGasOnLevel();
+}
+bool AChel::CallEnableGasVent_Validate() {
+	return true;
+}
+
 //PlayStartingAnimation---------------------
 void AChel::PlaySpawnAnimationAwake_Implementation() {
 	TimeLine_FOV_WebCam->Stop();
@@ -1301,6 +1315,7 @@ void AChel::PlaySpawnAnimationAwake_Implementation() {
 
 //-----------------------------
 void AChel::PickUp() {
+	IsSuccessOpening = true;
 	if (!bInEscMenu && !bInShopMenu) {
 		if (IsNotInWebCam) {
 			if (LastInteractiveItem)
@@ -1321,7 +1336,22 @@ void AChel::PickUp() {
 
 void AChel::PickUp_Released()
 {
+	IsSuccessOpening = false;
 	if (bCanWalkingAndWatching) {
+		if (IsNotInWebCam) {
+			if (LastInteractiveItem)
+			{
+				if (LastInteractiveItem->PickUpEventReleaseClient(this))
+					PickUp_Released_Server();
+			}
+		}
+		else
+		{
+			TimeLine_FOV_WebCam->Reverse();
+			CameraZoomOut();
+		}
+	}
+	/*if (bCanWalkingAndWatching) {
 		if (IsNotInWebCam) {
 			IsSuccessOpening = false;
 			if (Cast<AOpenArea>(LastInteractiveItem))
@@ -1335,7 +1365,29 @@ void AChel::PickUp_Released()
 			TimeLine_FOV_WebCam->Reverse();
 			CameraZoomOut();
 		}
+	}*/
+}
+
+void AChel::PickUp_Released_Server_Implementation() {
+	FHitResult OutHit;
+
+	FVector StartLocation = CameraComp->GetComponentLocation();
+	FVector EndLocation = StartLocation + CameraComp->GetForwardVector() * 300;
+
+	FCollisionQueryParams CollisionParams;
+
+	World->LineTraceSingleByChannel(OutHit, StartLocation, EndLocation, ECC_Visibility, CollisionParams);
+	if (OutHit.GetActor()) {
+		AInteractiveItem* TracedItem = Cast<AInteractiveItem>(OutHit.GetActor());
+		if (TracedItem)
+		{
+			TracedItem->PickUpEventReleaseServer(this);
+		}
 	}
+}
+
+bool  AChel::PickUp_Released_Server_Validate() {
+	return true;
 }
 
 void AChel::ChangeIsAvaliableCache_Implementation()
@@ -1377,9 +1429,11 @@ void AChel::PickUp_Server_Implementation()
 	World->LineTraceSingleByChannel(OutHit, StartLocation, EndLocation, ECC_Visibility, CollisionParams);
 	if (OutHit.GetActor()) {
 		AInteractiveItem* TracedItem = Cast<AInteractiveItem>(OutHit.GetActor());
-		if (TracedItem)
+		
+		LastInteractiveItem_Server = TracedItem;
+		if (LastInteractiveItem_Server)
 		{
-			TracedItem->PickUpEventServer(this);
+			LastInteractiveItem_Server->PickUpEventServer(this);
 		}
 	}
 }
@@ -1982,7 +2036,7 @@ void AChel::ShowRandomItem_Implementation() {
 	if (ImportantItems.Num() != 0)
 	{
 		LastOutlineItem = Cast<ACoreItem>(ImportantItems[FMath::Rand() % ImportantItems.Num()]);
-		LastOutlineItem->ToggleCustomDepth(true);
+		LastOutlineItem->ToggleCustomDepth(true, this);
 		AddTargetArrowDynamic(LastOutlineItem);
 
 		FTimerHandle FuzeTimerHandle;
@@ -1994,7 +2048,7 @@ void AChel::ShowRandomItem_Implementation() {
 void AChel::HideRandomItem() {
 	if (LastOutlineItem) 
 	{
-		LastOutlineItem->ToggleCustomDepth(false);
+		LastOutlineItem->ToggleCustomDepth(false, this);
 		LastOutlineItem = nullptr;
 		RemoveTargetArrowDynamic();
 	}

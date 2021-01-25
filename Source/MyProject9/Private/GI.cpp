@@ -5,5 +5,6 @@
 
 void UGI::Init() {
 	Super::Init();
+	bIsEnabledPrompt = true;
 }
 
