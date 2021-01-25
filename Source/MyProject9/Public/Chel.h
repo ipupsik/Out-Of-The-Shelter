@@ -48,6 +48,7 @@ class AWeapon_Character;
 class UConsumableAbility;
 class AInteractiveItem;
 class ACoreItem;
+class UConsumableAbility_Invisible;
 
 UCLASS()
 class MYPROJECT9_API AChel : public ACharacter
@@ -232,6 +233,9 @@ public:
 
 	UFUNCTION(BlueprintImplementableEvent)
 		void InvisibleEverywhere();
+
+	UFUNCTION(BlueprintImplementableEvent)
+		void ReverceInvisibleEverywhere();
 
 	UFUNCTION(BlueprintImplementableEvent)
 		void PlayRAbilitySound(class USoundWave* SoundWave);
@@ -555,6 +559,10 @@ public:
 
 	int8 ProjectileDamageCount;
 	float ProjectileDamageEffect;
+
+	bool IsNowInvisible;
+	FTimerHandle TimerHandleInvisible;
+	UConsumableAbility_Invisible* LastInvisibleAbilityObj;
 	//RAbility
 
 	//Logic Boolean Variables

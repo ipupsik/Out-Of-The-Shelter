@@ -140,6 +140,7 @@ AChel::AChel()
 	CanThrowStone = true;
 	CanFireWeapon = true;
 	WebCamIterator = -1;
+	IsNowInvisible = false;
 	DoubleArmThrowing = false;
 	bIsAlreadyThrowingLeft = false;
 	CanalizationDamage = 1.0f;
