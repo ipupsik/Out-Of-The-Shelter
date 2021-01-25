@@ -296,7 +296,11 @@ public:
 	void DeleteArrowDelayBoltorez();
 	void DeleteArrowDelayOtvertka();
 
-	void ReplaceQAbilityItem(UClass* QAbilityItemclass, int32 ItemIndex);
+	void ReplaceQAbilityItem(UClass* AbilityItemclass, int32 ItemIndex);
+
+	void ReplaceRAbilityItem_Client(UClass* AbilityItemclass);
+	UFUNCTION(Server, Reliable, WithValidation)
+		void ReplaceRAbilityItem_Server(UClass* AbilityItemclass);
 
 	UFUNCTION(Client, Reliable)
 		void HideNoteWidget();
