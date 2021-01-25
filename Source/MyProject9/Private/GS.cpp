@@ -27,7 +27,7 @@ AGS::AGS() {
 	AcceptPiedistalAmount = 0;
 	AmountOfPlayers = 0;
 	AgreedPlayers = 0;
-	IsCanalizaciaPlayed = true;
+
 	GeneralLayer = 0;
 	AreaAvaliables.Init(false, 3);
 	AreaClosed.Init(false, 3);
@@ -57,7 +57,6 @@ void AGS::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps
 	DOREPLIFETIME(AGS, IsShelterAvaliable);
 	DOREPLIFETIME(AGS, IsVentilaciaAvaliable);
 	DOREPLIFETIME(AGS, IsCanalizaciaAvaliable);
-	DOREPLIFETIME(AGS, IsCanalizaciaPlayed);
 }
 
 void AGS::BeginPlay()
@@ -120,9 +119,7 @@ void AGS::BeginPlay()
 			int ArrayIndex = FMath::Rand() % CacheItems_Stuff_IsAvaliable.Num();
 			while (!CacheItems_Stuff_IsAvaliable[ArrayIndex])
 			{
-				ArrayIndex++;
-				if (ArrayIndex >= CacheItems_Stuff_IsAvaliable.Num())
-					ArrayIndex = 0;
+				ArrayIndex = FMath::Rand() % CacheItems_Stuff_IsAvaliable.Num();
 			}
 			AActor* NewItem = GetWorld()->SpawnActor<AActor>(KeyShelter);
 			FAttachmentTransformRules AttachmentRules = FAttachmentTransformRules(EAttachmentRule::KeepRelative, true);
@@ -139,9 +136,7 @@ void AGS::BeginPlay()
 				int ArrayIndex = FMath::Rand() % CacheItems_Stuff_IsAvaliable.Num();
 				while (!CacheItems_Stuff_IsAvaliable[ArrayIndex])
 				{
-					ArrayIndex++;
-					if (ArrayIndex >= CacheItems_Stuff_IsAvaliable.Num())
-						ArrayIndex = 0;
+					ArrayIndex = FMath::Rand() % CacheItems_Stuff_IsAvaliable.Num();
 				}
 				AActor* NewItem = GetWorld()->SpawnActor<AActor>(Boltorez);
 				FAttachmentTransformRules AttachmentRules = FAttachmentTransformRules(EAttachmentRule::KeepRelative, true);
@@ -153,17 +148,13 @@ void AGS::BeginPlay()
 				CacheItems_Stuff_IsAvaliable[ArrayIndex] = false;
 			}
 		}
-		else
-			IsCanalizaciaPlayed = false;
 
 		if (MaxPlayersCount >= 3) {
 			for (int i = 0; i < 1; ++i) {
 				int ArrayIndex = FMath::Rand() % CacheItems_Stuff_IsAvaliable.Num();
 				while (!CacheItems_Stuff_IsAvaliable[ArrayIndex])
 				{
-					ArrayIndex++;
-					if (ArrayIndex >= CacheItems_Stuff_IsAvaliable.Num())
-						ArrayIndex = 0;
+					ArrayIndex = FMath::Rand() % CacheItems_Stuff_IsAvaliable.Num();
 				}
 
 				AActor* NewItem = GetWorld()->SpawnActor<AActor>(Otvertka);
@@ -181,9 +172,7 @@ void AGS::BeginPlay()
 			int ArrayIndex = FMath::Rand() % CacheItems_Stuff_IsAvaliable.Num();
 			while (!CacheItems_Stuff_IsAvaliable[ArrayIndex])
 			{
-				ArrayIndex++;
-				if (ArrayIndex >= CacheItems_Stuff_IsAvaliable.Num())
-					ArrayIndex = 0;
+				ArrayIndex = FMath::Rand() % CacheItems_Stuff_IsAvaliable.Num();
 			}
 			AActor* NewItem = GetWorld()->SpawnActor<AActor>(HealPacket_class);
 			FAttachmentTransformRules AttachmentRules = FAttachmentTransformRules(EAttachmentRule::KeepRelative, true);
@@ -228,9 +217,7 @@ void AGS::BeginPlay()
 				int ArrayIndex = FMath::Rand() % Keys_IsAvaliable.Num();
 				while (!Keys_IsAvaliable[ArrayIndex])
 				{
-					ArrayIndex++;
-					if (ArrayIndex >= CacheItems_Stuff_IsAvaliable.Num())
-						ArrayIndex = 0;
+					ArrayIndex = FMath::Rand() % Keys_IsAvaliable.Num();
 				}
 
 				AActor* NewItem = nullptr;
@@ -267,9 +254,7 @@ void AGS::BeginPlay()
 			int ArrayIndex = FMath::Rand() % Details_IsAvaliable.Num();
 			while (!Details_IsAvaliable[ArrayIndex])
 			{
-				ArrayIndex++;
-				if (ArrayIndex >= Details_IsAvaliable.Num())
-					ArrayIndex = 0;
+				ArrayIndex = FMath::Rand() % Details_IsAvaliable.Num();
 			}
 
 			AActor* NewItem = GetWorld()->SpawnActor<AActor>(Details_class, Details_Transform[ArrayIndex]);

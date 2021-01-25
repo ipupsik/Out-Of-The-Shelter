@@ -21,28 +21,24 @@ public:
 	virtual bool UseAbilityClient(AChel* Player);
 	virtual void UseAbilityServer(AChel* Player);
 
-	virtual FVector GetCacheScale3D(int32 CacheIndex);
-	virtual FRotator GetCacheRotation(int32 CacheIndex);
-	virtual FVector GetCacheLocation(int32 CacheIndex);
-
 	UPROPERTY(EditAnywhere)
 		USoundWave* MySoundWave;
 
 	void SetAbilityToSlot();
-
+	void UpdateCount();
 	void SetCurRAbilityUserView(AChel* Player);
 	UFUNCTION(BlueprintCallable)
 		void ResetAbility();
 	UFUNCTION(BlueprintCallable)
 		void ResetCurRAbilityUserView(AChel* Player);
 
+	int32 CurCount;
+	UPROPERTY(EditAnywhere)
+		int32 MaxCountToStack;
 	UPROPERTY(EditAnywhere)
 		UObject* Icon;
 	UPROPERTY(BlueprintReadWrite)
 		URAbilitySlot* UserViewSlot;
 	UPROPERTY(EditAnywhere)
 		float Duration;
-
-	UPROPERTY(EditAnywhere, Category = "Main_Vars")
-		TSubclassOf<class AConsumable> Consumable_class;
 };

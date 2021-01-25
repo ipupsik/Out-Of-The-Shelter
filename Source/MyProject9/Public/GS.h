@@ -178,13 +178,10 @@ public:
 	UPROPERTY(Replicated)
 		bool IsCanalizaciaAvaliable;
 	bool IsGameStarted;
-	UPROPERTY(Replicated)
-	bool IsCanalizaciaPlayed;
 
 	TArray<FTransform>Keys_Transform;
 	TArray<bool>Keys_IsAvaliable;
 	TArray<FTransform>Details_Transform;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TArray<bool>Details_IsAvaliable;
 
 	TArray<AInteractiveCache*>Caches;

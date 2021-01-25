@@ -35,18 +35,16 @@ bool ADetails::PickUpEventClient(AChel* Player) {
 
 void ADetails::RemoveAndRefreshTimer()
 {
-	int NewIndex = EnabledArrayIndex;
+	int NewIndex = ArrayIndex;
 	AGS* GS = GetWorld()->GetGameState<AGS>();
 	while (!GS->Details_IsAvaliable[NewIndex])
 	{
-		NewIndex++;
-		if (NewIndex >= GS->Details_IsAvaliable.Num())
-			NewIndex = 0;
+		NewIndex = FMath::Rand() % GS->Details_IsAvaliable.Num();
 	}
-	GS->Details_IsAvaliable[EnabledArrayIndex] = true;
+	GS->Details_IsAvaliable[ArrayIndex] = true;
 	GS->Details_IsAvaliable[NewIndex] = false;
 
-	EnabledArrayIndex = NewIndex;
+	ArrayIndex = NewIndex;
 	ReplaceMulticast(GS->Details_Transform[NewIndex]);
 	FTimerHandle FuzeTimerHandle;
 	GetWorld()->GetTimerManager().SetTimer(FuzeTimerHandle, this, &ADetails::Refresh, 12.f, false);
