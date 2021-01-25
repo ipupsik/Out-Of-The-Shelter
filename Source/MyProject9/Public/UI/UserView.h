@@ -78,6 +78,9 @@ public:
 
 	UPROPERTY(meta = (BindWidget))
 		UTextBlock* AmmoMax;
+
+	UPROPERTY(meta = (BindWidget))
+		UTextBlock* Details;
 	
 	//---------------------------
 	UPROPERTY(meta = (BindWidget)) //!!!!!!!!!!!!!!!!!!!!!!!

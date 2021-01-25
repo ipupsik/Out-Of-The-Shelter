@@ -540,6 +540,17 @@ public:
 	FRotator BaseWebCamRotation;
 	
 public:
+	//RAbility
+	int8 ArmoryZelieCount;
+	float ArmoryZelieEffect;
+
+	int8 TempAntiDotCount;
+	float TempAntiDotEffect;
+
+	int8 ProjectileDamageCount;
+	float ProjectileDamageEffect;
+	//RAbility
+
 	//Logic Boolean Variables
 	bool bLineTrace_is_need_refresh;
 		bool bCanPossessWebCam;

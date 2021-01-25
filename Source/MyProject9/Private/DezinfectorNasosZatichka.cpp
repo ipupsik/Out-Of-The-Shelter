@@ -58,15 +58,19 @@ void ADezinfectorNasosZatichka::OnLineTraced(AChel* Player)
 		if (!Player->UserView->E_Mark->IsVisible())
 			Player->UserView->E_Mark->SetVisibility(ESlateVisibility::Visible);
 	}
+	else
+	{
+		ToggleCustomDepth(false);
+		if (Player->UserView->E_Mark->IsVisible())
+			Player->UserView->E_Mark->SetVisibility(ESlateVisibility::Hidden);
+	}
 }
 
 void ADezinfectorNasosZatichka::ToggleCustomDepth(bool NewIsOutliningNow, AChel* Player)
 {
-	if (Nasos->bIsAvaliable) {
-		if (this->IsOutliningNow != NewIsOutliningNow) {
-			Zatichka->SetRenderCustomDepth(NewIsOutliningNow);
-			Zatichka->MarkRenderStateDirty();
-			this->IsOutliningNow = NewIsOutliningNow;
-		}
+	if (this->IsOutliningNow != NewIsOutliningNow) {
+		Zatichka->SetRenderCustomDepth(NewIsOutliningNow);
+		Zatichka->MarkRenderStateDirty();
+		this->IsOutliningNow = NewIsOutliningNow;
 	}
 }

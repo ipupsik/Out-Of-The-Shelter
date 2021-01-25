@@ -13,7 +13,11 @@ UCLASS()
 class MYPROJECT9_API UQAbility_Rentgen : public UQAbility
 {
 	GENERATED_BODY()
+public:
 	
+	virtual bool UseAbilityClient(AChel* Player) override;
+	virtual bool DeUseAbilityClient(AChel* Player) override;
+
 	FVector GetCacheScale3D(int32 CacheIndex) override;
 	FRotator GetCacheRotation(int32 CacheIndex) override;
 	FVector GetCacheLocation(int32 CacheIndex) override;

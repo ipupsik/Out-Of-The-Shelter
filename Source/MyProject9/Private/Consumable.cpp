@@ -2,6 +2,7 @@
 
 
 #include "Consumable.h"
+#include "Chel.h"
 
 AConsumable::AConsumable() {
 	Scene = CreateDefaultSubobject<USceneComponent>("Scene");
@@ -22,6 +23,7 @@ void AConsumable::PickUpEventServer(AChel* Player)
 bool AConsumable::PickUpEventClient(AChel* Player)
 {
 	Player->NewRAbility(Ability_class);
-	Destroy();
+	if (GetLocalRole() != ROLE_Authority)
+		Destroy();
 	return true;
 }

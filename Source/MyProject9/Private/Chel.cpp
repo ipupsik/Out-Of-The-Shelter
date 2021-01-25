@@ -152,9 +152,12 @@ AChel::AChel()
 	Index = -1;
 	bInEscMenu = false;
 	bInShopMenu = false;
+	TempAntiDotEffect = 1.0f;
+	ArmoryZelieEffect = 1.0f;
 	AmountDetails = 5;
 //	OpenAreaObj = nullptr;
 	TickEnableGeneratorWidget = false;
+	ProjectileDamageEffect = 1.0f;
 	KeysCount.Init(0, 3);
 	TargetItemsStatic.Init(nullptr, 0);
 	TargetArrowsStatic.Init(nullptr, 0);
@@ -203,86 +206,30 @@ void AChel::DisableChelDetector()
 	}
 }
 
-//void AChel::EnableRentgen()
-//{
-//	IsRentgenRender = true;
-//	SenseCollision->SetRenderCustomDepth(true);
-//	SenseCollision->MarkRenderStateDirty();
-//
-//	TArray<AActor*>RentgenItems1;
-//	SenseCollision->GetOverlappingActors(RentgenItems1, GS->Boltorez);
-//	for (auto& it : RentgenItems1)
-//	{
-//		APickableItem* RentgenOverlappItem = Cast<APickableItem>(it);
-//		RentgenOverlappItem->Item->SetRenderCustomDepth(true);
-//		RentgenOverlappItem->Item->MarkRenderStateDirty();
-//		UE_LOG(LogTemp, Warning, TEXT("Find Boltorez"));
-//	}
-//	TArray<AActor*>RentgenItems2;
-//	SenseCollision->GetOverlappingActors(RentgenItems2, GS->KeyShelter);
-//	for (auto& it : RentgenItems2)
-//	{
-//		APickableItem* RentgenOverlappItem = Cast<APickableItem>(it);
-//		RentgenOverlappItem->Item->SetRenderCustomDepth(true);
-//		RentgenOverlappItem->Item->MarkRenderStateDirty();
-//		UE_LOG(LogTemp, Warning, TEXT("Find KeyShelter"));
-//	}
-//	TArray<AActor*>RentgenItems3;
-//	SenseCollision->GetOverlappingActors(RentgenItems3, GS->Otvertka);
-//	for (auto& it : RentgenItems3)
-//	{
-//		APickableItem* RentgenOverlappItem = Cast<APickableItem>(it);
-//		RentgenOverlappItem->Item->SetRenderCustomDepth(true);
-//		RentgenOverlappItem->Item->MarkRenderStateDirty();
-//		UE_LOG(LogTemp, Warning, TEXT("Find Otvertka"));
-//	}
-//}
-
-	/*IsRentgenRender = false;
-	SenseCollision->SetRenderCustomDepth(false);
-	SenseCollision->MarkRenderStateDirty();
-
-	TArray<AActor*>RentgenItems1;
-	SenseCollision->GetOverlappingActors(RentgenItems1, GS->Boltorez);
-	for (auto& it : RentgenItems1)
-	{
-		APickableItem* RentgenOverlappItem = Cast<APickableItem>(it);
-		RentgenOverlappItem->Item->SetRenderCustomDepth(false);
-		RentgenOverlappItem->Item->MarkRenderStateDirty();
-	}
-	TArray<AActor*>RentgenItems2;
-	SenseCollision->GetOverlappingActors(RentgenItems2, GS->KeyShelter);
-	for (auto& it : RentgenItems2)
-	{
-		APickableItem* RentgenOverlappItem = Cast<APickableItem>(it);
-		RentgenOverlappItem->Item->SetRenderCustomDepth(false);
-		RentgenOverlappItem->Item->MarkRenderStateDirty();
-	}
-	TArray<AActor*>RentgenItems3;
-	SenseCollision->GetOverlappingActors(RentgenItems3, GS->Otvertka);
-	for (auto& it : RentgenItems3)
-	{
-		APickableItem* RentgenOverlappItem = Cast<APickableItem>(it);
-		RentgenOverlappItem->Item->SetRenderCustomDepth(false);
-		RentgenOverlappItem->Item->MarkRenderStateDirty();
-	}*/
-
 void AChel::QAbilityEnable()
 {
-
+	if (CurQAbility)
+	{
+		if (CurQAbility->UseAbilityClient(this))
+			CurQAbility->UseAbilityServer(this);
+	}
 }
 
 void AChel::QAbilityDisable()
 {
-
+	if (CurQAbility)
+	{
+		if (CurQAbility->DeUseAbilityClient(this))
+			CurQAbility->DeUseAbilityServer(this);
+	}
 }
 
 void AChel::RAbilityEnable_Client()
 {
-	if (RAbilityTypeIndex != -1 && !bInShopMenu && !bInEscMenu && bCanWalkingAndWatching)
+	if (RAbilityTypeIndex != -1 && !bInShopMenu && !bInEscMenu && bCanWalkingAndWatching && IsInGame)
 	{
-		RAbilityPanel[RAbilityTypeIndex]->UseAbilityClient(this);
-		RAbilityEnable_Server(RAbilityPanel[RAbilityTypeIndex]->GetClass());
+		if (RAbilityPanel[RAbilityTypeIndex]->UseAbilityClient(this))
+			RAbilityEnable_Server(RAbilityPanel[RAbilityTypeIndex]->GetClass());
 		UseRAbility();
 	}
 }
@@ -503,7 +450,7 @@ void AChel::Tick(float DeltaTime)
 
 	if (IsInGame == true) {
 		if (IsServerAuth) {
-			Health += DeltaTime * 2 * 0.01f * RadCoeff * CanalizationDamage / 1.5f * DoesRadiationAntidot * DoesNotImmortal;
+			Health += DeltaTime * 2 * 0.01f * RadCoeff * CanalizationDamage / 1.5f  * TempAntiDotEffect;
 			if (Health > 1.0f) {
 				if (DoesHave[Boltorez])
 					GS->CurrentBoltorez--;

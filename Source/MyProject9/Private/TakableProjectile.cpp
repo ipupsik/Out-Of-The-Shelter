@@ -30,7 +30,7 @@ void ATakableProjectile::OnOverlapBegin(class UPrimitiveComponent* OverlappedCom
 				{
 					UE_LOG(LogTemp, Warning, TEXT("Weapon hit chel"));
 					if (Player->GetLocalRole() == ROLE_Authority) {
-						Player->Health += Damage / (1 + 0.2 * Player->ShieldsCount) * Player->DoesNotImmortal;
+						Player->Health += GetDamage(Player);
 						if (Player->Health + DeltaRadiation >= 1.0f)
 						{
 							Player->KillerIndex = IndexOwner;

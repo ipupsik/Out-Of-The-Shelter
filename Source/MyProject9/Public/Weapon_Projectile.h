@@ -8,6 +8,8 @@
 #include "Kismet/GameplayStatics.h"
 #include "Weapon_Projectile.generated.h"
 
+class AChel;
+
 UCLASS()
 class MYPROJECT9_API AWeapon_Projectile : public AActor
 {
@@ -19,7 +21,7 @@ public:
 
 	int32 IndexOwner;
 
-
+	float GetDamage(AChel* Player);
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	UProjectileMovementComponent* ProjectMovement;

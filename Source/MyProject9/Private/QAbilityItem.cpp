@@ -39,5 +39,7 @@ bool AQAbilityItem::PickUpEventClient(AChel* Player)
 	FSlateBrush NewBrush;
 	NewBrush.SetResourceObject(TempAbility->Icon);
 	Player->UserView->CurQSlot->AbilityImage->SetBrush(NewBrush);
+	if (GetLocalRole() != ROLE_Authority)
+		Destroy();
 	return true;
 }

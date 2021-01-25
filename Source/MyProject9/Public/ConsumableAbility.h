@@ -17,7 +17,7 @@ class MYPROJECT9_API UConsumableAbility : public UObject
 	GENERATED_BODY()
 	
 public:
-	virtual void UseAbilityClient(AChel* Player);
+	virtual bool UseAbilityClient(AChel* Player);
 	virtual void UseAbilityServer(AChel* Player);
 
 	void SetAbilityToSlot();
@@ -35,4 +35,6 @@ public:
 		UObject* Icon;
 	UPROPERTY(BlueprintReadWrite)
 		URAbilitySlot* UserViewSlot;
+	UPROPERTY(EditAnywhere)
+		float Duration;
 };

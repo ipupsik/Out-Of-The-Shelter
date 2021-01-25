@@ -11,9 +11,9 @@ UConsumableAbility_HealPacket::UConsumableAbility_HealPacket()
 	MaxCountToStack = 3;
 }
 
-void UConsumableAbility_HealPacket::UseAbilityClient(AChel* Player)
+bool UConsumableAbility_HealPacket::UseAbilityClient(AChel* Player)
 {
-	
+	return true;
 }
 
 void UConsumableAbility_HealPacket::UseAbilityServer(AChel* Player)

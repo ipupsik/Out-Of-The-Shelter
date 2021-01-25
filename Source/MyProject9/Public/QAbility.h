@@ -7,6 +7,7 @@
 #include "QAbility.generated.h"
 
 class AQAbilityItem;
+class AChel;
 /**
  * 
  */
@@ -15,6 +16,12 @@ class MYPROJECT9_API UQAbility : public UObject
 {
 	GENERATED_BODY()
 public:
+	virtual bool UseAbilityClient(AChel* Player);
+	virtual void UseAbilityServer(AChel* Player);
+
+	virtual bool DeUseAbilityClient(AChel* Player);
+	virtual void DeUseAbilityServer(AChel* Player);
+
 	virtual FVector GetCacheScale3D(int32 CacheIndex);
 	virtual FRotator GetCacheRotation(int32 CacheIndex);
 	virtual FVector GetCacheLocation(int32 CacheIndex);

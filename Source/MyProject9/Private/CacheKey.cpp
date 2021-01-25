@@ -2,6 +2,8 @@
 
 
 #include "CacheKey.h"
+#include "Chel.h"
+#include "GS.h"
 
 ACacheKey::ACacheKey() {
 	Scene = CreateDefaultSubobject<USceneComponent>("Scene");
@@ -23,7 +25,10 @@ void ACacheKey::PickUpEventServer(AChel* Player) {
 bool ACacheKey::PickUpEventClient(AChel* Player) {
 	Player->UserView->ArrayCacheKey[TypeKey]->SetText(FText::AsNumber(Player->KeysCount[TypeKey] + 1));
 	Player->KeysCount[TypeKey]++;
-	Destroy();
+	if (GetLocalRole() != ROLE_Authority) {
+		SetActorEnableCollision(false);
+		SetActorHiddenInGame(true);
+	}
 	return true;
 }
 

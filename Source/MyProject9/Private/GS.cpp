@@ -13,6 +13,7 @@
 #include "PromptCollisionArea.h"
 #include "CollectableItem.h"
 #include "InteractiveCache.h"
+#include "Details.h"
 #include "Weapon_Character.h"
 
 AGS::AGS() {
@@ -238,6 +239,29 @@ void AGS::BeginPlay()
 				}
 			}
 		}
+		// Details
+		TArray<AActor*>TargetPoints_Details;
+		UGameplayStatics::GetAllActorsOfClassWithTag(GetWorld(), ATargetPoint::StaticClass(), FName("Details"), TargetPoints_Details);
+
+		for (int i = 0; i < TargetPoints_Details.Num(); ++i)
+		{
+			Details_Transform.Add(TargetPoints_Details[i]->GetActorTransform());
+			Details_IsAvaliable.Add(true);
+		}
+
+		for (int Det = 0; Det < 15; ++Det)
+		{
+			int ArrayIndex = FMath::Rand() % Details_IsAvaliable.Num();
+			while (!Details_IsAvaliable[ArrayIndex])
+			{
+				ArrayIndex = FMath::Rand() % Details_IsAvaliable.Num();
+			}
+
+			AActor* NewItem = GetWorld()->SpawnActor<AActor>(Details_class, Details_Transform[ArrayIndex]);
+			Cast<ACollectableItem>(NewItem)->EnabledArrayIndex = ArrayIndex;
+			Details_IsAvaliable[ArrayIndex] = false;
+		}
+		//Details
 
 		TArray<AActor*>TargetPoints_TerminalLamp;
 		UGameplayStatics::GetAllActorsOfClass(GetWorld(), ATerminalLight::StaticClass(), TargetPoints_TerminalLamp);
