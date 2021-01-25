@@ -31,6 +31,4 @@ public:
 
 	UFUNCTION(NetMulticast, Reliable)
 		void RefreshMulticast();
-
-	int ArrayIndex;
 };
