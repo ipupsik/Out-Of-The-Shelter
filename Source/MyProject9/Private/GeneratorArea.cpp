@@ -54,7 +54,6 @@ void AGeneratorArea::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, c
 		}
 		if (Player->IsPlayerOwner) {
 			Player->GenAreaObj = this;
-			Player->AreaCode = 6;
 			if (IsAvalible) {
 				if (Player->GI->bIsEnabledPrompt) {
 					Player->UserView->E_Mark->SetVisibility(ESlateVisibility::Visible);
@@ -87,7 +86,6 @@ void AGeneratorArea::OnOverlapEnd(UPrimitiveComponent * OverlappedComp, AActor *
 		}
 		if (Player->IsPlayerOwner) {
 			Player->GenAreaObj = nullptr;
-			Player->AreaCode = -1;
 			Player->TickEnableGeneratorWidget = false;
 			if (Player->GI->bIsEnabledPrompt) {
 				Player->UserView->E_Mark->SetVisibility(ESlateVisibility::Hidden);

@@ -8,6 +8,7 @@
 
 #include "AreaCollision.generated.h"
 
+class AChel;
 UCLASS()
 class MYPROJECT9_API AAreaCollision : public AActor
 {
@@ -29,4 +30,17 @@ public:
 		UBoxComponent* Collision;
 	UPROPERTY(EditAnywhere)
 	int32 AreaType;
+
+	void PressedEAreaCollision(AChel* Player);
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		FText AreaOpenAndCanEscape;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		FText AreaClose;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		FText AreaAvaliableAndHaveNoItem;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		FText AreaAvaliableAndCanOpen;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		FText AreaNotAvaliable;
 };

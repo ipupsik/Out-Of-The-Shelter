@@ -48,7 +48,7 @@ class AWeapon_Character;
 class UConsumableAbility;
 class AInteractiveItem;
 class ACoreItem;
-
+class AAreaCollision;
 UCLASS()
 class MYPROJECT9_API AChel : public ACharacter
 {
@@ -599,6 +599,7 @@ public:
 
 	//ADezinfectorNasosZatichka* LastZatichka;
 	AGeneratorArea* GenAreaObj;
+	AAreaCollision* CurCoreArea;
 	UGeneratorWidget* GeneratorView;
 
 	ABP_PlayerController* MyController;
