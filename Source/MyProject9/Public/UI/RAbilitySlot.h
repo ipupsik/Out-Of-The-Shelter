@@ -22,8 +22,6 @@ public:
 		void SelectRAbility();
 
 	UPROPERTY(meta = (BindWidget), BlueprintReadWrite)
-		UTextBlock* CountText;
-	UPROPERTY(meta = (BindWidget), BlueprintReadWrite)
 		UImage* AbilityImage;
 
 	void NativeConstruct() override;

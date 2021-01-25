@@ -35,16 +35,18 @@ bool ACacheKey::PickUpEventClient(AChel* Player) {
 
 void ACacheKey::RemoveAndRefreshTimer()
 {
-	int NewIndex = ArrayIndex;
+	int NewIndex = EnabledArrayIndex;
 	AGS* GS = GetWorld()->GetGameState<AGS>();
 	while (!GS->Keys_IsAvaliable[NewIndex])
 	{
-		NewIndex = FMath::Rand() % GS->Keys_IsAvaliable.Num();
+		NewIndex++;
+		if (NewIndex >= GS->Keys_IsAvaliable.Num())
+			NewIndex = 0;
 	}
-	GS->Keys_IsAvaliable[ArrayIndex] = true;
+	GS->Keys_IsAvaliable[EnabledArrayIndex] = true;
 	GS->Keys_IsAvaliable[NewIndex] = false;
 
-	ArrayIndex = NewIndex;
+	EnabledArrayIndex = NewIndex;
 	ReplaceMulticast(GS->Keys_Transform[NewIndex]);
 	FTimerHandle FuzeTimerHandle;
 	GetWorld()->GetTimerManager().SetTimer(FuzeTimerHandle, this, &ACacheKey::Refresh, 12.f, false);

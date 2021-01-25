@@ -18,4 +18,8 @@ public:
 	UConsumableAbility_HealPacket();
 	void UseAbilityServer(AChel* Player) override;
 	bool UseAbilityClient(AChel* Player) override;
+
+	FVector GetCacheScale3D(int32 CacheIndex) override;
+	FRotator GetCacheRotation(int32 CacheIndex) override;
+	FVector GetCacheLocation(int32 CacheIndex) override;
 };
