@@ -49,6 +49,8 @@ class UConsumableAbility;
 class AInteractiveItem;
 class ACoreItem;
 class AAreaCollision;
+class UConsumableAbility_Invisible;
+
 UCLASS()
 class MYPROJECT9_API AChel : public ACharacter
 {
@@ -234,6 +236,9 @@ public:
 		void InvisibleEverywhere();
 
 	UFUNCTION(BlueprintImplementableEvent)
+		void ReverceInvisibleEverywhere();
+
+	UFUNCTION(BlueprintImplementableEvent)
 		void PlayRAbilitySound(class USoundWave* SoundWave);
 
 	UFUNCTION(BlueprintImplementableEvent)
@@ -292,7 +297,11 @@ public:
 	void DeleteArrowDelayBoltorez();
 	void DeleteArrowDelayOtvertka();
 
-	void ReplaceQAbilityItem(UClass* QAbilityItemclass, int32 ItemIndex);
+	void ReplaceQAbilityItem(UClass* AbilityItemclass, int32 ItemIndex);
+
+	void ReplaceRAbilityItem_Client(UClass* AbilityItemclass);
+	UFUNCTION(Server, Reliable, WithValidation)
+		void ReplaceRAbilityItem_Server(UClass* AbilityItemclass);
 
 	UFUNCTION(Client, Reliable)
 		void HideNoteWidget();
@@ -555,6 +564,10 @@ public:
 
 	int8 ProjectileDamageCount;
 	float ProjectileDamageEffect;
+
+	bool IsNowInvisible;
+	FTimerHandle TimerHandleInvisible;
+	UConsumableAbility_Invisible* LastInvisibleAbilityObj;
 	//RAbility
 
 	//Logic Boolean Variables

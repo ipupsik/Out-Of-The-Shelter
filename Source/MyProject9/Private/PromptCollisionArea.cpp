@@ -30,7 +30,7 @@ void APromptCollisionArea::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, A
 {
 	if (bISAvaliable) {
 		AChel* Player = Cast<AChel>(OtherActor);
-		if (Player) {
+		if (Player && Player->DamageCollision == OtherComp) {
 			if (Player->IsPlayerOwner) {
 				for (auto& item : PromptedItems)
 				{
@@ -49,7 +49,7 @@ void APromptCollisionArea::OnOverlapEnd(UPrimitiveComponent* OverlappedComp, AAc
 {
 	if (bISAvaliable) {
 		AChel* Player = Cast<AChel>(OtherActor);
-		if (Player) {
+		if (Player && Player->DamageCollision == OtherComp) {
 			if (Player->IsPlayerOwner) {
 				for (auto& item : PromptedItems)
 				{

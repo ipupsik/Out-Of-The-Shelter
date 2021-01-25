@@ -425,11 +425,18 @@ void AGS::CheckCode(int Index) {
 				{
 					it->bISAvaliable = false;
 				}
-				TArray<AActor*>Chelix;
-				GeneratorAreaTmp->ShelterCollision->Collision->GetOverlappingActors(Chelix, AChel::StaticClass());
-				for (auto& it : Chelix)
+				TArray<AActor*>ChelixZero;
+				GeneratorAreaTmp->ShelterCollision[0]->Collision->GetOverlappingActors(ChelixZero, AChel::StaticClass());
+				for (auto& it : ChelixZero)
 				{
-					Cast<AChel>(it)->ShowUIAfterTerminalAndGenerator(-1, false);
+					Cast<AChel>(it)->ShowUIAfterTerminalAndGenerator(1, false);
+				}
+
+				TArray<AActor*>ChelixOne;
+				GeneratorAreaTmp->ShelterCollision[1]->Collision->GetOverlappingActors(ChelixOne, AChel::StaticClass());
+				for (auto& it : ChelixOne)
+				{
+					Cast<AChel>(it)->ShowUIAfterTerminalAndGenerator(3, false);
 				}
 				GeneratorAreaTmp->ChangeSoundAmbientToNotWorking();
 			}

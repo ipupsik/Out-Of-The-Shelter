@@ -455,7 +455,7 @@ void AChel::Tick(float DeltaTime)
 
 	if (IsInGame == true) {
 		if (IsServerAuth) {
-			Health += DeltaTime * 2 * 0.01f * RadCoeff * CanalizationDamage / 1.5f  * TempAntiDotEffect;
+			Health += DeltaTime * 2 * 0.01f * RadCoeff * CanalizationDamage / 1.5f  * TempAntiDotEffect * 0;
 			if (Health > 1.0f) {
 				if (DoesHave[Boltorez])
 					GS->CurrentBoltorez--;
@@ -1274,7 +1274,7 @@ void AChel::PlaySpawnAnimationAwake_Implementation() {
 //-----------------------------
 void AChel::PickUp() {
 	IsSuccessOpening = true;
-	if (!bInEscMenu && !bInShopMenu && bCanWalkingAndWatching) {
+	if (!bInEscMenu && !bInShopMenu) {
 		if (IsNotInWebCam) {
 			if (LastInteractiveItem)
 			{
@@ -1708,18 +1708,17 @@ void AChel::PlayerOpenAreaUpdate_Implementation(int32 EscapeWay)
 	}
 
 	TArray<AActor*>Chels;
-	if (EscapeWay != 1) {
-		GS->Areas[EscapeWay]->GetOverlappingActors(Chels);
-		for (auto& Player : Chels)
-		{
-			Cast<AChel>(Player)->ExitAvaliableUpdate(EscapeWay);
-		}
+	GS->Areas[EscapeWay]->GetOverlappingActors(Chels);
+	for (auto& Player : Chels)
+	{
+		Cast<AChel>(Player)->ExitAvaliableUpdate(EscapeWay);
 	}
-	else {
-		GS->Areas[3]->GetOverlappingActors(Chels);
-		for (auto& Player : Chels)
+	if (EscapeWay == 1){
+		TArray<AActor*>Chels2;
+		GS->Areas[3]->GetOverlappingActors(Chels2);
+		for (auto& Player : Chels2)
 		{
-			Cast<AChel>(Player)->ExitAvaliableUpdate(ShelterOpener);
+			Cast<AChel>(Player)->ExitAvaliableUpdate(3);
 		}
 	}
 }
@@ -1790,7 +1789,10 @@ void AChel::ExitAvaliableUpdate_Implementation(int32 EscapeWay)
 {
 	//AreaCode = EscapeWay; //хз нужно ли
 	if (CurCoreArea) {
-		UserView->E_Mark->SetVisibility(ESlateVisibility::Visible);
+		if (EscapeWay != 1)
+			UserView->E_Mark->SetVisibility(ESlateVisibility::Visible);
+		else
+			UserView->E_Mark->SetVisibility(ESlateVisibility::Hidden);
 		UserView->PropmptTextArea->SetText(CurCoreArea->AreaOpenAndCanEscape);
 	}
 	//UserView->EscapeText->SetVisibility(ESlateVisibility::Visible);
@@ -1847,6 +1849,14 @@ void AChel::PlayerEscape_Implementation(int32 EscapeWay)
 		for (auto& Player : Chels)
 		{
 			Cast<AChel>(Player)->AreaClosedUpdate(EscapeWay);
+		}
+		if (EscapeWay == 1) {
+			TArray<AActor*>Chels2;
+			GS->Areas[3]->GetOverlappingActors(Chels2);
+			for (auto& Player : Chels2)
+			{
+				Cast<AChel>(Player)->AreaClosedUpdate(3);
+			}
 		}
 
 		PossessToSpectator();
@@ -1924,12 +1934,20 @@ void AChel::ChangeGeneratorStas_Implementation()
 			it->bISAvaliable = false;
 		}
 
-		TArray<AActor*>Chelix;
-		GenAreaObj->ShelterCollision->Collision->GetOverlappingActors(Chelix, AChel::StaticClass());
-		for (auto& it : Chelix)
+		TArray<AActor*>ChelixZero;
+		GenAreaObj->ShelterCollision[0]->Collision->GetOverlappingActors(ChelixZero, AChel::StaticClass());
+		for (auto& it : ChelixZero)
 		{
 			Cast<AChel>(it)->ShowUIAfterTerminalAndGenerator(1, true);
 		}
+
+		TArray<AActor*>ChelixOne;
+		GenAreaObj->ShelterCollision[1]->Collision->GetOverlappingActors(ChelixOne, AChel::StaticClass());
+		for (auto& it : ChelixOne)
+		{
+			Cast<AChel>(it)->ShowUIAfterTerminalAndGenerator(3, true);
+		}
+		
 
 		GenAreaObj->DoSomethinkGen();
 		GS->IsShelterAvaliable = true;
@@ -2107,8 +2125,8 @@ void AChel::HideNoteWidget_Implementation()
 
 void AChel::RefreshGeneratorArea_Implementation()
 {
-	UserView->AreaUsedText->SetVisibility(ESlateVisibility::Hidden);
-	UserView->HoldText->SetVisibility(ESlateVisibility::Visible);
+	UserView->PropmptTextArea->SetText(GenAreaObj->PromptGenNotRepairing);
+	UserView->E_Mark->SetVisibility(ESlateVisibility::Visible);
 }
 
 void AChel::AddNumToTerminalServer_Implementation(int32 ButtonType)
@@ -2332,7 +2350,7 @@ void AChel::ShowUIAfterTerminalAndGenerator_Implementation(int32 NewAreaType, bo
 			GNRTR->PromtCollisionTerminal[0]->PromptedItems[i]->Mesh->SetRenderCustomDepth(true);
 			GNRTR->PromtCollisionTerminal[0]->PromptedItems[i]->Mesh->MarkRenderStateDirty();
 		}
-		if (!GS->AreaAvaliables[NewAreaType])
+		if (NewAreaType <= 2 && !GS->AreaAvaliables[NewAreaType])
 		{
 			if (CurCoreArea) {
 				if (DoesHave[NewAreaType]) {
@@ -2362,7 +2380,7 @@ void AChel::ShowUIAfterTerminalAndGenerator_Implementation(int32 NewAreaType, bo
 			GNRTR->PromtCollisionGenerator[0]->PromptedItems[i]->Mesh->SetRenderCustomDepth(true);
 			GNRTR->PromtCollisionGenerator[0]->PromptedItems[i]->Mesh->MarkRenderStateDirty();
 		}
-		if (!GS->AreaAvaliables[NewAreaType])
+		if (NewAreaType <= 2 && !GS->AreaAvaliables[NewAreaType])
 		{
 			if (DoesHave[NewAreaType]) { //на случай, если чел открывал дверь букера, но вырубили генератор
 				IsSuccessOpening = false;

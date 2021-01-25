@@ -60,7 +60,7 @@ public:
 		TArray<APromptCollisionArea*> PromtCollisionTerminal;
 
 	UPROPERTY(EditAnywhere)
-		AAreaCollision* ShelterCollision;
+		TArray <AAreaCollision*> ShelterCollision;
 
 	void GetLifetimeReplicatedProps(TArray < FLifetimeProperty >& OutLifetimeProps) const override;
 

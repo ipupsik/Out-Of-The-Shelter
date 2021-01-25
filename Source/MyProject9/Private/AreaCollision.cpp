@@ -19,7 +19,7 @@ void AAreaCollision::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor*
 	bool bFromSweep, const FHitResult& SweepResult)
 {
 	AChel* Player = Cast<AChel>(OtherActor);
-	if (Player) {
+	if (Player && Player->DamageCollision == OtherComp) {
 		if (Player->IsPlayerOwner) {
 			if (AreaType != 3) { //Не в двери выхода шелтора
 				Player->UserView->PropmptTextArea->SetVisibility(ESlateVisibility::Visible);
@@ -93,7 +93,7 @@ void AAreaCollision::OnOverlapEnd(UPrimitiveComponent* OverlappedComp, AActor* O
 	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
 	AChel* Player = Cast<AChel>(OtherActor);
-	if (Player) {
+	if (Player && Player->DamageCollision == OtherComp) {
 		if (Player->IsPlayerOwner) {
 			if (AreaType != 3) { //Не в двери выхода шелтора
 				if (Player->IsPlayerOwner && !Player->GS->AreaClosed[AreaType]) {
@@ -138,10 +138,6 @@ void AAreaCollision::OnOverlapEnd(UPrimitiveComponent* OverlappedComp, AActor* O
 
 void AAreaCollision::PressedEAreaCollision(AChel* Player) {
 	if (!Player->bInEscMenu && Player->bCanWalkingAndWatching) {
-		if (AreaType >=0 && AreaType <= 2 && !Player->GS->AreaAvaliables[AreaType] && Player->DoesHave[AreaType]) {
-			Player->UserView->PB_Opening->SetVisibility(ESlateVisibility::Visible);
-			Player->UserView->TimeLeft->SetVisibility(ESlateVisibility::Visible);
-		}
 		switch (AreaType)
 		{
 			case 0: //канализация
@@ -151,16 +147,20 @@ void AAreaCollision::PressedEAreaCollision(AChel* Player) {
 					Player->PlayerEscape(AreaType);
 					Player->UserView->RemoveFromParent();
 				}
-				else if (Player->DoesHave[AreaType])
+				else if (Player->DoesHave[AreaType] && Player->GS->IsCanalizaciaAvaliable && !Player->GS->AreaAvaliables[AreaType])
 				{
+					Player->UserView->PB_Opening->SetVisibility(ESlateVisibility::Visible);
+					Player->UserView->TimeLeft->SetVisibility(ESlateVisibility::Visible);
 					Player->UserView->PlayAnimation(Player->UserView->CanalizaciaAnim);
 				}
 				break;
 			}
 			case 1: //замочная скважина шелтора
 			{
-				if (Player->DoesHave[AreaType] && !Player->GS->AreaAvaliables[AreaType])
+				if (Player->DoesHave[AreaType] && !Player->GS->AreaAvaliables[AreaType] && Player->GS->IsShelterAvaliable)
 				{
+					Player->UserView->PB_Opening->SetVisibility(ESlateVisibility::Visible);
+					Player->UserView->TimeLeft->SetVisibility(ESlateVisibility::Visible);
 					Player->UserView->PlayAnimation(Player->UserView->ShelterAnim);
 				}
 				break;
@@ -172,15 +172,17 @@ void AAreaCollision::PressedEAreaCollision(AChel* Player) {
 					Player->PlayerEscape(AreaType);
 					Player->UserView->RemoveFromParent();
 				}
-				else if (Player->DoesHave[AreaType])
+				else if (Player->DoesHave[AreaType] && Player->GS->IsVentilaciaAvaliable && !Player->GS->AreaAvaliables[AreaType])
 				{
+					Player->UserView->PB_Opening->SetVisibility(ESlateVisibility::Visible);
+					Player->UserView->TimeLeft->SetVisibility(ESlateVisibility::Visible);
 					Player->UserView->PlayAnimation(Player->UserView->VentilaciaAnim);
 				}
 				break;
 			}
 			case 3: //выход шелтора(сама дверь)
 			{
-				if (Player->GS->AreaAvaliables[1]) {
+				if (Player->GS->AreaAvaliables[1] && !Player->GS->AreaClosed[1]) {
 					Player->PlayerEscape(1);
 					Player->UserView->RemoveFromParent();
 				}
