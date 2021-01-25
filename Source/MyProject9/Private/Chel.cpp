@@ -23,7 +23,6 @@
 #include "QAbilityItem.h"
 #include "Ventil.h"
 #include "InteractiveCache.h"
-#include "AreaCollision.h"
 
 enum AreaType
 {
@@ -509,8 +508,7 @@ void AChel::Tick(float DeltaTime)
 				if (TracedItem) { //Если мы стукнулись в нужный нам предмет
 					if (LastInteractiveItem && LastInteractiveItem != TracedItem) {
 						LastInteractiveItem->ToggleCustomDepth(false, this);
-						if(!CurCoreArea)
-							UserView->E_Mark->SetVisibility(ESlateVisibility::Hidden);
+						UserView->E_Mark->SetVisibility(ESlateVisibility::Hidden);
 						if(GI->bIsEnabledPrompt)
 							UserView->PropmptTextInterract->SetVisibility(ESlateVisibility::Hidden);
 					}
@@ -523,8 +521,7 @@ void AChel::Tick(float DeltaTime)
 					if (LastInteractiveItem) {
 						LastInteractiveItem->ToggleCustomDepth(false, this);
 						LastInteractiveItem = nullptr;
-						if(!CurCoreArea)
-							UserView->E_Mark->SetVisibility(ESlateVisibility::Hidden);
+						UserView->E_Mark->SetVisibility(ESlateVisibility::Hidden);
 						if(GI->bIsEnabledPrompt)
 							UserView->PropmptTextInterract->SetVisibility(ESlateVisibility::Hidden);
 					}
@@ -534,8 +531,7 @@ void AChel::Tick(float DeltaTime)
 				if (LastInteractiveItem) {
 					LastInteractiveItem->ToggleCustomDepth(false, this);
 					LastInteractiveItem = nullptr;
-					if(!CurCoreArea)
-						UserView->E_Mark->SetVisibility(ESlateVisibility::Hidden);
+					UserView->E_Mark->SetVisibility(ESlateVisibility::Hidden);
 					if(GI->bIsEnabledPrompt)
 						UserView->PropmptTextInterract->SetVisibility(ESlateVisibility::Hidden);
 				}
@@ -693,7 +689,7 @@ bool AChel::UpdateSpectating_Left_Server_Validate()
 
 void AChel::OpenAreaPressed() 
 {
-	/*if (!bInEscMenu && bCanWalkingAndWatching) {
+	if (!bInEscMenu && bCanWalkingAndWatching) {
 		if (AreaCode != -1)
 		{
 			IsSuccessOpening = true;
@@ -739,7 +735,7 @@ void AChel::OpenAreaPressed()
 				}
 				break;
 			}
-			case GeneratorArea:
+			/*case GeneratorArea:
 			{
 				if (GenAreaObj) {
 					if (GenAreaObj->IsAvalible) {
@@ -761,7 +757,7 @@ void AChel::OpenAreaPressed()
 					}
 				}
 				break;
-			}
+			}*/
 			case ShelterOpener:
 			{
 				if (GS->AreaAvaliables[1]) {
@@ -772,7 +768,6 @@ void AChel::OpenAreaPressed()
 			}
 		}
 	}
-	*/
 }
 
 void AChel::OpenAreaReleased()
@@ -1272,7 +1267,7 @@ void AChel::PlaySpawnAnimationAwake_Implementation() {
 //-----------------------------
 void AChel::PickUp() {
 	IsSuccessOpening = true;
-	if (!bInEscMenu && !bInShopMenu && bCanWalkingAndWatching) {
+	if (!bInEscMenu && !bInShopMenu) {
 		if (IsNotInWebCam) {
 			if (LastInteractiveItem)
 			{
@@ -1281,8 +1276,6 @@ void AChel::PickUp() {
 			}
 			else if (GenAreaObj)
 				GenAreaObj->PressedEGenerator(this);
-			else if (CurCoreArea)
-				CurCoreArea->PressedEAreaCollision(this);
 		}
 		else
 		{
@@ -1295,15 +1288,13 @@ void AChel::PickUp() {
 void AChel::PickUp_Released()
 {
 	IsSuccessOpening = false;
-	if (bCanWalkingAndWatching && !bInEscMenu && !bInShopMenu) {
+	if (bCanWalkingAndWatching) {
 		if (IsNotInWebCam) {
 			if (LastInteractiveItem)
 			{
 				if (LastInteractiveItem->PickUpEventReleaseClient(this))
 					PickUp_Released_Server();
 			}
-			else if (CurCoreArea)
-				UserView->StopAllAnimations();
 		}
 		else
 		{
@@ -1726,12 +1717,8 @@ bool AChel::StuffAvaliableUpdate_Validate(int32 EscapeWay)
 
 void AChel::ExitAvaliableUpdate_Implementation(int32 EscapeWay)
 {
-	//AreaCode = EscapeWay; //хз нужно ли
-	if (CurCoreArea) {
-		UserView->E_Mark->SetVisibility(ESlateVisibility::Visible);
-		UserView->PropmptTextArea->SetText(CurCoreArea->AreaOpenAndCanEscape);
-	}
-	//UserView->EscapeText->SetVisibility(ESlateVisibility::Visible);
+	AreaCode = EscapeWay;
+	UserView->EscapeText->SetVisibility(ESlateVisibility::Visible);
 }
 
 void AChel::PlayerEscape_Implementation(int32 EscapeWay)
@@ -1798,12 +1785,8 @@ bool AChel::PlayerEscape_Validate(int32 EscapeWay)
 
 void AChel::AreaClosedUpdate_Implementation(int32 EscapeWay)
 {
-	//AreaCode = -1;
-	if(!LastInteractiveItem)
-		UserView->E_Mark->SetVisibility(ESlateVisibility::Hidden);
-	UserView->PropmptTextArea->SetText(CurCoreArea->AreaClose);
-	//UserView->EscapeText->SetVisibility(ESlateVisibility::Hidden);
-	CurCoreArea = nullptr;
+	AreaCode = -1;
+	UserView->EscapeText->SetVisibility(ESlateVisibility::Hidden);
 }
 
 
@@ -2254,66 +2237,19 @@ void AChel::RemoveArrowBadOutline(int32 ChelIndex)
 
 void AChel::ShowUIAfterTerminalAndGenerator_Implementation(int32 NewAreaType, bool DoesEnabled)
 {
-	if (DoesEnabled) {
-		//AreaCode = NewAreaType; //скорее всего не нужно
-		//убираем стрелки с генератора и ставим на терминал
-		TArray<AActor*> Govno;
-		UGameplayStatics::GetAllActorsOfClass(World, AGeneratorArea::StaticClass(), Govno);
-		AGeneratorArea* GNRTR = Cast<AGeneratorArea>(Govno[0]);
-		for (int i = 0; i < 2; i++) {
-			RemoveTargetArrowStatic(GNRTR->PromtCollisionGenerator[0]->PromptedItems[i]);
-			GNRTR->PromtCollisionGenerator[0]->PromptedItems[i]->Mesh->SetRenderCustomDepth(false);
-			GNRTR->PromtCollisionGenerator[0]->PromptedItems[i]->Mesh->MarkRenderStateDirty();
-		}
-		for (int i = 0; i < 1; i++) {
-			AddTargetArrowStatic(GNRTR->PromtCollisionTerminal[0]->PromptedItems[i]);
-			GNRTR->PromtCollisionTerminal[0]->PromptedItems[i]->Mesh->SetRenderCustomDepth(true);
-			GNRTR->PromtCollisionTerminal[0]->PromptedItems[i]->Mesh->MarkRenderStateDirty();
-		}
+	/*if (DoesEnabled) {
+		AreaCode = NewAreaType;
 		if (!GS->AreaAvaliables[NewAreaType])
 		{
-			if (CurCoreArea) {
-				if (DoesHave[NewAreaType]) {
-					UserView->E_Mark->SetVisibility(ESlateVisibility::Visible);
-					UserView->PropmptTextArea->SetText(CurCoreArea->AreaAvaliableAndCanOpen);
-				}
-				else
-					UserView->PropmptTextArea->SetText(CurCoreArea->AreaAvaliableAndHaveNoItem);
-			}	
-				//UserView->HoldText->SetVisibility(ESlateVisibility::Visible);
+			if (DoesHave[NewAreaType])
+				UserView->HoldText->SetVisibility(ESlateVisibility::Visible);
 		}
 	}
 	else
 	{
-		//AreaCode = -1; //скорее всего не нужно
-		//убираем стрелки с терминала и ставим на генератор
-		TArray<AActor*> Govno;
-		UGameplayStatics::GetAllActorsOfClass(World, AGeneratorArea::StaticClass(), Govno);
-		AGeneratorArea* GNRTR = Cast<AGeneratorArea>(Govno[0]);
-		for (int i = 0; i < 1; i++) {
-			RemoveTargetArrowStatic(GNRTR->PromtCollisionTerminal[0]->PromptedItems[i]);
-			GNRTR->PromtCollisionTerminal[0]->PromptedItems[i]->Mesh->SetRenderCustomDepth(false);
-			GNRTR->PromtCollisionTerminal[0]->PromptedItems[i]->Mesh->MarkRenderStateDirty();
-		}
-		for (int i = 0; i < 2; i++) {
-			AddTargetArrowStatic(GNRTR->PromtCollisionGenerator[0]->PromptedItems[i]);
-			GNRTR->PromtCollisionGenerator[0]->PromptedItems[i]->Mesh->SetRenderCustomDepth(true);
-			GNRTR->PromtCollisionGenerator[0]->PromptedItems[i]->Mesh->MarkRenderStateDirty();
-		}
-		if (!GS->AreaAvaliables[NewAreaType])
-		{
-			if (DoesHave[NewAreaType]) { //на случай, если чел открывал дверь букера, но вырубили генератор
-				IsSuccessOpening = false;
-				UserView->StopAllAnimations();
-			}
-			if (!LastInteractiveItem) {
-				UserView->E_Mark->SetVisibility(ESlateVisibility::Hidden);
-			}
-			if (CurCoreArea)
-				UserView->PropmptTextArea->SetText(CurCoreArea->AreaNotAvaliable);
-			//UserView->HoldText->SetVisibility(ESlateVisibility::Hidden);
-		}
-	}
+		AreaCode = -1;
+		UserView->HoldText->SetVisibility(ESlateVisibility::Hidden);
+	}*/
 }
 
 void AChel::ResetCacheKeys()

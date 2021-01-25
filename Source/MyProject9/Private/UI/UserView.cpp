@@ -27,10 +27,8 @@ void UUserView::OnAnimationFinished_Implementation(const UWidgetAnimation* Anima
 	{
 		if (Player->IsSuccessOpening && !Player->GS->AreaAvaliables[0]) {
 			Player->StuffAvaliableUpdate(0);
-			//HoldText->SetVisibility(ESlateVisibility::Hidden);
-			//EscapeText->SetVisibility(ESlateVisibility::Visible);
-			if (Player->CurCoreArea)
-				PropmptTextArea->SetText(Player->CurCoreArea->AreaOpenAndCanEscape);
+			HoldText->SetVisibility(ESlateVisibility::Hidden);
+			EscapeText->SetVisibility(ESlateVisibility::Visible);
 			Player->DeleteArrowDelayBoltorez();
 			Player->PlayerOpenAreaUpdate(0);
 		}
@@ -39,11 +37,7 @@ void UUserView::OnAnimationFinished_Implementation(const UWidgetAnimation* Anima
 	{
 		if (Player->IsSuccessOpening && !Player->GS->AreaAvaliables[1]) {
 			Player->StuffAvaliableUpdate(1);
-			//HoldText->SetVisibility(ESlateVisibility::Hidden);
-			if (!Player->LastInteractiveItem)
-				E_Mark->SetVisibility(ESlateVisibility::Hidden);
-			if (Player->CurCoreArea)
-				PropmptTextArea->SetText(Player->CurCoreArea->AreaOpenAndCanEscape);
+			HoldText->SetVisibility(ESlateVisibility::Hidden);
 			Player->PlayerOpenAreaUpdate(1);
 			Player->DeleteArrowDelayKeyShelter();
 		}
@@ -52,10 +46,8 @@ void UUserView::OnAnimationFinished_Implementation(const UWidgetAnimation* Anima
 	{
 		if (Player->IsSuccessOpening && !Player->GS->AreaAvaliables[2]) {
 			Player->StuffAvaliableUpdate(2);
-			//HoldText->SetVisibility(ESlateVisibility::Hidden);
-			//EscapeText->SetVisibility(ESlateVisibility::Visible);
-			if (Player->CurCoreArea)
-				PropmptTextArea->SetText(Player->CurCoreArea->AreaOpenAndCanEscape);
+			HoldText->SetVisibility(ESlateVisibility::Hidden);
+			EscapeText->SetVisibility(ESlateVisibility::Visible);
 			Player->DeleteArrowDelayOtvertka();
 			Player->PlayerOpenAreaUpdate(2);
 		}
