@@ -249,6 +249,63 @@ void AGS::BeginPlay()
 			CacheItems_Stuff_IsAvaliable[ArrayIndex] = false;
 		}
 
+		for (int i = 0; i < 3; ++i) {
+			int ArrayIndex = FMath::Rand() % CacheItems_Stuff_IsAvaliable.Num();
+			while (!CacheItems_Stuff_IsAvaliable[ArrayIndex])
+			{
+				ArrayIndex++;
+				if (ArrayIndex >= CacheItems_Stuff_IsAvaliable.Num())
+					ArrayIndex = 0;
+			}
+			AWeapon_Level* NewItem = GetWorld()->SpawnActor<AWeapon_Level>(Axe_Class);
+			FAttachmentTransformRules AttachmentRules = FAttachmentTransformRules(EAttachmentRule::KeepRelative, true);
+			NewItem->AttachToActor(Caches[ArrayIndex], AttachmentRules);
+			NewItem->SetActorScale3D(AxeTransform[Caches[ArrayIndex]->CacheIndex].GetScale3D());
+			NewItem->AddActorLocalOffset(AxeTransform[Caches[ArrayIndex]->CacheIndex].GetLocation());
+			NewItem->AddActorLocalRotation(AxeTransform[Caches[ArrayIndex]->CacheIndex].GetRotation());
+			NewItem->EnabledArrayIndex = ArrayIndex;
+			CacheItems_Stuff_IsAvaliable[ArrayIndex] = false;
+			NewItem->Amount = 1;
+		}
+
+		for (int i = 0; i < 3; ++i) {
+			int ArrayIndex = FMath::Rand() % CacheItems_Stuff_IsAvaliable.Num();
+			while (!CacheItems_Stuff_IsAvaliable[ArrayIndex])
+			{
+				ArrayIndex++;
+				if (ArrayIndex >= CacheItems_Stuff_IsAvaliable.Num())
+					ArrayIndex = 0;
+			}
+			AWeapon_Level* NewItem = GetWorld()->SpawnActor<AWeapon_Level>(Bottle_Class);
+			FAttachmentTransformRules AttachmentRules = FAttachmentTransformRules(EAttachmentRule::KeepRelative, true);
+			NewItem->AttachToActor(Caches[ArrayIndex], AttachmentRules);
+			NewItem->SetActorScale3D(BottleTransform[Caches[ArrayIndex]->CacheIndex].GetScale3D());
+			NewItem->AddActorLocalOffset(BottleTransform[Caches[ArrayIndex]->CacheIndex].GetLocation());
+			NewItem->AddActorLocalRotation(BottleTransform[Caches[ArrayIndex]->CacheIndex].GetRotation());
+			NewItem->EnabledArrayIndex = ArrayIndex;
+			CacheItems_Stuff_IsAvaliable[ArrayIndex] = false;
+			NewItem->Amount = 1 + FMath::Rand() % 5;
+		}
+
+		for (int i = 0; i < 3; ++i) {
+			int ArrayIndex = FMath::Rand() % CacheItems_Stuff_IsAvaliable.Num();
+			while (!CacheItems_Stuff_IsAvaliable[ArrayIndex])
+			{
+				ArrayIndex++;
+				if (ArrayIndex >= CacheItems_Stuff_IsAvaliable.Num())
+					ArrayIndex = 0;
+			}
+			AWeapon_Level* NewItem = GetWorld()->SpawnActor<AWeapon_Level>(Knife_Class);
+			FAttachmentTransformRules AttachmentRules = FAttachmentTransformRules(EAttachmentRule::KeepRelative, true);
+			NewItem->AttachToActor(Caches[ArrayIndex], AttachmentRules);
+			NewItem->SetActorScale3D(KnifeTransform[Caches[ArrayIndex]->CacheIndex].GetScale3D());
+			NewItem->AddActorLocalOffset(KnifeTransform[Caches[ArrayIndex]->CacheIndex].GetLocation());
+			NewItem->AddActorLocalRotation(KnifeTransform[Caches[ArrayIndex]->CacheIndex].GetRotation());
+			NewItem->EnabledArrayIndex = ArrayIndex;
+			CacheItems_Stuff_IsAvaliable[ArrayIndex] = false;
+			NewItem->Amount = 1 + FMath::Rand() % 4;
+		}
+
 		for (int i = 0; i < 6; ++i) {
 			int ArrayIndex = FMath::Rand() % CacheItems_Stuff_IsAvaliable.Num();
 			while (!CacheItems_Stuff_IsAvaliable[ArrayIndex])

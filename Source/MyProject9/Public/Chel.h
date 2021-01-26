@@ -15,10 +15,12 @@
 #include "FinalMenuPawn.h"
 #include "AmmoPoint.h"
 #include "Cache.h"
+#include "UI/PlayerFindCoreItem.h"
 #include "GeneratorArea.h"
 #include "UI/GeneratorWidget.h"
 #include "UI/KillFeed.h"
 #include "UI/Tab.h"
+#include "UI/PlayerEscapeWidget.h"
 #include "Components/SceneComponent.h"
 #include "ItemPromtArrow_MainExis.h"
 #include "GI.h"
@@ -90,9 +92,6 @@ protected:
 	/*void ThrowStoneLeft();*/
 	void PickUp();
 	void PickUp_Released();
-	void OpenAreaPressed();
-	void OpenAreaReleased();
-
 
 	void UpdateSpectating_Left();
 	void UpdateSpectating_Right();
@@ -125,6 +124,8 @@ public:
 
 	UFUNCTION(Client, Reliable)
 		void DeleteStrelkaBadOutline_Client(int32 ChelIndex);
+	UFUNCTION(Client, Reliable)
+		void ShowEscapeWidget(int32 Escape_Way, const FText& ThrowNickName);
 	void RemoveArrowBadOutline(int32 ChelIndex); //убирает стрелку-подсказку на экране, которая указывает на плохо обведенного чела(который щас подох)
 
 	UFUNCTION(Server, Reliable, WithValidation)
@@ -338,6 +339,9 @@ public:
 		void ShowNoiseWebCamUI(bool DoesNoise);
 
 	UFUNCTION(Client, Reliable)
+		void PickUpCoreItem(int32 ItemType, const FText& ThrowNickName);
+
+	UFUNCTION(Client, Reliable)
 		void ShowUIAfterTerminalAndGenerator(int32 NewAreaType, bool DoesEnabled);
 
 	UFUNCTION(Client, Reliable)
@@ -353,7 +357,8 @@ public:
 		void SetCameraRotationWebCam(float RollRot, float PitchRot, float YawRot);
 
 	UFUNCTION(Client, Reliable)
-		void RefreshWidgets(const TArray<bool> &whatToUpdate, int KillerNickIndex, int VictimNickIndex);
+		void RefreshWidgets(const TArray<bool>& whatToUpdate, const FText& KillerNickName,
+			const FText& VictimNickName, bool IsEscape);
 
 	UFUNCTION(Client, Reliable)
 		void RefreshTabWidget(int32 VictimIndex, int32 newKillerIndex);
@@ -458,6 +463,10 @@ public:
 		TSubclassOf<UKillFeed> KillFeed_class;
 	UPROPERTY(EditAnywhere, Category = "UI HUD") //класс стрелки подсказки
 		TSubclassOf<UTargetArrow> TargetArrowClass;
+	UPROPERTY(EditAnywhere, Category = "UI HUD") //класс стрелки подсказки
+		TSubclassOf<UPlayerEscapeWidget> PlayerEscapeWidget_class;
+	UPROPERTY(EditAnywhere, Category = "UI HUD") //класс стрелки подсказки
+		TSubclassOf<UPlayerFindCoreItem> PlayerFindCoreItem_class;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float InverseCoeff;
