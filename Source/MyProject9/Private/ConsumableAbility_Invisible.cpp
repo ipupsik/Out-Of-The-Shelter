@@ -3,6 +3,26 @@
 
 #include "ConsumableAbility_Invisible.h"
 #include "Chel.h"
+#include "GS.h"
+#include "InteractiveCache.h"
+
+FVector UConsumableAbility_Invisible::GetCacheScale3D(int32 CacheIndex)
+{
+	AGS* GS = GetWorld()->GetGameState<AGS>();
+	return GS->ZelieTransform[GS->Caches[CacheIndex]->CacheIndex].GetScale3D();
+}
+
+FRotator UConsumableAbility_Invisible::GetCacheRotation(int32 CacheIndex)
+{
+	AGS* GS = GetWorld()->GetGameState<AGS>();
+	return FRotator(GS->ZelieTransform[GS->Caches[CacheIndex]->CacheIndex].GetRotation());
+}
+
+FVector UConsumableAbility_Invisible::GetCacheLocation(int32 CacheIndex)
+{
+	AGS* GS = GetWorld()->GetGameState<AGS>();
+	return GS->ZelieTransform[GS->Caches[CacheIndex]->CacheIndex].GetLocation();
+}
 
 void UConsumableAbility_Invisible::UseAbilityServer(AChel* Player)
 {

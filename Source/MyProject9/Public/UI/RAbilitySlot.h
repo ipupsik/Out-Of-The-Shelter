@@ -20,9 +20,18 @@ class MYPROJECT9_API URAbilitySlot : public UUserWidget
 public:
 	UFUNCTION()
 		void SelectRAbility();
+	UFUNCTION()
+		void HoveredRAbility();
+	UFUNCTION()
+		void UnHoveredRAbility();
 
 	UPROPERTY(meta = (BindWidget), BlueprintReadWrite)
 		UImage* AbilityImage;
+	UPROPERTY(meta = (BindWidget), BlueprintReadWrite)
+		UImage* SelectImage;
+
+	UPROPERTY(meta = (BindWidget), BlueprintReadWrite)
+		UTextBlock* PromtText;
 
 	void NativeConstruct() override;
 	

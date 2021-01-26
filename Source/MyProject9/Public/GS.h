@@ -141,6 +141,12 @@ public:
 		TSubclassOf<AInteractiveItem> HealPacket_class;
 	UPROPERTY(EditAnywhere, Category = "ItemClasses")
 		TSubclassOf<AInteractiveItem> InvisiblePotion_class;
+	UPROPERTY(EditAnywhere, Category = "ItemClasses")
+		TSubclassOf<AInteractiveItem> AntiRadZelie_class;
+	UPROPERTY(EditAnywhere, Category = "ItemClasses")
+		TSubclassOf<AInteractiveItem> ArmoryZelie_class;
+	UPROPERTY(EditAnywhere, Category = "ItemClasses")
+		TSubclassOf<AInteractiveItem> ProjectileZelie_class;
 
 	UPROPERTY(EditAnywhere, Category = "ItemClasses")
 		TSubclassOf<AActor> InvisiblePotion;
@@ -206,7 +212,10 @@ public:
 		TArray<FTransform> HealPacketTransform;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		TArray<FTransform> InvisiblePotionTransform;
+		TArray<FTransform> ZelieTransform;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		TArray<FTransform> ArmoryZelieTransform;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		TArray<FTransform> BoltorezTransform;

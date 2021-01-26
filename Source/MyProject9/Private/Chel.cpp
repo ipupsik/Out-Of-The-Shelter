@@ -231,7 +231,7 @@ void AChel::QAbilityDisable()
 
 void AChel::RAbilityEnable_Client()
 {
-	if (RAbilityTypeIndex != -1 && !bInShopMenu && !bInEscMenu && bCanWalkingAndWatching && IsInGame)
+	if (LastRAbilityIndex != -1 && !bInShopMenu && !bInEscMenu && bCanWalkingAndWatching && IsInGame)
 	{
 		if (RAbilityPanel[RAbilityTypeIndex]->UseAbilityClient(this))
 			RAbilityEnable_Server(RAbilityPanel[RAbilityTypeIndex]->GetClass());
@@ -455,7 +455,7 @@ void AChel::Tick(float DeltaTime)
 
 	if (IsInGame == true) {
 		if (IsServerAuth) {
-			Health += DeltaTime * 2 * 0.01f * RadCoeff * CanalizationDamage / 1.5f  * TempAntiDotEffect * 0;
+			Health += DeltaTime * 2 * 0.01f * RadCoeff * CanalizationDamage / 1.5f  * TempAntiDotEffect;
 			if (Health > 1.0f) {
 				if (DoesHave[Boltorez])
 					GS->CurrentBoltorez--;
@@ -1410,8 +1410,9 @@ void AChel::ReplaceRAbilityItem_Client(UClass* AbilityItemclass)
 	ReplaceRAbilityItem_Server(RAbilityPanel[RAbilityTypeIndex]->GetClass());
 	RAbilityPanel[RAbilityTypeIndex]->DestroyNonNativeProperties();
 	RAbilityPanel[RAbilityTypeIndex] = NewObject<UConsumableAbility>(this, AbilityItemclass);
-	RAbilityPanel[RAbilityTypeIndex]->UserViewSlot = Cast<URAbilitySlot>(MyInventory->RAbilityPanel->GetChildAt(LastRAbilityIndex));
+	RAbilityPanel[RAbilityTypeIndex]->UserViewSlot = Cast<URAbilitySlot>(MyInventory->RAbilityPanel->GetChildAt(RAbilityTypeIndex));
 	RAbilityPanel[RAbilityTypeIndex]->SetAbilityToSlot();
+	SetCurRAbilityUserView();
 }
 
 void AChel::ReplaceRAbilityItem_Server_Implementation(UClass* AbilityItemclass)
@@ -2550,6 +2551,10 @@ void AChel::UseRAbility()
 			RAbilityPanel[i]->UserViewSlot = tmpSlot;
 			RAbilityPanel[i - 1]->ResetAbility();
 			LastRAbilityIndex++;
+			if (i == RAbilityTypeIndex + 1)
+			{
+				RAbilityPanel[i - 1]->UserViewSlot->HoveredRAbility();
+			}
 		}
 	}
 	if (LastRAbilityIndex < RAbilityTypeIndex)
@@ -2558,6 +2563,7 @@ void AChel::UseRAbility()
 	}
 	SetCurRAbilityUserView();
 	RAbilityPanel[LastRAbilityIndex + 1]->UserViewSlot->SetVisibility(ESlateVisibility::Hidden);
+	RAbilityPanel[LastRAbilityIndex + 1]->UserViewSlot->SelectImage->SetVisibility(ESlateVisibility::Hidden);
 	RAbilityPanel[LastRAbilityIndex + 1] = nullptr;
 }
 

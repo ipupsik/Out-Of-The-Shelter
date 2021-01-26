@@ -28,6 +28,9 @@ public:
 	UPROPERTY(EditAnywhere)
 		USoundWave* MySoundWave;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		FText PromtText;
+
 	void SetAbilityToSlot();
 
 	void SetCurRAbilityUserView(AChel* Player);
