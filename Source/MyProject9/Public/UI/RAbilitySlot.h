@@ -23,6 +23,8 @@ public:
 
 	UPROPERTY(meta = (BindWidget), BlueprintReadWrite)
 		UImage* AbilityImage;
+	UPROPERTY(meta = (BindWidget), BlueprintReadWrite)
+		UImage* SelectImage;
 
 	void NativeConstruct() override;
 	

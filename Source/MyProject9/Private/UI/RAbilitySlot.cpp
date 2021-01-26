@@ -4,6 +4,7 @@
 #include "UI/RAbilitySlot.h"
 #include "Kismet/GameplayStatics.h"
 #include "Chel.h"
+#include "ConsumableAbility.h"
 
 void URAbilitySlot::NativeConstruct() {
 	Super::NativeConstruct();
@@ -14,6 +15,8 @@ void URAbilitySlot::NativeConstruct() {
 void URAbilitySlot::SelectRAbility()
 {
 	AChel* MyChel = Cast<AChel>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
+	MyChel->RAbilityPanel[MyChel->RAbilityTypeIndex]->UserViewSlot->SelectImage->SetVisibility(ESlateVisibility::Hidden);
+	SelectImage->SetVisibility(ESlateVisibility::Visible);
 	MyChel->RAbilityTypeIndex = InArrayIndex;
 	MyChel->SetCurRAbilityUserView();
 }
