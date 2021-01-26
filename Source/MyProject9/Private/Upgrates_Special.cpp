@@ -21,10 +21,40 @@ void AUpgrates_Special::PickUpEventServer(AChel* Player)
 
 bool AUpgrates_Special::PickUpEventClient(AChel* Player)
 {
-	Player->HaveSpecialAmmo = true;
-	if (GetLocalRole() != ROLE_Authority)
-	{
-		Destroy();
+	if (!Player->HaveSpecialAmmo) {
+		Player->HaveSpecialAmmo = true;
+		if (GetLocalRole() != ROLE_Authority)
+		{
+			Destroy();
+		}
+		return true;
 	}
-	return true;
+	else
+		return false;
+}
+
+void AUpgrates_Special::OnLineTraced(AChel* Player)
+{
+	if(!Player->HaveSpecialAmmo) {
+		SetOutlineColor(2);
+		ToggleCustomDepth(true, Player);
+		if(Player->GI->bIsEnabledPrompt && Player->UserView->PropmptTextInterract->GetText().ToString() != PromptText.ToString())
+			Player->UserView->PropmptTextInterract->SetText(PromptText);
+		if (!Player->UserView->E_Mark->IsVisible()) {
+			Player->UserView->E_Mark->SetVisibility(ESlateVisibility::Visible);
+			if (Player->GI->bIsEnabledPrompt)
+				Player->UserView->PropmptTextInterract->SetVisibility(ESlateVisibility::Visible);
+		}
+	}
+	else {
+		SetOutlineColor(1);
+		ToggleCustomDepth(true, Player);
+		if (Player->GI->bIsEnabledPrompt && Player->UserView->PropmptTextInterract->GetText().ToString() != BadOutlineText.ToString())
+			Player->UserView->PropmptTextInterract->SetText(BadOutlineText);
+		if (!Player->UserView->E_Mark->IsVisible()) {
+			Player->UserView->E_Mark->SetVisibility(ESlateVisibility::Hidden);
+			if (Player->GI->bIsEnabledPrompt)
+				Player->UserView->PropmptTextInterract->SetVisibility(ESlateVisibility::Visible);
+		}
+	}
 }
