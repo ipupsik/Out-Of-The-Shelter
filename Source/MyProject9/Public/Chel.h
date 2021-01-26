@@ -711,6 +711,9 @@ public:
 	UFUNCTION(BlueprintImplementableEvent)
 		void RemoveChromaticInvet();
 
+	UFUNCTION(NetMulticast, Reliable)
+		void DeleteAllWeapons();
+
 	int32 AmountBottleEffects;
 
 

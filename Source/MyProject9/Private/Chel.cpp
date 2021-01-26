@@ -1811,6 +1811,8 @@ void AChel::PlayerEscape_Implementation(int32 EscapeWay)
 			CustomizationChilds[i]->Destroy();
 	}
 
+	DeleteAllWeapons();
+
 	if (GS->GeneralLayer == 2) {
 		GS->SpawnCustomizationChels();
 
@@ -2839,4 +2841,11 @@ void AChel::ChangeAmmoServer_Implementation(int32 NewLeftAmmmo, int32 indexWeapo
 
 bool AChel::ChangeAmmoServer_Validate(int32 NewLeftAmmmo, int32 indexWeapon) {
 	return true;
+}
+
+void AChel::DeleteAllWeapons_Implementation() {
+	for (int i = 0; i < CurrentWeapons.Num(); ++i) {
+		if (CurrentWeapons[i])
+			CurrentWeapons[i]->Destroy();
+	}
 }
