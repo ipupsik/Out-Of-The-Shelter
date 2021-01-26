@@ -27,7 +27,7 @@ FVector UConsumableAbility_ArmoryZelie::GetCacheLocation(int32 CacheIndex)
 void UConsumableAbility_ArmoryZelie::UseAbilityServer(AChel* Player)
 {
 	Player->ArmoryZelieCount++;
-	Player->ArmoryZelieEffect = 0.3f;
+	Player->ArmoryZelieEffect = 0;
 	TmpPlayer = Player;
 	FTimerHandle FuzeTimerHandle;
 	GetWorld()->GetTimerManager().SetTimer(FuzeTimerHandle, this, &UConsumableAbility_ArmoryZelie::EndEffect, Duration, false);
