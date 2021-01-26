@@ -14,6 +14,7 @@
 #include "Cache.h"
 #include "WebCamPoint.h"
 #include "ItemPromtArrow.h"
+#include "Weapon_Level.h"
 #include "GS.generated.h"
 
 class ASpectator;
@@ -159,6 +160,13 @@ public:
 		TSubclassOf<AInteractiveItem> GoldKey;
 
 	UPROPERTY(EditAnywhere, Category = "ItemClasses")
+		TSubclassOf<AWeapon_Level> Axe_Class;
+	UPROPERTY(EditAnywhere, Category = "ItemClasses")
+		TSubclassOf<AWeapon_Level> Bottle_Class;
+	UPROPERTY(EditAnywhere, Category = "ItemClasses")
+		TSubclassOf<AWeapon_Level> Knife_Class;
+
+	UPROPERTY(EditAnywhere, Category = "ItemClasses")
 		TSubclassOf<AInteractiveItem> Details_class;
 
 	UPROPERTY(EditAnywhere, Category = "ItemClasses")
@@ -216,6 +224,15 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		TArray<FTransform> ArmoryZelieTransform;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		TArray<FTransform> AxeTransform;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		TArray<FTransform> BottleTransform;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		TArray<FTransform> KnifeTransform;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		TArray<FTransform> BoltorezTransform;
