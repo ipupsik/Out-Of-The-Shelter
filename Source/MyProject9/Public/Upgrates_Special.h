@@ -16,4 +16,9 @@ class MYPROJECT9_API AUpgrates_Special : public AUpgrates
 public:
 	void PickUpEventServer(AChel* Player) override;
 	bool PickUpEventClient(AChel* Player) override;
+
+	UPROPERTY(EditAnywhere)
+		FText BadOutlineText;
+
+	void OnLineTraced(AChel* Player) override;
 };
