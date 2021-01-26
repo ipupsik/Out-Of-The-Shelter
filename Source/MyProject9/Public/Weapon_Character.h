@@ -28,6 +28,8 @@ public:
 	UFUNCTION(BlueprintImplementableEvent)
 	void AnimationThrowReverse();
 
+	UPROPERTY(EditAnywhere)
+		int32 ExtraAmountAmmo;
 
 	UFUNCTION(BlueprintCallable)
 	void AnimationThrow_Finished();

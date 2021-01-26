@@ -58,7 +58,7 @@ void AWeapon_Level::OnLineTraced(AChel* Player) {
 void AWeapon_Level::PickUpEventServer(AChel* Player) { //Вызывается из PickUp серверовского чела
 	if (Player->CurrentWeapons[1]) {
 		if (Player->CurrentWeapons[1]->GetClass() == WeaponClass) {
-			if (Player->CurrentWeapons[1]->LeftAmmo == Player->CurrentWeapons[1]->MaxAmmo)
+			if (Player->CurrentWeapons[1]->LeftAmmo  == Player->CurrentWeapons[1]->MaxAmmo)
 				return;
 			if (Player->CurrentWeapons[1]->LeftAmmo + Amount <= Player->CurrentWeapons[1]->MaxAmmo) {
 				Player->CurrentWeapons[1]->LeftAmmo += Amount;

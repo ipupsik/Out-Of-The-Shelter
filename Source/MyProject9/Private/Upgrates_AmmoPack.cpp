@@ -8,15 +8,21 @@
 void AUpgrates_AmmoPack::PickUpEventServer(AChel* Player) 
 {
 	Player->CurrentWeapons[0]->MaxAmmo += 5;
+	Player->CurrentWeapons[0]->LeftAmmo += 5;
+	Player->ChangeAmmoClients(Player->CurrentWeapons[0]->LeftAmmo, 0);
+	Player->ChangeAmmoMaxClients(Player->CurrentWeapons[0]->MaxAmmo, 0);
+	if (Player->CurrentIndex == 0)
+	{
+		Player->SetWeaponToSlotMulticast(0);
+		Player->RefreshWidgetAmmoOwningClient(Player->CurrentWeapons[0]->LeftAmmo, Player->CurrentWeapons[0]->MaxAmmo, 0);
+	}
 	Destroy();
 }
 
 bool AUpgrates_AmmoPack::PickUpEventClient(AChel* Player) 
 {
-	Player->UserView->AmmoMax->SetText(FText::AsNumber(Player->MaxAmmoCount + 5));
 	if (GetLocalRole() != ROLE_Authority)
 	{
-		Player->CurrentWeapons[0]->MaxAmmo += 5;
 		Destroy();
 	}
 	return true;

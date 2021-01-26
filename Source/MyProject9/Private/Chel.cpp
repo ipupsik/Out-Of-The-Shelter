@@ -157,6 +157,7 @@ AChel::AChel()
 	InverseCoeff = 1.f;
 	bInEscMenu = false;
 	bInShopMenu = false;
+	HaveSpecialAmmo = false;
 	TempAntiDotEffect = 1.0f;
 	ArmoryZelieEffect = 1.0f;
 	AmountDetails = 5;
@@ -2656,6 +2657,7 @@ void AChel::CreateWeapon(UClass* WeaponCreatedClass, int32 Amount, int32 IndexSl
 	AWeapon_Character* CreatedWeapon = World->SpawnActor<AWeapon_Character>(WeaponCreatedClass);
 	CreatedWeapon->WeaponOwner = this;
 	CreatedWeapon->LeftAmmo = Amount;
+	CreatedWeapon->MaxAmmo = CreatedWeapon->MaxAmmo + CreatedWeapon->ExtraAmountAmmo * HaveSpecialAmmo;
 
 	FAttachmentTransformRules AttachmentRules = FAttachmentTransformRules(EAttachmentRule::KeepRelative, true);
 	CreatedWeapon->AttachToComponent(WeaponPosition, AttachmentRules);
@@ -2755,6 +2757,13 @@ void AChel::ChangeAmmoClients_Implementation(int32 NewLeftAmmo, int32 indexWeapo
 	if(GetLocalRole() != ROLE_Authority && CurrentWeapons[indexWeapon])
 		CurrentWeapons[indexWeapon]->LeftAmmo = NewLeftAmmo;
 }
+
+void AChel::ChangeAmmoMaxClients_Implementation(int32 NewMaxAmmmo, int32 indexWeapon)
+{
+	if (GetLocalRole() != ROLE_Authority && CurrentWeapons[indexWeapon])
+		CurrentWeapons[indexWeapon]->MaxAmmo = NewMaxAmmmo;
+}
+
 void AChel::StartAnimInCurSlot_Implementation()
 {
 	if (IsPlayerOwner) {

@@ -695,6 +695,9 @@ public:
 	UFUNCTION(NetMulticast, Reliable)
 	void ChangeAmmoClients(int32 NewLeftAmmmo, int32 indexWeapon); //меняет кол-во патронов у клиента-хозяина в оружии(игрока)
 
+	UFUNCTION(NetMulticast, Reliable)
+		void ChangeAmmoMaxClients(int32 NewMaxAmmmo, int32 indexWeapon);
+
 	UFUNCTION(Client, Reliable)
 		void RefreshWidgetAmmoOwningClient(int32 NewLeftAmmo, int32 NewMaxAmmo, int32 NewCurIndex); //когда с сервера нужно поменять виджет у хозина hud
 	void RefreshWidgetAmmoOwning(int32 NewLeftAmmo, int32 NewMaxAmmo, int32 NewCurIndex);
@@ -718,7 +721,7 @@ public:
 
 
 
-
+	bool HaveSpecialAmmo;
 	bool CanFireWeapon; // может ли чел стрелять из оружия
 
 
