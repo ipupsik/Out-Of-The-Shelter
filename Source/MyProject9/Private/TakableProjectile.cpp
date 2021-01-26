@@ -42,7 +42,14 @@ void ATakableProjectile::OnOverlapBegin(class UPrimitiveComponent* OverlappedCom
 							TArray<AActor*>Players;
 							UGameplayStatics::GetAllActorsOfClass(Player->World, Player->GetClass(), Players);
 							for (auto& it : Players)
-								Cast<AChel>(it)->RefreshWidgets(Player->DoesHave, Player->KillerIndex, Player->Index);
+							{
+								if (Player->KillerIndex != -1)
+									Cast<AChel>(it)->RefreshWidgets(Player->DoesHave, Player->GS->NickNames[Player->KillerIndex],
+										Player->GS->NickNames[Player->Index], false);
+								else
+									Cast<AChel>(it)->RefreshWidgets(Player->DoesHave, FText(),
+										Player->GS->NickNames[Player->Index], false);
+							}
 							Player->DoesHave.Init(false, 3);
 							Player->bCanWalkingAndWatching = true;
 							Player->KillPlayer();

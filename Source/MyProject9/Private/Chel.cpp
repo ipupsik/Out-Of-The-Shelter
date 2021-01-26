@@ -26,48 +26,6 @@
 #include "InteractiveCache.h"
 #include "AreaCollision.h"
 
-enum AreaType
-{
-	Canalizacia,
-	Shelter,
-	Ventilacia,
-	ShelterOpener
-};
-
-enum PickUpType {
-	Boltorez,
-	KeyShelter,
-	Otvertka,
-	OpenArea,
-	Cache,
-	CacheKey,
-	GeneratorArea,
-	CanalizationButton,
-	WebCamLocker,
-	InvisiblePotion,
-	CodeNote,
-	ClickButton,
-	AmmoBackPack,
-	RentgenGlasses,
-	ChelsDetector,
-	HealthPacket,
-	DoubleArmAbility,
-	Shields,
-	StoneDamageBuff,
-	RadiationAntidot,
-	SpeedBust,
-	VentilaciaRubilnick,
-	StoneDamageBuffTemp,
-	ImmortalPotion,
-	NasosZatichka,
-};
-
-enum CacheType {
-	KeyBronze,
-	KeySilver,
-	KeyGold
-};
-
 // Sets default values
 AChel::AChel()
 {
@@ -95,32 +53,6 @@ AChel::AChel()
 
 	TimeLine_FOV_WebCam = CreateDefaultSubobject<UTimelineComponent>(TEXT("FOV_WebCam"));
 	InterpFunction_FOV_WebCam.BindUFunction(this, FName("TimelineFloatReturn_FOV_WebCam"));
-
-
-	/*StoneRight = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("StoneRight"));
-	StoneRight->SetupAttachment(WeaponPosition);
-
-	StoneLeft = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("StoneLeft"));
-	StoneLeft->SetupAttachment(WeaponPosition);
-
-	TimeLine_Stone_First = CreateDefaultSubobject<UTimelineComponent>(TEXT("ThrowStoneFirst"));
-	TimeLine_Stone_Second = CreateDefaultSubobject<UTimelineComponent>(TEXT("ThrowStoneSecond"));
-	TimeLine_Stone_First_Left = CreateDefaultSubobject<UTimelineComponent>(TEXT("TimeLine_Stone_First_Left"));
-	TimeLine_Stone_Second_Left = CreateDefaultSubobject<UTimelineComponent>(TEXT("TimeLine_Stone_Second_Left"));
-	
-
-	//Говорим делегатам, какую функцию подцепить для Update и для OnFinished
-	InterpFunction_Stone.BindUFunction(this, FName("TimelineVectorReturn_Stone"));
-	InterpFunction_Stone_Left.BindUFunction(this, FName("TimelineVectorReturn_Stone_Left"));
-
-
-	TimelineFinished_Stone_First.BindUFunction(this, FName("OnTimelineFinished_Stone_First"));
-	TimelineFinished_Stone_Second.BindUFunction(this, FName("OnTimelineFinished_Stone_Second"));
-
-	TimelineFinished_Stone_First_Left.BindUFunction(this, FName("OnTimelineFinished_Stone_First_Left"));
-	TimelineFinished_Stone_Second_Left.BindUFunction(this, FName("OnTimelineFinished_Stone_Second_Left"));
-	*/
-	//DamageCollision->OnComponentBeginOverlap.AddDynamic(this, &AChel::OnOverlapBegin);
 
 	IsAlreadyCreated = false;
 	LastRAbilityIndex = -1;
@@ -277,39 +209,10 @@ void AChel::MyBeginPlay()
 	MyController = Cast<ABP_PlayerController>(GetController());
 	IsServerAuth = GetLocalRole() == ROLE_Authority;
 	IsPlayerOwner = UGameplayStatics::GetPlayerController(GetWorld(), 0) == MyController;
-	/*StonePositionRight = StoneRight->GetRelativeLocation();
-	StonePositionLeft = StoneLeft->GetRelativeLocation();*/
 	World = GetWorld();
 	GI = World->GetGameInstance<UGI>();
 	
 	Cast<AChel>(UGameplayStatics::GetPlayerCharacter(World, 0))->PlayersArray.Add(this);
-
-	/*if (vCurveStone) {
-		//Подцепляем эти функции для TimeLine
-		TimeLine_Stone_First->AddInterpVector(vCurveStone, InterpFunction_Stone);
-		TimeLine_Stone_First->SetTimelineFinishedFunc(TimelineFinished_Stone_First);
-
-		TimeLine_Stone_First->SetLooping(false);
-		TimeLine_Stone_First->SetIgnoreTimeDilation(true);
-
-		TimeLine_Stone_Second->AddInterpVector(vCurveStone, InterpFunction_Stone);
-		TimeLine_Stone_Second->SetTimelineFinishedFunc(TimelineFinished_Stone_Second);
-
-		TimeLine_Stone_Second->SetLooping(false);
-		TimeLine_Stone_Second->SetIgnoreTimeDilation(true);
-		//-----------------------------------------------
-		TimeLine_Stone_First_Left->AddInterpVector(vCurveStone, InterpFunction_Stone_Left);
-		TimeLine_Stone_First_Left->SetTimelineFinishedFunc(TimelineFinished_Stone_First_Left);
-
-		TimeLine_Stone_First_Left->SetLooping(false);
-		TimeLine_Stone_First_Left->SetIgnoreTimeDilation(true);
-
-		TimeLine_Stone_Second_Left->AddInterpVector(vCurveStone, InterpFunction_Stone_Left);
-		TimeLine_Stone_Second_Left->SetTimelineFinishedFunc(TimelineFinished_Stone_Second_Left);
-
-		TimeLine_Stone_Second_Left->SetLooping(false);
-		TimeLine_Stone_Second_Left->SetIgnoreTimeDilation(true);
-	}*/
 
 	if (vCurveFOV_WebCam)
 	{
@@ -458,20 +361,21 @@ void AChel::Tick(float DeltaTime)
 		if (IsServerAuth) {
 			Health += DeltaTime * 2 * 0.01f * RadCoeff * CanalizationDamage / 1.5f  * TempAntiDotEffect;
 			if (Health > 1.0f) {
-				if (DoesHave[Boltorez])
-					GS->CurrentBoltorez--;
-				if (DoesHave[KeyShelter])
-					GS->CurrentKeyShelter--;
-				if (DoesHave[Otvertka])
-					GS->CurrentOtvertka--;
-
 				TArray<AActor*>Players;
 				UGameplayStatics::GetAllActorsOfClass(World, StaticClass(), Players);
-				for (auto& Player : Players) {
-					Cast<AChel>(Player)->RefreshWidgets(DoesHave, KillerIndex, Index);
+				for (auto& it : Players)
+				{
+					if (KillerIndex != -1)
+						Cast<AChel>(it)->RefreshWidgets(DoesHave, GS->NickNames[KillerIndex],
+							GS->NickNames[Index], false);
+					else
+						Cast<AChel>(it)->RefreshWidgets(DoesHave, FText(),
+							GS->NickNames[Index], false);
 				}
 				DoesHave.Init(false, 3);
 				bCanWalkingAndWatching = true;
+				if (IsNowInvisible)
+					ReverceInvisibleEverywhere();
 				KillPlayer();
 				return;
 			}
@@ -544,23 +448,6 @@ void AChel::Tick(float DeltaTime)
 				}
 			}
 		}
-
-		/*if (isTracedBad && bLineTrace_is_need_refresh) {
-			bLineTrace_is_need_refresh = false;
-			UE_LOG(LogTemp, Warning, TEXT("Widget Update"));
-			if (LastInteractiveItem)
-			{
-				LastInteractiveItem->ToggleCustomDepth(false);
-			}
-
-			if (LastInteractiveItem && Cast<AOpenArea>(LastInteractiveItem))
-			{
-				PickUp_Released();
-			}
-			UserView->StopAllAnimations();
-			UserView->E_Mark->SetVisibility(ESlateVisibility::Hidden);
-			LastInteractiveItem = nullptr;
-		}*/
 	}
 
 	if (IsPlayerOwner) {
@@ -568,8 +455,7 @@ void AChel::Tick(float DeltaTime)
 		{
 			UpdateTargetArrowPosition(TargetItemsStatic[i], TargetArrowsStatic[i]);
 		}
-		//UE_LOG(LogTemp, Warning, TEXT("TargetItemsDynamic.Num - %d"), TargetItemsDynamic.Num());
-		//UE_LOG(LogTemp, Warning, TEXT("TargetArrowsDynamic.Num - %d"), TargetArrowsDynamic.Num());
+
 		for (int i = 0; i < TargetArrowsDynamic.Num(); ++i)
 		{
 			UpdateTargetArrowPosition(TargetItemsDynamic[i], TargetArrowsDynamic[i]);
@@ -617,8 +503,6 @@ void AChel::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 	/*PlayerInputComponent->BindAction("ThrowStoneLeft", IE_Pressed, this, &AChel::ThrowStoneLeft);*/
 	PlayerInputComponent->BindAction("PickUp", IE_Pressed, this, &AChel::PickUp);
 	PlayerInputComponent->BindAction("PickUp", IE_Released, this, &AChel::PickUp_Released);
-	PlayerInputComponent->BindAction("Opening", IE_Pressed, this, &AChel::OpenAreaPressed);
-	PlayerInputComponent->BindAction("Opening", IE_Released, this, &AChel::OpenAreaReleased);
 	PlayerInputComponent->BindAction("UpdateSpectating_Left", IE_Released, this, &AChel::UpdateSpectating_Left);
 	PlayerInputComponent->BindAction("UpdateSpectating_Right", IE_Released, this, &AChel::UpdateSpectating_Right);
 	PlayerInputComponent->BindAction("QAbility", IE_Pressed, this, &AChel::QAbilityEnable);
@@ -694,252 +578,20 @@ bool AChel::UpdateSpectating_Left_Server_Validate()
 	return true;
 }
 
-void AChel::OpenAreaPressed() 
-{
-	/*if (!bInEscMenu && bCanWalkingAndWatching) {
-		if (AreaCode != -1)
-		{
-			IsSuccessOpening = true;
-			if (AreaCode <= 2 && AreaCode >= 0) {
-				if (!GS->AreaAvaliables[AreaCode] && DoesHave[AreaCode]) {
-					UserView->PB_Opening->SetVisibility(ESlateVisibility::Visible);
-					UserView->TimeLeft->SetVisibility(ESlateVisibility::Visible);
-				}
-			}
-			switch (AreaCode)
-			{
-			case Boltorez:
-			{
-				if (GS->AreaAvaliables[AreaCode])
-				{
-					PlayerEscape(AreaCode);
-					UserView->RemoveFromParent();
-				}
-				else if (DoesHave[AreaCode])
-				{
-					UserView->PlayAnimation(UserView->CanalizaciaAnim);
-				}
-				break;
-			}
-			case KeyShelter:
-			{
-				if (DoesHave[AreaCode] && !GS->AreaAvaliables[AreaCode])
-				{
-					UserView->PlayAnimation(UserView->ShelterAnim);
-				}
-				break;
-			}
-			case Otvertka:
-			{
-				if (GS->AreaAvaliables[AreaCode])
-				{
-					PlayerEscape(AreaCode);
-					UserView->RemoveFromParent();
-				}
-				else if (DoesHave[AreaCode])
-				{
-					UserView->PlayAnimation(UserView->VentilaciaAnim);
-				}
-				break;
-			}
-			case GeneratorArea:
-			{
-				if (GenAreaObj) {
-					if (GenAreaObj->IsAvalible) {
-						if (GeneratorView->IsVisible()) {
-							if (GeneratorView->Corretca->Value <= GeneratorView->PB_Repair->Percent) {
-								ChangeGeneratorStas();
-							}
-							else {
-								//ChangeCorretcaPosition(GenAreaObj->Stadiya);
-								OutlineBad_Server();//Здесь могла быть ваша логика с обводкой конкретного челика для всех остальных, но уже 12 часов ночи, сори, бб
-							}
-						}
-						else {
-							UserView->HoldText->SetVisibility(ESlateVisibility::Hidden);
-							//ChangeCorretcaPosition(GenAreaObj->Stadiya);
-							TickEnableGeneratorWidget = true;
-							GeneratorView->SetVisibility(ESlateVisibility::Visible);
-						}
-					}
-				}
-				break;
-			}
-			case ShelterOpener:
-			{
-				if (GS->AreaAvaliables[1]) {
-					PlayerEscape(1);
-					UserView->RemoveFromParent();
-				}
-			}
-			}
-		}
-	}
-	*/
-}
-
-void AChel::OpenAreaReleased()
-{
-	/*if (AreaCode != -1) {
-		if (IsSuccessOpening) {
-			IsSuccessOpening = false;
-			UserView->StopAllAnimations();
-		}
-	}*/
-	if (LastInteractiveItem || AreaCode != -1) {
-		IsSuccessOpening = false;
-		UserView->StopAllAnimations();
-	}
-}
-
 void AChel::AddChromaticAbberationClient_Implementation()
 {
 	AddChromaticAbberation();
 }
 
-//TimelineAnimation
-/*void AChel::OnTimelineFinished_Stone_First() {
-	TimeLine_Stone_Second->ReverseFromEnd();
-	if (IsPlayerOwner)
-	{
-		PlayStoneThrowSound();
-	}
-
-	StoneCountUpdate(Ammo);
-
-	FTransform trans;
-	trans.SetLocation(FVector(GetActorLocation().X, GetActorLocation().Y, StoneRight->GetComponentLocation().Z));
-	trans.SetRotation(FQuat(StoneRight->GetComponentRotation()));
-
-	AStone* NewStone = World->SpawnActorDeferred<AStone>(StoneClass, trans, this, this, ESpawnActorCollisionHandlingMethod::AlwaysSpawn);
-	NewStone->Index = Index;
-	NewStone->StoneDamage = (STONE_DAMAGE + 0.02 * StoneDamageBuffCount) * StoneDamageBuffTempValue;
-	UGameplayStatics::FinishSpawningActor(NewStone, trans);
-	if (Ammo == 0) {
-		HideStoneMulticast();
-	}
-}StoneRight*/
-
-/*void AChel::OnTimelineFinished_Stone_First_Left()
-{
-	TimeLine_Stone_Second_Left->ReverseFromEnd();
-	if (IsPlayerOwner)
-	{
-		PlayStoneThrowSound();
-	}
-
-	StoneCountUpdate(Ammo);
-
-	FTransform trans;
-	trans.SetLocation(FVector(GetActorLocation().X, GetActorLocation().Y, StoneLeft->GetComponentLocation().Z));
-	trans.SetRotation(FQuat(StoneLeft->GetComponentRotation()));
-
-	AStone* NewStone = World->SpawnActorDeferred<AStone>(StoneClass, trans, this, this, ESpawnActorCollisionHandlingMethod::AlwaysSpawn);
-	NewStone->Index = Index;
-	NewStone->StoneDamage = (STONE_DAMAGE + 0.02 * StoneDamageBuffCount) * StoneDamageBuffTempValue;
-	UGameplayStatics::FinishSpawningActor(NewStone, trans);
-	if (Ammo == 0) {
-		HideStoneMulticast();
-	}
-}StoneLeft*/
-
-/*void AChel::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
-{
-	AStone* OverStone = Cast<AStone>(OtherActor);
-	if (IsServerAuth) {
-		if (OverStone) {
-			if (OverStone->Index != Index)
-			{
-				StoneAttack(OverStone->Index, OverStone->StoneDamage);
-				TArray<AActor*>Players;
-				UGameplayStatics::GetAllActorsOfClass(GetWorld(), AChel::StaticClass(), Players);
-				for (int i = 0; i < Players.Num(); i++) {
-					AChel* Chel = Cast<AChel>(Players[i]);
-					if (Chel->Index == OverStone->Index)
-					{
-						Chel->AddHitMarker();
-						break;
-					}
-				}
-				PlayStoneHit();
-				OverStone->Destroy();
-			}
-		}
-	}
-	else
-	{
-		if (OverStone->Index != Index)
-		{
-			OverStone->Destroy();
-		}
-	}
-}*/
-
-/*void AChel::StoneCountUpdate_Implementation(int32 Count)
-{
-	if (IsPlayerOwner)
-		UserView->AmmoLabel->SetText(FText::AsNumber(Count));
-}
-
-void AChel::TimelineVectorReturn_Stone(FVector value) {
-	StoneRight->SetRelativeLocation(StonePositionRight + value);
-}
-
-void AChel::TimelineVectorReturn_Stone_Left(FVector value) {
-	StoneLeft->SetRelativeLocation(StonePositionLeft + value);
-}
-*/
 void AChel::TimelineFloatReturn_FOV_WebCam(float value)
 {
 	CameraComp->SetFieldOfView(value);
 }
 
-/*void AChel::OnTimelineFinished_Stone_Second() {
-	bIsAlreadyThrowing = false;
-}
-
-void AChel::OnTimelineFinished_Stone_Second_Left() {
-	bIsAlreadyThrowingLeft = false;
-}*/
-//-----------------------------
-
-//AttackInput------------------
-/*void AChel::ThrowStoneRight() {
-	if (DoubleArmThrowing) {
-		if (Ammo > 0 && IsNotInWebCam && bCanWalkingAndWatching && !bInEscMenu && CanThrowStone) {
-			if (!bIsAlreadyThrowing) {
-				bIsAlreadyThrowing = true;
-				TimeLine_Stone_First->PlayFromStart();
-				ThrowStoneServer(true);
-			}
-		}
-	}
-}
-StoneLeft*/
 void AChel::FireEvent() {
 	if (IsNotInWebCam && bCanWalkingAndWatching && !bInEscMenu && !bInShopMenu && CanFireWeapon && CurrentWeapons[CurrentIndex] && CurrentWeapons[CurrentIndex]->LeftAmmo > 0 ) {
 		FireEvent_Server();
 	}
-
-	/*if (!DoubleArmThrowing) {
-		if (Ammo > 0 && IsNotInWebCam && bCanWalkingAndWatching && !bInEscMenu && CanThrowStone) {
-			if (!bIsAlreadyThrowing) {
-				bIsAlreadyThrowing = true;
-				TimeLine_Stone_First->PlayFromStart();
-				ThrowStoneServer(true);
-			}
-		}
-	}
-	else
-	{
-		if (Ammo > 0 && IsNotInWebCam && bCanWalkingAndWatching && !bInEscMenu && CanThrowStone) {
-			if (!bIsAlreadyThrowingLeft) {
-				bIsAlreadyThrowingLeft = true;
-				TimeLine_Stone_First_Left->PlayFromStart();
-				ThrowStoneServer(false);
-			}
-		}
-	}StoneLeft*/
 }
 
 void AChel::FireEvent_Server_Implementation() {
@@ -975,55 +627,6 @@ void AChel::WeaponSwitch_Server_Implementation(int32 SlotIndex) {
 bool AChel::WeaponSwitch_Server_Validate(int32 SlotIndex) {
 	return true;
 }
-
-/*void AChel::ThrowStoneMulticast_Implementation(bool Type)
-{
-	if (!IsPlayerOwner)
-	{
-		if (Type) {
-			TimeLine_Stone_First->PlayFromStart();
-		}
-		else
-		{
-			TimeLine_Stone_First_Left->PlayFromStart();
-		}
-	}
-}
-*/
-/*void AChel::ThrowStoneServer_Implementation(bool Type)
-{
-	--Ammo;
-	ThrowStoneMulticast(Type);F
-	TArray<AActor*> OverlappngActors;
-	GetOverlappingActors(OverlappngActors, AAmmoPoint::StaticClass());
-	for (auto& it : OverlappngActors) {
-		AAmmoPoint* AmPt = Cast<AAmmoPoint>(it);
-		if (AmPt) {
-			UE_LOG(LogTemp, Warning, TEXT("UpdatingAmmo-Server"));
-			AmPt->AmmoUpdate();
-			break;
-		}
-	}
-	UE_LOG(LogTemp, Warning, TEXT("Complete Throwing stone - server"));
-}
-
-bool AChel::ThrowStoneServer_Validate(bool Type)
-{
-	return true;
-}*/
-
-/*void AChel::HideStoneMulticast_Implementation() {
-	StoneRight->SetHiddenInGame(true);
-	if (DoubleArmThrowing)
-		StoneLeft->SetHiddenInGame(true);
-}
-
-void AChel::ShowStoneMulticast_Implementation() {
-	StoneRight->SetHiddenInGame(false);
-	if (DoubleArmThrowing)
-		StoneLeft->SetHiddenInGame(false);
-}*/
-//----------------------------
 
 //KeyBoardInput----------------
 void AChel::GoForward(float input) {
@@ -1314,21 +917,6 @@ void AChel::PickUp_Released()
 			CameraZoomOut();
 		}
 	}
-	/*if (bCanWalkingAndWatching) {
-		if (IsNotInWebCam) {
-			IsSuccessOpening = false;
-			if (Cast<AOpenArea>(LastInteractiveItem))
-			{
-				//GoToServerOpenArea(false);
-			}
-			UserView->StopAllAnimations();
-		}
-		else
-		{
-			TimeLine_FOV_WebCam->Reverse();
-			CameraZoomOut();
-		}
-	}*/
 }
 
 void AChel::PickUp_Released_Server_Implementation() {
@@ -1485,27 +1073,7 @@ void AChel::ReplaceQAbilityItem(UClass* AbilityItemclass, int32 ItemIndex)
 
 void AChel::NewHaveItemClient_Implementation(int32 ItemType)
 {
-	if (!DoesHave_Owner)
-		switch (ItemType) {
-		case Boltorez:
-		{
-			UserView->WS_Boltorez->SetRenderOpacity(0.5f);
-			break;
-		}
-		case KeyShelter:
-		{
-			UserView->WS_KeyShelter->SetRenderOpacity(0.5f);
-			break;
-		}
-		case Otvertka:
-		{
-			UserView->WS_Otvertka->SetRenderOpacity(0.5f);
-			break;
-		}
-		default:
-			break;
-		}
-	DoesHave_Owner = false;
+	
 }
 
 void AChel::AddHitMarker_Implementation()
@@ -1520,83 +1088,50 @@ void AChel::RemoveHitMarker()
 	UserView->Marker->SetVisibility(ESlateVisibility::Hidden);
 }
 
-/*void AChel::StoneAttack(int StoneIndex, float StoneDamage)
-{
-	if (IsInGame) 
-	{
-		Health += StoneDamage / (1 + 0.2 * ShieldsCount) * DoesNotImmortal;
-		if (Health + DeltaRadiation >= 1.0f)
-		{
-			KillerIndex = StoneIndex;
-		}
-
-		if (Health >= 1.0f)
-		{
-
-			if (DoesHave[Boltorez])
-				GS->CurrentBoltorez--;
-			if (DoesHave[KeyShelter])
-				GS->CurrentKeyShelter--;
-			if (DoesHave[Otvertka])
-				GS->CurrentOtvertka--;
-
-			TArray<AActor*>Players;
-			UGameplayStatics::GetAllActorsOfClass(World, StaticClass(), Players);
-			for (auto& Player : Players)
-					Cast<AChel>(Player)->RefreshWidgets(DoesHave, KillerIndex, Index);
-			DoesHave.Init(false, 3);
-			bCanWalkingAndWatching = true;
-			KillPlayer();
-		}
-	}
-}*/
-
-void AChel::RefreshWidgets_Implementation(const TArray<bool>& whatToUpdate, int KillerNickIndex, int VictimNickIndex)
+void AChel::RefreshWidgets_Implementation(const TArray<bool>& whatToUpdate, const FText& KillerNickName, 
+	const FText& VictimNickName, bool IsEscape)
 {
 	UE_LOG(LogTemp, Warning, TEXT("WidgetUpdates"))
-	if (whatToUpdate[Boltorez])
+	if (whatToUpdate[0])
 	{
 		UserView->WS_Boltorez->SetActiveWidgetIndex(0);
-		UserView->WS_Boltorez->SetRenderOpacity(1.f);
 	}
-	if (whatToUpdate[Otvertka])
+	if (whatToUpdate[1])
 	{
 		UserView->WS_Otvertka->SetActiveWidgetIndex(0);
-		UserView->WS_Otvertka->SetRenderOpacity(1.f);
 	}
-	if (whatToUpdate[KeyShelter])
+	if (whatToUpdate[2])
 	{
 		UserView->WS_KeyShelter->SetActiveWidgetIndex(0);
-		UserView->WS_KeyShelter->SetRenderOpacity(1.f);
+	}
+	if (!IsEscape) {
+		if (KillerNickName.ToString() == "") {
+			UPlayerSuicide* PS_Widget = Cast<UPlayerSuicide>(CreateWidget(World, PlayerSuicide_class));
+			PS_Widget->Player->SetText(VictimNickName);
+			KillFeed->VB_KillFeed->AddChild(PS_Widget);
+		}
+		else
+		{
+			UPlayerKillPlayer* PKP_Widget = Cast<UPlayerKillPlayer>(CreateWidget(World, PlayerKillPlayer_class));
+			PKP_Widget->Killer->SetText(KillerNickName);
+			PKP_Widget->Victim->SetText(KillerNickName);
+			KillFeed->VB_KillFeed->AddChild(PKP_Widget);
+		}
 	}
 
-	if (KillerNickIndex == -1) {
-		UPlayerSuicide* PS_Widget = Cast<UPlayerSuicide>(CreateWidget(World, PlayerSuicide_class));
-		PS_Widget->Player->SetText(GS->NickNames[VictimNickIndex]);
-		KillFeed->VB_KillFeed->AddChild(PS_Widget);
-	}
-	else
-	{
-		UPlayerKillPlayer* PKP_Widget = Cast<UPlayerKillPlayer>(CreateWidget(World, PlayerKillPlayer_class));
-		PKP_Widget->Killer->SetText(GS->NickNames[KillerNickIndex]);
-		PKP_Widget->Victim->SetText(GS->NickNames[VictimNickIndex]);
-		KillFeed->VB_KillFeed->AddChild(PKP_Widget);
-	}
-
-	if (whatToUpdate[Boltorez] || whatToUpdate[Otvertka] || whatToUpdate[KeyShelter])
+	if (whatToUpdate[0] || whatToUpdate[1] || whatToUpdate[2])
 	{
 		UPlayerLostItem* PLI_Widget = Cast<UPlayerLostItem>(CreateWidget(World, PlayerLostItem_class));
-		PLI_Widget->Player->SetText(GS->NickNames[VictimNickIndex]);
-		if (whatToUpdate[Boltorez])
+		PLI_Widget->Player->SetText(VictimNickName);
+		if (whatToUpdate[0])
 			PLI_Widget->IMG_Boltorez->SetVisibility(ESlateVisibility::Visible);
-		if (whatToUpdate[Otvertka])
+		if (whatToUpdate[2])
 			PLI_Widget->IMG_Otvertka->SetVisibility(ESlateVisibility::Visible);
-		if (whatToUpdate[KeyShelter])
+		if (whatToUpdate[1])
 			PLI_Widget->IMG_KeyShelter->SetVisibility(ESlateVisibility::Visible);
 
 		KillFeed->VB_KillFeed->AddChild(PLI_Widget);
 	}
-
 }
 
 void AChel::KillPlayer()
@@ -1734,17 +1269,17 @@ void AChel::RefreshWidgets_Winner_Implementation(int32 EscapeWay)
 {
 	switch (EscapeWay)
 	{
-	case Boltorez:
+	case 0:
 	{
 		UserView->WS_Boltorez->SetVisibility(ESlateVisibility::Hidden);
 		break;
 	}
-	case Otvertka:
+	case 1:
 	{
 		UserView->WS_Otvertka->SetVisibility(ESlateVisibility::Hidden);
 		break;
 	}
-	case KeyShelter:
+	case 2:
 	{
 		UserView->WS_KeyShelter->SetVisibility(ESlateVisibility::Hidden);
 		break;
@@ -1756,30 +1291,6 @@ void AChel::StuffAvaliableUpdate_Implementation(int32 EscapeWay)
 {
 	GS->AreaAvaliables[EscapeWay] = true;
 	DoesHave[EscapeWay] = false;
-	TArray<AActor*>DeletingItems;
-	switch (EscapeWay)
-	{
-	case Boltorez:
-	{
-		UGameplayStatics::GetAllActorsOfClass(World, GS->Boltorez, DeletingItems);
-		break;
-	}
-	case KeyShelter:
-	{
-		UGameplayStatics::GetAllActorsOfClass(World, GS->KeyShelter, DeletingItems);
-		break;
-	}
-	case Otvertka:
-	{
-		UGameplayStatics::GetAllActorsOfClass(World, GS->Otvertka, DeletingItems);
-		break;
-	}
-	}
-
-	for (auto& it : DeletingItems)
-	{
-		it->Destroy();
-	}
 }
 
 bool AChel::StuffAvaliableUpdate_Validate(int32 EscapeWay)
@@ -1811,6 +1322,15 @@ void AChel::PlayerEscape_Implementation(int32 EscapeWay)
 	{
 		if (CustomizationChilds[i])
 			CustomizationChilds[i]->Destroy();
+	}
+	
+	DoesHave[EscapeWay] = false;
+	TArray<AActor*>PlayersEscape;
+	UGameplayStatics::GetAllActorsOfClass(World, AChel::StaticClass(), PlayersEscape);
+	for (auto& Player : PlayersEscape) {
+		AChel* TmpPlayer = Cast<AChel>(Player);
+		TmpPlayer->ShowEscapeWidget(EscapeWay, GS->NickNames[TmpPlayer->Index]);
+		TmpPlayer->RefreshWidgets(DoesHave, FText(), GS->NickNames[Index], true);
 	}
 
 	DeleteAllWeapons();
@@ -2164,29 +1684,6 @@ bool AChel::CheckCodeServer_Validate()
 	return true;
 }
 
-//void AChel::GoToServerOpenArea_Implementation(bool IsStart) 
-//{
-//	if (IsStart) 
-//	{
-//		DoTraceOpenArea();
-//		AOpenArea* CurArea = Cast<AOpenArea>(LastInteractiveItem);
-//		CurArea->bIsUsed = true;
-//		CurArea->RotateVentilServer();
-//	}
-//	else
-//	{
-//		AOpenArea* CurArea = Cast<AOpenArea>(LastInteractiveItem);
-//		if (CurArea) {
-//			CurArea->bIsUsed = false;
-//			if (Cast<AOpenArea>(LastInteractiveItem)->CurTimeVentil != 10.f)
-//			{
-//				Cast<AOpenArea>(LastInteractiveItem)->RotateVentilServerReverse();
-//			}
-//			LastInteractiveItem = nullptr;
-//		}
-//	}
-//}
-
 void AChel::UpdateTargetArrowPosition(AActor* TargetObj, UTargetArrow* ArrowWidget) {
 	if (ArrowWidget && TargetObj) {
 		APlayerController* CurPC = UGameplayStatics::GetPlayerController(World, 0);
@@ -2322,6 +1819,34 @@ void AChel::DeleteStrelkaBadOutline_Client_Implementation(int32 ChelIndex)
 	RemoveArrowBadOutline(ChelIndex);
 }
 
+void AChel::ShowEscapeWidget_Implementation(int32 Escape_Way, const FText& ThrowNickName)
+{
+	UPlayerEscapeWidget* TmpWidget = Cast<UPlayerEscapeWidget>(CreateWidget(World, PlayerEscapeWidget_class));
+	TmpWidget->NickName->SetText(ThrowNickName);
+	switch (Escape_Way)
+	{
+	case 0:
+	{
+		TmpWidget->BoltorezImage->SetVisibility(ESlateVisibility::Visible);
+		TmpWidget->WayOut->SetText(FText::FromString("escaped from Canalizacia"));
+		break;
+	}
+	case 1:
+	{
+		TmpWidget->KeyShelterImage->SetVisibility(ESlateVisibility::Visible);
+		TmpWidget->WayOut->SetText(FText::FromString("escaped from Shelter Door"));
+		break;
+	}
+	case 2:
+	{
+		TmpWidget->OtvertkaImage->SetVisibility(ESlateVisibility::Visible);
+		TmpWidget->WayOut->SetText(FText::FromString("escaped from Ventilacia"));
+		break;
+	}
+	}
+	KillFeed->VB_KillFeed->AddChild(TmpWidget);
+}
+
 void AChel::RemoveArrowBadOutline(int32 ChelIndex)
 {
 	for (int i = 0; i < TargetItemsDynamic.Num(); ++i)
@@ -2435,28 +1960,6 @@ bool AChel::UseSpeedBust_Server_Validate()
 {
 	return true;
 }
-
-/*void AChel::AddStoneDamageBuffTemp_Implementation()
-{
-	StoneDamageBuffTempValue = 2.0f;
-	CurrentStoneDamageBuffTempCount++;
-	FTimerHandle FuzeTimerHandle2;
-	GetWorld()->GetTimerManager().SetTimer(FuzeTimerHandle2, this, &AChel::RemoveStoneDamageBuffTemp, 10, false);
-}
-
-bool AChel::AddStoneDamageBuffTemp_Validate()
-{
-	return true;
-}*/
-
-/*void AChel::RemoveStoneDamageBuffTemp()
-{
-	CurrentStoneDamageBuffTempCount--;
-	if (CurrentStoneDamageBuffTempCount == 0)
-	{
-		StoneDamageBuffTempValue = 1.0f;
-	}
-}*/
 
 void AChel::AddImmortalServer_Implementation()
 {
@@ -2863,4 +2366,29 @@ void AChel::DeleteAllWeapons_Implementation() {
 		if (CurrentWeapons[i])
 			CurrentWeapons[i]->Destroy();
 	}
+}
+
+void AChel::PickUpCoreItem_Implementation(int32 ItemType, const FText& ThrowNickName)
+{
+	UPlayerFindCoreItem* TmpWidget = Cast<UPlayerFindCoreItem>(CreateWidget(World, PlayerFindCoreItem_class));
+	TmpWidget->NickName->SetText(ThrowNickName);
+	switch (ItemType)
+	{
+	case 0:
+	{
+		TmpWidget->BoltorezImage->SetVisibility(ESlateVisibility::Visible);
+		break;
+	}
+	case 1:
+	{
+		TmpWidget->KeyShelterImage->SetVisibility(ESlateVisibility::Visible);
+		break;
+	}
+	case 2:
+	{
+		TmpWidget->OtvertkaImage->SetVisibility(ESlateVisibility::Visible);
+		break;
+	}
+	}
+	KillFeed->VB_KillFeed->AddChild(TmpWidget);
 }

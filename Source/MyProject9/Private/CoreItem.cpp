@@ -3,6 +3,7 @@
 
 #include "CoreItem.h"
 #include "Chel.h"
+#include "Kismet/GameplayStatics.h"
 
 ACoreItem::ACoreItem() {
 	Scene = CreateDefaultSubobject<USceneComponent>("Scene");
@@ -18,6 +19,12 @@ ACoreItem::ACoreItem() {
 void ACoreItem::PickUpEventServer(AChel* Player) {
 	PlayPickUpSound();
 	Player->DoesHave[TypeItem] = true;
+	TArray<AActor*>Players;
+	UGameplayStatics::GetAllActorsOfClass(Player->World, AChel::StaticClass(), Players);
+	for (auto& itPlayer : Players) {
+		AChel* TmpPlayer = Cast<AChel>(itPlayer);
+		TmpPlayer->PickUpCoreItem(TypeItem, Player->GS->NickNames[Player->Index]);
+	}
 	Destroy();
 }
 
