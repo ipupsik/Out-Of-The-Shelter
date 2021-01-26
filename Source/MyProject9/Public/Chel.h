@@ -38,7 +38,9 @@
 #include "UI/VerstakWidget.h"
 #include "Components/CapsuleComponent.h"
 #include "QAbility.h"
+#include "CoreItem_Dropped.h"
 #include "Chel.generated.h"
+
 
 class UCameraComponent;
 class UPoseableMeshComponent;
@@ -409,6 +411,15 @@ public:
 		USphereComponent* SenseCollision;
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Player")
 		USceneComponent* Scene;
+
+	UPROPERTY(EditAnywhere, Category = "CoreItem_Dropped")
+		TSubclassOf<ACoreItem_Dropped> BoltorezClass_Dropped;
+	UPROPERTY(EditAnywhere, Category = "CoreItem_Dropped")
+		TSubclassOf<ACoreItem_Dropped> KeyClass_Dropped;
+	UPROPERTY(EditAnywhere, Category = "CoreItem_Dropped")
+		TSubclassOf<ACoreItem_Dropped> OtvertkaClass_Dropped;
+	
+	void CreateDroppedItem(UClass* DroppedItemClass);
 
 	UPROPERTY(EditAnywhere, Category = "Projectile")
 		TSubclassOf<AStone> StoneClass;

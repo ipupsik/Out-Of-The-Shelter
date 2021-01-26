@@ -470,9 +470,9 @@ void AChel::Tick(float DeltaTime)
 				for (auto& Player : Players) {
 					Cast<AChel>(Player)->RefreshWidgets(DoesHave, KillerIndex, Index);
 				}
-				DoesHave.Init(false, 3);
 				bCanWalkingAndWatching = true;
 				KillPlayer();
+				DoesHave.Init(false, 3);
 				return;
 			}
 		}
@@ -1814,6 +1814,7 @@ void AChel::PlayerEscape_Implementation(int32 EscapeWay)
 	}
 
 	DeleteAllWeapons();
+	DropCoreItems();
 
 	if (GS->GeneralLayer == 2) {
 		GS->SpawnCustomizationChels();
@@ -2607,30 +2608,24 @@ void AChel::SetCurRAbilityUserView()
 void AChel::DropCoreItems()
 {
 	if (DoesHave[0]) {
-		FTransform Trsfrm;
-		Trsfrm.SetLocation(DamageCollision->GetComponentLocation());
-		Trsfrm.SetRotation(FQuat(FRotator(DamageCollision->GetComponentRotation())));
-		Trsfrm.SetScale3D(FVector(1.0f, 1.0f, 1.0f));
-		ACoreItem* DroppedItm = World->SpawnActor<ACoreItem>(GS->Boltorez, Trsfrm);
-		DroppedItm->Collision->SetPhysicsLinearVelocity(FVector(CameraComp->GetForwardVector() * 200.f));
+		CreateDroppedItem(BoltorezClass_Dropped);
 	}
 	if (DoesHave[1]) {
-		FTransform Trsfrm;
-		Trsfrm.SetLocation(DamageCollision->GetComponentLocation());
-		Trsfrm.SetRotation(FQuat(FRotator(DamageCollision->GetComponentRotation())));
-		Trsfrm.SetScale3D(FVector(1.0f, 1.0f, 1.0f));
-		ACoreItem* DroppedItm = World->SpawnActor<ACoreItem>(GS->KeyShelter, Trsfrm);
-		DroppedItm->Collision->SetPhysicsLinearVelocity(FVector(CameraComp->GetForwardVector() * 200.f));
+		CreateDroppedItem(KeyClass_Dropped);
 	}
 	if (DoesHave[2]) {
-		FTransform Trsfrm;
-		Trsfrm.SetLocation(DamageCollision->GetComponentLocation());
-		Trsfrm.SetRotation(FQuat(FRotator(DamageCollision->GetComponentRotation())));
-		Trsfrm.SetScale3D(FVector(1.0f, 1.0f, 1.0f));
-		ACoreItem* DroppedItm = World->SpawnActor<ACoreItem>(GS->Otvertka, Trsfrm);
-		DroppedItm->Collision->SetPhysicsLinearVelocity(FVector(CameraComp->GetForwardVector() * 200.f));
+		CreateDroppedItem(OtvertkaClass_Dropped);
 	}
 }
+void AChel::CreateDroppedItem(UClass* DroppedItemClass) {
+	FTransform Trsfrm;
+	Trsfrm.SetLocation(DamageCollision->GetComponentLocation());
+	Trsfrm.SetRotation(FQuat(FRotator(DamageCollision->GetComponentRotation())));
+	Trsfrm.SetScale3D(FVector(1.0f, 1.0f, 1.0f));
+	ACoreItem_Dropped* DroppedItm = World->SpawnActor<ACoreItem_Dropped>(DroppedItemClass, Trsfrm);
+	DroppedItm->Mesh->SetPhysicsLinearVelocity(FVector(CameraComp->GetForwardVector() * 200.f));
+}
+
 //----------------оружия------------------------
 void AChel::SwitchToFirstWeapon() {
 	if (CurrentWeapons[0] && CurrentWeapons[0]->LeftAmmo > 0 &&
