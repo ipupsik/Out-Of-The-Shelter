@@ -2549,6 +2549,10 @@ void AChel::UseRAbility()
 			RAbilityPanel[i]->UserViewSlot = tmpSlot;
 			RAbilityPanel[i - 1]->ResetAbility();
 			LastRAbilityIndex++;
+			if (i == RAbilityTypeIndex + 1)
+			{
+				RAbilityPanel[i - 1]->UserViewSlot->HoveredRAbility();
+			}
 		}
 	}
 	if (LastRAbilityIndex < RAbilityTypeIndex)
@@ -2557,6 +2561,7 @@ void AChel::UseRAbility()
 	}
 	SetCurRAbilityUserView();
 	RAbilityPanel[LastRAbilityIndex + 1]->UserViewSlot->SetVisibility(ESlateVisibility::Hidden);
+	RAbilityPanel[LastRAbilityIndex + 1]->UserViewSlot->SelectImage->SetVisibility(ESlateVisibility::Hidden);
 	RAbilityPanel[LastRAbilityIndex + 1] = nullptr;
 }
 
