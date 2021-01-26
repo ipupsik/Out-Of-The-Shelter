@@ -22,6 +22,12 @@ void AQAbilityItem::PickUpEventServer(AChel* Player)
 		Player->ReplaceQAbilityItem(Player->CurQAbility->QAbilityitem_class, EnabledArrayIndex);
 	}
 	Player->CurQAbility = NewObject<UQAbility>(Player, QAbility_class);
+	if (Player->IsPlayerOwner)
+	{
+		FSlateBrush NewBrush;
+		NewBrush.SetResourceObject(Player->CurQAbility->Icon);
+		Player->UserView->CurQSlot->AbilityImage->SetBrush(NewBrush);
+	}
 	Destroy();
 }
 
@@ -32,12 +38,12 @@ bool AQAbilityItem::PickUpEventClient(AChel* Player)
 			return false;
 		Player->CurQAbility->ConditionalBeginDestroy();
 	}
-	if (GetLocalRole() != ROLE_Authority)
+	if (!Player->IsServerAuth) {
 		Player->CurQAbility = NewObject<UQAbility>(Player, QAbility_class);
-	FSlateBrush NewBrush;
-	NewBrush.SetResourceObject(Player->CurQAbility->Icon);
-	Player->UserView->CurQSlot->AbilityImage->SetBrush(NewBrush);
-	if (GetLocalRole() != ROLE_Authority)
+		FSlateBrush NewBrush;
+		NewBrush.SetResourceObject(Player->CurQAbility->Icon);
+		Player->UserView->CurQSlot->AbilityImage->SetBrush(NewBrush);
 		Destroy();
+	}
 	return true;
 }

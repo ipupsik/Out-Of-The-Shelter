@@ -3,6 +3,26 @@
 
 #include "ConAbility_ProjectileDamage.h"
 #include "Chel.h"
+#include "GS.h"
+#include "InteractiveCache.h"
+
+FVector UConAbility_ProjectileDamage::GetCacheScale3D(int32 CacheIndex)
+{
+	AGS* GS = GetWorld()->GetGameState<AGS>();
+	return GS->ArmoryZelieTransform[GS->Caches[CacheIndex]->CacheIndex].GetScale3D();
+}
+
+FRotator UConAbility_ProjectileDamage::GetCacheRotation(int32 CacheIndex)
+{
+	AGS* GS = GetWorld()->GetGameState<AGS>();
+	return FRotator(GS->ArmoryZelieTransform[GS->Caches[CacheIndex]->CacheIndex].GetRotation());
+}
+
+FVector UConAbility_ProjectileDamage::GetCacheLocation(int32 CacheIndex)
+{
+	AGS* GS = GetWorld()->GetGameState<AGS>();
+	return GS->ArmoryZelieTransform[GS->Caches[CacheIndex]->CacheIndex].GetLocation();
+}
 
 void UConAbility_ProjectileDamage::UseAbilityServer(AChel* Player)
 {

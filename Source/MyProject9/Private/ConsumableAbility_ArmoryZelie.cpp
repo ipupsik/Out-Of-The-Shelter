@@ -3,6 +3,26 @@
 
 #include "ConsumableAbility_ArmoryZelie.h"
 #include "Chel.h"
+#include "GS.h"
+#include "InteractiveCache.h"
+
+FVector UConsumableAbility_ArmoryZelie::GetCacheScale3D(int32 CacheIndex)
+{
+	AGS* GS = GetWorld()->GetGameState<AGS>();
+	return GS->ZelieTransform[GS->Caches[CacheIndex]->CacheIndex].GetScale3D();
+}
+
+FRotator UConsumableAbility_ArmoryZelie::GetCacheRotation(int32 CacheIndex)
+{
+	AGS* GS = GetWorld()->GetGameState<AGS>();
+	return FRotator(GS->ZelieTransform[GS->Caches[CacheIndex]->CacheIndex].GetRotation());
+}
+
+FVector UConsumableAbility_ArmoryZelie::GetCacheLocation(int32 CacheIndex)
+{
+	AGS* GS = GetWorld()->GetGameState<AGS>();
+	return GS->ZelieTransform[GS->Caches[CacheIndex]->CacheIndex].GetLocation();
+}
 
 void UConsumableAbility_ArmoryZelie::UseAbilityServer(AChel* Player)
 {

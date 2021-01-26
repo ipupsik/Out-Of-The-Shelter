@@ -195,11 +195,85 @@ void AGS::BeginPlay()
 			CacheItems_Stuff_IsAvaliable[ArrayIndex] = false;
 		}
 
+		for (int i = 0; i < 4; ++i) {
+			int ArrayIndex = FMath::Rand() % CacheItems_Stuff_IsAvaliable.Num();
+			while (!CacheItems_Stuff_IsAvaliable[ArrayIndex])
+			{
+				ArrayIndex++;
+				if (ArrayIndex >= CacheItems_Stuff_IsAvaliable.Num())
+					ArrayIndex = 0;
+			}
+			AActor* NewItem = GetWorld()->SpawnActor<AActor>(InvisiblePotion_class);
+			FAttachmentTransformRules AttachmentRules = FAttachmentTransformRules(EAttachmentRule::KeepRelative, true);
+			NewItem->AttachToActor(Caches[ArrayIndex], AttachmentRules);
+			NewItem->SetActorScale3D(ZelieTransform[Caches[ArrayIndex]->CacheIndex].GetScale3D());
+			NewItem->AddActorLocalOffset(ZelieTransform[Caches[ArrayIndex]->CacheIndex].GetLocation());
+			NewItem->AddActorLocalRotation(ZelieTransform[Caches[ArrayIndex]->CacheIndex].GetRotation());
+			Cast<ACollectableItem>(NewItem)->EnabledArrayIndex = ArrayIndex;
+			CacheItems_Stuff_IsAvaliable[ArrayIndex] = false;
+		}
+
+		for (int i = 0; i < 6; ++i) {
+			int ArrayIndex = FMath::Rand() % CacheItems_Stuff_IsAvaliable.Num();
+			while (!CacheItems_Stuff_IsAvaliable[ArrayIndex])
+			{
+				ArrayIndex++;
+				if (ArrayIndex >= CacheItems_Stuff_IsAvaliable.Num())
+					ArrayIndex = 0;
+			}
+			AActor* NewItem = GetWorld()->SpawnActor<AActor>(AntiRadZelie_class);
+			FAttachmentTransformRules AttachmentRules = FAttachmentTransformRules(EAttachmentRule::KeepRelative, true);
+			NewItem->AttachToActor(Caches[ArrayIndex], AttachmentRules);
+			NewItem->SetActorScale3D(ZelieTransform[Caches[ArrayIndex]->CacheIndex].GetScale3D());
+			NewItem->AddActorLocalOffset(ZelieTransform[Caches[ArrayIndex]->CacheIndex].GetLocation());
+			NewItem->AddActorLocalRotation(ZelieTransform[Caches[ArrayIndex]->CacheIndex].GetRotation());
+			Cast<ACollectableItem>(NewItem)->EnabledArrayIndex = ArrayIndex;
+			CacheItems_Stuff_IsAvaliable[ArrayIndex] = false;
+		}
+
+		for (int i = 0; i < 6; ++i) {
+			int ArrayIndex = FMath::Rand() % CacheItems_Stuff_IsAvaliable.Num();
+			while (!CacheItems_Stuff_IsAvaliable[ArrayIndex])
+			{
+				ArrayIndex++;
+				if (ArrayIndex >= CacheItems_Stuff_IsAvaliable.Num())
+					ArrayIndex = 0;
+			}
+			AActor* NewItem = GetWorld()->SpawnActor<AActor>(ArmoryZelie_class);
+			FAttachmentTransformRules AttachmentRules = FAttachmentTransformRules(EAttachmentRule::KeepRelative, true);
+			NewItem->AttachToActor(Caches[ArrayIndex], AttachmentRules);
+			NewItem->SetActorScale3D(ZelieTransform[Caches[ArrayIndex]->CacheIndex].GetScale3D());
+			NewItem->AddActorLocalOffset(ZelieTransform[Caches[ArrayIndex]->CacheIndex].GetLocation());
+			NewItem->AddActorLocalRotation(ZelieTransform[Caches[ArrayIndex]->CacheIndex].GetRotation());
+			Cast<ACollectableItem>(NewItem)->EnabledArrayIndex = ArrayIndex;
+			CacheItems_Stuff_IsAvaliable[ArrayIndex] = false;
+		}
+
+		for (int i = 0; i < 6; ++i) {
+			int ArrayIndex = FMath::Rand() % CacheItems_Stuff_IsAvaliable.Num();
+			while (!CacheItems_Stuff_IsAvaliable[ArrayIndex])
+			{
+				ArrayIndex++;
+				if (ArrayIndex >= CacheItems_Stuff_IsAvaliable.Num())
+					ArrayIndex = 0;
+			}
+			AActor* NewItem = GetWorld()->SpawnActor<AActor>(ProjectileZelie_class);
+			FAttachmentTransformRules AttachmentRules = FAttachmentTransformRules(EAttachmentRule::KeepRelative, true);
+			NewItem->AttachToActor(Caches[ArrayIndex], AttachmentRules);
+			NewItem->SetActorScale3D(ArmoryZelieTransform[Caches[ArrayIndex]->CacheIndex].GetScale3D());
+			NewItem->AddActorLocalOffset(ArmoryZelieTransform[Caches[ArrayIndex]->CacheIndex].GetLocation());
+			NewItem->AddActorLocalRotation(ArmoryZelieTransform[Caches[ArrayIndex]->CacheIndex].GetRotation());
+			Cast<ACollectableItem>(NewItem)->EnabledArrayIndex = ArrayIndex;
+			CacheItems_Stuff_IsAvaliable[ArrayIndex] = false;
+		}
+
 		for (int i = 0; i < 2; ++i) {
 			int ArrayIndex = FMath::Rand() % CacheItems_Stuff_IsAvaliable.Num();
 			while (!CacheItems_Stuff_IsAvaliable[ArrayIndex])
 			{
-				ArrayIndex = FMath::Rand() % CacheItems_Stuff_IsAvaliable.Num();
+				ArrayIndex++;
+				if (ArrayIndex >= CacheItems_Stuff_IsAvaliable.Num())
+					ArrayIndex = 0;
 			}
 			AActor* NewItem = GetWorld()->SpawnActor<AActor>(RentgenGlass_class);
 			FAttachmentTransformRules AttachmentRules = FAttachmentTransformRules(EAttachmentRule::KeepRelative, true);
@@ -223,7 +297,7 @@ void AGS::BeginPlay()
 
 		for (int Keys = 0; Keys < 3; ++Keys)
 		{
-			for (int i = 0; i < COUNT_CacheKey; ++i)
+			for (int i = 0; i < 11; ++i)
 			{
 				int ArrayIndex = FMath::Rand() % Keys_IsAvaliable.Num();
 				while (!Keys_IsAvaliable[ArrayIndex])
