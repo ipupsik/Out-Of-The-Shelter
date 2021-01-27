@@ -1096,11 +1096,11 @@ void AChel::RefreshWidgets_Implementation(const TArray<bool>& whatToUpdate, cons
 	{
 		UserView->WS_Boltorez->SetActiveWidgetIndex(0);
 	}
-	if (whatToUpdate[1])
+	if (whatToUpdate[2])
 	{
 		UserView->WS_Otvertka->SetActiveWidgetIndex(0);
 	}
-	if (whatToUpdate[2])
+	if (whatToUpdate[1])
 	{
 		UserView->WS_KeyShelter->SetActiveWidgetIndex(0);
 	}
