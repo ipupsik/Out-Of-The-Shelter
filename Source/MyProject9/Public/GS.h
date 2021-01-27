@@ -142,12 +142,28 @@ public:
 	UPROPERTY(EditAnywhere, Category = "RandomEvent")
 		float RandomEventDuration;
 	UPROPERTY(EditAnywhere, Category = "RandomEvent")
-		FName GasAreaDamageTag;
+		FName GasAreaDamageTag_1;
 	UPROPERTY(EditAnywhere, Category = "RandomEvent")
-		FName GasAreaParticleTag;
-
+		FName GasAreaParticleTag_1;
+	UPROPERTY(EditAnywhere, Category = "RandomEvent")
+		FName GasAreaDamageTag_2;
+	UPROPERTY(EditAnywhere, Category = "RandomEvent")
+		FName GasAreaParticleTag_2;
+	UPROPERTY(EditAnywhere, Category = "RandomEvent")
+		FName GasAreaDamageTag_3;
+	UPROPERTY(EditAnywhere, Category = "RandomEvent")
+		FName GasAreaParticleTag_3;
+	UPROPERTY(EditAnywhere, Category = "RandomEvent")
+		FName GasAreaDamageTag_4;
+	UPROPERTY(EditAnywhere, Category = "RandomEvent")
+		FName GasAreaParticleTag_4;
+	UFUNCTION(BlueprintImplementableEvent)
+		void PlaySoundGas(FVector Location);
 	void CreateGasOnFloor();
 	void RemoveGasFromFloor();
+
+
+
 
 	UPROPERTY(EditAnywhere, Category = "ItemClasses")
 		TSubclassOf<AInteractiveItem> KeyShelter;

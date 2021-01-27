@@ -464,6 +464,9 @@ void AGS::SpawnPlayers()
 		Player->IsInGame = true;
 		Player->Health = 0;
 	}
+
+	FTimerHandle FuzeTimerHandle;
+	GetWorld()->GetTimerManager().SetTimer(FuzeTimerHandle, this, &AGS::CreateGasOnFloor, RandomEventDuration, false);
 }
 
 void AGS::ResetGame() {
@@ -668,9 +671,74 @@ void AGS::RefreshGenerator()
 
 
 void AGS::CreateGasOnFloor() {
+	if (IsGameStarted) { //если в игре
+		FName GasAreaParticleTag = "";
+		FName GasAreaDamageTag = "";
+		int32 Floor = FMath::Rand() % 4;
+		switch (Floor) {
+		case 0:
+			GasAreaParticleTag = GasAreaParticleTag_1;
+			GasAreaDamageTag = GasAreaDamageTag_1;
+			break;
+		case 1:
+			GasAreaParticleTag = GasAreaParticleTag_2;
+			GasAreaDamageTag = GasAreaDamageTag_2;
+			break;
+		case 2:
+			GasAreaParticleTag = GasAreaParticleTag_3;
+			GasAreaDamageTag = GasAreaDamageTag_3;
+			break;
+		case 3:
+			GasAreaParticleTag = GasAreaParticleTag_4;
+			GasAreaDamageTag = GasAreaDamageTag_4;
+			break;
+		}
 
+		TArray<AActor*> PartSystem_Targets;
+		UGameplayStatics::GetAllActorsOfClassWithTag(GetWorld(), ATargetPoint::StaticClass(), GasAreaParticleTag, PartSystem_Targets);
+
+		for (auto& it : PartSystem_Targets)
+		{
+			AParticleGasRandomEvent* PSActor = GetWorld()->SpawnActor<AParticleGasRandomEvent>(ParticleGas_Class, it->GetActorTransform());
+			PlaySoundGas(it->GetActorLocation());
+		}
+
+		TArray<AActor*> DamageArea_Targets;
+		UGameplayStatics::GetAllActorsOfClassWithTag(GetWorld(), ATargetPoint::StaticClass(), GasAreaDamageTag, DamageArea_Targets);
+
+		for (auto& it : DamageArea_Targets)
+		{
+			ADamageAreaRandomEvent* DamageActor = GetWorld()->SpawnActor<ADamageAreaRandomEvent>(DamageAreaRandom_Class, it->GetActorTransform());
+		}
+
+		FTimerHandle FuzeTimerHandle;
+		GetWorld()->GetTimerManager().SetTimer(FuzeTimerHandle, this, &AGS::RemoveGasFromFloor, 21, false);
+	}
 }
 
 void AGS::RemoveGasFromFloor() {
+	TArray<AActor*> PS_Targets;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AParticleGasRandomEvent::StaticClass(), PS_Targets);
 
+	for (auto& it : PS_Targets)
+	{
+		if (Cast<AParticleGasRandomEvent>(it))
+		{
+			it->Destroy();
+		}
+	}
+
+	TArray<AActor*> DamageArea_Targets;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ADamageAreaRandomEvent::StaticClass(), DamageArea_Targets);
+
+	for (auto& it : DamageArea_Targets)
+	{
+		if (Cast<ADamageAreaRandomEvent>(it))
+		{
+			it->Destroy();
+		}
+	}
+
+	FTimerHandle FuzeTimerHandle;
+	GetWorld()->GetTimerManager().SetTimer(FuzeTimerHandle, this, &AGS::CreateGasOnFloor, RandomEventDuration, false);
 }
