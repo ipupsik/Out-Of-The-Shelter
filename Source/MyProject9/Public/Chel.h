@@ -101,6 +101,9 @@ protected:
 	UFUNCTION(Server, Reliable, WithValidation)
 		void UpdateSpectating_Right_Server();
 public:
+	void AddExtraCacheKeys();
+	void AddExtraDetails();
+
 	UFUNCTION(Server, Reliable, WithValidation)
 		void CallEnableGasVent();
 	UFUNCTION(Server, Reliable, WithValidation)
@@ -562,6 +565,9 @@ public:
 
 	int32 ShieldsCount;
 	int32 StoneDamageBuffCount;
+
+	int8 ExtraCacheKeysTimer;
+	int8 ExtraDetailsTimer;
 
 	int32 DoesRadiationAntidot;
 	int32 CurrentSpeedBustCount;

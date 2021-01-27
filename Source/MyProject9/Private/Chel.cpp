@@ -76,6 +76,8 @@ AChel::AChel()
 	WebCamIterator = -1;
 	IsNowInvisible = false;
 	DoubleArmThrowing = false;
+	ExtraCacheKeysTimer = 0;
+	ExtraDetailsTimer = 0;
 	bIsAlreadyThrowingLeft = false;
 	CanalizationDamage = 1.0f;
 	QAbilityType = -1;
@@ -92,7 +94,7 @@ AChel::AChel()
 	HaveSpecialAmmo = false;
 	TempAntiDotEffect = 1.0f;
 	ArmoryZelieEffect = 1.0f;
-	AmountDetails = 5;
+	AmountDetails = 0;
 //	OpenAreaObj = nullptr;
 	TickEnableGeneratorWidget = false;
 	ProjectileDamageEffect = 1.0f;
@@ -1946,6 +1948,28 @@ void AChel::StopUseSpeedBust()
 	{
 		SpeedBustValue = 0;
 	}
+}
+
+void AChel::AddExtraDetails()
+{
+	AmountDetails += ExtraDetailsTimer;
+	UserView->Details->SetText(FText::AsNumber(AmountDetails));
+
+	FTimerHandle FuzeTimerHandle;
+	GetWorld()->GetTimerManager().SetTimer(FuzeTimerHandle, this, &AChel::AddExtraDetails, 15, false);
+}
+
+void AChel::AddExtraCacheKeys()
+{
+	KeysCount[0] += ExtraCacheKeysTimer;
+	KeysCount[1] += ExtraCacheKeysTimer;
+	KeysCount[2] += ExtraCacheKeysTimer;
+	UserView->KeyLeft_Gold->SetText(FText::AsNumber(KeysCount[2]));
+	UserView->KeyLeft_Silver->SetText(FText::AsNumber(KeysCount[1]));
+	UserView->KeyLeft_Bronze->SetText(FText::AsNumber(KeysCount[0]));
+
+	FTimerHandle FuzeTimerHandle;
+	GetWorld()->GetTimerManager().SetTimer(FuzeTimerHandle, this, &AChel::AddExtraCacheKeys, 30, false);
 }
 
 void AChel::UseSpeedBust_Server_Implementation()
