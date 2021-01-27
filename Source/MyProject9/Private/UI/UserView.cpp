@@ -6,6 +6,11 @@
 #include "Chel.h"
 #include "Ventil.h"
 
+enum {
+	RadiationRandomEvent,
+	RadiationVentil
+};
+
 void UUserView::NativeConstruct() {
 	Super::NativeConstruct();
 	IsAwake = true;
@@ -74,7 +79,7 @@ void UUserView::OnAnimationFinished_Implementation(const UWidgetAnimation* Anima
 	PB_Opening->SetVisibility(ESlateVisibility::Hidden);
 	TimeLeft->SetVisibility(ESlateVisibility::Hidden);
 }
-void UUserView::AddDoubleRadiationEffect() {
+/*void UUserView::AddDoubleRadiationEffect() {
 	
 	UUserWidget* Image = CreateWidget(GetWorld(), RadiationImage);
 	UHorizontalBoxSlot* Hor_slot = Cast<UHorizontalBoxSlot>(Effects_Bar->AddChild(Image));
@@ -95,6 +100,45 @@ void UUserView::DisableDoubleRadiationEffect()
 		{
 			UE_LOG(LogTemp, Warning, TEXT("Remove"))
 			it->RemoveFromParent();
+			return;
+		}
+	}
+}
+*/
+
+void UUserView::AddIconToPanel(int32 IdEffect) {
+	UUserWidget* Image = nullptr;
+	switch (IdEffect) {
+	case RadiationRandomEvent:
+		Image = CreateWidget(GetWorld(), RadiationRandomEvent_Class);
+		break;
+	case RadiationVentil:
+		Image = CreateWidget(GetWorld(), RadiationVentil_Class);
+		break;
+	default:
+		return;
+		break;
+	}
+
+	UIconWidget* Icon = Cast<UIconWidget>(Image);
+	if (Icon) {
+		Icon->Identificator = IdEffect;
+		UHorizontalBoxSlot* Hor_slot = Cast<UHorizontalBoxSlot>(Effects_Bar->AddChild(Icon));
+		Hor_slot->SetHorizontalAlignment(EHorizontalAlignment::HAlign_Center);
+		Hor_slot->SetVerticalAlignment(EVerticalAlignment::VAlign_Center);
+		FSlateChildSize InSize = FSlateChildSize(ESlateSizeRule::Fill);
+		InSize.Value = 1.0f;
+		Hor_slot->SetSize(InSize);
+	}
+}
+
+void UUserView::RemoveIconFromPanel(int32 IdEffect) {
+	TArray<UWidget*> EffectsWidgets = Effects_Bar->GetAllChildren();
+	for (auto& it : EffectsWidgets) {
+		UIconWidget* Icon = Cast<UIconWidget>(it);
+		if (Icon && Icon->Identificator == IdEffect)
+		{
+			Icon->RemoveFromParent();
 			return;
 		}
 	}

@@ -1536,12 +1536,12 @@ void AChel::DeleteGameHUD_Implementation()
 
 void AChel::AddDoubleRadiationWidget_Implementation()
 {
-	UserView->AddDoubleRadiationEffect();
+	//UserView->AddDoubleRadiationEffect();
 }
 
 void AChel::DisableDoubleRadiationWidget_Implementation()
 {
-	UserView->DisableDoubleRadiationEffect();
+	//UserView->DisableDoubleRadiationEffect();
 }
 
 void AChel::ChangePB_Client_Implementation(int32 ValueV)

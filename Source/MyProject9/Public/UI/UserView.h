@@ -16,6 +16,7 @@
 #include "UI/RadiationWidget.h"
 #include "UI/QAbilitySlot.h"
 #include "UI/RAbilitySlot.h"
+#include "UI/IconWidget.h"
 #include "UserView.generated.h"
 
 
@@ -31,13 +32,23 @@ class MYPROJECT9_API UUserView : public UUserWidget
 	
 public:
 	void OnAnimationFinished_Implementation(const UWidgetAnimation* Animation) override;
-	void AddDoubleRadiationEffect();
+	/*void AddDoubleRadiationEffect();
 	void DisableDoubleRadiationEffect();
 	void AddFreezeEffect();
-	void DisableFreezeEffect();
-
+	void DisableFreezeEffect();*/
 	//void Construct() override;
+
+	void AddIconToPanel(int32 IdEffect);
+	void RemoveIconFromPanel(int32 IdEffect);
 public:
+
+	UPROPERTY(EditAnywhere, Category = "Effect Icon Classes")
+		TSubclassOf<UIconWidget> RadiationRandomEvent_Class;
+	UPROPERTY(EditAnywhere, Category = "Effect Icon Classes")
+		TSubclassOf<UIconWidget> RadiationVentil_Class;
+
+
+
 	AChel* Player;
 	//---------------------------
 	UPROPERTY(meta = (BindWidget))

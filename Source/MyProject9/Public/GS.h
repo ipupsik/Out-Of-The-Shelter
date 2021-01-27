@@ -15,6 +15,12 @@
 #include "WebCamPoint.h"
 #include "ItemPromtArrow.h"
 #include "Weapon_Level.h"
+
+//для рандомного события - start
+#include "DamageAreaRandomEvent.h"
+#include "ParticleGasRandomEvent.h"
+//для рандомного события - end
+
 #include "GS.generated.h"
 
 class ASpectator;
@@ -127,6 +133,21 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		FTransform TransFMP;
 		
+
+
+	UPROPERTY(EditAnywhere, Category = "RandomEvent")
+		TSubclassOf<ADamageAreaRandomEvent> DamageAreaRandom_Class;
+	UPROPERTY(EditAnywhere, Category = "RandomEvent")
+		TSubclassOf<AParticleGasRandomEvent> ParticleGas_Class;
+	UPROPERTY(EditAnywhere, Category = "RandomEvent")
+		float RandomEventDuration;
+	UPROPERTY(EditAnywhere, Category = "RandomEvent")
+		FName GasAreaDamageTag;
+	UPROPERTY(EditAnywhere, Category = "RandomEvent")
+		FName GasAreaParticleTag;
+
+	void CreateGasOnFloor();
+	void RemoveGasFromFloor();
 
 	UPROPERTY(EditAnywhere, Category = "ItemClasses")
 		TSubclassOf<AInteractiveItem> KeyShelter;

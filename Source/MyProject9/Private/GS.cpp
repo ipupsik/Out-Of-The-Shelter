@@ -663,3 +663,12 @@ void AGS::RefreshGenerator()
 	}
 
 }
+
+
+void AGS::CreateGasOnFloor() {
+
+}
+
+void AGS::RemoveGasFromFloor() {
+
+}
