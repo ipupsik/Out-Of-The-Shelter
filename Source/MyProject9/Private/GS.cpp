@@ -266,6 +266,7 @@ void AGS::BeginPlay()
 			NewItem->EnabledArrayIndex = ArrayIndex;
 			CacheItems_Stuff_IsAvaliable[ArrayIndex] = false;
 			NewItem->Amount = 1;
+			NewItem->DisableComponentsSimulatePhysics();
 		}
 
 		for (int i = 0; i < 3; ++i) {
@@ -304,6 +305,7 @@ void AGS::BeginPlay()
 			NewItem->EnabledArrayIndex = ArrayIndex;
 			CacheItems_Stuff_IsAvaliable[ArrayIndex] = false;
 			NewItem->Amount = 1 + FMath::Rand() % 4;
+			NewItem->DisableComponentsSimulatePhysics();
 		}
 
 		for (int i = 0; i < 6; ++i) {

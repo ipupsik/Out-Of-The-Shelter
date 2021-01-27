@@ -188,6 +188,9 @@ public:
 		TSubclassOf<AWeapon_Level> Knife_Class;
 
 	UPROPERTY(EditAnywhere, Category = "ItemClasses")
+		TSubclassOf<AInteractiveItem> AmmoBackPack_Class;
+
+	UPROPERTY(EditAnywhere, Category = "ItemClasses")
 		TSubclassOf<AInteractiveItem> Details_class;
 
 	UPROPERTY(EditAnywhere, Category = "ItemClasses")
@@ -260,6 +263,9 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		TArray<FTransform> OtvertkaTransform;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		TArray<FTransform> AmmoBackPackTransform;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		TArray<FTransform> ChelDetectorTransform;
