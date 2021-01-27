@@ -40,6 +40,7 @@ void UConAbility_ProjectileDamage::EndEffect()
 	{
 		TmpPlayer->ProjectileDamageEffect = 1.0f;
 	}
+	TmpPlayer->UserView->RemoveIconFromPanel(IdentificatorIcon);
 	DestroyNonNativeProperties();
 }
 

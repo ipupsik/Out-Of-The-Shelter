@@ -8,7 +8,12 @@
 
 enum {
 	RadiationRandomEvent,
-	RadiationVentil
+	RadiationVentil,
+	Invisible,
+	ImmortalDamage,
+	DoubleDamage,
+	DecreaseRadiation,
+	InvertMovement
 };
 
 void UUserView::NativeConstruct() {
@@ -114,6 +119,21 @@ void UUserView::AddIconToPanel(int32 IdEffect) {
 		break;
 	case RadiationVentil:
 		Image = CreateWidget(GetWorld(), RadiationVentil_Class);
+		break;
+	case Invisible:
+		Image = CreateWidget(GetWorld(), Invisible_Class);
+		break;
+	case ImmortalDamage:
+		Image = CreateWidget(GetWorld(), Immortal_Class);
+		break;
+	case DoubleDamage:
+		Image = CreateWidget(GetWorld(), DoubleDamage_Class);
+		break;
+	case DecreaseRadiation:
+		Image = CreateWidget(GetWorld(), DecreaseRadiation_Class);
+		break;
+	case InvertMovement:
+		Image = CreateWidget(GetWorld(), InvertMovement_Class);
 		break;
 	default:
 		return;

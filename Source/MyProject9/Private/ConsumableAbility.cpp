@@ -8,6 +8,7 @@
 bool UConsumableAbility::UseAbilityClient(AChel* Player)
 {
 	Player->PlayRAbilitySound(MySoundWave);
+	Player->UserView->AddIconToPanel(IdentificatorIcon);
 	return true;
 }
 
