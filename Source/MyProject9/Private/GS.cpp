@@ -711,6 +711,15 @@ void AGS::CreateGasOnFloor() {
 			ADamageAreaRandomEvent* DamageActor = GetWorld()->SpawnActor<ADamageAreaRandomEvent>(DamageAreaRandom_Class, it->GetActorTransform());
 		}
 
+		TArray<AActor*> Chls;
+		UGameplayStatics::GetAllActorsOfClass(GetWorld(), AChel::StaticClass(), Chls);
+		for (auto& it : Chls) {
+			AChel* Plr = Cast<AChel>(it);
+			if (Plr) {
+				Plr->AddMessageRandomEvent(Floor);
+			}
+		}
+
 		FTimerHandle FuzeTimerHandle;
 		GetWorld()->GetTimerManager().SetTimer(FuzeTimerHandle, this, &AGS::RemoveGasFromFloor, 21, false);
 	}

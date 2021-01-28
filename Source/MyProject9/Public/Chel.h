@@ -41,6 +41,7 @@
 #include "Components/CapsuleComponent.h"
 #include "QAbility.h"
 #include "CoreItem_Dropped.h"
+#include "UI/GasOnRandomFloorMessage.h"
 #include "Chel.generated.h"
 
 
@@ -470,9 +471,18 @@ public:
 		TSubclassOf<UPlayerEscapeWidget> PlayerEscapeWidget_class;
 	UPROPERTY(EditAnywhere, Category = "UI HUD") //класс стрелки подсказки
 		TSubclassOf<UPlayerFindCoreItem> PlayerFindCoreItem_class;
+	UPROPERTY(EditAnywhere, Category = "UI HUD")
+		TSubclassOf<UGasOnRandomFloorMessage> RandomGasWidget_class;
+
+	UFUNCTION(Client, Reliable)
+	void AddMessageRandomEvent(int32 FloorNum);
+
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float InverseCoeff;
+
+
+	
 
 	//HUD Variables
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite) //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -693,6 +703,7 @@ public:
 
 	void DropCoreItems(); //вываливает из себ€ имеющиес€ ключевые предметы при смерти
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	TArray<AWeapon_Character*> CurrentWeapons; //текущие оружи€(камень + особое)
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	USceneComponent* WeaponPosition; //ѕозици€, на которую установитс€ оружие

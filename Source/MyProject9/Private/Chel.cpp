@@ -2413,3 +2413,9 @@ void AChel::PickUpCoreItem_Implementation(int32 ItemType, const FText& ThrowNick
 	}
 	KillFeed->VB_KillFeed->AddChild(TmpWidget);
 }
+
+void AChel::AddMessageRandomEvent_Implementation(int32 FloorNum) {
+	UGasOnRandomFloorMessage* TmpWidget = Cast<UGasOnRandomFloorMessage>(CreateWidget(World, RandomGasWidget_class));
+	TmpWidget->Floor->SetText(FText::AsNumber(FloorNum + 1));
+	KillFeed->VB_KillFeed->AddChild(TmpWidget);
+}
