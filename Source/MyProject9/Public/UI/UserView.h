@@ -46,6 +46,16 @@ public:
 		TSubclassOf<UIconWidget> RadiationRandomEvent_Class;
 	UPROPERTY(EditAnywhere, Category = "Effect Icon Classes")
 		TSubclassOf<UIconWidget> RadiationVentil_Class;
+	UPROPERTY(EditAnywhere, Category = "Effect Icon Classes")
+		TSubclassOf<UIconWidget> Invisible_Class;
+	UPROPERTY(EditAnywhere, Category = "Effect Icon Classes")
+		TSubclassOf<UIconWidget> DecreaseRadiation_Class;
+	UPROPERTY(EditAnywhere, Category = "Effect Icon Classes")
+		TSubclassOf<UIconWidget> Immortal_Class;
+	UPROPERTY(EditAnywhere, Category = "Effect Icon Classes")
+		TSubclassOf<UIconWidget> DoubleDamage_Class;
+	UPROPERTY(EditAnywhere, Category = "Effect Icon Classes")
+		TSubclassOf<UIconWidget> InvertMovement_Class;
 
 
 

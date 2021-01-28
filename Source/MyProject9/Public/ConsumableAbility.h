@@ -46,6 +46,9 @@ public:
 	UPROPERTY(EditAnywhere)
 		float Duration;
 
+	UPROPERTY(EditAnywhere)
+		int32 IdentificatorIcon;
+
 	UPROPERTY(EditAnywhere, Category = "Main_Vars")
 		TSubclassOf<class AConsumable> Consumable_class;
 };

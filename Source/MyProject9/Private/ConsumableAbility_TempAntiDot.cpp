@@ -40,6 +40,7 @@ void UConsumableAbility_TempAntiDot::EndEffect()
 	{
 		TmpPlayer->TempAntiDotEffect = 1.0f;
 	}
+	TmpPlayer->UserView->RemoveIconFromPanel(IdentificatorIcon);
 	DestroyNonNativeProperties();
 }
 

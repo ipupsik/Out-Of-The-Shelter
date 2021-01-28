@@ -40,6 +40,7 @@ void UConsumableAbility_ArmoryZelie::EndEffect()
 	{
 		TmpPlayer->ArmoryZelieEffect = 1.0f;
 	}
+	TmpPlayer->UserView->RemoveIconFromPanel(IdentificatorIcon);
 	DestroyNonNativeProperties();
 }
 

@@ -44,6 +44,7 @@ void UConsumableAbility_Invisible::EndEffect()
 	TmpPlayer->IsNowInvisible = false;
 	TmpPlayer->ReverceInvisibleEverywhere();
 	TmpPlayer->LastInvisibleAbilityObj = nullptr;
+	TmpPlayer->UserView->RemoveIconFromPanel(IdentificatorIcon);
 	DestroyNonNativeProperties();
 }
 
