@@ -39,7 +39,8 @@ public:
 	//void Construct() override;
 
 	void AddIconToPanel(int32 IdEffect);
-	void RemoveIconFromPanel(int32 IdEffect);
+	UFUNCTION(BlueprintCallable)
+		void RemoveIconFromPanel(int32 IdEffect);
 public:
 
 	UPROPERTY(EditAnywhere, Category = "Effect Icon Classes")
