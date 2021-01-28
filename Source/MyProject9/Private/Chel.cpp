@@ -19,6 +19,7 @@
 #include "InteractiveItem.h"
 #include "Weapon_Level.h"
 #include "QAbility.h"
+#include "ConsumableAbility_Invisible.h"
 #include "PromptCollisionArea.h"
 #include "QAbilityItem.h"
 #include "Ventil.h"
@@ -376,7 +377,12 @@ void AChel::Tick(float DeltaTime)
 				}
 				bCanWalkingAndWatching = true;
 				if (IsNowInvisible)
+				{
 					ReverceInvisibleEverywhere();
+					LastInvisibleAbilityObj->DestroyNonNativeProperties();
+					World->GetTimerManager().ClearTimer(TimerHandleInvisible);
+					IsNowInvisible = false;
+				}
 				KillPlayer();
 				DoesHave.Init(false, 3);
 				return;
