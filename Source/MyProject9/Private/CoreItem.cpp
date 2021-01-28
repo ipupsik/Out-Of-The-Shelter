@@ -31,6 +31,27 @@ void ACoreItem::PickUpEventServer(AChel* Player) {
 bool ACoreItem::PickUpEventClient(AChel * Player)
 {
 	Player->UserView->ArraySwitcher[TypeItem]->SetActiveWidgetIndex(1);
+	switch (TypeItem)
+	{
+	case 0:
+	{
+		Player->MainExis_Canalizacia->Mesh->SetRenderCustomDepth(true);
+		Player->MainExis_Canalizacia->Mesh->MarkRenderStateDirty();
+		break;
+	}
+	case 1:
+	{
+		Player->MainExis_Shelter->Mesh->SetRenderCustomDepth(true);
+		Player->MainExis_Shelter->Mesh->MarkRenderStateDirty();
+		break;
+	}
+	case 2:
+	{
+		Player->MainExis_Ventilacia->Mesh->SetRenderCustomDepth(true);
+		Player->MainExis_Ventilacia->Mesh->MarkRenderStateDirty();
+		break;
+	}
+	}
 	PlayPickUpSound();
 	if (GetLocalRole() != ROLE_Authority)
 		Destroy();
