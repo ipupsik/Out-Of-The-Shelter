@@ -89,6 +89,7 @@ AChel::AChel()
 	IsAwake = true;
 	Index = -1;
 	InverseCoeff = 1.f;
+	LastOpacityValue = 1.0f;
 	bInEscMenu = false;
 	bInShopMenu = false;
 	HaveSpecialAmmo = false;
@@ -339,6 +340,12 @@ void AChel::MyBeginPlay()
 	GetAmmo_Server();
 	//---------------------обновление патронов у камня-------------------------------------------------
 }
+
+void AChel::RemoveIconFromPanel_Client_Implementation(int32 IdEffect)
+{
+	UserView->RemoveIconFromPanel(IdEffect);
+}
+
 void AChel::PossessedBy(AController* NewController)
 {
 	Super::PossessedBy(NewController);
@@ -376,7 +383,11 @@ void AChel::Tick(float DeltaTime)
 				}
 				bCanWalkingAndWatching = true;
 				if (IsNowInvisible)
+				{
+					IsNowInvisible = false;
 					ReverceInvisibleEverywhere();
+					LastInvisibleAbilityObj = nullptr;
+				}
 				KillPlayer();
 				DoesHave.Init(false, 3);
 				return;
@@ -2203,6 +2214,11 @@ void AChel::CreateWeapon(UClass* WeaponCreatedClass, int32 Amount, int32 IndexSl
 void AChel::SetWeaponToSlot(int32 IndexWeapon) //вызывается из мультикастового события
 {
 	CurrentWeapons[IndexWeapon]->GunMesh->SetVisibility(true);
+	if (CurWeaponMatInst)
+		CurWeaponMatInst->SetScalarParameterValue("Opacity", 1.0f);
+	CurWeaponMatInst = CurrentWeapons[IndexWeapon]->GunMesh->CreateDynamicMaterialInstance(0,
+		CurrentWeapons[IndexWeapon]->GunMesh->GetMaterial(0));
+	CurWeaponMatInst->SetScalarParameterValue("Opacity", LastOpacityValue);
 	if(CurrentWeapons[(IndexWeapon + 1) % 2]) //условие нужно при старте игры, когда второго оружия нет
 		CurrentWeapons[(IndexWeapon + 1) % 2]->GunMesh->SetVisibility(false);
 	CurrentIndex = IndexWeapon;

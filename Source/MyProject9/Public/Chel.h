@@ -6,6 +6,7 @@
 #include "GameFramework/Character.h"
 #include "Net/UnrealNetwork.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "Materials/MaterialInstanceDynamic.h"
 #include "Blueprint/WidgetLayoutLibrary.h"
 #include "UI/RAbilitySlot.h"
 #include "UI/QAbilitySlot.h"
@@ -722,6 +723,9 @@ public:
 	UFUNCTION(Client, Reliable)
 	void ClearWeaponInfoClient(); //вызывается из выстрела оружия с сервера
 
+	UFUNCTION(Client, Reliable)
+		void RemoveIconFromPanel_Client(int32 IdEffect);
+
 	void ClearWeaponInfo();
 
 	UFUNCTION(NetMulticast, Reliable)
@@ -755,8 +759,10 @@ public:
 		void DeleteAllWeapons();
 
 	int32 AmountBottleEffects;
-
-
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	UMaterialInstanceDynamic* CurWeaponMatInst;
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	float LastOpacityValue; 
 
 	bool HaveSpecialAmmo;
 	bool CanFireWeapon; // может ли чел стрелять из оружия

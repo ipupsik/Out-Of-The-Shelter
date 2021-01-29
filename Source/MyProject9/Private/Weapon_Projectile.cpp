@@ -15,7 +15,8 @@ float AWeapon_Projectile::GetDamage(AChel* Player)
 	if (Player->IsNowInvisible)
 	{
 		Player->ReverceInvisibleEverywhere();
-		Player->LastInvisibleAbilityObj->DestroyNonNativeProperties();
+		if (Player->LastInvisibleAbilityObj)
+			Player->LastInvisibleAbilityObj->DestroyNonNativeProperties();
 		Player->LastInvisibleAbilityObj = nullptr;
 		Player->World->GetTimerManager().ClearTimer(Player->TimerHandleInvisible);
 		Player->IsNowInvisible = false;

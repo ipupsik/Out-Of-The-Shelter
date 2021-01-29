@@ -30,12 +30,14 @@ void UConsumableAbility_Invisible::UseAbilityServer(AChel* Player)
 		Player->InvisibleEverywhere();
 	else
 	{
-		Player->LastInvisibleAbilityObj->DestroyNonNativeProperties();
+		if (Player->LastInvisibleAbilityObj)
+			Player->LastInvisibleAbilityObj->DestroyNonNativeProperties();
 		Player->World->GetTimerManager().ClearTimer(Player->TimerHandleInvisible);
 	}
 	Player->LastInvisibleAbilityObj = this;
 	Player->IsNowInvisible = true;
 	TmpPlayer = Player;
+	Player->TimerHandleInvisible = FTimerHandle();
 	GetWorld()->GetTimerManager().SetTimer(Player->TimerHandleInvisible, this, &UConsumableAbility_Invisible::EndEffect, Duration, false);
 }
 
@@ -44,7 +46,6 @@ void UConsumableAbility_Invisible::EndEffect()
 	TmpPlayer->IsNowInvisible = false;
 	TmpPlayer->ReverceInvisibleEverywhere();
 	TmpPlayer->LastInvisibleAbilityObj = nullptr;
-	TmpPlayer->UserView->RemoveIconFromPanel(IdentificatorIcon);
 	DestroyNonNativeProperties();
 }
 
