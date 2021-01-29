@@ -52,6 +52,7 @@ void ADezinfectorNasos::TurnOn()
 
 void ADezinfectorNasos::TurnOnMulticast_Implementation()
 {
+	TurnOnSound();
 	bIsAvaliable = false;
 	Lampochka->SetMaterial(0, MaterialLampochkaOn);
 }
