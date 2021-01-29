@@ -37,6 +37,7 @@ public:
 	void AnimationThrowReverse_Finished();
 
 
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	int32 LeftAmmo;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)

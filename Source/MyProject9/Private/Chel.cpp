@@ -2228,6 +2228,8 @@ void AChel::SetWeaponToSlot(int32 IndexWeapon) //вызывается из мультикастового с
 		CurrentWeapons[(IndexWeapon + 1) % 2]->GunMesh->SetVisibility(false);
 	CurrentIndex = IndexWeapon;
 	if (IsPlayerOwner) {
+		if(CurrentWeapons[CurrentIndex]->LeftAmmo > 0)
+			PlaySoundSwitchWeapon();
 		RefreshWidgetAmmoOwning(CurrentWeapons[CurrentIndex]->LeftAmmo, CurrentWeapons[CurrentIndex]->MaxAmmo, CurrentIndex);
 	}
 }

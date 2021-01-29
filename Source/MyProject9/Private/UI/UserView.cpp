@@ -112,43 +112,45 @@ void UUserView::DisableDoubleRadiationEffect()
 */
 
 void UUserView::AddIconToPanel(int32 IdEffect) {
-	UUserWidget* Image = nullptr;
-	switch (IdEffect) {
-	case RadiationRandomEvent:
-		Image = CreateWidget(GetWorld(), RadiationRandomEvent_Class);
-		break;
-	case RadiationVentil:
-		Image = CreateWidget(GetWorld(), RadiationVentil_Class);
-		break;
-	case Invisible:
-		Image = CreateWidget(GetWorld(), Invisible_Class);
-		break;
-	case ImmortalDamage:
-		Image = CreateWidget(GetWorld(), Immortal_Class);
-		break;
-	case DoubleDamage:
-		Image = CreateWidget(GetWorld(), DoubleDamage_Class);
-		break;
-	case DecreaseRadiation:
-		Image = CreateWidget(GetWorld(), DecreaseRadiation_Class);
-		break;
-	case InvertMovement:
-		Image = CreateWidget(GetWorld(), InvertMovement_Class);
-		break;
-	default:
-		return;
-		break;
-	}
+	if (IdEffect >= 0) {
+		UUserWidget* Image = nullptr;
+		switch (IdEffect) {
+		case RadiationRandomEvent:
+			Image = CreateWidget(GetWorld(), RadiationRandomEvent_Class);
+			break;
+		case RadiationVentil:
+			Image = CreateWidget(GetWorld(), RadiationVentil_Class);
+			break;
+		case Invisible:
+			Image = CreateWidget(GetWorld(), Invisible_Class);
+			break;
+		case ImmortalDamage:
+			Image = CreateWidget(GetWorld(), Immortal_Class);
+			break;
+		case DoubleDamage:
+			Image = CreateWidget(GetWorld(), DoubleDamage_Class);
+			break;
+		case DecreaseRadiation:
+			Image = CreateWidget(GetWorld(), DecreaseRadiation_Class);
+			break;
+		case InvertMovement:
+			Image = CreateWidget(GetWorld(), InvertMovement_Class);
+			break;
+		default:
+			return;
+			break;
+		}
 
-	UIconWidget* Icon = Cast<UIconWidget>(Image);
-	if (Icon) {
-		Icon->Identificator = IdEffect;
-		UHorizontalBoxSlot* Hor_slot = Cast<UHorizontalBoxSlot>(Effects_Bar->AddChild(Icon));
-		Hor_slot->SetHorizontalAlignment(EHorizontalAlignment::HAlign_Center);
-		Hor_slot->SetVerticalAlignment(EVerticalAlignment::VAlign_Center);
-		FSlateChildSize InSize = FSlateChildSize(ESlateSizeRule::Fill);
-		InSize.Value = 1.0f;
-		Hor_slot->SetSize(InSize);
+		UIconWidget* Icon = Cast<UIconWidget>(Image);
+		if (Icon) {
+			Icon->Identificator = IdEffect;
+			UHorizontalBoxSlot* Hor_slot = Cast<UHorizontalBoxSlot>(Effects_Bar->AddChild(Icon));
+			Hor_slot->SetHorizontalAlignment(EHorizontalAlignment::HAlign_Center);
+			Hor_slot->SetVerticalAlignment(EVerticalAlignment::VAlign_Center);
+			FSlateChildSize InSize = FSlateChildSize(ESlateSizeRule::Fill);
+			InSize.Value = 1.0f;
+			Hor_slot->SetSize(InSize);
+		}
 	}
 }
 
