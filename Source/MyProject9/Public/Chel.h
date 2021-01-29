@@ -695,6 +695,10 @@ public:
 	UFUNCTION(Server, Reliable, WithValidation)
 	void FireEvent_Server(); //выстреливаем из оружия на сервере
 
+
+	UFUNCTION(BlueprintImplementableEvent)
+		void PlaySoundSwitchWeapon();
+
 	void SwitchToFirstWeapon();
 	void SwitchToSpecialWeapon();
 
