@@ -12,6 +12,7 @@ ABP_PlayerController::ABP_PlayerController()
 	bReplicates = true;
 	IsAccept = true;
 	IsHost = false;
+	bInTabMenu = false;
 }
 
 void ABP_PlayerController::BeginPlay()
@@ -38,6 +39,7 @@ void ABP_PlayerController::SetupInputComponent()
 //KillFeed --------------------
 void ABP_PlayerController::ShowTab()
 {
+	bInTabMenu = true;
 	bShowMouseCursor = true;
 	TabWidget->SetVisibility(ESlateVisibility::Visible);
 	FInputModeGameAndUI InputUI;
@@ -51,7 +53,10 @@ void ABP_PlayerController::ShowTab()
 
 void ABP_PlayerController::UnShowTab()
 {
-	bShowMouseCursor = false;
+	bInTabMenu = false;
+	AChel* Plr = Cast<AChel>(GetPawn());
+	if(!Plr || Plr && !(Plr->bInShopMenu) && !(Plr->bInEscMenu))
+		bShowMouseCursor = false;
 	TabWidget->SetVisibility(ESlateVisibility::Hidden);
 	FInputModeGameOnly GameUI;
 	SetInputMode(GameUI);

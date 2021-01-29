@@ -67,4 +67,7 @@ public:
 		int32 Index;
 
 	UTab* TabWidget;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool bInTabMenu;
 };
