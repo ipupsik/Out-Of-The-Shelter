@@ -27,6 +27,7 @@ FVector UQAbility_ChelDetector::GetCacheLocation(int32 CacheIndex)
 
 bool UQAbility_ChelDetector::UseAbilityClient(AChel* Player)
 {
+	Player->RentgentOnSound();
 	for (auto& it : Player->PlayersArray)
 	{
 		if (!it->IsPlayerOwner) {
@@ -40,6 +41,7 @@ bool UQAbility_ChelDetector::UseAbilityClient(AChel* Player)
 
 bool UQAbility_ChelDetector::DeUseAbilityClient(AChel* Player)
 {
+	Player->RentgentOffSound();
 	for (auto& it : Player->PlayersArray)
 	{
 		if (!it->IsPlayerOwner) {

@@ -27,6 +27,7 @@ FVector UQAbility_Rentgen::GetCacheLocation(int32 CacheIndex)
 bool UQAbility_Rentgen::UseAbilityClient(AChel* Player)
 {
 	Player->IsRentgenRender = true;
+	Player->RentgentOnSound();
 	TArray<AActor*>RentgenItems;
 	Player->SenseCollision->GetOverlappingActors(RentgenItems, ACoreItem::StaticClass());
 	for (auto& it : RentgenItems)
@@ -39,6 +40,7 @@ bool UQAbility_Rentgen::UseAbilityClient(AChel* Player)
 bool UQAbility_Rentgen::DeUseAbilityClient(AChel* Player)
 {
 	Player->IsRentgenRender = false;
+	Player->RentgentOffSound();
 	TArray<AActor*>RentgenItems;
 	Player->SenseCollision->GetOverlappingActors(RentgenItems, ACoreItem::StaticClass());
 	for (auto& it : RentgenItems)

@@ -699,6 +699,12 @@ public:
 	UFUNCTION(BlueprintImplementableEvent)
 		void PlaySoundSwitchWeapon();
 
+	UFUNCTION(BlueprintImplementableEvent)
+		void RentgentOnSound();
+	UFUNCTION(BlueprintImplementableEvent)
+		void RentgentOffSound();
+
+
 	void SwitchToFirstWeapon();
 	void SwitchToSpecialWeapon();
 
