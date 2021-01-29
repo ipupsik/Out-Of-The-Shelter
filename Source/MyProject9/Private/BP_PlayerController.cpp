@@ -41,6 +41,7 @@ void ABP_PlayerController::ShowTab()
 {
 	bInTabMenu = true;
 	bShowMouseCursor = true;
+	WidgetStack++;
 	TabWidget->SetVisibility(ESlateVisibility::Visible);
 	FInputModeGameAndUI InputUI;
 	InputUI.SetWidgetToFocus(Cast<AChel>(GetPawn())->MyInventory->TakeWidget());

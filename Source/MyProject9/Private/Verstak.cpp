@@ -22,6 +22,7 @@ bool AVerstak::PickUpEventClient(AChel * Player)
 	Player->MyController->bShowMouseCursor = true;
 	Player->MyController->SetInputMode(FInputModeGameAndUI());
 	Player->bInShopMenu = true;
+	Player->MyController->WidgetStack += 1;
 	return false;
 }
 
