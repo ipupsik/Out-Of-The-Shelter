@@ -193,6 +193,8 @@ public:
 		TSubclassOf<AInteractiveItem> ArmoryZelie_class;
 	UPROPERTY(EditAnywhere, Category = "ItemClasses")
 		TSubclassOf<AInteractiveItem> ProjectileZelie_class;
+	UPROPERTY(EditAnywhere, Category = "ItemClasses")
+		TSubclassOf<AInteractiveItem> ExtraDetails_class;
 
 	UPROPERTY(EditAnywhere, Category = "ItemClasses")
 		TSubclassOf<AActor> InvisiblePotion;
@@ -287,6 +289,9 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		TArray<FTransform> OtvertkaTransform;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		TArray<FTransform> ExtraDetailsTransform;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		TArray<FTransform> AmmoBackPackTransform;

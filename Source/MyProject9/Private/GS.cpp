@@ -380,6 +380,24 @@ void AGS::BeginPlay()
 			CacheItems_Stuff_IsAvaliable[ArrayIndex] = false;
 		}
 
+		for (int i = 0; i < 5; ++i) {
+			int ArrayIndex = FMath::Rand() % CacheItems_Stuff_IsAvaliable.Num();
+			while (!CacheItems_Stuff_IsAvaliable[ArrayIndex])
+			{
+				ArrayIndex++;
+				if (ArrayIndex >= CacheItems_Stuff_IsAvaliable.Num())
+					ArrayIndex = 0;
+			}
+			AActor* NewItem = GetWorld()->SpawnActor<AActor>(ExtraDetails_class);
+			FAttachmentTransformRules AttachmentRules = FAttachmentTransformRules(EAttachmentRule::KeepRelative, true);
+			NewItem->AttachToActor(Caches[ArrayIndex], AttachmentRules);
+			NewItem->SetActorScale3D(ExtraDetailsTransform[Caches[ArrayIndex]->CacheIndex].GetScale3D());
+			NewItem->AddActorLocalOffset(ExtraDetailsTransform[Caches[ArrayIndex]->CacheIndex].GetLocation());
+			NewItem->AddActorLocalRotation(ExtraDetailsTransform[Caches[ArrayIndex]->CacheIndex].GetRotation());
+			Cast<ACollectableItem>(NewItem)->EnabledArrayIndex = ArrayIndex;
+			CacheItems_Stuff_IsAvaliable[ArrayIndex] = false;
+		}
+
 		for (int i = 0; i < MaxPlayersCount; ++i) {
 			int ArrayIndex = FMath::Rand() % CacheItems_Stuff_IsAvaliable.Num();
 			while (!CacheItems_Stuff_IsAvaliable[ArrayIndex])
