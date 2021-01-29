@@ -13,6 +13,7 @@ ABP_PlayerController::ABP_PlayerController()
 	IsAccept = true;
 	IsHost = false;
 	bInTabMenu = false;
+	WidgetStack = 0;
 }
 
 void ABP_PlayerController::BeginPlay()

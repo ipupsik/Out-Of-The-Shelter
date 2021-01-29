@@ -25,6 +25,9 @@ public:
 		void TurnOnMulticast();
 
 public:
+	UFUNCTION(BlueprintImplementableEvent)
+		void TurnOnSound();
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Player")
 		UStaticMeshComponent* Nasos;
 
