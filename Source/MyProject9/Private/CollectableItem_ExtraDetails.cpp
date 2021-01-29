@@ -20,7 +20,7 @@ ACollectableItem_ExtraDetails::ACollectableItem_ExtraDetails() {
 	Mesh3 = CreateDefaultSubobject<UStaticMeshComponent>("Mesh3");
 	Mesh3->SetupAttachment(Scene);
 
-	Amount = 1 + FMath::Rand() % 10;
+	Amount = 10 + FMath::Rand() % 10;
 }
 
 void ACollectableItem_ExtraDetails::ToggleCustomDepth(bool NewIsOutliningNow, AChel* Player)
