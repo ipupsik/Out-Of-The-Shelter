@@ -29,6 +29,7 @@ void UConsumableAbility_ArmoryZelie::UseAbilityServer(AChel* Player)
 	Player->ArmoryZelieCount++;
 	Player->ArmoryZelieEffect = 0;
 	TmpPlayer = Player;
+	TmpPlayer->CreateParticleImmortal();
 	FTimerHandle FuzeTimerHandle;
 	GetWorld()->GetTimerManager().SetTimer(FuzeTimerHandle, this, &UConsumableAbility_ArmoryZelie::EndEffect, Duration, false);
 }
@@ -38,9 +39,10 @@ void UConsumableAbility_ArmoryZelie::EndEffect()
 	TmpPlayer->ArmoryZelieCount--;
 	if (TmpPlayer->ArmoryZelieCount == 0)
 	{
+		TmpPlayer->DeleteParticleImmortal();
 		TmpPlayer->ArmoryZelieEffect = 1.0f;
+		TmpPlayer->RemoveIconFromPanel_Client(IdentificatorIcon);
 	}
-	TmpPlayer->UserView->RemoveIconFromPanel(IdentificatorIcon);
 	DestroyNonNativeProperties();
 }
 

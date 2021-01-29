@@ -43,6 +43,7 @@
 #include "QAbility.h"
 #include "CoreItem_Dropped.h"
 #include "UI/GasOnRandomFloorMessage.h"
+#include "ParticleImmortal.h"
 #include "Chel.generated.h"
 
 
@@ -428,6 +429,14 @@ public:
 		TSubclassOf<ACoreItem_Dropped> KeyClass_Dropped;
 	UPROPERTY(EditAnywhere, Category = "CoreItem_Dropped")
 		TSubclassOf<ACoreItem_Dropped> OtvertkaClass_Dropped;
+	UPROPERTY(EditAnywhere, Category = "ParticleImmortal_Class")
+		TSubclassOf<AParticleImmortal> ParticleImmortal_Class;
+	AParticleImmortal* CurParticleImmortal;
+
+	UFUNCTION(NetMulticast, Reliable)
+	void CreateParticleImmortal();
+	UFUNCTION(NetMulticast, Reliable)
+	void DeleteParticleImmortal();
 	
 	void CreateDroppedItem(UClass* DroppedItemClass);
 
@@ -705,9 +714,11 @@ public:
 	void DropCoreItems(); //вываливает из себя имеющиеся ключевые предметы при смерти
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
-	TArray<AWeapon_Character*> CurrentWeapons; //текущие оружия(камень + особое)
+		TArray<AWeapon_Character*> CurrentWeapons; //текущие оружия(камень + особое)
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
-	USceneComponent* WeaponPosition; //Позиция, на которую установится оружие
+		USceneComponent* WeaponPosition; //Позиция, на которую установится оружие
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+		USceneComponent* ParticlePosition; //Позиция, на которую установится оружие
 	int32 CurrentIndex; //индекс в массиве CurrentWeapons
 	void SetWeaponToSlot(int32 IndexWeapon); //когда мы на клиенте и нужно поменять оружие в слоте клиента
 

@@ -39,8 +39,8 @@ void UConAbility_ProjectileDamage::EndEffect()
 	if (TmpPlayer->ProjectileDamageCount == 0)
 	{
 		TmpPlayer->ProjectileDamageEffect = 1.0f;
+		TmpPlayer->RemoveIconFromPanel_Client(IdentificatorIcon);
 	}
-	TmpPlayer->UserView->RemoveIconFromPanel(IdentificatorIcon);
 	DestroyNonNativeProperties();
 }
 

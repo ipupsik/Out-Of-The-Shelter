@@ -50,6 +50,9 @@ AChel::AChel()
 	WeaponPosition = CreateDefaultSubobject<USceneComponent>(TEXT("WeaponPosition"));
 	WeaponPosition->SetupAttachment(CameraComp);
 
+	ParticlePosition = CreateDefaultSubobject<USceneComponent>(TEXT("ParticlePosition"));
+	ParticlePosition->SetupAttachment(RootComponent);
+
 
 	TimeLine_FOV_WebCam = CreateDefaultSubobject<UTimelineComponent>(TEXT("FOV_WebCam"));
 	InterpFunction_FOV_WebCam.BindUFunction(this, FName("TimelineFloatReturn_FOV_WebCam"));
@@ -1154,6 +1157,7 @@ void AChel::KillPlayer()
 	UGameplayStatics::GetAllActorsOfClass(World, AChel::StaticClass(), Players);
 
 	DropCoreItems();
+	DeleteParticleImmortal();
 
 	CurrentWeapons[0]->LeftAmmo = 0;
 	ChangeAmmoClients(0, 0);
@@ -2435,4 +2439,19 @@ void AChel::AddMessageRandomEvent_Implementation(int32 FloorNum) {
 	UGasOnRandomFloorMessage* TmpWidget = Cast<UGasOnRandomFloorMessage>(CreateWidget(World, RandomGasWidget_class));
 	TmpWidget->Floor->SetText(FText::AsNumber(FloorNum + 1));
 	KillFeed->VB_KillFeed->AddChild(TmpWidget);
+}
+
+void AChel::CreateParticleImmortal_Implementation() {
+	if (!CurParticleImmortal) {
+		CurParticleImmortal = World->SpawnActor<AParticleImmortal>(ParticleImmortal_Class);
+
+		FAttachmentTransformRules AttachmentRules = FAttachmentTransformRules(EAttachmentRule::KeepRelative, true);
+		CurParticleImmortal->AttachToComponent(ParticlePosition, AttachmentRules);
+	}
+}
+
+void AChel::DeleteParticleImmortal_Implementation() {
+	if (CurParticleImmortal) {
+		CurParticleImmortal->Destroy();
+	}
 }
