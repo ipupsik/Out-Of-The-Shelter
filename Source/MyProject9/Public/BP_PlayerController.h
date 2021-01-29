@@ -69,5 +69,7 @@ public:
 	UTab* TabWidget;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	bool bInTabMenu;
+		bool bInTabMenu;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		int32 WidgetStack;
 };

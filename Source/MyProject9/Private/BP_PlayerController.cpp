@@ -54,12 +54,15 @@ void ABP_PlayerController::ShowTab()
 void ABP_PlayerController::UnShowTab()
 {
 	bInTabMenu = false;
+	WidgetStack--;
 	AChel* Plr = Cast<AChel>(GetPawn());
-	if(!Plr || Plr && !(Plr->bInShopMenu) && !(Plr->bInEscMenu))
+	if (WidgetStack == 0)
+	{
 		bShowMouseCursor = false;
+		FInputModeGameOnly GameUI;
+		SetInputMode(GameUI);
+	}
 	TabWidget->SetVisibility(ESlateVisibility::Hidden);
-	FInputModeGameOnly GameUI;
-	SetInputMode(GameUI);
 	if (Cast<AChel>(GetPawn())) {
 		Cast<AChel>(GetPawn())->UnShowInventory();
 	}
