@@ -17,7 +17,7 @@ void AWeapon_Character::SpawnProjectile()
 	FVector Locat;
 	FTransform Trsfrm;
 	
-	Trsfrm.SetLocation(FVector(WeaponOwner->GetActorLocation().X, WeaponOwner->GetActorLocation().Y, GunMesh->GetComponentLocation().Z));
+	Trsfrm.SetLocation(FVector(WeaponOwner->CameraComp->GetComponentLocation().X, WeaponOwner->CameraComp->GetComponentLocation().Y, GunMesh->GetComponentLocation().Z));
 	Trsfrm.SetRotation(FQuat(FRotator(WeaponOwner->Scene->GetComponentRotation()) + RotationProjectile));
 	Trsfrm.SetScale3D(FVector(1.0f, 1.0f, 1.0f));
 	AWeapon_Projectile* DroppedItm = WeaponOwner->World->SpawnActorDeferred<AWeapon_Projectile>(WeaponProjectileClass, Trsfrm);

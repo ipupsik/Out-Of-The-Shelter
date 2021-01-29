@@ -195,6 +195,42 @@ void AGS::BeginPlay()
 			CacheItems_Stuff_IsAvaliable[ArrayIndex] = false;
 		}
 
+		for (int i = 0; i < 10; ++i) {
+			int ArrayIndex = FMath::Rand() % CacheItems_Stuff_IsAvaliable.Num();
+			while (!CacheItems_Stuff_IsAvaliable[ArrayIndex])
+			{
+				ArrayIndex++;
+				if (ArrayIndex >= CacheItems_Stuff_IsAvaliable.Num())
+					ArrayIndex = 0;
+			}
+			AActor* NewItem = GetWorld()->SpawnActor<AActor>(Shileds_class);
+			FAttachmentTransformRules AttachmentRules = FAttachmentTransformRules(EAttachmentRule::KeepRelative, true);
+			NewItem->AttachToActor(Caches[ArrayIndex], AttachmentRules);
+			NewItem->SetActorScale3D(ShiledsTransform[Caches[ArrayIndex]->CacheIndex].GetScale3D());
+			NewItem->AddActorLocalOffset(ShiledsTransform[Caches[ArrayIndex]->CacheIndex].GetLocation());
+			NewItem->AddActorLocalRotation(ShiledsTransform[Caches[ArrayIndex]->CacheIndex].GetRotation());
+			Cast<ACollectableItem>(NewItem)->EnabledArrayIndex = ArrayIndex;
+			CacheItems_Stuff_IsAvaliable[ArrayIndex] = false;
+		}
+
+		for (int i = 0; i < 1; ++i) {
+			int ArrayIndex = FMath::Rand() % CacheItems_Stuff_IsAvaliable.Num();
+			while (!CacheItems_Stuff_IsAvaliable[ArrayIndex])
+			{
+				ArrayIndex++;
+				if (ArrayIndex >= CacheItems_Stuff_IsAvaliable.Num())
+					ArrayIndex = 0;
+			}
+			AActor* NewItem = GetWorld()->SpawnActor<AActor>(ChelDetector_class);
+			FAttachmentTransformRules AttachmentRules = FAttachmentTransformRules(EAttachmentRule::KeepRelative, true);
+			NewItem->AttachToActor(Caches[ArrayIndex], AttachmentRules);
+			NewItem->SetActorScale3D(ChelDetectorTransform[Caches[ArrayIndex]->CacheIndex].GetScale3D());
+			NewItem->AddActorLocalOffset(ChelDetectorTransform[Caches[ArrayIndex]->CacheIndex].GetLocation());
+			NewItem->AddActorLocalRotation(ChelDetectorTransform[Caches[ArrayIndex]->CacheIndex].GetRotation());
+			Cast<ACollectableItem>(NewItem)->EnabledArrayIndex = ArrayIndex;
+			CacheItems_Stuff_IsAvaliable[ArrayIndex] = false;
+		}
+
 		for (int i = 0; i < 4; ++i) {
 			int ArrayIndex = FMath::Rand() % CacheItems_Stuff_IsAvaliable.Num();
 			while (!CacheItems_Stuff_IsAvaliable[ArrayIndex])
@@ -326,7 +362,7 @@ void AGS::BeginPlay()
 			CacheItems_Stuff_IsAvaliable[ArrayIndex] = false;
 		}
 
-		for (int i = 0; i < 2; ++i) {
+		for (int i = 0; i < 1; ++i) {
 			int ArrayIndex = FMath::Rand() % CacheItems_Stuff_IsAvaliable.Num();
 			while (!CacheItems_Stuff_IsAvaliable[ArrayIndex])
 			{
@@ -340,6 +376,60 @@ void AGS::BeginPlay()
 			NewItem->SetActorScale3D(RentgenGlassTransform[Caches[ArrayIndex]->CacheIndex].GetScale3D());
 			NewItem->AddActorLocalOffset(RentgenGlassTransform[Caches[ArrayIndex]->CacheIndex].GetLocation());
 			NewItem->AddActorLocalRotation(RentgenGlassTransform[Caches[ArrayIndex]->CacheIndex].GetRotation());
+			Cast<ACollectableItem>(NewItem)->EnabledArrayIndex = ArrayIndex;
+			CacheItems_Stuff_IsAvaliable[ArrayIndex] = false;
+		}
+
+		for (int i = 0; i < MaxPlayersCount; ++i) {
+			int ArrayIndex = FMath::Rand() % CacheItems_Stuff_IsAvaliable.Num();
+			while (!CacheItems_Stuff_IsAvaliable[ArrayIndex])
+			{
+				ArrayIndex++;
+				if (ArrayIndex >= CacheItems_Stuff_IsAvaliable.Num())
+					ArrayIndex = 0;
+			}
+			AActor* NewItem = GetWorld()->SpawnActor<AActor>(SpecialWeapon_class);
+			FAttachmentTransformRules AttachmentRules = FAttachmentTransformRules(EAttachmentRule::KeepRelative, true);
+			NewItem->AttachToActor(Caches[ArrayIndex], AttachmentRules);
+			NewItem->SetActorScale3D(SpecialWeaponTransform[Caches[ArrayIndex]->CacheIndex].GetScale3D());
+			NewItem->AddActorLocalOffset(SpecialWeaponTransform[Caches[ArrayIndex]->CacheIndex].GetLocation());
+			NewItem->AddActorLocalRotation(SpecialWeaponTransform[Caches[ArrayIndex]->CacheIndex].GetRotation());
+			Cast<ACollectableItem>(NewItem)->EnabledArrayIndex = ArrayIndex;
+			CacheItems_Stuff_IsAvaliable[ArrayIndex] = false;
+		}
+
+		for (int i = 0; i < MaxPlayersCount * 2; ++i) {
+			int ArrayIndex = FMath::Rand() % CacheItems_Stuff_IsAvaliable.Num();
+			while (!CacheItems_Stuff_IsAvaliable[ArrayIndex])
+			{
+				ArrayIndex++;
+				if (ArrayIndex >= CacheItems_Stuff_IsAvaliable.Num())
+					ArrayIndex = 0;
+			}
+			AActor* NewItem = GetWorld()->SpawnActor<AActor>(BubenCache_class);
+			FAttachmentTransformRules AttachmentRules = FAttachmentTransformRules(EAttachmentRule::KeepRelative, true);
+			NewItem->AttachToActor(Caches[ArrayIndex], AttachmentRules);
+			NewItem->SetActorScale3D(BubenCacheTransform[Caches[ArrayIndex]->CacheIndex].GetScale3D());
+			NewItem->AddActorLocalOffset(BubenCacheTransform[Caches[ArrayIndex]->CacheIndex].GetLocation());
+			NewItem->AddActorLocalRotation(BubenCacheTransform[Caches[ArrayIndex]->CacheIndex].GetRotation());
+			Cast<ACollectableItem>(NewItem)->EnabledArrayIndex = ArrayIndex;
+			CacheItems_Stuff_IsAvaliable[ArrayIndex] = false;
+		}
+
+		for (int i = 0; i < MaxPlayersCount * 2; ++i) {
+			int ArrayIndex = FMath::Rand() % CacheItems_Stuff_IsAvaliable.Num();
+			while (!CacheItems_Stuff_IsAvaliable[ArrayIndex])
+			{
+				ArrayIndex++;
+				if (ArrayIndex >= CacheItems_Stuff_IsAvaliable.Num())
+					ArrayIndex = 0;
+			}
+			AActor* NewItem = GetWorld()->SpawnActor<AActor>(BubenDetail_class);
+			FAttachmentTransformRules AttachmentRules = FAttachmentTransformRules(EAttachmentRule::KeepRelative, true);
+			NewItem->AttachToActor(Caches[ArrayIndex], AttachmentRules);
+			NewItem->SetActorScale3D(BubenDetailTransform[Caches[ArrayIndex]->CacheIndex].GetScale3D());
+			NewItem->AddActorLocalOffset(BubenDetailTransform[Caches[ArrayIndex]->CacheIndex].GetLocation());
+			NewItem->AddActorLocalRotation(BubenDetailTransform[Caches[ArrayIndex]->CacheIndex].GetRotation());
 			Cast<ACollectableItem>(NewItem)->EnabledArrayIndex = ArrayIndex;
 			CacheItems_Stuff_IsAvaliable[ArrayIndex] = false;
 		}

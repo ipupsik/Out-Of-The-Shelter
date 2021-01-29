@@ -174,6 +174,14 @@ public:
 	UPROPERTY(EditAnywhere, Category = "ItemClasses")
 		TSubclassOf<AInteractiveItem> ChelDetector_class;
 	UPROPERTY(EditAnywhere, Category = "ItemClasses")
+		TSubclassOf<AInteractiveItem> Shileds_class;
+	UPROPERTY(EditAnywhere, Category = "ItemClasses")
+		TSubclassOf<AInteractiveItem> SpecialWeapon_class;
+	UPROPERTY(EditAnywhere, Category = "ItemClasses")
+		TSubclassOf<AInteractiveItem> BubenCache_class;
+	UPROPERTY(EditAnywhere, Category = "ItemClasses")
+		TSubclassOf<AInteractiveItem> BubenDetail_class;
+	UPROPERTY(EditAnywhere, Category = "ItemClasses")
 		TSubclassOf<AInteractiveItem> RentgenGlass_class;
 	UPROPERTY(EditAnywhere, Category = "ItemClasses")
 		TSubclassOf<AInteractiveItem> HealPacket_class;
@@ -285,6 +293,15 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		TArray<FTransform> ChelDetectorTransform;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		TArray<FTransform> ShiledsTransform;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		TArray<FTransform> SpecialWeaponTransform;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		TArray<FTransform> BubenCacheTransform;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		TArray<FTransform> BubenDetailTransform;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		TArray<FTransform> RentgenGlassTransform;
