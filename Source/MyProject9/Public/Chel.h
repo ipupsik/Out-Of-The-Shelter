@@ -666,6 +666,7 @@ public:
 	AAreaCollision* CurCoreArea;
 	UGeneratorWidget* GeneratorView;
 
+	UPROPERTY(BlueprintReadWrite)
 	ABP_PlayerController* MyController;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
