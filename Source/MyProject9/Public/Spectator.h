@@ -23,6 +23,9 @@ public:
 	// Sets default values for this pawn's properties
 	ASpectator();
 
+	UPROPERTY(EditAnywhere, Category = "UI HUD")
+		TSubclassOf<UUserWidget> SpectatorWidget_class;
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;

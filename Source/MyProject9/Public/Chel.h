@@ -472,8 +472,6 @@ public:
 	UPROPERTY(EditAnywhere, Category = "UI HUD")
 		TSubclassOf<UTab> Tab_Stat_class;
 	UPROPERTY(EditAnywhere, Category = "UI HUD")
-		TSubclassOf<UUserWidget> SpectatorWidget_class;
-	UPROPERTY(EditAnywhere, Category = "UI HUD")
 		TSubclassOf<UInventory> Inventory_class;
 	UPROPERTY(EditAnywhere, Category = "UI HUD")
 		TSubclassOf<UKillFeed> KillFeed_class;

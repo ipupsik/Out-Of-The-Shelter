@@ -1452,7 +1452,6 @@ void AChel::PossessToSpectator()
 
 	iteration += GI->MaxPlayersCount - 2;
 	iteration += GS->GeneralLayer;
-	CreateWidget(World, SpectatorWidget_class)->AddToViewport();
 	GS->GeneralLayer++;
 	while (true)
 	{
