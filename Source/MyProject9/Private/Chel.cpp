@@ -686,7 +686,7 @@ bool AChel::MeshCompRepServer_Validate(float RotationRoll)
 void AChel::LookUp(float input)
 {
 	if (bCanWalkingAndWatching && !bInEscMenu && !bInShopMenu) {
-		if (IsNotInWebCam) {
+		if (!bCanSwitchWebCam) {
 			if (input != 0.0f)
 			{
 				input *= Sensetivity;
@@ -727,7 +727,7 @@ void AChel::LookUp(float input)
 void AChel::LookRight(float input)
 {
 	if (bCanWalkingAndWatching && !bInEscMenu && !bInShopMenu) {
-		if (IsNotInWebCam) {
+		if (!bCanSwitchWebCam) {
 			if (input != 0.0f) {
 				input *= Sensetivity;
 				AddControllerYawInput(input);
@@ -836,12 +836,12 @@ void AChel::SleepAnimation_End()
 {
 	bInShopMenu = false;
 	bCanWalkingAndWatching = true;
-	bCanSwitchWebCam = true;
 	if (bCanPossessWebCam) {
 		UserView->SetVisibility(ESlateVisibility::Hidden);
 		UpdateSpectating_Right();
 		WebCamUI->SetVisibility(ESlateVisibility::Visible);
 		IsAwake = false;
+		bCanSwitchWebCam = true;
 	}
 	else
 	{
@@ -912,8 +912,10 @@ void AChel::PickUp() {
 		}
 		else
 		{
-			TimeLine_FOV_WebCam->Play();
-			CameraZoomIn();
+			if (bCanSwitchWebCam) {
+				TimeLine_FOV_WebCam->Play();
+				CameraZoomIn();
+			}
 		}
 	}
 }
@@ -933,8 +935,10 @@ void AChel::PickUp_Released()
 		}
 		else
 		{
-			TimeLine_FOV_WebCam->Reverse();
-			CameraZoomOut();
+			if (bCanSwitchWebCam) {
+				TimeLine_FOV_WebCam->Reverse();
+				CameraZoomOut();
+			}
 		}
 	}
 }
