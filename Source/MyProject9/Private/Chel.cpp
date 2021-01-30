@@ -252,7 +252,7 @@ void AChel::MyBeginPlay()
 		GS->AmountOfPlayers++;
 		MyController->Index = Index;
 		UE_LOG(LogTemp, Warning, TEXT("AmountOfPlayers increase Chel"))
-		for (int i = 0; i < 2; ++i)
+		for (int i = 0; i < GI->MaxPlayersCount - 2; ++i)
 		{
 			ASpectator* spec = World->SpawnActorDeferred<ASpectator>(SpectatorClass, CameraComp->GetComponentTransform());
 			if (spec != nullptr) {
@@ -333,7 +333,6 @@ void AChel::MyBeginPlay()
 	if (IsServerAuth && IsPlayerOwner)
 	{
 		MyController->IsHost = true;
-		GS->MaxPlayersCount = GI->MaxPlayersCount;
 	}
 
 	//---------------------добавление начального камня ( у себя)-------------------------------------------------
@@ -837,11 +836,11 @@ void AChel::SleepAnimation_End()
 	bInShopMenu = false;
 	bCanWalkingAndWatching = true;
 	if (bCanPossessWebCam) {
+		bCanSwitchWebCam = true;
 		UserView->SetVisibility(ESlateVisibility::Hidden);
 		UpdateSpectating_Right();
 		WebCamUI->SetVisibility(ESlateVisibility::Visible);
 		IsAwake = false;
-		bCanSwitchWebCam = true;
 	}
 	else
 	{
@@ -887,12 +886,13 @@ void AChel::PlaySpawnAnimationAwake_Implementation() {
 		CameraTurnOff();
 	CameraComp->SetFieldOfView(90.0f);
 	//StoneCountUpdate(MaxAmmoCount);
-
-	WebCamUI->SetVisibility(ESlateVisibility::Hidden);
-
-	UserView->SetVisibility(ESlateVisibility::Visible);
+	if (WebCamUI)
+		WebCamUI->SetVisibility(ESlateVisibility::Hidden);
+	if (UserView)
+		UserView->SetVisibility(ESlateVisibility::Visible);
 	SpawnWakeUpSound();
-	UserView->PlayAnimation(UserView->Shading, 0, 1, EUMGSequencePlayMode::Type::Reverse);
+	if (UserView)
+		UserView->PlayAnimation(UserView->Shading, 0, 1, EUMGSequencePlayMode::Type::Reverse);
 }
 
 //-----------------------------
@@ -1299,12 +1299,12 @@ void AChel::RefreshWidgets_Winner_Implementation(int32 EscapeWay)
 		UserView->WS_Boltorez->SetVisibility(ESlateVisibility::Hidden);
 		break;
 	}
-	case 1:
+	case 2:
 	{
 		UserView->WS_Otvertka->SetVisibility(ESlateVisibility::Hidden);
 		break;
 	}
-	case 2:
+	case 1:
 	{
 		UserView->WS_KeyShelter->SetVisibility(ESlateVisibility::Hidden);
 		break;
@@ -1361,7 +1361,7 @@ void AChel::PlayerEscape_Implementation(int32 EscapeWay)
 	DeleteAllWeapons();
 	DropCoreItems();
 
-	if (GS->GeneralLayer == 2) {
+	if (GS->GeneralLayer == (GI->MaxPlayersCount - 2)) {
 		GS->SpawnCustomizationChels();
 
 		TArray<AActor*>Players;
@@ -1376,7 +1376,7 @@ void AChel::PlayerEscape_Implementation(int32 EscapeWay)
 		UGameplayStatics::GetAllActorsOfClass(World, ABP_PlayerController::StaticClass(), PlayerControllers);
 		UGameplayStatics::GetAllActorsOfClass(World, AFinalMenuPawn::StaticClass(), FinalMenuPlayers);
 
-		for (int i = 0; i < 4; ++i)
+		for (int i = 0; i < PlayerControllers.Num(); ++i)
 		{
 			ABP_PlayerController* PC = Cast<ABP_PlayerController>(PlayerControllers[i]);
 			PC->Possess(Cast<APawn>(FinalMenuPlayers[i]));
@@ -1433,29 +1433,32 @@ void AChel::PossessToSpectator()
 {
 	MyController->DisableOutline();
 	int iteration = 0;
-	for (iteration = 0; iteration < 8; iteration += 2)
+	for (iteration = 0; iteration < (GI->MaxPlayersCount - 2) * GI->MaxPlayersCount; iteration += (GI->MaxPlayersCount - 2))
 	{
 		if (GS->Spectators[iteration]->Index == Index)
 		{
 			if (GS->Spectators[iteration]->IsPawnControlled())
 				GS->Spectators[iteration]->UpdateSpectating_Right();
-			if (GS->Spectators[iteration + 1]->IsPawnControlled())
-				GS->Spectators[iteration + 1]->UpdateSpectating_Right();
+			if ((GI->MaxPlayersCount - 2) == 2)
+				if (GS->Spectators[iteration + 1]->IsPawnControlled())
+					GS->Spectators[iteration + 1]->UpdateSpectating_Right();
 
 			GS->Spectators[iteration]->IsKilled = true;
-			GS->Spectators[iteration + 1]->IsKilled = true;
+			if ((GI->MaxPlayersCount - 2) == 2)
+				GS->Spectators[iteration + 1]->IsKilled = true;
 			break;
 		}
 	}
 
-	iteration += 2;
+	iteration += GI->MaxPlayersCount - 2;
 	iteration += GS->GeneralLayer;
+	CreateWidget(World, SpectatorWidget_class)->AddToViewport();
 	GS->GeneralLayer++;
 	while (true)
 	{
-		if (iteration >= 8)
+		if (iteration >= (GI->MaxPlayersCount - 2)* GI->MaxPlayersCount)
 		{
-			iteration -= 8;
+			iteration -= (GI->MaxPlayersCount - 2) * GI->MaxPlayersCount;
 		}
 		if (!GS->Spectators[iteration]->IsKilled)
 		{
@@ -1463,7 +1466,7 @@ void AChel::PossessToSpectator()
 			Destroy();
 			break;
 		}
-		iteration += 2;
+		iteration += GI->MaxPlayersCount - 2;
 	}
 }
 

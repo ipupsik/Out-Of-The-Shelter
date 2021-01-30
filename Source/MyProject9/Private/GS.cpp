@@ -65,7 +65,7 @@ void AGS::BeginPlay()
 	Super::BeginPlay();
 
 	if (GetLocalRole() == ROLE_Authority) {
-		//Спавним FinalMenuPawn
+		MaxPlayersCount = GetWorld()->GetGameInstance<UGI>()->MaxPlayersCount;
 		for (int i = 0; i < 4; ++i) {
 			GetWorld()->SpawnActor<AFinalMenuPawn>(FMP, TransFMP);
 		}
@@ -100,6 +100,9 @@ void AGS::BeginPlay()
 		TArray<AActor*>VentilaciaRubilnick;
 		UGameplayStatics::GetAllActorsOfClass(GetWorld(), ABP_VentilaciaRubilnick::StaticClass(), VentilaciaRubilnick);
 		VentilaciaRubilnickCount = VentilaciaRubilnick.Num();
+
+		if (MaxPlayersCount == 3)
+			VentilaciaRubilnickCount -= 2;
 
 		TArray<AActor*>CanalizaciaNasos;
 		UGameplayStatics::GetAllActorsOfClass(GetWorld(), ADezinfectorNasos::StaticClass(), CanalizaciaNasos);
@@ -578,37 +581,6 @@ void AGS::SpawnPlayers()
 }
 
 void AGS::ResetGame() {
-	TArray<AActor*>Stuff;
-
-	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AInteractiveItem::StaticClass(), Stuff);
-
-	for (auto Obj : Stuff)
-		Obj->Destroy();
-
-	NickNames.Init(FText::FromString(TEXT(" ")), 4);
-
-	EscapeTime.Init(0, 0);
-	AcceptPiedistalAmount = 0;
-	AmountOfPlayers = 0;
-	AgreedPlayers = 0;
-
-	GeneralLayer = 0;
-	AreaAvaliables.Init(false, 3);
-	AreaClosed.Init(false, 3);
-	Areas.Init(nullptr, 3);
-
-	IsGameStarted = false;
-
-	TArray<AActor*>Players;
-
-	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ABP_PlayerController::StaticClass(), Players);
-
-	for (auto& Chel : Players)
-	{
-		Cast<ABP_PlayerController>(Chel)->RemoveFinalMenu();
-		Cast<ABP_PlayerController>(Chel)->EnableOutline();
-	}
-
 	Cast<AGM>(UGameplayStatics::GetGameMode(GetWorld()))->Respawn();
 }
 

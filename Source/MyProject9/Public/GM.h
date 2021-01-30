@@ -15,6 +15,7 @@ class MYPROJECT9_API AGM : public AGameModeBase
 	GENERATED_BODY()
 	
 public:
-	void Respawn();
+	UFUNCTION(BlueprintImplementableEvent)
+		void Respawn();
 
 };
