@@ -2,7 +2,7 @@
 
 
 #include "Spectator.h"
-
+#include "Blueprint/WidgetBlueprintLibrary.h"
 #include "Chel.h"
 // Sets default values
 ASpectator::ASpectator()
@@ -33,7 +33,13 @@ void ASpectator::BeginPlay()
 	
 	GS = Cast<AGS>(GetWorld()->GetGameState());
 	if (GetLocalRole() == ROLE_AutonomousProxy)
+	{
 		Sensetivity = GetWorld()->GetGameInstance<UGI>()->Sensetivity;
+		TArray<UUserWidget*>Widgets;
+		UWidgetBlueprintLibrary::GetAllWidgetsOfClass(GetWorld(), Widgets, SpectatorWidget_class);
+		if (Widgets.Num() == 0)
+			CreateWidget(GetWorld(), SpectatorWidget_class)->AddToViewport();
+	}
 }
 
 void ASpectator::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
