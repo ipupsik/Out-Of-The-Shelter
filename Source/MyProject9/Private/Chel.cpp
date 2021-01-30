@@ -1350,16 +1350,6 @@ void AChel::PlayerEscape_Implementation(int32 EscapeWay)
 	}
 	
 	DoesHave[EscapeWay] = false;
-	TArray<AActor*>PlayersEscape;
-	UGameplayStatics::GetAllActorsOfClass(World, AChel::StaticClass(), PlayersEscape);
-	for (auto& Player : PlayersEscape) {
-		AChel* TmpPlayer = Cast<AChel>(Player);
-		TmpPlayer->ShowEscapeWidget(EscapeWay, GS->NickNames[TmpPlayer->Index]);
-		TmpPlayer->RefreshWidgets(DoesHave, FText(), GS->NickNames[Index], true);
-	}
-
-	DeleteAllWeapons();
-	DropCoreItems();
 
 	if (GS->GeneralLayer == (GI->MaxPlayersCount - 2)) {
 		GS->SpawnCustomizationChels();
@@ -1394,6 +1384,17 @@ void AChel::PlayerEscape_Implementation(int32 EscapeWay)
 	}
 	else
 	{
+		TArray<AActor*>PlayersEscape;
+		UGameplayStatics::GetAllActorsOfClass(World, AChel::StaticClass(), PlayersEscape);
+		for (auto& Player : PlayersEscape) {
+			AChel* TmpPlayer = Cast<AChel>(Player);
+			TmpPlayer->ShowEscapeWidget(EscapeWay, GS->NickNames[TmpPlayer->Index]);
+			TmpPlayer->RefreshWidgets(DoesHave, FText(), GS->NickNames[Index], true);
+		}
+
+		DeleteAllWeapons();
+		DropCoreItems();
+
 		TArray<AActor*>Chels;
 		GS->Areas[EscapeWay]->GetOverlappingActors(Chels);
 		for (auto& Player : Chels)
@@ -2448,8 +2449,10 @@ void AChel::PickUpCoreItem_Implementation(int32 ItemType, const FText& ThrowNick
 
 void AChel::AddMessageRandomEvent_Implementation(int32 FloorNum) {
 	UGasOnRandomFloorMessage* TmpWidget = Cast<UGasOnRandomFloorMessage>(CreateWidget(World, RandomGasWidget_class));
-	TmpWidget->Floor->SetText(FText::AsNumber(FloorNum + 1));
-	KillFeed->VB_KillFeed->AddChild(TmpWidget);
+	if (TmpWidget)
+		TmpWidget->Floor->SetText(FText::AsNumber(FloorNum + 1));
+	if (KillFeed)
+		KillFeed->VB_KillFeed->AddChild(TmpWidget);
 }
 
 void AChel::CreateParticleImmortal_Implementation() {
