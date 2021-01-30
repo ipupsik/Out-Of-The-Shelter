@@ -81,7 +81,7 @@ public:
 	UPROPERTY(meta = (BindWidget))
 		UTextBlock* PropmptTextInterract;
 
-	UPROPERTY(meta = (BindWidget))
+	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
 		UTextBlock* PropmptTextArea;
 
 	UPROPERTY(meta = (BindWidget))

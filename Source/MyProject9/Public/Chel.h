@@ -657,7 +657,10 @@ public:
 	int32 LastRAbilityIndex;
 
 	//ADezinfectorNasosZatichka* LastZatichka;
+
+	UPROPERTY(BlueprintReadWrite)
 	AGeneratorArea* GenAreaObj;
+	UPROPERTY(BlueprintReadWrite)
 	AAreaCollision* CurCoreArea;
 	UGeneratorWidget* GeneratorView;
 
