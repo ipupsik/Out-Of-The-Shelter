@@ -31,7 +31,7 @@ public:
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
 		UButton* BTN_Exit;
 
-	UPROPERTY(meta = (BindWidget))
+	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
 		UTextBlock* TB_PlayMore;
 
 	UPROPERTY(meta = (BindWidget))

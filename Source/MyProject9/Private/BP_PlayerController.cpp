@@ -89,7 +89,6 @@ void ABP_PlayerController::ChangePlayersVoteCount_Implementation()
 		if ((GS->AgreedPlayers + 1) == GS->AmountOfPlayers)
 		{
 			GS->ResetGame();
-			RemoveFinalMenu();
 		}
 		else {
 			TArray<AActor*>PlayerControllers;

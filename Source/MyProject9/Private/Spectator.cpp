@@ -173,25 +173,26 @@ void ASpectator::ChangeSpecLeft()
 
 void ASpectator::UpdateSpectating_Left_Implementation()
 {
+	int32 MaxPlayersCount = GetWorld()->GetGameInstance<UGI>()->MaxPlayersCount;
 	int iteration = 0;
-	for (iteration = Layer; iteration < 8; iteration += 2)
+	for (iteration = Layer; iteration < MaxPlayersCount * (MaxPlayersCount - 2); iteration += (MaxPlayersCount - 2))
 	{
 		if (GS->Spectators[iteration]->Index == Index)
 			break;
 	}
-	iteration -= 2;
+	iteration -= (MaxPlayersCount - 2);
 	while (true)
 	{
 		if (iteration < 0)
 		{
-			iteration += 8;
+			iteration += MaxPlayersCount * (MaxPlayersCount - 2);
 		}
 		if (!GS->Spectators[iteration]->IsKilled)
 		{
 			GetController()->Possess(GS->Spectators[iteration]);
 			break;
 		}
-		iteration -= 2;
+		iteration -= MaxPlayersCount - 2;
 	}
 }
 
@@ -203,25 +204,27 @@ bool ASpectator::UpdateSpectating_Left_Validate()
 
 void ASpectator::UpdateSpectating_Right_Implementation()
 {
+	int32 MaxPlayersCount = GetWorld()->GetGameInstance<UGI>()->MaxPlayersCount;
 	int iteration = 0;
-	for (iteration = Layer; iteration < 8; iteration += 2)
+	UE_LOG(LogTemp, Warning, TEXT("Count - %d"), MaxPlayersCount);
+	for (iteration = Layer; iteration < MaxPlayersCount * (MaxPlayersCount - 2); iteration += (MaxPlayersCount - 2))
 	{
 		if (GS->Spectators[iteration]->Index == Index)
 			break;
 	}
-	iteration += 2;
+	iteration += MaxPlayersCount - 2;
 	while (true)
 	{
-		if (iteration >= 8 )
+		if (iteration >= MaxPlayersCount * (MaxPlayersCount - 2))
 		{
-			iteration -= 8;
+			iteration -= MaxPlayersCount * (MaxPlayersCount - 2);
 		}
 		if (!GS->Spectators[iteration]->IsKilled)
 		{
 			GetController()->Possess(GS->Spectators[iteration]);
 			break;
 		}
-		iteration += 2;
+		iteration += MaxPlayersCount - 2;
 	}
 }
 
