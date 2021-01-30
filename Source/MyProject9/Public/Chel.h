@@ -787,7 +787,7 @@ public:
 
 	bool HaveSpecialAmmo;
 	bool CanFireWeapon; // может ли чел стрелять из оружия
-
+	bool bCanSwitchWebCam;
 
 	UFUNCTION(Server, Reliable, WithValidation)
 		void GetAmmo_Server(); // для обновлениея патронов камня в начале игры

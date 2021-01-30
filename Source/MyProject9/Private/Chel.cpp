@@ -67,6 +67,7 @@ AChel::AChel()
 	StoneDamageBuffCount = 0;
 	AmountBottleEffects = 0;
 	ShieldsCount = 0;
+	bCanSwitchWebCam = false;
 	Health = 0;
 	bIsAlreadyThrowing = false;
 	IsInGame = false;
@@ -528,7 +529,7 @@ void AChel::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 
 void AChel::UpdateSpectating_Right()
 {
-	if (!IsNotInWebCam)
+	if (bCanSwitchWebCam)
 	{
 		UpdateSpectating_Right_Server();
 		CameraSwitch();
@@ -566,7 +567,7 @@ bool AChel::UpdateSpectating_Right_Server_Validate()
 
 void AChel::UpdateSpectating_Left()
 {
-	if (!IsNotInWebCam)
+	if (bCanSwitchWebCam)
 	{
 		UpdateSpectating_Left_Server();
 		CameraSwitch();
@@ -823,6 +824,7 @@ void AChel::PlaySpawnAnimationSleep_Implementation() {
 	}
 	
 	//na vsyakii
+	IsNotInWebCam = false;
 	MyController->bShowMouseCursor = false;
 	MyController->SetInputMode(FInputModeGameOnly());
 
@@ -834,9 +836,9 @@ void AChel::SleepAnimation_End()
 {
 	bInShopMenu = false;
 	bCanWalkingAndWatching = true;
+	bCanSwitchWebCam = true;
 	if (bCanPossessWebCam) {
 		UserView->SetVisibility(ESlateVisibility::Hidden);
-		IsNotInWebCam = false;
 		UpdateSpectating_Right();
 		WebCamUI->SetVisibility(ESlateVisibility::Visible);
 		IsAwake = false;
@@ -875,6 +877,7 @@ void AChel::PlaySpawnAnimationAwake_Implementation() {
 	TimeLine_FOV_WebCam->Stop();
 	ShowNoiseWebCamUI(false);
 	IsNotInWebCam = true;
+	bCanSwitchWebCam = false;
 	FTimerHandle FuzeTimerHandle;
 	World->GetTimerManager().SetTimer(FuzeTimerHandle, this, &AChel::AwakeAnimation_End, 2, false);
 	CanThrowStone = true;
