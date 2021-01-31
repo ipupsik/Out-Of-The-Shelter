@@ -69,5 +69,8 @@ void ABP_VentilaciaRubilnick::OnLineTraced(AChel* Player)
 		ToggleCustomDepth(true, Player);
 		if (!Player->UserView->E_Mark->IsVisible())
 			Player->UserView->E_Mark->SetVisibility(ESlateVisibility::Visible);
+		if (Player->GI->bIsEnabledPrompt) {
+			Player->UserView->PropmptTextInterract->SetVisibility(ESlateVisibility::Visible);
+		}
 	}
 }

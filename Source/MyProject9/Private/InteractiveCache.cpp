@@ -57,9 +57,9 @@ void AInteractiveCache::OnLineTraced(AChel* Player)
 				Player->UserView->PropmptTextInterract->SetText(PromptText);
 			if (!Player->UserView->E_Mark->IsVisible()) {
 				Player->UserView->E_Mark->SetVisibility(ESlateVisibility::Visible);
-				if (Player->GI->bIsEnabledPrompt)
-					Player->UserView->PropmptTextInterract->SetVisibility(ESlateVisibility::Visible);
 			}
 		}
+		if (Player->GI->bIsEnabledPrompt)
+			Player->UserView->PropmptTextInterract->SetVisibility(ESlateVisibility::Visible);
 	}
 }
