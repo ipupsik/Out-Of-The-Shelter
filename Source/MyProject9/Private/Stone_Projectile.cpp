@@ -56,9 +56,10 @@ void AStone_Projectile::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp
 							Player->KillPlayer();
 							Player->DoesHave.Init(false, 3);
 						}
-						CallAddMarker();
 					}
 				}
+				if (Player->GetLocalRole() == ROLE_Authority)
+					CallAddMarker();
 				PlaySoundHitChel();
 				Destroy();
 			}
