@@ -168,13 +168,18 @@ void ASpectator::LookRight(float input)
 void ASpectator::ChangeSpecRight()
 {
 	if (!IsFreeCam)
+	{
 		UpdateSpectating_Right();
+		CameraSwitch();
+	}
 }
 
 void ASpectator::ChangeSpecLeft()
 {
-	if (!IsFreeCam)
+	if (!IsFreeCam) {
+		CameraSwitch();
 		UpdateSpectating_Left();
+	}
 }
 
 void ASpectator::UpdateSpectating_Left_Implementation()

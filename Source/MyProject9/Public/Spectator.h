@@ -33,6 +33,9 @@ protected:
 	virtual void PossessedBy(AController* NewController) override;
 
 public:	
+
+	UFUNCTION(BlueprintImplementableEvent)
+		void CameraSwitch();
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
