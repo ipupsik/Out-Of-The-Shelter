@@ -265,6 +265,8 @@ void AChel::MyBeginPlay()
 		VerstakViewWidget->SetVisibility(ESlateVisibility::Hidden);
 		KillFeed->AddToViewport();
 
+		MyController->SetInputMode(FInputModeGameOnly());
+
 		UserView->Player = this;
 		UserView->AmmoLabel->SetText(FText::AsNumber((int32)Ammo));
 		UserView->CurRSlot->PromtText->SetJustification(ETextJustify::Type::Center);
