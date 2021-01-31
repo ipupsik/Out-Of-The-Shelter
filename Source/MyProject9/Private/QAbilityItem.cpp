@@ -36,6 +36,17 @@ bool AQAbilityItem::PickUpEventClient(AChel* Player)
 	if (Player->CurQAbility) {
 		if (Player->CurQAbility->GetClass() == QAbility_class)
 			return false;
+		if (Player->IsQAbilityUsing)
+		{
+			Player->IsQAbilityUsing = false;
+			GetWorld()->GetTimerManager().ClearTimer(Player->QAbilityTimer);
+			Player->CurQAbility->DeUseAbilityClient();
+		}
+		else if (Player->IsQAbilityRefreshing)
+		{
+			Player->IsQAbilityRefreshing = false;
+			GetWorld()->GetTimerManager().ClearTimer(Player->QAbilityTimer);
+		}
 		Player->CurQAbility->ConditionalBeginDestroy();
 	}
 	if (!Player->IsServerAuth) {

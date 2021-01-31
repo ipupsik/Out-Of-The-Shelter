@@ -34,18 +34,27 @@ bool UQAbility_Rentgen::UseAbilityClient(AChel* Player)
 	{
 		Cast<ACoreItem>(it)->ToggleCustomDepth(true, Player);
 	}
+	Player->IsQAbilityUsing = true;
+	Player->QAbilityTimer = FTimerHandle();
+	TmpPlayer = Player;
+	GetWorld()->GetTimerManager().SetTimer(Player->QAbilityTimer, this, &UQAbility_Rentgen::DeUseAbilityClient, Duration, false);
 	return false;
 }
 
-bool UQAbility_Rentgen::DeUseAbilityClient(AChel* Player)
+void UQAbility_Rentgen::DeUseAbilityClient()
 {
-	Player->IsRentgenRender = false;
-	Player->RentgentOffSound();
+	TmpPlayer->IsRentgenRender = false;
+	TmpPlayer->RentgentOffSound();
 	TArray<AActor*>RentgenItems;
-	Player->SenseCollision->GetOverlappingActors(RentgenItems, ACoreItem::StaticClass());
+	TmpPlayer->SenseCollision->GetOverlappingActors(RentgenItems, ACoreItem::StaticClass());
 	for (auto& it : RentgenItems)
 	{
-		Cast<ACoreItem>(it)->ToggleCustomDepth(false, Player);
+		Cast<ACoreItem>(it)->ToggleCustomDepth(false, TmpPlayer);
 	}
-	return false;
+	if (TmpPlayer->IsQAbilityUsing) {
+		TmpPlayer->IsQAbilityUsing = false;
+		TmpPlayer->IsQAbilityRefreshing = true;
+		TmpPlayer->QAbilityTimer = FTimerHandle();
+		GetWorld()->GetTimerManager().SetTimer(TmpPlayer->QAbilityTimer, TmpPlayer, &AChel::QAbilityEnableAvaliable, DurationAvaliable, false);
+	}
 }
