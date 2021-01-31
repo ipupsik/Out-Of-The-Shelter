@@ -61,6 +61,10 @@ void AGS::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps
 	DOREPLIFETIME(AGS, IsVentilaciaAvaliable);
 	DOREPLIFETIME(AGS, IsCanalizaciaAvaliable);
 	DOREPLIFETIME(AGS, IsCanalizaciaPlayed);
+	DOREPLIFETIME(AGS, VentilaciaRubilnickCount);
+	DOREPLIFETIME(AGS, MaxVentilaciaRubilnickCount);
+	DOREPLIFETIME(AGS, CanalizaciaNasosCount);
+	DOREPLIFETIME(AGS, MaxCanalizaciaNasosCount);
 }
 
 void AGS::BeginPlay()
@@ -102,14 +106,16 @@ void AGS::BeginPlay()
 
 		TArray<AActor*>VentilaciaRubilnick;
 		UGameplayStatics::GetAllActorsOfClass(GetWorld(), ABP_VentilaciaRubilnick::StaticClass(), VentilaciaRubilnick);
-		VentilaciaRubilnickCount = VentilaciaRubilnick.Num();
+		MaxVentilaciaRubilnickCount = VentilaciaRubilnickCount = VentilaciaRubilnick.Num();
 
-		if (MaxPlayersCount == 3)
+		if (MaxPlayersCount == 3) {
 			VentilaciaRubilnickCount -= 2;
+			MaxVentilaciaRubilnickCount -= 2;
+		}
 
 		TArray<AActor*>CanalizaciaNasos;
 		UGameplayStatics::GetAllActorsOfClass(GetWorld(), ADezinfectorNasos::StaticClass(), CanalizaciaNasos);
-		CanalizaciaNasosCount = CanalizaciaNasos.Num();
+		MaxCanalizaciaNasosCount = CanalizaciaNasosCount = CanalizaciaNasos.Num();
 
 		//----------------------------Cache Items
 

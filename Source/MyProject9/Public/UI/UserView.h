@@ -87,6 +87,9 @@ public:
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
 		UTextBlock* PropmptTextArea;
 
+	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
+		UTextBlock* CountLeftPromt;
+
 	UPROPERTY(meta = (BindWidget))
 		UTextBlock* AmmoLabel;
 

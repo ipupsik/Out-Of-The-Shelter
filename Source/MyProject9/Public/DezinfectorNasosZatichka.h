@@ -47,4 +47,7 @@ public:
 		bool DoesLock;
 	UPROPERTY(BlueprintReadWrite)
 		bool DoesPlayAnim;
+
+	UPROPERTY(EditAnywhere)
+		FSlateColor MyColor;
 };

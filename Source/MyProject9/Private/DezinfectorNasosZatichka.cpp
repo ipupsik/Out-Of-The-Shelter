@@ -60,12 +60,30 @@ void ADezinfectorNasosZatichka::OnLineTraced(AChel* Player)
 			ToggleCustomDepth(true, Player);
 			if (!Player->UserView->E_Mark->IsVisible())
 				Player->UserView->E_Mark->SetVisibility(ESlateVisibility::Visible);
+			if (Player->GI->bIsEnabledPrompt) {
+				Player->UserView->PropmptTextInterract->SetText(PromptText);
+				Player->UserView->PropmptTextInterract->SetVisibility(ESlateVisibility::Visible);
+				Player->UserView->CountLeftPromt->SetVisibility(ESlateVisibility::Visible);
+				FString NewString = FText::AsNumber(Player->GS->MaxCanalizaciaNasosCount - Player->GS->CanalizaciaNasosCount).ToString();
+				NewString += "/";
+				NewString += FText::AsNumber(Player->GS->MaxCanalizaciaNasosCount).ToString();
+				Player->UserView->CountLeftPromt->SetText(FText::FromString(NewString));
+				Player->UserView->CountLeftPromt->SetColorAndOpacity(MyColor);
+			}
 		}
 		else
 		{
-			ToggleCustomDepth(false, Player);
-			if (Player->UserView->E_Mark->IsVisible())
+			if (Player->UserView->E_Mark->IsVisible()) {
 				Player->UserView->E_Mark->SetVisibility(ESlateVisibility::Hidden);
+			}
+			if (Player->GI->bIsEnabledPrompt) {
+				Player->UserView->CountLeftPromt->SetVisibility(ESlateVisibility::Visible);
+				FString NewString = FText::AsNumber(Player->GS->MaxCanalizaciaNasosCount - Player->GS->CanalizaciaNasosCount).ToString();
+				NewString += "/";
+				NewString += FText::AsNumber(Player->GS->MaxCanalizaciaNasosCount).ToString();
+				Player->UserView->CountLeftPromt->SetText(FText::FromString(NewString));
+				Player->UserView->CountLeftPromt->SetColorAndOpacity(MyColor);
+			}
 		}
 	}
 }
@@ -76,5 +94,9 @@ void ADezinfectorNasosZatichka::ToggleCustomDepth(bool NewIsOutliningNow, AChel*
 		Zatichka->SetRenderCustomDepth(NewIsOutliningNow);
 		Zatichka->MarkRenderStateDirty();
 		this->IsOutliningNow = NewIsOutliningNow;
+	}
+	if (!NewIsOutliningNow)
+	{
+		Player->UserView->CountLeftPromt->SetVisibility(ESlateVisibility::Hidden);
 	}
 }

@@ -227,8 +227,14 @@ public:
 	int CurrentOtvertka;
 	int CurrentKeyShelter;
 	int CurrentBoltorez;
+	UPROPERTY(Replicated)
 	int32 VentilaciaRubilnickCount;
+	UPROPERTY(Replicated)
+	int32 MaxVentilaciaRubilnickCount;
+	UPROPERTY(Replicated)
 	int32 CanalizaciaNasosCount;
+	UPROPERTY(Replicated)
+	int32 MaxCanalizaciaNasosCount;
 
 	int CurrentButtonCount;
 

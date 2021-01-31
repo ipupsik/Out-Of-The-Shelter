@@ -40,4 +40,6 @@ public:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Player")
 		USceneComponent* Scene;
+	UPROPERTY(EditAnywhere)
+	FSlateColor MyColor;
 };

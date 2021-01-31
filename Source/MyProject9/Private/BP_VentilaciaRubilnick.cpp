@@ -29,6 +29,10 @@ void ABP_VentilaciaRubilnick::ToggleCustomDepth(bool NewIsOutliningNow, AChel* P
 			this->IsOutliningNow = NewIsOutliningNow;
 		}
 	}
+	if (!NewIsOutliningNow)
+	{
+		Player->UserView->CountLeftPromt->SetVisibility(ESlateVisibility::Hidden);
+	}
 }
 
 bool ABP_VentilaciaRubilnick::PickUpEventClient(AChel* Player)
@@ -70,7 +74,25 @@ void ABP_VentilaciaRubilnick::OnLineTraced(AChel* Player)
 		if (!Player->UserView->E_Mark->IsVisible())
 			Player->UserView->E_Mark->SetVisibility(ESlateVisibility::Visible);
 		if (Player->GI->bIsEnabledPrompt) {
+			Player->UserView->PropmptTextInterract->SetText(PromptText);
 			Player->UserView->PropmptTextInterract->SetVisibility(ESlateVisibility::Visible);
+			Player->UserView->CountLeftPromt->SetVisibility(ESlateVisibility::Visible);
+			FString NewString = FText::AsNumber(Player->GS->MaxVentilaciaRubilnickCount - Player->GS->VentilaciaRubilnickCount).ToString();
+			NewString += "/";
+			NewString += FText::AsNumber(Player->GS->MaxVentilaciaRubilnickCount).ToString();
+			Player->UserView->CountLeftPromt->SetText(FText::FromString(NewString));
+			Player->UserView->CountLeftPromt->SetColorAndOpacity(MyColor);
+		}
+	}
+	else
+	{
+		if (Player->GI->bIsEnabledPrompt) {
+			Player->UserView->CountLeftPromt->SetVisibility(ESlateVisibility::Visible);
+			FString NewString = FText::AsNumber(Player->GS->MaxVentilaciaRubilnickCount - Player->GS->VentilaciaRubilnickCount).ToString();
+			NewString += "/";
+			NewString += FText::AsNumber(Player->GS->MaxVentilaciaRubilnickCount).ToString();
+			Player->UserView->CountLeftPromt->SetText(FText::FromString(NewString));
+			Player->UserView->CountLeftPromt->SetColorAndOpacity(MyColor);
 		}
 	}
 }
