@@ -15,7 +15,7 @@ ATakableProjectile::ATakableProjectile() {
 	ProjectMovement = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("ProjectileMovement"));
 	ProjectMovement->SetUpdatedComponent(MyGunMesh);
 
-	MyCollision->OnComponentBeginOverlap.AddDynamic(this, &ATakableProjectile::OnOverlapBegin);
+
 	MyGunMesh->OnComponentHit.AddDynamic(this, &ATakableProjectile::OnHit);
 }
 

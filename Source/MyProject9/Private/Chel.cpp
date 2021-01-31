@@ -294,6 +294,9 @@ void AChel::MyBeginPlay()
 		UserView->Player = this;
 		UserView->AmmoLabel->SetText(FText::AsNumber((int32)Ammo));
 
+		if (GI->MaxPlayersCount == 3)
+			UserView->WS_Boltorez->SetVisibility(ESlateVisibility::Collapsed);
+
 		TArray<AActor*>MainExis;
 		UGameplayStatics::GetAllActorsOfClass(World, AItemPromtArrow_MainExis::StaticClass(), MainExis);
 		for (auto& it : MainExis)
@@ -433,9 +436,9 @@ void AChel::Tick(float DeltaTime)
 					if (LastInteractiveItem && LastInteractiveItem != TracedItem) {
 						LastInteractiveItem->ToggleCustomDepth(false, this);
 						if(!CurCoreArea)
-							UserView->E_Mark->SetVisibility(ESlateVisibility::Hidden);
+							UserView->E_Mark->SetVisibility(ESlateVisibility::Collapsed);
 						if(GI->bIsEnabledPrompt)
-							UserView->PropmptTextInterract->SetVisibility(ESlateVisibility::Hidden);
+							UserView->PropmptTextInterract->SetVisibility(ESlateVisibility::Collapsed);
 					}
 					TracedItem->OnLineTraced(this);
 					if (LastInteractiveItem != TracedItem) {
@@ -447,9 +450,9 @@ void AChel::Tick(float DeltaTime)
 						LastInteractiveItem->ToggleCustomDepth(false, this);
 						LastInteractiveItem = nullptr;
 						if(!CurCoreArea)
-							UserView->E_Mark->SetVisibility(ESlateVisibility::Hidden);
+							UserView->E_Mark->SetVisibility(ESlateVisibility::Collapsed);
 						if(GI->bIsEnabledPrompt)
-							UserView->PropmptTextInterract->SetVisibility(ESlateVisibility::Hidden);
+							UserView->PropmptTextInterract->SetVisibility(ESlateVisibility::Collapsed);
 					}
 				}
 			}
@@ -458,9 +461,9 @@ void AChel::Tick(float DeltaTime)
 					LastInteractiveItem->ToggleCustomDepth(false, this);
 					LastInteractiveItem = nullptr;
 					if(!CurCoreArea)
-						UserView->E_Mark->SetVisibility(ESlateVisibility::Hidden);
+						UserView->E_Mark->SetVisibility(ESlateVisibility::Collapsed);
 					if(GI->bIsEnabledPrompt)
-						UserView->PropmptTextInterract->SetVisibility(ESlateVisibility::Hidden);
+						UserView->PropmptTextInterract->SetVisibility(ESlateVisibility::Collapsed);
 				}
 			}
 		}
@@ -806,8 +809,8 @@ void AChel::PlaySpawnAnimationSleep_Implementation() {
 	ResetCacheKeys();
 	if (bCanPossessWebCam)
 		CanThrowStone = false;
-	VerstakViewWidget->SetVisibility(ESlateVisibility::Hidden);
-	Widget_Note->SetVisibility(ESlateVisibility::Hidden);
+	VerstakViewWidget->SetVisibility(ESlateVisibility::Collapsed);
+	Widget_Note->SetVisibility(ESlateVisibility::Collapsed);
 	SpawnDeadSound();
 	UserView->PlayAnimation(UserView->Shading);
 	AmountBottleEffects = 1;
@@ -817,9 +820,9 @@ void AChel::PlaySpawnAnimationSleep_Implementation() {
 	{
 		LastInteractiveItem->ToggleCustomDepth(false, this);
 		LastInteractiveItem = nullptr;
-		UserView->E_Mark->SetVisibility(ESlateVisibility::Hidden);
+		UserView->E_Mark->SetVisibility(ESlateVisibility::Collapsed);
 		if (GI->bIsEnabledPrompt)
-			UserView->PropmptTextInterract->SetVisibility(ESlateVisibility::Hidden);
+			UserView->PropmptTextInterract->SetVisibility(ESlateVisibility::Collapsed);
 	}
 	
 	//na vsyakii
@@ -837,7 +840,7 @@ void AChel::SleepAnimation_End()
 	bCanWalkingAndWatching = true;
 	if (bCanPossessWebCam) {
 		bCanSwitchWebCam = true;
-		UserView->SetVisibility(ESlateVisibility::Hidden);
+		UserView->SetVisibility(ESlateVisibility::Collapsed);
 		UpdateSpectating_Right();
 		WebCamUI->SetVisibility(ESlateVisibility::Visible);
 		IsAwake = false;
@@ -887,7 +890,7 @@ void AChel::PlaySpawnAnimationAwake_Implementation() {
 	CameraComp->SetFieldOfView(90.0f);
 	//StoneCountUpdate(MaxAmmoCount);
 	if (WebCamUI)
-		WebCamUI->SetVisibility(ESlateVisibility::Hidden);
+		WebCamUI->SetVisibility(ESlateVisibility::Collapsed);
 	if (UserView)
 		UserView->SetVisibility(ESlateVisibility::Visible);
 	SpawnWakeUpSound();
@@ -1109,7 +1112,7 @@ void AChel::AddHitMarker_Implementation()
 
 void AChel::RemoveHitMarker()
 {
-	UserView->Marker->SetVisibility(ESlateVisibility::Hidden);
+	UserView->Marker->SetVisibility(ESlateVisibility::Collapsed);
 }
 
 void AChel::RefreshWidgets_Implementation(const TArray<bool>& whatToUpdate, const FText& KillerNickName, 
@@ -1296,17 +1299,17 @@ void AChel::RefreshWidgets_Winner_Implementation(int32 EscapeWay)
 	{
 	case 0:
 	{
-		UserView->WS_Boltorez->SetVisibility(ESlateVisibility::Hidden);
+		UserView->WS_Boltorez->SetVisibility(ESlateVisibility::Collapsed);
 		break;
 	}
 	case 2:
 	{
-		UserView->WS_Otvertka->SetVisibility(ESlateVisibility::Hidden);
+		UserView->WS_Otvertka->SetVisibility(ESlateVisibility::Collapsed);
 		break;
 	}
 	case 1:
 	{
-		UserView->WS_KeyShelter->SetVisibility(ESlateVisibility::Hidden);
+		UserView->WS_KeyShelter->SetVisibility(ESlateVisibility::Collapsed);
 		break;
 	}
 	}
@@ -1330,7 +1333,7 @@ void AChel::ExitAvaliableUpdate_Implementation(int32 EscapeWay)
 		if (EscapeWay != 1)
 			UserView->E_Mark->SetVisibility(ESlateVisibility::Visible);
 		else
-			UserView->E_Mark->SetVisibility(ESlateVisibility::Hidden);
+			UserView->E_Mark->SetVisibility(ESlateVisibility::Collapsed);
 		UserView->PropmptTextArea->SetText(CurCoreArea->AreaOpenAndCanEscape);
 	}
 	//UserView->EscapeText->SetVisibility(ESlateVisibility::Visible);
@@ -1423,7 +1426,7 @@ void AChel::AreaClosedUpdate_Implementation(int32 EscapeWay)
 {
 	//AreaCode = -1;
 	if(!LastInteractiveItem)
-		UserView->E_Mark->SetVisibility(ESlateVisibility::Hidden);
+		UserView->E_Mark->SetVisibility(ESlateVisibility::Collapsed);
 	UserView->PropmptTextArea->SetText(CurCoreArea->AreaClose);
 	//UserView->EscapeText->SetVisibility(ESlateVisibility::Hidden);
 	CurCoreArea = nullptr;
@@ -1518,9 +1521,6 @@ void AChel::ChangeGeneratorStas_Implementation()
 			}
 		}
 
-
-		ShowRandomItem();
-
 		TArray<AActor*> Players;
 		GenAreaObj->GetOverlappingActors(Players, AChel::StaticClass());
 		for (auto& it : Players) {
@@ -1581,8 +1581,8 @@ void AChel::HideWidgetStas_Implementation()
 {
 	if(GI->bIsEnabledPrompt)
 		UserView->PropmptTextArea->SetText(GenAreaObj->PromptGenTextNotActive);
-	GeneratorView->SetVisibility(ESlateVisibility::Hidden);
-	UserView->E_Mark->SetVisibility(ESlateVisibility::Hidden);
+	GeneratorView->SetVisibility(ESlateVisibility::Collapsed);
+	UserView->E_Mark->SetVisibility(ESlateVisibility::Collapsed);
 	TickEnableGeneratorWidget = false;
 }
 

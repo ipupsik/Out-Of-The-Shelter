@@ -14,7 +14,7 @@ ABottle_Projectile::ABottle_Projectile() {
 	ProjectMovement = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("ProjectileMovement"));
 	ProjectMovement->SetUpdatedComponent(MyGunMesh);
 
-	MyCollision->OnComponentBeginOverlap.AddDynamic(this, &ABottle_Projectile::OnOverlapBegin);
+
 	MyGunMesh->OnComponentHit.AddDynamic(this, &ABottle_Projectile::OnHit);
 }
 

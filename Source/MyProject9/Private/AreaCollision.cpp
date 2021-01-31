@@ -144,6 +144,12 @@ void AAreaCollision::PressedEAreaCollision(AChel* Player) {
 			{
 				if (Player->GS->AreaAvaliables[AreaType])
 				{
+					Player->MainExis_Ventilacia->Mesh->SetRenderCustomDepth(false);
+					Player->MainExis_Ventilacia->Mesh->MarkRenderStateDirty();
+					Player->MainExis_Shelter->Mesh->SetRenderCustomDepth(false);
+					Player->MainExis_Shelter->Mesh->MarkRenderStateDirty();
+					Player->MainExis_Canalizacia->Mesh->SetRenderCustomDepth(false);
+					Player->MainExis_Canalizacia->Mesh->MarkRenderStateDirty();
 					Player->PlayerEscape(AreaType);
 					Player->UserView->RemoveFromParent();
 				}
@@ -169,8 +175,15 @@ void AAreaCollision::PressedEAreaCollision(AChel* Player) {
 			{
 				if (Player->GS->AreaAvaliables[AreaType])
 				{
-					Player->PlayerEscape(AreaType);
+					Player->MainExis_Ventilacia->Mesh->SetRenderCustomDepth(false);
+					Player->MainExis_Ventilacia->Mesh->MarkRenderStateDirty();
+					Player->MainExis_Shelter->Mesh->SetRenderCustomDepth(false);
+					Player->MainExis_Shelter->Mesh->MarkRenderStateDirty();
+					Player->MainExis_Canalizacia->Mesh->SetRenderCustomDepth(false);
+					Player->MainExis_Canalizacia->Mesh->MarkRenderStateDirty();
 					Player->UserView->RemoveFromParent();
+					Player->PlayerEscape(AreaType);
+
 				}
 				else if (Player->DoesHave[AreaType] && Player->GS->IsVentilaciaAvaliable && !Player->GS->AreaAvaliables[AreaType])
 				{
@@ -184,6 +197,12 @@ void AAreaCollision::PressedEAreaCollision(AChel* Player) {
 			{
 				if (Player->GS->AreaAvaliables[1] && !Player->GS->AreaClosed[1]) {
 					Player->PlayerEscape(1);
+					Player->MainExis_Ventilacia->Mesh->SetRenderCustomDepth(false);
+					Player->MainExis_Ventilacia->Mesh->MarkRenderStateDirty();
+					Player->MainExis_Shelter->Mesh->SetRenderCustomDepth(false);
+					Player->MainExis_Shelter->Mesh->MarkRenderStateDirty();
+					Player->MainExis_Canalizacia->Mesh->SetRenderCustomDepth(false);
+					Player->MainExis_Canalizacia->Mesh->MarkRenderStateDirty();
 					Player->UserView->RemoveFromParent();
 				}
 			}

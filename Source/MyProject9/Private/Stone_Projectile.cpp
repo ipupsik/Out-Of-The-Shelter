@@ -17,7 +17,7 @@ AStone_Projectile::AStone_Projectile() {
 	ProjectMovement = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("ProjectileMovement"));
 	ProjectMovement->SetUpdatedComponent(MyGunMesh);
 
-	MyCollision->OnComponentBeginOverlap.AddDynamic(this, &AStone_Projectile::OnOverlapBegin);
+
 	MyGunMesh->OnComponentHit.AddDynamic(this, &AStone_Projectile::OnHit);
 }
 
