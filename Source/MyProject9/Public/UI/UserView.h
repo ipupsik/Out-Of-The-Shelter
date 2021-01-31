@@ -42,8 +42,7 @@ public:
 	UFUNCTION(BlueprintCallable)
 		void RemoveIconFromPanel(int32 IdEffect);
 
-	UFUNCTION(BlueprintImplementableEvent)
-		void ShowTaskOfGame(int32 AmountPlayersInGame);
+	void ShowTaskOfGame(int32 AmountPlayersInGame);
 public:
 
 	UPROPERTY(EditAnywhere, Category = "Effect Icon Classes")
@@ -111,11 +110,18 @@ public:
 	UPROPERTY(meta = (BindWidget)) //!!!!!!!!!!!!!!!!!!!!!!!
 		UTextBlock* TimeLeft;
 
+	UPROPERTY(meta = (BindWidget))
+		UTextBlock* TB_Task4Player;
+
+	UPROPERTY(meta = (BindWidget))
+		UTextBlock* TB_Task3Player;
+
 	//---------------------------
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))  //!!!!!!!!!!!!!!!!!!!!!!!
 		UTextBlock* HoldText;
 	UPROPERTY(meta = (BindWidget))
 		UTextBlock* EscapeText;
+
 	//---------------------------
 	UPROPERTY(meta = (BindWidget))
 		UProgressBar* RadiationPoints;
@@ -155,6 +161,12 @@ public:
 	
 	UPROPERTY(meta = (BindWidgetAnim))
 		UWidgetAnimation* OpenAreaAnim;
+
+	UPROPERTY(meta = (BindWidgetAnim))
+		UWidgetAnimation* HideTextAnimation3;
+
+	UPROPERTY(meta = (BindWidgetAnim))
+		UWidgetAnimation* HideTextAnimation4;
 
 	UPROPERTY(EditAnywhere, Category = "UI HUD")
 		TSubclassOf<URadiationWidget> RadiationImage;

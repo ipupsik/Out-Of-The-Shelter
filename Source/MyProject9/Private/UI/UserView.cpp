@@ -81,9 +81,29 @@ void UUserView::OnAnimationFinished_Implementation(const UWidgetAnimation* Anima
 //			Player->CallDoThomethinkArea();
 //		}
 	}
+	else if (Animation == HideTextAnimation3) {
+		TB_Task3Player->SetVisibility(ESlateVisibility::Collapsed);
+	}
+	else if (Animation == HideTextAnimation4) {
+		TB_Task4Player->SetVisibility(ESlateVisibility::Collapsed);
+	}
 	PB_Opening->SetVisibility(ESlateVisibility::Hidden);
 	TimeLeft->SetVisibility(ESlateVisibility::Hidden);
 }
+
+
+
+void UUserView::ShowTaskOfGame(int32 AmountPlayersInGame) {
+	if (AmountPlayersInGame == 4) {
+		TB_Task4Player->SetVisibility(ESlateVisibility::Visible);
+		PlayAnimation(HideTextAnimation4);
+	}
+	else {
+		TB_Task3Player->SetVisibility(ESlateVisibility::Visible);
+		PlayAnimation(HideTextAnimation3);
+	}
+}
+
 /*void UUserView::AddDoubleRadiationEffect() {
 	
 	UUserWidget* Image = CreateWidget(GetWorld(), RadiationImage);

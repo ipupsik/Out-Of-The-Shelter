@@ -53,12 +53,13 @@ void ABottle_Projectile::OnOverlapBegin(class UPrimitiveComponent* OverlappedCom
 							Player->KillPlayer();
 							Player->DoesHave.Init(false, 3);
 						}
-						CallAddMarker();
 					}
 				}
 				if (Player->IsPlayerOwner && Player->Health < 1.f) {
 					Player->InvertMovement(TimeEffect);
 				}
+				if (Player->GetLocalRole() == ROLE_Authority)
+					CallAddMarker();
 				PlaySoundBroke();
 				Destroy();
 			}
