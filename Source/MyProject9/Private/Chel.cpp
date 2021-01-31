@@ -272,6 +272,7 @@ void AChel::MyBeginPlay()
 		if (GI->MaxPlayersCount == 3)
 			UserView->WS_Boltorez->SetVisibility(ESlateVisibility::Collapsed);
 
+		MyController->SetInputMode(FInputModeGameOnly());
 		TArray<AActor*>MainExis;
 		UGameplayStatics::GetAllActorsOfClass(World, AItemPromtArrow_MainExis::StaticClass(), MainExis);
 		for (auto& it : MainExis)
@@ -783,74 +784,80 @@ void AChel::StopSprint() {
 //-----------------------------
 //PlayStartingAnimation---------------------
 void AChel::PlaySpawnAnimationSleep_Implementation() {
-	for (int i = 0; i < TargetItemsStatic.Num(); ++i)
-	{
-		RemoveTargetArrowStatic(TargetItemsStatic[i]);
-	}
-	for (int i = 0; i < TargetArrowsDynamic.Num(); ++i)
-	{
-		RemoveTargetArrowDynamic(TargetArrowsDynamic[i]);
-	}
-	UserView->Effects_Bar->ClearChildren();
-	ResetCacheKeys();
-	if (bCanPossessWebCam){
-		CanThrowStone = false;
-		UserView->RadiationPoints->SetPercent(1.0f);
-		UserView->DarkScreen->SetRenderOpacity(1.0f);
-	}
-	VerstakViewWidget->SetVisibility(ESlateVisibility::Collapsed);
-	Widget_Note->SetVisibility(ESlateVisibility::Collapsed);
-	SpawnDeadSound();
-	UserView->PlayAnimation(UserView->Shading);
-	AmountBottleEffects = 1;
-	RemoveInvertMovement();
+	if (UserView) {
+		for (int i = 0; i < TargetItemsStatic.Num(); ++i)
+		{
+			RemoveTargetArrowStatic(TargetItemsStatic[i]);
+		}
+		for (int i = 0; i < TargetArrowsDynamic.Num(); ++i)
+		{
+			RemoveTargetArrowDynamic(TargetArrowsDynamic[i]);
+		}
+		UserView->Effects_Bar->ClearChildren();
+		ResetCacheKeys();
+		if (bCanPossessWebCam) {
+			CanThrowStone = false;
+			UserView->RadiationPoints->SetPercent(1.0f);
+			UserView->DarkScreen->SetRenderOpacity(1.0f);
+		}
+		VerstakViewWidget->SetVisibility(ESlateVisibility::Collapsed);
+		Widget_Note->SetVisibility(ESlateVisibility::Collapsed);
+		SpawnDeadSound();
+		UserView->PlayAnimation(UserView->Shading);
+		AmountBottleEffects = 1;
+		RemoveInvertMovement();
 
-	if (LastInteractiveItem)
-	{
-		LastInteractiveItem->ToggleCustomDepth(false, this);
-		LastInteractiveItem = nullptr;
-		UserView->E_Mark->SetVisibility(ESlateVisibility::Collapsed);
-		if (GI->bIsEnabledPrompt)
-			UserView->PropmptTextInterract->SetVisibility(ESlateVisibility::Collapsed);
-	}
-	
-	//na vsyakii
-	IsNotInWebCam = false;
-	MyController->bShowMouseCursor = false;
-	MyController->SetInputMode(FInputModeGameOnly());
+		if (LastInteractiveItem)
+		{
+			LastInteractiveItem->ToggleCustomDepth(false, this);
+			LastInteractiveItem = nullptr;
+			UserView->E_Mark->SetVisibility(ESlateVisibility::Collapsed);
+			if (GI->bIsEnabledPrompt)
+				UserView->PropmptTextInterract->SetVisibility(ESlateVisibility::Collapsed);
+		}
 
-	FTimerHandle FuzeTimerHandle;
-	World->GetTimerManager().SetTimer(FuzeTimerHandle, this, &AChel::SleepAnimation_End, 2.0f, false);
+		//na vsyakii
+		IsNotInWebCam = false;
+		MyController->bShowMouseCursor = false;
+		MyController->SetInputMode(FInputModeGameOnly());
+
+		FTimerHandle FuzeTimerHandle;
+		World->GetTimerManager().SetTimer(FuzeTimerHandle, this, &AChel::SleepAnimation_End, 2.0f, false);
+	}
 }
 
 void AChel::SleepAnimation_End()
 {
-	bInShopMenu = false;
-	bCanWalkingAndWatching = true;
-	if (bCanPossessWebCam) {
-		bCanSwitchWebCam = true;
-		UserView->SetVisibility(ESlateVisibility::Collapsed);
-		UpdateSpectating_Right();
-		WebCamUI->SetVisibility(ESlateVisibility::Visible);
-		IsAwake = false;
-	}
-	else
-	{
-		IsAwake = false;
-		MyController->PlayGameplayMusic();
+	if (UserView) {
+		bInShopMenu = false;
+		bCanWalkingAndWatching = true;
+		if (bCanPossessWebCam) {
+			bCanSwitchWebCam = true;
+			UserView->SetVisibility(ESlateVisibility::Collapsed);
+			UpdateSpectating_Right();
+			WebCamUI->SetVisibility(ESlateVisibility::Visible);
+			IsAwake = false;
+		}
+		else
+		{
+			IsAwake = false;
+			MyController->PlayGameplayMusic();
+		}
 	}
 }
 
 void AChel::AwakeAnimation_End()
 {
-	CameraComp->SetFieldOfView(90.0f);
-	if (bCanPossessWebCam) {
-		IsAwake = true;
-	}
-	else
-	{
-		bCanPossessWebCam = true;
-		IsAwake = true;
+	if (UserView) {
+		CameraComp->SetFieldOfView(90.0f);
+		if (bCanPossessWebCam) {
+			IsAwake = true;
+		}
+		else
+		{
+			bCanPossessWebCam = true;
+			IsAwake = true;
+		}
 	}
 }
 
@@ -865,28 +872,30 @@ bool AChel::CallEnableGasVent_Validate() {
 
 //PlayStartingAnimation---------------------
 void AChel::PlaySpawnAnimationAwake_Implementation() {
-	TimeLine_FOV_WebCam->Stop();
-	ShowNoiseWebCamUI(false);
-	IsNotInWebCam = true;
-	bCanSwitchWebCam = false;
-	FTimerHandle FuzeTimerHandle;
-	World->GetTimerManager().SetTimer(FuzeTimerHandle, this, &AChel::AwakeAnimation_End, 2, false);
-	CanThrowStone = true;
-	CameraComp->SetRelativeLocation({ 0,0,0 });
-	CameraComp->SetRelativeRotation({ 0,0,0 });
-	if (bCanPossessWebCam)
-		CameraTurnOff();
-	else
-		UserView->ShowTaskOfGame(GI->MaxPlayersCount);
-	CameraComp->SetFieldOfView(90.0f);
-	//StoneCountUpdate(MaxAmmoCount);
-	if (WebCamUI)
-		WebCamUI->SetVisibility(ESlateVisibility::Collapsed);
-	if (UserView)
-		UserView->SetVisibility(ESlateVisibility::Visible);
-	SpawnWakeUpSound();
-	if (UserView)
-		UserView->PlayAnimation(UserView->Shading, 0, 1, EUMGSequencePlayMode::Type::Reverse);
+	if (UserView) {
+		TimeLine_FOV_WebCam->Stop();
+		ShowNoiseWebCamUI(false);
+		IsNotInWebCam = true;
+		bCanSwitchWebCam = false;
+		FTimerHandle FuzeTimerHandle;
+		World->GetTimerManager().SetTimer(FuzeTimerHandle, this, &AChel::AwakeAnimation_End, 2, false);
+		CanThrowStone = true;
+		CameraComp->SetRelativeLocation({ 0,0,0 });
+		CameraComp->SetRelativeRotation({ 0,0,0 });
+		if (bCanPossessWebCam)
+			CameraTurnOff();
+		else
+			UserView->ShowTaskOfGame(GI->MaxPlayersCount);
+		CameraComp->SetFieldOfView(90.0f);
+		//StoneCountUpdate(MaxAmmoCount);
+		if (WebCamUI)
+			WebCamUI->SetVisibility(ESlateVisibility::Collapsed);
+		if (UserView)
+			UserView->SetVisibility(ESlateVisibility::Visible);
+		SpawnWakeUpSound();
+		if (UserView)
+			UserView->PlayAnimation(UserView->Shading, 0, 1, EUMGSequencePlayMode::Type::Reverse);
+	}
 }
 
 //-----------------------------
