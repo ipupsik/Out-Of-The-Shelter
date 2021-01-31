@@ -251,6 +251,11 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TArray<bool>Details_IsAvaliable;
 
+	TArray<bool> RespawnPointAvaliable;
+	TArray<int32> StackOfPointsNum;
+	
+
+
 	TArray<AInteractiveCache*>Caches;
 	TArray<bool>CacheItems_Stuff_IsAvaliable;
 

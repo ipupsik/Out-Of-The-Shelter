@@ -33,6 +33,8 @@ AGS::AGS() {
 	AreaClosed.Init(false, 3);
 	Areas.Init(nullptr, 4);
 
+	RespawnPointAvaliable.Init(true, 4);
+
 	IsGameStarted = false;
 
 	CurrentButtonCount = 0;
@@ -43,6 +45,7 @@ AGS::AGS() {
 	CurrentCode = 0;
 	ButtonPlayAnim = false;
 	NumbersOnPanel.Init(nullptr, 0);
+	StackOfPointsNum.Init(0, 0);
 }
 
 void AGS::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const

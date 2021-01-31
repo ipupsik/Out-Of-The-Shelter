@@ -639,6 +639,9 @@ public:
 
 	bool IsAwake;
 
+
+	void SetAvaliableSpawnPoint();
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite) //!!!!!!!!!!!!!!
 	TArray<AActor*>CustomizationChilds;
 

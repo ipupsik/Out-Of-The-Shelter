@@ -1241,11 +1241,28 @@ void AChel::SpawnPlayer()
 	ChangeAmmoClients(CurrentWeapons[0]->MaxAmmo, 0);
 	SwitchToFreeWeapon_Multicast();
 
+
 	TArray<AActor*> TargetPoints;
 	UGameplayStatics::GetAllActorsOfClassWithTag(World, ATargetPoint::StaticClass(), TEXT("spawn"), TargetPoints);
-	SetActorLocation(TargetPoints[FMath::Rand() % 4]->GetActorLocation());
+	int32 SpawnPointIndex = FMath::Rand() % 4;
+	while (!GS->RespawnPointAvaliable[SpawnPointIndex]) {
+		SpawnPointIndex = FMath::Rand() % 4;
+	}
+	GS->RespawnPointAvaliable[SpawnPointIndex] = false;
+	GS->StackOfPointsNum.Add(SpawnPointIndex);
+	SetActorLocation(TargetPoints[SpawnPointIndex]->GetActorLocation());
+	FTimerHandle FuzeTimerHandle123;
+	GetWorld()->GetTimerManager().SetTimer(FuzeTimerHandle123, this, &AChel::SetAvaliableSpawnPoint, 5, false);
+
 
 	PlaySpawnAnimationAwake();
+}
+
+void AChel::SetAvaliableSpawnPoint() {
+	if (GS && GS->StackOfPointsNum.Num() != 0) {
+		GS->RespawnPointAvaliable[GS->StackOfPointsNum[0]] = true;
+		GS->StackOfPointsNum.RemoveAt(0);
+	}
 }
 
 void AChel::DisableCollisionEverywhere_Implementation()
