@@ -850,28 +850,30 @@ bool AChel::CallEnableGasVent_Validate() {
 
 //PlayStartingAnimation---------------------
 void AChel::PlaySpawnAnimationAwake_Implementation() {
-	TimeLine_FOV_WebCam->Stop();
-	ShowNoiseWebCamUI(false);
-	IsNotInWebCam = true;
-	bCanSwitchWebCam = false;
-	FTimerHandle FuzeTimerHandle;
-	World->GetTimerManager().SetTimer(FuzeTimerHandle, this, &AChel::AwakeAnimation_End, 2, false);
-	CanThrowStone = true;
-	CameraComp->SetRelativeLocation({ 0,0,0 });
-	CameraComp->SetRelativeRotation({ 0,0,0 });
-	if (bCanPossessWebCam)
-		CameraTurnOff();
-	else
-		UserView->ShowTaskOfGame(GS->MaxPlayersCount);
-	CameraComp->SetFieldOfView(90.0f);
-	//StoneCountUpdate(MaxAmmoCount);
-	if (WebCamUI)
-		WebCamUI->SetVisibility(ESlateVisibility::Collapsed);
-	if (UserView)
-		UserView->SetVisibility(ESlateVisibility::Visible);
-	SpawnWakeUpSound();
-	if (UserView)
-		UserView->PlayAnimation(UserView->Shading, 0, 1, EUMGSequencePlayMode::Type::Reverse);
+	if (UserView) {
+		TimeLine_FOV_WebCam->Stop();
+		ShowNoiseWebCamUI(false);
+		IsNotInWebCam = true;
+		bCanSwitchWebCam = false;
+		FTimerHandle FuzeTimerHandle;
+		World->GetTimerManager().SetTimer(FuzeTimerHandle, this, &AChel::AwakeAnimation_End, 2, false);
+		CanThrowStone = true;
+		CameraComp->SetRelativeLocation({ 0,0,0 });
+		CameraComp->SetRelativeRotation({ 0,0,0 });
+		if (bCanPossessWebCam)
+			CameraTurnOff();
+		else
+			UserView->ShowTaskOfGame(GS->MaxPlayersCount);
+		CameraComp->SetFieldOfView(90.0f);
+		//StoneCountUpdate(MaxAmmoCount);
+		if (WebCamUI)
+			WebCamUI->SetVisibility(ESlateVisibility::Collapsed);
+		if (UserView)
+			UserView->SetVisibility(ESlateVisibility::Visible);
+		SpawnWakeUpSound();
+		if (UserView)
+			UserView->PlayAnimation(UserView->Shading, 0, 1, EUMGSequencePlayMode::Type::Reverse);
+	}
 }
 
 //-----------------------------
