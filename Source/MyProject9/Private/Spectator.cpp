@@ -32,7 +32,7 @@ void ASpectator::BeginPlay()
 	Super::BeginPlay();
 	
 	GS = Cast<AGS>(GetWorld()->GetGameState());
-	if (GetLocalRole() == ROLE_AutonomousProxy)
+	if (GetLocalRole() != ROLE_Authority)
 	{
 		Sensetivity = GetWorld()->GetGameInstance<UGI>()->Sensetivity;
 		TArray<UUserWidget*>Widgets;

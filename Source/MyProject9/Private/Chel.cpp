@@ -206,7 +206,7 @@ void AChel::MyBeginPlay()
 	if (IsServerAuth) {
 		TArray<AActor*>Players;
 		UGameplayStatics::GetAllActorsOfClass(World, AChel::StaticClass(), Players);
-		for (int i = 0; i < Players.Num(); i++)
+		for (int i = 0; i < 4; i++)
 		{
 			bool CanUseIndex = true;
 			for (auto& it : Players)

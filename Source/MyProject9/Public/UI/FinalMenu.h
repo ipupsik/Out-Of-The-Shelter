@@ -6,6 +6,7 @@
 #include "Blueprint/UserWidget.h"
 #include "Components/TextBlock.h"
 #include "Components/Button.h"
+#include "Components/CircularThrobber.h"
 
 #include "FinalMenu.generated.h"
 
@@ -36,6 +37,12 @@ public:
 
 	UPROPERTY(meta = (BindWidget))
 		UTextBlock* TB_Exit;
+
+	UPROPERTY(meta = (BindWidget))
+		UTextBlock* TB_Restart;
+
+	UPROPERTY(meta = (BindWidget))
+		UCircularThrobber* Throbbler;
 
 public:
 	UPROPERTY(BlueprintReadOnly)

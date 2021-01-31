@@ -88,6 +88,11 @@ void ABP_PlayerController::ChangePlayersVoteCount_Implementation()
 	{
 		if ((GS->AgreedPlayers + 1) == GS->AmountOfPlayers)
 		{
+			TArray<AActor*>PlayerControllers;
+			UGameplayStatics::GetAllActorsOfClass(GetWorld(), ABP_PlayerController::StaticClass(), PlayerControllers);
+			for (auto PC : PlayerControllers) {
+				Cast<ABP_PlayerController>(PC)->RemoveFinalMenu();
+			}
 			GS->ResetGame();
 		}
 		else {
@@ -118,6 +123,11 @@ bool ABP_PlayerController::ChangePlayersVoteCount_Validate()
 
 void ABP_PlayerController::RemoveFinalMenu_Implementation()
 {
-	FinalMenu->RemoveFromParent();
 	bShowMouseCursor = false;
+	if (FinalMenu) {
+		FinalMenu->TB_Restart->SetVisibility(ESlateVisibility::Visible);
+		FinalMenu->Throbbler->SetVisibility(ESlateVisibility::Visible);
+		FinalMenu->BTN_PlayMore->SetVisibility(ESlateVisibility::Hidden);
+		FinalMenu->BTN_Exit->SetVisibility(ESlateVisibility::Hidden);
+	}
 }
