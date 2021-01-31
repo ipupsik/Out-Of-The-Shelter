@@ -777,11 +777,12 @@ void AChel::PlaySpawnAnimationSleep_Implementation() {
 		RemoveTargetArrowDynamic(TargetArrowsDynamic[i]);
 	}
 	UserView->Effects_Bar->ClearChildren();
-	UserView->RadiationPoints->SetPercent(1.0f);
-	UserView->DarkScreen->SetRenderOpacity(1.0f);
 	ResetCacheKeys();
-	if (bCanPossessWebCam)
+	if (bCanPossessWebCam){
 		CanThrowStone = false;
+		UserView->RadiationPoints->SetPercent(1.0f);
+		UserView->DarkScreen->SetRenderOpacity(1.0f);
+	}
 	VerstakViewWidget->SetVisibility(ESlateVisibility::Collapsed);
 	Widget_Note->SetVisibility(ESlateVisibility::Collapsed);
 	SpawnDeadSound();
