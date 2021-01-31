@@ -114,6 +114,7 @@ AChel::AChel()
 	MyKDA_Stat.Init(nullptr, 4);
 	CurrentWeapons.Init(nullptr, 2);
 	IsRentgenRender = false;
+	IsAdditiveVisible = false;
 }
 
 //SetupReplicationVariables----
@@ -500,6 +501,20 @@ void AChel::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 	PlayerInputComponent->BindAction("UpdateSpectating_Right", IE_Released, this, &AChel::UpdateSpectating_Right);
 	PlayerInputComponent->BindAction("QAbility", IE_Pressed, this, &AChel::QAbilityEnable);
 	PlayerInputComponent->BindAction("RAbility", IE_Pressed, this, &AChel::RAbilityEnable_Client);
+	PlayerInputComponent->BindAction("HideAdditWidgets", IE_Pressed, this, &AChel::H_Pressed);
+}
+
+void AChel::H_Pressed() {
+	if (!bInShopMenu && bCanWalkingAndWatching && !bInEscMenu && !(MyController->bInTabMenu)) {
+		if (IsAdditiveVisible) {
+			IsAdditiveVisible = false;
+			UserView->PlayAnimation(UserView->HideAdditiveInformation, 0, 1, EUMGSequencePlayMode::Reverse);
+		}
+		else {
+			IsAdditiveVisible = true;
+			UserView->PlayAnimation(UserView->HideAdditiveInformation, 0, 1, EUMGSequencePlayMode::Forward);
+		}
+	}
 }
 
 void AChel::UpdateSpectating_Right()
@@ -862,7 +877,7 @@ void AChel::PlaySpawnAnimationAwake_Implementation() {
 	if (bCanPossessWebCam)
 		CameraTurnOff();
 	else
-		UserView->ShowTaskOfGame(GS->MaxPlayersCount);
+		UserView->ShowTaskOfGame(GI->MaxPlayersCount);
 	CameraComp->SetFieldOfView(90.0f);
 	//StoneCountUpdate(MaxAmmoCount);
 	if (WebCamUI)

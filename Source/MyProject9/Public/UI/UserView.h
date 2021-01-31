@@ -17,6 +17,7 @@
 #include "UI/QAbilitySlot.h"
 #include "UI/RAbilitySlot.h"
 #include "UI/IconWidget.h"
+#include "Components/CanvasPanel.h"
 #include "UserView.generated.h"
 
 
@@ -116,6 +117,8 @@ public:
 	UPROPERTY(meta = (BindWidget))
 		UTextBlock* TB_Task3Player;
 
+	UPROPERTY(meta = (BindWidget))
+		UCanvasPanel* CP_HiddenItems;
 	//---------------------------
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))  //!!!!!!!!!!!!!!!!!!!!!!!
 		UTextBlock* HoldText;
@@ -167,6 +170,9 @@ public:
 
 	UPROPERTY(meta = (BindWidgetAnim))
 		UWidgetAnimation* HideTextAnimation4;
+	
+	UPROPERTY(meta = (BindWidgetAnim))
+		UWidgetAnimation* HideAdditiveInformation;
 
 	UPROPERTY(EditAnywhere, Category = "UI HUD")
 		TSubclassOf<URadiationWidget> RadiationImage;

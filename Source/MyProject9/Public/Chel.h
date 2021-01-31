@@ -204,6 +204,9 @@ public:
 		void DeleteGameHUD();
 
 
+	bool IsAdditiveVisible;
+	void H_Pressed();
+
 	UFUNCTION(Client, Reliable)
 	void AddHitMarker();
 	void RemoveHitMarker();
