@@ -118,6 +118,9 @@ bool ABP_PlayerController::ChangePlayersVoteCount_Validate()
 
 void ABP_PlayerController::RemoveFinalMenu_Implementation()
 {
-	FinalMenu->RemoveFromParent();
 	bShowMouseCursor = false;
+	FinalMenu->TB_Restart->SetVisibility(ESlateVisibility::Visible);
+	FinalMenu->Throbbler->SetVisibility(ESlateVisibility::Visible);
+	FinalMenu->BTN_PlayMore->SetVisibility(ESlateVisibility::Hidden);
+	FinalMenu->BTN_Exit->SetVisibility(ESlateVisibility::Hidden);
 }
