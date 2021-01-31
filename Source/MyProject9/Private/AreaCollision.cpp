@@ -22,7 +22,8 @@ void AAreaCollision::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor*
 	if (Player && Player->DamageCollision == OtherComp) {
 		if (Player->IsPlayerOwner) {
 			if (AreaType != 3) { //Не в двери выхода шелтора
-				Player->UserView->PropmptTextArea->SetVisibility(ESlateVisibility::Visible);
+				if (Player->GI->bIsEnabledPrompt)
+					Player->UserView->PropmptTextArea->SetVisibility(ESlateVisibility::Visible);
 				if (Player->IsPlayerOwner && !Player->GS->AreaClosed[AreaType]) {
 					Player->CurCoreArea = this;
 					if (AreaType == 1 && !Player->GS->IsShelterAvaliable) {
@@ -70,18 +71,21 @@ void AAreaCollision::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor*
 						if (Player->GS->AreaAvaliables[1]) {
 							Player->UserView->E_Mark->SetVisibility(ESlateVisibility::Visible);
 							Player->UserView->PropmptTextArea->SetText(AreaOpenAndCanEscape);
-							Player->UserView->PropmptTextArea->SetVisibility(ESlateVisibility::Visible);
+							if (Player->GI->bIsEnabledPrompt)
+								Player->UserView->PropmptTextArea->SetVisibility(ESlateVisibility::Visible);
 							//Player->UserView->EscapeText->SetVisibility(ESlateVisibility::Visible);
 
 						}
 						else {
 							Player->UserView->PropmptTextArea->SetText(AreaNotAvaliable);
-							Player->UserView->PropmptTextArea->SetVisibility(ESlateVisibility::Visible);
+							if (Player->GI->bIsEnabledPrompt)
+								Player->UserView->PropmptTextArea->SetVisibility(ESlateVisibility::Visible);
 						}
 					}
 					else {
 						Player->UserView->PropmptTextArea->SetText(AreaClose);
-						Player->UserView->PropmptTextArea->SetVisibility(ESlateVisibility::Visible);
+						if (Player->GI->bIsEnabledPrompt)
+							Player->UserView->PropmptTextArea->SetVisibility(ESlateVisibility::Visible);
 					}
 				}
 			}
@@ -114,7 +118,8 @@ void AAreaCollision::OnOverlapEnd(UPrimitiveComponent* OverlappedComp, AActor* O
 						//Player->UserView->EscapeText->SetVisibility(ESlateVisibility::Hidden);
 					}
 				}
-				Player->UserView->PropmptTextArea->SetVisibility(ESlateVisibility::Hidden);
+				if (Player->GI->bIsEnabledPrompt)
+					Player->UserView->PropmptTextArea->SetVisibility(ESlateVisibility::Hidden);
 				if(!Player->LastInteractiveItem)
 					Player->UserView->E_Mark->SetVisibility(ESlateVisibility::Hidden);
 			}
@@ -130,7 +135,8 @@ void AAreaCollision::OnOverlapEnd(UPrimitiveComponent* OverlappedComp, AActor* O
 				}
 				if (!Player->LastInteractiveItem)
 					Player->UserView->E_Mark->SetVisibility(ESlateVisibility::Hidden);
-				Player->UserView->PropmptTextArea->SetVisibility(ESlateVisibility::Hidden);
+				if (Player->GI->bIsEnabledPrompt)
+					Player->UserView->PropmptTextArea->SetVisibility(ESlateVisibility::Hidden);
 			}
 		}
 	}

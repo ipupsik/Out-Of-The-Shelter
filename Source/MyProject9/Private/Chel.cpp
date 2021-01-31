@@ -860,6 +860,8 @@ void AChel::PlaySpawnAnimationAwake_Implementation() {
 	CameraComp->SetRelativeRotation({ 0,0,0 });
 	if (bCanPossessWebCam)
 		CameraTurnOff();
+	else
+		UserView->ShowTaskOfGame(GS->MaxPlayersCount);
 	CameraComp->SetFieldOfView(90.0f);
 	//StoneCountUpdate(MaxAmmoCount);
 	if (WebCamUI)
@@ -1548,6 +1550,9 @@ void AChel::DeleteGameHUD_Implementation()
 
 	KillFeed->RemoveFromParent();
 	KillFeed->Destruct();
+
+	WebCamUI->RemoveFromParent();
+	WebCamUI->Destruct();	
 	
 	Destroy();
 }

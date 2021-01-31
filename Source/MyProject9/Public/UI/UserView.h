@@ -41,6 +41,9 @@ public:
 	void AddIconToPanel(int32 IdEffect);
 	UFUNCTION(BlueprintCallable)
 		void RemoveIconFromPanel(int32 IdEffect);
+
+	UFUNCTION(BlueprintImplementableEvent)
+		void ShowTaskOfGame(int32 AmountPlayersInGame);
 public:
 
 	UPROPERTY(EditAnywhere, Category = "Effect Icon Classes")
