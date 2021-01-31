@@ -46,4 +46,5 @@ void UVerstakWidget_Item::CreateEvent(AChel* Creator, int32 CostItem){
 		if (Creator->NewRAbility(CreatedItemClass))
 			Creator->AmountDetails -= CostItem;
 	}
+	Creator->RefreshAmountDetails();
 }

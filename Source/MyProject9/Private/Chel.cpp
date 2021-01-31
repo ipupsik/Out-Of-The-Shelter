@@ -1982,6 +1982,9 @@ void AChel::ResetCacheKeys()
 	UserView->KeyLeft_Gold->SetText(FText::AsNumber(0));
 	UserView->KeyLeft_Silver->SetText(FText::AsNumber(0));
 	UserView->KeyLeft_Bronze->SetText(FText::AsNumber(0));
+
+	AmountDetails = 0;
+	RefreshAmountDetails();
 }
 
 void AChel::StopUseSpeedBust()
@@ -2484,5 +2487,11 @@ void AChel::CreateParticleImmortal_Implementation() {
 void AChel::DeleteParticleImmortal_Implementation() {
 	if (CurParticleImmortal) {
 		CurParticleImmortal->Destroy();
+	}
+}
+
+void AChel::RefreshAmountDetails() {
+	if (UserView) {
+		UserView->Details->SetText(FText::AsNumber(AmountDetails));
 	}
 }

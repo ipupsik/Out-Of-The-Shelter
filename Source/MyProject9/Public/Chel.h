@@ -657,7 +657,10 @@ public:
 	FTransform MeshTrans;
 	FRotator BaseRotation;
 
+	UPROPERTY(BlueprintReadWrite)
 	int32 LastRAbilityIndex;
+
+	void RefreshAmountDetails();
 
 	//ADezinfectorNasosZatichka* LastZatichka;
 
