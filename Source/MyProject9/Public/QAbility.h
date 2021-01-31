@@ -19,8 +19,8 @@ public:
 	virtual bool UseAbilityClient(AChel* Player);
 	virtual void UseAbilityServer(AChel* Player);
 
-	virtual bool DeUseAbilityClient(AChel* Player);
-	virtual void DeUseAbilityServer(AChel* Player);
+	virtual void DeUseAbilityClient();
+	virtual void DeUseAbilityServer();
 
 	virtual FVector GetCacheScale3D(int32 CacheIndex);
 	virtual FRotator GetCacheRotation(int32 CacheIndex);
@@ -30,4 +30,10 @@ public:
 		TSubclassOf<AQAbilityItem> QAbilityitem_class;
 	UPROPERTY(EditAnywhere)
 		UObject* Icon;
+	UPROPERTY(EditAnywhere, Category = "Main_Vars")
+		float Duration;
+	UPROPERTY(EditAnywhere, Category = "Main_Vars")
+		float DurationAvaliable;
+
+	AChel* TmpPlayer;
 };

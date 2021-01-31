@@ -58,6 +58,8 @@ AChel::AChel()
 	InterpFunction_FOV_WebCam.BindUFunction(this, FName("TimelineFloatReturn_FOV_WebCam"));
 
 	IsAlreadyCreated = false;
+	IsQAbilityUsing = false;
+	IsQAbilityRefreshing = false;
 	LastRAbilityIndex = -1;
 	DoesNotImmortal = 1;
 	CurrentStoneDamageBuffTempCount = 0;
@@ -126,47 +128,19 @@ void AChel::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimePro
 	DOREPLIFETIME(AChel, DoesHave);
 	DOREPLIFETIME(AChel, IsInGame);
 }
-//-----------------------------
-
-void AChel::EnableChelDetector()
-{
-	for (auto& it : PlayersArray)
-	{
-		if (!it->IsPlayerOwner) {
-			UE_LOG(LogTemp, Warning, TEXT("lla"));
-			it->PoseableMeshComp->SetRenderCustomDepth(true);
-			it->PoseableMeshComp->MarkRenderStateDirty();
-		}
-	}
-}
-
-void AChel::DisableChelDetector()
-{
-	for (auto& it : PlayersArray)
-	{
-		if (!it->IsPlayerOwner) {
-			it->PoseableMeshComp->SetRenderCustomDepth(false);
-			it->PoseableMeshComp->MarkRenderStateDirty();
-		}
-	}
-}
 
 void AChel::QAbilityEnable()
 {
-	if (CurQAbility)
+	if (CurQAbility && !IsQAbilityUsing && !IsQAbilityRefreshing)
 	{
 		if (CurQAbility->UseAbilityClient(this))
 			CurQAbility->UseAbilityServer(this);
 	}
 }
 
-void AChel::QAbilityDisable()
+void AChel::QAbilityEnableAvaliable()
 {
-	if (CurQAbility)
-	{
-		if (CurQAbility->DeUseAbilityClient(this))
-			CurQAbility->DeUseAbilityServer(this);
-	}
+	IsQAbilityRefreshing = false;
 }
 
 void AChel::RAbilityEnable_Client()
@@ -293,7 +267,7 @@ void AChel::MyBeginPlay()
 
 		UserView->Player = this;
 		UserView->AmmoLabel->SetText(FText::AsNumber((int32)Ammo));
-
+		UserView->CurRSlot->PromtText->SetJustification(ETextJustify::Type::Center);
 		if (GI->MaxPlayersCount == 3)
 			UserView->WS_Boltorez->SetVisibility(ESlateVisibility::Collapsed);
 
@@ -525,7 +499,6 @@ void AChel::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 	PlayerInputComponent->BindAction("UpdateSpectating_Left", IE_Released, this, &AChel::UpdateSpectating_Left);
 	PlayerInputComponent->BindAction("UpdateSpectating_Right", IE_Released, this, &AChel::UpdateSpectating_Right);
 	PlayerInputComponent->BindAction("QAbility", IE_Pressed, this, &AChel::QAbilityEnable);
-	PlayerInputComponent->BindAction("QAbility", IE_Released, this, &AChel::QAbilityDisable);
 	PlayerInputComponent->BindAction("RAbility", IE_Pressed, this, &AChel::RAbilityEnable_Client);
 }
 
@@ -2175,6 +2148,7 @@ void AChel::SetCurRAbilityUserView()
 		FSlateBrush NewBrush;
 		NewBrush.SetResourceObject(DefaultRAbilityImage);
 		UserView->CurRSlot->AbilityImage->SetBrush(NewBrush);
+		UserView->CurRSlot->PromtText->SetVisibility(ESlateVisibility::Hidden);
 	}
 }
 

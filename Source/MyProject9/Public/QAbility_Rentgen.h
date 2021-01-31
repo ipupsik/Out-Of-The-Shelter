@@ -16,7 +16,7 @@ class MYPROJECT9_API UQAbility_Rentgen : public UQAbility
 public:
 	
 	virtual bool UseAbilityClient(AChel* Player) override;
-	virtual bool DeUseAbilityClient(AChel* Player) override;
+	void DeUseAbilityClient();
 
 	FVector GetCacheScale3D(int32 CacheIndex) override;
 	FRotator GetCacheRotation(int32 CacheIndex) override;

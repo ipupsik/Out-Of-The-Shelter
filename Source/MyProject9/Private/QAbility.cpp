@@ -23,12 +23,12 @@ void UQAbility::UseAbilityServer(AChel* Player)
 
 }
 
-bool UQAbility::DeUseAbilityClient(AChel* Player)
+void UQAbility::DeUseAbilityClient()
 {
-	return false;
+	
 }
 
-void UQAbility::DeUseAbilityServer(AChel* Player)
+void UQAbility::DeUseAbilityServer()
 {
 
 }

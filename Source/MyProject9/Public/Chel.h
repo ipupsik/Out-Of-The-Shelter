@@ -76,9 +76,6 @@ protected:
 	void GoRight(float);
 	void LookUp(float);
 	void LookRight(float);
-	void QAbilityEnable();
-	void QAbilityDisable();
-	void RAbilityEnable_Client();
 
 	UFUNCTION(Server, Reliable, WithValidation)
 		void RAbilityEnable_Server(const UClass* Ability_class);
@@ -104,6 +101,10 @@ protected:
 	UFUNCTION(Server, Reliable, WithValidation)
 		void UpdateSpectating_Right_Server();
 public:
+	void QAbilityEnable();
+	UFUNCTION()
+	void QAbilityEnableAvaliable();
+	void RAbilityEnable_Client();
 	void AddExtraCacheKeys();
 	void AddExtraDetails();
 
@@ -613,6 +614,9 @@ public:
 
 	bool IsNowInvisible;
 	FTimerHandle TimerHandleInvisible;
+	FTimerHandle QAbilityTimer;
+	bool IsQAbilityUsing;
+	bool IsQAbilityRefreshing;
 	UConsumableAbility_Invisible* LastInvisibleAbilityObj;
 	//RAbility
 

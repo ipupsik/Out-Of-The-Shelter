@@ -44,6 +44,8 @@ void UConsumableAbility::SetCurRAbilityUserView(AChel* Player)
 {
 	Player->UserView->CurRSlot->AbilityImage->SetBrush(UserViewSlot->AbilityImage->Brush);
 	Player->RAbilityPanel[Player->RAbilityTypeIndex]->UserViewSlot->SelectImage->SetVisibility(ESlateVisibility::Visible);
+	Player->UserView->CurRSlot->PromtText->SetVisibility(ESlateVisibility::Visible);
+	Player->UserView->CurRSlot->PromtText->SetText(PromtText);
 }
 
 void UConsumableAbility::ResetCurRAbilityUserView(AChel* Player)

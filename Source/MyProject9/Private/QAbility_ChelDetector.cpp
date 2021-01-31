@@ -36,18 +36,27 @@ bool UQAbility_ChelDetector::UseAbilityClient(AChel* Player)
 			it->PoseableMeshComp->MarkRenderStateDirty();
 		}
 	}
+	Player->IsQAbilityUsing = true;
+	Player->QAbilityTimer = FTimerHandle();
+	TmpPlayer = Player;
+	GetWorld()->GetTimerManager().SetTimer(Player->QAbilityTimer, this, &UQAbility_ChelDetector::DeUseAbilityClient, Duration, false);
 	return false;
 }
 
-bool UQAbility_ChelDetector::DeUseAbilityClient(AChel* Player)
+void UQAbility_ChelDetector::DeUseAbilityClient()
 {
-	Player->RentgentOffSound();
-	for (auto& it : Player->PlayersArray)
+	TmpPlayer->RentgentOffSound();
+	for (auto& it : TmpPlayer->PlayersArray)
 	{
 		if (!it->IsPlayerOwner) {
 			it->PoseableMeshComp->SetRenderCustomDepth(false);
 			it->PoseableMeshComp->MarkRenderStateDirty();
 		}
 	}
-	return false;
+	if (TmpPlayer->IsQAbilityUsing) {
+		TmpPlayer->IsQAbilityUsing = false;
+		TmpPlayer->IsQAbilityRefreshing = true;
+		TmpPlayer->QAbilityTimer = FTimerHandle();
+		GetWorld()->GetTimerManager().SetTimer(TmpPlayer->QAbilityTimer, TmpPlayer, &AChel::QAbilityEnableAvaliable, DurationAvaliable, false);
+	}
 }
