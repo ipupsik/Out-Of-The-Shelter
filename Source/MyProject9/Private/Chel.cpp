@@ -413,7 +413,6 @@ void AChel::Tick(float DeltaTime)
 						LastInteractiveItem->ToggleCustomDepth(false, this);
 						if(!CurCoreArea)
 							UserView->E_Mark->SetVisibility(ESlateVisibility::Collapsed);
-						if(GI->bIsEnabledPrompt)
 							UserView->PropmptTextInterract->SetVisibility(ESlateVisibility::Collapsed);
 					}
 					TracedItem->OnLineTraced(this);
@@ -427,7 +426,6 @@ void AChel::Tick(float DeltaTime)
 						LastInteractiveItem = nullptr;
 						if(!CurCoreArea)
 							UserView->E_Mark->SetVisibility(ESlateVisibility::Collapsed);
-						if(GI->bIsEnabledPrompt)
 							UserView->PropmptTextInterract->SetVisibility(ESlateVisibility::Collapsed);
 					}
 				}
@@ -438,8 +436,7 @@ void AChel::Tick(float DeltaTime)
 					LastInteractiveItem = nullptr;
 					if(!CurCoreArea)
 						UserView->E_Mark->SetVisibility(ESlateVisibility::Collapsed);
-					if(GI->bIsEnabledPrompt)
-						UserView->PropmptTextInterract->SetVisibility(ESlateVisibility::Collapsed);
+					UserView->PropmptTextInterract->SetVisibility(ESlateVisibility::Collapsed);
 				}
 			}
 		}

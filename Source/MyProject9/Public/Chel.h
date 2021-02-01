@@ -714,6 +714,12 @@ public:
 
 
 	UFUNCTION(BlueprintImplementableEvent)
+		void PlaySoundOpenShelter();
+
+	UFUNCTION(BlueprintImplementableEvent)
+		void PlaySoundOpenNoShelter();
+
+	UFUNCTION(BlueprintImplementableEvent)
 		void PlaySoundSwitchWeapon();
 
 	UFUNCTION(BlueprintImplementableEvent)

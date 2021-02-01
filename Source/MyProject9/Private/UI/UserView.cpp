@@ -43,6 +43,7 @@ void UUserView::OnAnimationFinished_Implementation(const UWidgetAnimation* Anima
 				PropmptTextArea->SetText(Player->CurCoreArea->AreaOpenAndCanEscape);
 			Player->DeleteArrowDelayBoltorez();
 			Player->PlayerOpenAreaUpdate(0);
+			Player->PlaySoundOpenNoShelter();
 		}
 	}
 	else if (Animation == ShelterAnim)
@@ -56,6 +57,7 @@ void UUserView::OnAnimationFinished_Implementation(const UWidgetAnimation* Anima
 				PropmptTextArea->SetText(Player->CurCoreArea->AreaOpenAndCanEscape);
 			Player->PlayerOpenAreaUpdate(1);
 			Player->DeleteArrowDelayKeyShelter();
+			Player->PlaySoundOpenShelter();
 		}
 	}
 	else if (Animation == VentilaciaAnim)
@@ -68,6 +70,7 @@ void UUserView::OnAnimationFinished_Implementation(const UWidgetAnimation* Anima
 				PropmptTextArea->SetText(Player->CurCoreArea->AreaOpenAndCanEscape);
 			Player->DeleteArrowDelayOtvertka();
 			Player->PlayerOpenAreaUpdate(2);
+			Player->PlaySoundOpenNoShelter();
 		}
 	}
 	else if (Animation == OpenAreaAnim) {

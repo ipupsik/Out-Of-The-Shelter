@@ -36,6 +36,9 @@ void AVerstak::OnLineTraced(AChel * Player)
 		ToggleCustomDepth(true, Player);
 		if (!Player->UserView->E_Mark->IsVisible())
 			Player->UserView->E_Mark->SetVisibility(ESlateVisibility::Visible);
+		Player->UserView->PropmptTextInterract->SetText(PromptText);
+		if (Player->GI->bIsEnabledPrompt)
+			Player->UserView->PropmptTextInterract->SetVisibility(ESlateVisibility::Visible);
 	}
 }
 
