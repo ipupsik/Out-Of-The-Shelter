@@ -2001,24 +2001,28 @@ void AChel::StopUseSpeedBust()
 
 void AChel::AddExtraDetails()
 {
-	AmountDetails += ExtraDetailsTimer;
-	UserView->Details->SetText(FText::AsNumber(AmountDetails));
+	if (IsNotInWebCam) {
+		AmountDetails += ExtraDetailsTimer;
+		UserView->Details->SetText(FText::AsNumber(AmountDetails));
+	}
 
 	FTimerHandle FuzeTimerHandle;
-	GetWorld()->GetTimerManager().SetTimer(FuzeTimerHandle, this, &AChel::AddExtraDetails, 15, false);
+	GetWorld()->GetTimerManager().SetTimer(FuzeTimerHandle, this, &AChel::AddExtraDetails, 20, false);
 }
 
 void AChel::AddExtraCacheKeys()
 {
-	KeysCount[0] += ExtraCacheKeysTimer;
-	KeysCount[1] += ExtraCacheKeysTimer;
-	KeysCount[2] += ExtraCacheKeysTimer;
-	UserView->KeyLeft_Gold->SetText(FText::AsNumber(KeysCount[2]));
-	UserView->KeyLeft_Silver->SetText(FText::AsNumber(KeysCount[1]));
-	UserView->KeyLeft_Bronze->SetText(FText::AsNumber(KeysCount[0]));
+	if (IsNotInWebCam) {
+		KeysCount[0] += ExtraCacheKeysTimer;
+		KeysCount[1] += ExtraCacheKeysTimer;
+		KeysCount[2] += ExtraCacheKeysTimer;
+		UserView->KeyLeft_Gold->SetText(FText::AsNumber(KeysCount[2]));
+		UserView->KeyLeft_Silver->SetText(FText::AsNumber(KeysCount[1]));
+		UserView->KeyLeft_Bronze->SetText(FText::AsNumber(KeysCount[0]));
+	}
 
 	FTimerHandle FuzeTimerHandle;
-	GetWorld()->GetTimerManager().SetTimer(FuzeTimerHandle, this, &AChel::AddExtraCacheKeys, 30, false);
+	GetWorld()->GetTimerManager().SetTimer(FuzeTimerHandle, this, &AChel::AddExtraCacheKeys, 35, false);
 }
 
 void AChel::UseSpeedBust_Server_Implementation()
