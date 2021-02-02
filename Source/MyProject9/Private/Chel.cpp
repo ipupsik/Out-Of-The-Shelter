@@ -930,8 +930,14 @@ void AChel::PickUp_Released()
 				if (LastInteractiveItem->PickUpEventReleaseClient(this))
 					PickUp_Released_Server();
 			}
-			else if (CurCoreArea)
-				UserView->StopAllAnimations();
+			else if (CurCoreArea) {
+				if (UserView->IsAnimationPlaying(UserView->CanalizaciaAnim))
+					UserView->StopAnimation(UserView->CanalizaciaAnim);
+				else if (UserView->IsAnimationPlaying(UserView->VentilaciaAnim))
+					UserView->StopAnimation(UserView->VentilaciaAnim);
+				else if (UserView->IsAnimationPlaying(UserView->ShelterAnim))
+					UserView->StopAnimation(UserView->ShelterAnim);
+			}
 		}
 		else
 		{
