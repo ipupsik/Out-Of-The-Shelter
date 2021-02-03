@@ -38,15 +38,7 @@ void UConsumableAbility_Invisible::UseAbilityServer(AChel* Player)
 	Player->IsNowInvisible = true;
 	TmpPlayer = Player;
 	Player->TimerHandleInvisible = FTimerHandle();
-	GetWorld()->GetTimerManager().SetTimer(Player->TimerHandleInvisible, this, &UConsumableAbility_Invisible::EndEffect, Duration, false);
-}
-
-void UConsumableAbility_Invisible::EndEffect()
-{
-	TmpPlayer->IsNowInvisible = false;
-	TmpPlayer->ReverceInvisibleEverywhere();
-	TmpPlayer->LastInvisibleAbilityObj = nullptr;
-	DestroyNonNativeProperties();
+	GetWorld()->GetTimerManager().SetTimer(Player->TimerHandleInvisible, Player, &AChel::InvisibleEnd, Duration, false);
 }
 
 bool UConsumableAbility_Invisible::UseAbilityClient(AChel* Player)

@@ -207,6 +207,8 @@ public:
 	bool IsAdditiveVisible;
 	void H_Pressed();
 
+	void InvisibleEnd();
+
 	UFUNCTION(Client, Reliable)
 	void AddHitMarker();
 	void RemoveHitMarker();
@@ -660,6 +662,7 @@ public:
 	TArray<UKDA_Stat*>MyKDA_Stat;
 	UPROPERTY(BlueprintReadWrite)
 	TArray<UConsumableAbility*>RAbilityPanel;
+	UPROPERTY()
 	UQAbility* CurQAbility;
 	FTransform MeshTrans;
 	FRotator BaseRotation;

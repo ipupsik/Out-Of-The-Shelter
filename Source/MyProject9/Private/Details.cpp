@@ -35,8 +35,8 @@ bool ADetails::PickUpEventClient(AChel* Player) {
 
 void ADetails::RemoveAndRefreshTimer()
 {
-	int NewIndex = EnabledArrayIndex;
 	AGS* GS = GetWorld()->GetGameState<AGS>();
+	int NewIndex = FMath::RandRange(0, GS->Details_IsAvaliable.Num() - 1);
 	while (!GS->Details_IsAvaliable[NewIndex])
 	{
 		NewIndex++;

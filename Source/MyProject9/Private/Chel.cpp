@@ -18,6 +18,7 @@
 #include "ConsumableAbility.h"
 #include "InteractiveItem.h"
 #include "Weapon_Level.h"
+#include "ConsumableAbility_Invisible.h"
 #include "QAbility.h"
 #include "PromptCollisionArea.h"
 #include "QAbilityItem.h"
@@ -134,8 +135,9 @@ void AChel::QAbilityEnable()
 {
 	if (CurQAbility && !IsQAbilityUsing && !IsQAbilityRefreshing)
 	{
-		if (CurQAbility->UseAbilityClient(this))
-			CurQAbility->UseAbilityServer(this);
+		if (CurQAbility->IsValidLowLevel())
+			if (CurQAbility->UseAbilityClient(this))
+				CurQAbility->UseAbilityServer(this);
 	}
 }
 
@@ -144,12 +146,20 @@ void AChel::QAbilityEnableAvaliable()
 	IsQAbilityRefreshing = false;
 }
 
+void AChel::InvisibleEnd()
+{
+	IsNowInvisible = false;
+	ReverceInvisibleEverywhere();
+	LastInvisibleAbilityObj = nullptr;
+}
+
 void AChel::RAbilityEnable_Client()
 {
 	if (LastRAbilityIndex != -1 && !bInShopMenu && !bInEscMenu && bCanWalkingAndWatching && IsInGame)
 	{
 		if (RAbilityPanel[RAbilityTypeIndex]->UseAbilityClient(this))
 			RAbilityEnable_Server(RAbilityPanel[RAbilityTypeIndex]->GetClass());
+		RAbilityPanel[RAbilityTypeIndex]->ConditionalBeginDestroy();
 		UseRAbility();
 	}
 }
@@ -1027,7 +1037,7 @@ bool AChel::PickUp_Server_Validate()
 void AChel::ReplaceRAbilityItem_Client(UClass* AbilityItemclass)
 {
 	ReplaceRAbilityItem_Server(RAbilityPanel[RAbilityTypeIndex]->GetClass());
-	RAbilityPanel[RAbilityTypeIndex]->DestroyNonNativeProperties();
+	RAbilityPanel[RAbilityTypeIndex]->ConditionalBeginDestroy();
 	RAbilityPanel[RAbilityTypeIndex] = NewObject<UConsumableAbility>(this, AbilityItemclass);
 	RAbilityPanel[RAbilityTypeIndex]->UserViewSlot = Cast<URAbilitySlot>(MyInventory->RAbilityPanel->GetChildAt(RAbilityTypeIndex));
 	RAbilityPanel[RAbilityTypeIndex]->SetAbilityToSlot();
@@ -1121,46 +1131,48 @@ void AChel::RemoveHitMarker()
 void AChel::RefreshWidgets_Implementation(const TArray<bool>& whatToUpdate, const FText& KillerNickName, 
 	const FText& VictimNickName, bool IsEscape)
 {
-	UE_LOG(LogTemp, Warning, TEXT("WidgetUpdates"))
-	if (whatToUpdate[0])
-	{
-		UserView->WS_Boltorez->SetActiveWidgetIndex(0);
-	}
-	if (whatToUpdate[2])
-	{
-		UserView->WS_Otvertka->SetActiveWidgetIndex(0);
-	}
-	if (whatToUpdate[1])
-	{
-		UserView->WS_KeyShelter->SetActiveWidgetIndex(0);
-	}
-	if (!IsEscape) {
-		if (KillerNickName.ToString() == "") {
-			UPlayerSuicide* PS_Widget = Cast<UPlayerSuicide>(CreateWidget(World, PlayerSuicide_class));
-			PS_Widget->Player->SetText(VictimNickName);
-			KillFeed->VB_KillFeed->AddChild(PS_Widget);
-		}
-		else
-		{
-			UPlayerKillPlayer* PKP_Widget = Cast<UPlayerKillPlayer>(CreateWidget(World, PlayerKillPlayer_class));
-			PKP_Widget->Killer->SetText(KillerNickName);
-			PKP_Widget->Victim->SetText(KillerNickName);
-			KillFeed->VB_KillFeed->AddChild(PKP_Widget);
-		}
-	}
-
-	if (whatToUpdate[0] || whatToUpdate[1] || whatToUpdate[2])
-	{
-		UPlayerLostItem* PLI_Widget = Cast<UPlayerLostItem>(CreateWidget(World, PlayerLostItem_class));
-		PLI_Widget->Player->SetText(VictimNickName);
-		if (whatToUpdate[0])
-			PLI_Widget->IMG_Boltorez->SetVisibility(ESlateVisibility::Visible);
+	if (UserView) {
+		UE_LOG(LogTemp, Warning, TEXT("WidgetUpdates"))
+			if (whatToUpdate[0])
+			{
+				UserView->WS_Boltorez->SetActiveWidgetIndex(0);
+			}
 		if (whatToUpdate[2])
-			PLI_Widget->IMG_Otvertka->SetVisibility(ESlateVisibility::Visible);
+		{
+			UserView->WS_Otvertka->SetActiveWidgetIndex(0);
+		}
 		if (whatToUpdate[1])
-			PLI_Widget->IMG_KeyShelter->SetVisibility(ESlateVisibility::Visible);
+		{
+			UserView->WS_KeyShelter->SetActiveWidgetIndex(0);
+		}
+		if (!IsEscape) {
+			if (KillerNickName.ToString() == "") {
+				UPlayerSuicide* PS_Widget = Cast<UPlayerSuicide>(CreateWidget(World, PlayerSuicide_class));
+				PS_Widget->Player->SetText(VictimNickName);
+				KillFeed->VB_KillFeed->AddChild(PS_Widget);
+			}
+			else
+			{
+				UPlayerKillPlayer* PKP_Widget = Cast<UPlayerKillPlayer>(CreateWidget(World, PlayerKillPlayer_class));
+				PKP_Widget->Killer->SetText(KillerNickName);
+				PKP_Widget->Victim->SetText(VictimNickName);
+				KillFeed->VB_KillFeed->AddChild(PKP_Widget);
+			}
+		}
 
-		KillFeed->VB_KillFeed->AddChild(PLI_Widget);
+		if (whatToUpdate[0] || whatToUpdate[1] || whatToUpdate[2])
+		{
+			UPlayerLostItem* PLI_Widget = Cast<UPlayerLostItem>(CreateWidget(World, PlayerLostItem_class));
+			PLI_Widget->Player->SetText(VictimNickName);
+			if (whatToUpdate[0])
+				PLI_Widget->IMG_Boltorez->SetVisibility(ESlateVisibility::Visible);
+			if (whatToUpdate[2])
+				PLI_Widget->IMG_Otvertka->SetVisibility(ESlateVisibility::Visible);
+			if (whatToUpdate[1])
+				PLI_Widget->IMG_KeyShelter->SetVisibility(ESlateVisibility::Visible);
+
+			KillFeed->VB_KillFeed->AddChild(PLI_Widget);
+		}
 	}
 }
 
@@ -1247,9 +1259,11 @@ void AChel::SpawnPlayer()
 
 	TArray<AActor*> TargetPoints;
 	UGameplayStatics::GetAllActorsOfClassWithTag(World, ATargetPoint::StaticClass(), TEXT("spawn"), TargetPoints);
-	int32 SpawnPointIndex = FMath::Rand() % 4;
+	int32 SpawnPointIndex = FMath::RandRange(0, TargetPoints.Num() - 1);
 	while (!GS->RespawnPointAvaliable[SpawnPointIndex]) {
-		SpawnPointIndex = FMath::Rand() % 4;
+		SpawnPointIndex++;
+		if (SpawnPointIndex >= TargetPoints.Num())
+			SpawnPointIndex -= TargetPoints.Num();
 	}
 	GS->RespawnPointAvaliable[SpawnPointIndex] = false;
 	GS->StackOfPointsNum.Add(SpawnPointIndex);
@@ -1411,7 +1425,7 @@ void AChel::PlayerEscape_Implementation(int32 EscapeWay)
 		UGameplayStatics::GetAllActorsOfClass(World, AChel::StaticClass(), PlayersEscape);
 		for (auto& Player : PlayersEscape) {
 			AChel* TmpPlayer = Cast<AChel>(Player);
-			TmpPlayer->ShowEscapeWidget(EscapeWay, GS->NickNames[TmpPlayer->Index]);
+			TmpPlayer->ShowEscapeWidget(EscapeWay, GS->NickNames[Index]);
 			TmpPlayer->RefreshWidgets(DoesHave, FText(), GS->NickNames[Index], true);
 		}
 
@@ -2126,7 +2140,7 @@ void AChel::UseRAbility()
 	LastRAbilityIndex = RAbilityTypeIndex - 1;
 	for (int i = RAbilityTypeIndex + 1; i < RAbilityPanel.Num(); i++)
 	{
-		if (RAbilityPanel[i])
+		if (RAbilityPanel[i] && RAbilityPanel[i]->IsValidLowLevel())
 		{
 			UConsumableAbility* tmp = RAbilityPanel[i - 1];
 			RAbilityPanel[i - 1] = RAbilityPanel[i];

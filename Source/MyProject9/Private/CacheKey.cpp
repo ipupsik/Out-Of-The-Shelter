@@ -35,8 +35,8 @@ bool ACacheKey::PickUpEventClient(AChel* Player) {
 
 void ACacheKey::RemoveAndRefreshTimer()
 {
-	int NewIndex = EnabledArrayIndex;
 	AGS* GS = GetWorld()->GetGameState<AGS>();
+	int NewIndex = FMath::RandRange(0, GS->Details_IsAvaliable.Num() - 1);
 	while (!GS->Keys_IsAvaliable[NewIndex])
 	{
 		NewIndex++;

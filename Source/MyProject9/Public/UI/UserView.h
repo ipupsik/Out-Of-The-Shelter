@@ -81,7 +81,7 @@ public:
 	UPROPERTY(meta = (BindWidget))
 		UTextBlock* AmmoSlash;
 
-	UPROPERTY(meta = (BindWidget))
+	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
 		UTextBlock* PropmptTextInterract;
 
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))

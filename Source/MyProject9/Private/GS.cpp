@@ -17,6 +17,8 @@
 #include "Weapon_Character.h"
 
 AGS::AGS() {
+	PrimaryActorTick.bCanEverTick = true;
+
 	NickNames.Init(FText::FromString(TEXT(" ")), 4);
 	WinnersIndex.Init(0, 0);
 	WinnersNickNames.Init(FText::FromString(TEXT("")), 0);
@@ -129,7 +131,7 @@ void AGS::BeginPlay()
 		}
 
 		for (int i = 0; i < 1; ++i) {
-			int ArrayIndex = FMath::Rand() % CacheItems_Stuff_IsAvaliable.Num();
+			int ArrayIndex = FMath::RandRange(0, CacheItems_Stuff_IsAvaliable.Num() - 1);
 			while (!CacheItems_Stuff_IsAvaliable[ArrayIndex])
 			{
 				ArrayIndex++;
@@ -148,7 +150,7 @@ void AGS::BeginPlay()
 
 		if (MaxPlayersCount == 4) {
 			for (int i = 0; i < 1; ++i) {
-				int ArrayIndex = FMath::Rand() % CacheItems_Stuff_IsAvaliable.Num();
+				int ArrayIndex = FMath::RandRange(0, CacheItems_Stuff_IsAvaliable.Num() - 1);
 				while (!CacheItems_Stuff_IsAvaliable[ArrayIndex])
 				{
 					ArrayIndex++;
@@ -170,7 +172,7 @@ void AGS::BeginPlay()
 
 		if (MaxPlayersCount >= 3) {
 			for (int i = 0; i < 1; ++i) {
-				int ArrayIndex = FMath::Rand() % CacheItems_Stuff_IsAvaliable.Num();
+				int ArrayIndex = FMath::RandRange(0, CacheItems_Stuff_IsAvaliable.Num() - 1);
 				while (!CacheItems_Stuff_IsAvaliable[ArrayIndex])
 				{
 					ArrayIndex++;
@@ -190,7 +192,7 @@ void AGS::BeginPlay()
 		}
 
 		for (int i = 0; i < 6; ++i) {
-			int ArrayIndex = FMath::Rand() % CacheItems_Stuff_IsAvaliable.Num();
+			int ArrayIndex = FMath::RandRange(0, CacheItems_Stuff_IsAvaliable.Num() - 1);
 			while (!CacheItems_Stuff_IsAvaliable[ArrayIndex])
 			{
 				ArrayIndex++;
@@ -208,7 +210,7 @@ void AGS::BeginPlay()
 		}
 
 		for (int i = 0; i < 10; ++i) {
-			int ArrayIndex = FMath::Rand() % CacheItems_Stuff_IsAvaliable.Num();
+			int ArrayIndex = FMath::RandRange(0, CacheItems_Stuff_IsAvaliable.Num() - 1);
 			while (!CacheItems_Stuff_IsAvaliable[ArrayIndex])
 			{
 				ArrayIndex++;
@@ -226,7 +228,7 @@ void AGS::BeginPlay()
 		}
 
 		for (int i = 0; i < 1; ++i) {
-			int ArrayIndex = FMath::Rand() % CacheItems_Stuff_IsAvaliable.Num();
+			int ArrayIndex = FMath::RandRange(0, CacheItems_Stuff_IsAvaliable.Num() - 1);
 			while (!CacheItems_Stuff_IsAvaliable[ArrayIndex])
 			{
 				ArrayIndex++;
@@ -244,7 +246,7 @@ void AGS::BeginPlay()
 		}
 
 		for (int i = 0; i < 4; ++i) {
-			int ArrayIndex = FMath::Rand() % CacheItems_Stuff_IsAvaliable.Num();
+			int ArrayIndex = FMath::RandRange(0, CacheItems_Stuff_IsAvaliable.Num() - 1);
 			while (!CacheItems_Stuff_IsAvaliable[ArrayIndex])
 			{
 				ArrayIndex++;
@@ -262,7 +264,7 @@ void AGS::BeginPlay()
 		}
 
 		for (int i = 0; i < 6; ++i) {
-			int ArrayIndex = FMath::Rand() % CacheItems_Stuff_IsAvaliable.Num();
+			int ArrayIndex = FMath::RandRange(0, CacheItems_Stuff_IsAvaliable.Num() - 1);
 			while (!CacheItems_Stuff_IsAvaliable[ArrayIndex])
 			{
 				ArrayIndex++;
@@ -280,7 +282,7 @@ void AGS::BeginPlay()
 		}
 
 		for (int i = 0; i < 6; ++i) {
-			int ArrayIndex = FMath::Rand() % CacheItems_Stuff_IsAvaliable.Num();
+			int ArrayIndex = FMath::RandRange(0, CacheItems_Stuff_IsAvaliable.Num() - 1);
 			while (!CacheItems_Stuff_IsAvaliable[ArrayIndex])
 			{
 				ArrayIndex++;
@@ -298,7 +300,7 @@ void AGS::BeginPlay()
 		}
 
 		for (int i = 0; i < 3; ++i) {
-			int ArrayIndex = FMath::Rand() % CacheItems_Stuff_IsAvaliable.Num();
+			int ArrayIndex = FMath::RandRange(0, CacheItems_Stuff_IsAvaliable.Num() - 1);
 			while (!CacheItems_Stuff_IsAvaliable[ArrayIndex])
 			{
 				ArrayIndex++;
@@ -318,7 +320,7 @@ void AGS::BeginPlay()
 		}
 
 		for (int i = 0; i < 3; ++i) {
-			int ArrayIndex = FMath::Rand() % CacheItems_Stuff_IsAvaliable.Num();
+			int ArrayIndex = FMath::RandRange(0, CacheItems_Stuff_IsAvaliable.Num() - 1);
 			while (!CacheItems_Stuff_IsAvaliable[ArrayIndex])
 			{
 				ArrayIndex++;
@@ -333,11 +335,11 @@ void AGS::BeginPlay()
 			NewItem->AddActorLocalRotation(BottleTransform[Caches[ArrayIndex]->CacheIndex].GetRotation());
 			NewItem->EnabledArrayIndex = ArrayIndex;
 			CacheItems_Stuff_IsAvaliable[ArrayIndex] = false;
-			NewItem->Amount = 1 + FMath::Rand() % 5;
+			NewItem->Amount = 1 + FMath::RandRange(0, 4);
 		}
 
 		for (int i = 0; i < 3; ++i) {
-			int ArrayIndex = FMath::Rand() % CacheItems_Stuff_IsAvaliable.Num();
+			int ArrayIndex = FMath::RandRange(0, CacheItems_Stuff_IsAvaliable.Num() - 1);
 			while (!CacheItems_Stuff_IsAvaliable[ArrayIndex])
 			{
 				ArrayIndex++;
@@ -352,12 +354,12 @@ void AGS::BeginPlay()
 			NewItem->AddActorLocalRotation(KnifeTransform[Caches[ArrayIndex]->CacheIndex].GetRotation());
 			NewItem->EnabledArrayIndex = ArrayIndex;
 			CacheItems_Stuff_IsAvaliable[ArrayIndex] = false;
-			NewItem->Amount = 1 + FMath::Rand() % 4;
+			NewItem->Amount = 1 + FMath::RandRange(0, 3);
 			NewItem->DisableComponentsSimulatePhysics();
 		}
 
 		for (int i = 0; i < 6; ++i) {
-			int ArrayIndex = FMath::Rand() % CacheItems_Stuff_IsAvaliable.Num();
+			int ArrayIndex = FMath::RandRange(0, CacheItems_Stuff_IsAvaliable.Num() - 1);
 			while (!CacheItems_Stuff_IsAvaliable[ArrayIndex])
 			{
 				ArrayIndex++;
@@ -375,7 +377,7 @@ void AGS::BeginPlay()
 		}
 
 		for (int i = 0; i < 1; ++i) {
-			int ArrayIndex = FMath::Rand() % CacheItems_Stuff_IsAvaliable.Num();
+			int ArrayIndex = FMath::RandRange(0, CacheItems_Stuff_IsAvaliable.Num() - 1);
 			while (!CacheItems_Stuff_IsAvaliable[ArrayIndex])
 			{
 				ArrayIndex++;
@@ -393,7 +395,7 @@ void AGS::BeginPlay()
 		}
 
 		for (int i = 0; i < 5; ++i) {
-			int ArrayIndex = FMath::Rand() % CacheItems_Stuff_IsAvaliable.Num();
+			int ArrayIndex = FMath::RandRange(0, CacheItems_Stuff_IsAvaliable.Num() - 1);
 			while (!CacheItems_Stuff_IsAvaliable[ArrayIndex])
 			{
 				ArrayIndex++;
@@ -411,7 +413,7 @@ void AGS::BeginPlay()
 		}
 
 		for (int i = 0; i < MaxPlayersCount; ++i) {
-			int ArrayIndex = FMath::Rand() % CacheItems_Stuff_IsAvaliable.Num();
+			int ArrayIndex = FMath::RandRange(0, CacheItems_Stuff_IsAvaliable.Num() - 1);
 			while (!CacheItems_Stuff_IsAvaliable[ArrayIndex])
 			{
 				ArrayIndex++;
@@ -429,7 +431,7 @@ void AGS::BeginPlay()
 		}
 
 		for (int i = 0; i < MaxPlayersCount * 2; ++i) {
-			int ArrayIndex = FMath::Rand() % CacheItems_Stuff_IsAvaliable.Num();
+			int ArrayIndex = FMath::RandRange(0, CacheItems_Stuff_IsAvaliable.Num() - 1);
 			while (!CacheItems_Stuff_IsAvaliable[ArrayIndex])
 			{
 				ArrayIndex++;
@@ -447,7 +449,7 @@ void AGS::BeginPlay()
 		}
 
 		for (int i = 0; i < MaxPlayersCount * 2; ++i) {
-			int ArrayIndex = FMath::Rand() % CacheItems_Stuff_IsAvaliable.Num();
+			int ArrayIndex = FMath::RandRange(0, CacheItems_Stuff_IsAvaliable.Num() - 1);
 			while (!CacheItems_Stuff_IsAvaliable[ArrayIndex])
 			{
 				ArrayIndex++;
@@ -478,7 +480,7 @@ void AGS::BeginPlay()
 		{
 			for (int i = 0; i < 11; ++i)
 			{
-				int ArrayIndex = FMath::Rand() % Keys_IsAvaliable.Num();
+				int ArrayIndex = FMath::RandRange(0, Keys_IsAvaliable.Num() - 1);
 				while (!Keys_IsAvaliable[ArrayIndex])
 				{
 					ArrayIndex++;
@@ -517,7 +519,7 @@ void AGS::BeginPlay()
 
 		for (int Det = 0; Det < 15; ++Det)
 		{
-			int ArrayIndex = FMath::Rand() % Details_IsAvaliable.Num();
+			int ArrayIndex = FMath::RandRange(0, Details_IsAvaliable.Num());
 			while (!Details_IsAvaliable[ArrayIndex])
 			{
 				ArrayIndex++;
@@ -570,19 +572,7 @@ void AGS::SpawnPlayers()
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AChel::StaticClass(), Players);
 	for (int i = 0; i < Players.Num(); i++) {
 		AChel* Player = Cast<AChel>(Players[i]);
-
-		Player->PlaySpawnAnimationAwake();
-		Player->SetActorLocation(SpawnPoints[i]->GetActorLocation());
-
-
-		Player->CurrentWeapons[0]->LeftAmmo = Player->CurrentWeapons[0]->MaxAmmo;
-		Player->ChangeAmmoClients(Player->CurrentWeapons[0]->MaxAmmo, 0);
-		Player->SwitchToFreeWeapon_Multicast();
-
-		//Player->ShowStoneMulticast();
-		//Player->Ammo = Player->MaxAmmoCount;
-		Player->IsInGame = true;
-		Player->Health = 0;
+		Player->SpawnPlayer();
 	}
 
 	FTimerHandle FuzeTimerHandle;
@@ -594,10 +584,10 @@ void AGS::ResetGame() {
 }
 
 void AGS::EventSpawnNote() {
-	CodeGenerator = (1 + FMath::Rand() % 9) * 10000 + FMath::Rand() % 10 * 1000 + FMath::Rand() % 10 * 100 + FMath::Rand() % 10 * 10 + FMath::Rand() % 10;
+	CodeGenerator = (1 + FMath::RandRange(0, 8)) * 10000 + FMath::RandRange(0, 9) * 1000 + FMath::RandRange(0, 9) * 100 + FMath::RandRange(0, 9) * 10 + FMath::RandRange(0, 9);
 	TArray<AActor*> GettingTagActors;
 	UGameplayStatics::GetAllActorsOfClassWithTag(GetWorld(), ATargetPoint::StaticClass(), "NoteSpawn", GettingTagActors);
-	GetWorld()->SpawnActor<ACodeNote_New>(CodeNoteClass, GettingTagActors[FMath::Rand() % GettingTagActors.Num()]->GetTransform());
+	GetWorld()->SpawnActor<ACodeNote_New>(CodeNoteClass, GettingTagActors[FMath::RandRange(0, GettingTagActors.Num() - 1)]->GetTransform());
 	UE_LOG(LogTemp, Warning, TEXT("Note was spawned"));
 }
 
@@ -763,7 +753,7 @@ void AGS::CreateGasOnFloor() {
 	if (IsGameStarted) { //если в игре
 		FName GasAreaParticleTag = "";
 		FName GasAreaDamageTag = "";
-		int32 Floor = FMath::Rand() % 4;
+		int32 Floor = FMath::RandRange(0, 3);
 		switch (Floor) {
 		case 0:
 			GasAreaParticleTag = GasAreaParticleTag_1;

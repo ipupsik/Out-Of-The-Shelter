@@ -47,7 +47,9 @@ bool AQAbilityItem::PickUpEventClient(AChel* Player)
 			Player->IsQAbilityRefreshing = false;
 			GetWorld()->GetTimerManager().ClearTimer(Player->QAbilityTimer);
 		}
+		Player->CurQAbility->RemoveFromRoot();
 		Player->CurQAbility->ConditionalBeginDestroy();
+		Player->CurQAbility = nullptr;
 	}
 	if (!Player->IsServerAuth) {
 		Player->CurQAbility = NewObject<UQAbility>(Player, QAbility_class);
