@@ -31,6 +31,7 @@ void UConAbility_ProjectileDamage::UseAbilityServer(AChel* Player)
 		UConAbility_ProjectileDamage* Ability = Cast<UConAbility_ProjectileDamage>(Player->RAbilityStack[i]);
 		if (Ability)
 		{
+			GetWorld()->GetTimerManager().ClearTimer(Ability->TimerHande);
 			Player->RAbilityStackPop(i);
 			break;
 		}
@@ -38,7 +39,7 @@ void UConAbility_ProjectileDamage::UseAbilityServer(AChel* Player)
 
 	StackIndex = Player->RAbilityStack.Num();
 	Player->RAbilityStack.Add(this);
-	Player->IsNowInvisible = true;
+	Player->ProjectileDamageEffect =2.f;
 	TmpPlayer = Player;
 	TimerHande = FTimerHandle();
 	GetWorld()->GetTimerManager().SetTimer(TimerHande, this, &UConAbility_ProjectileDamage::EndEffect, Duration, false);

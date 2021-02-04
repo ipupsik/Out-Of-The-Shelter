@@ -31,6 +31,8 @@ void UConsumableAbility_ArmoryZelie::UseAbilityServer(AChel* Player)
 		UConsumableAbility_ArmoryZelie* Ability = Cast<UConsumableAbility_ArmoryZelie>(Player->RAbilityStack[i]);
 		if (Ability)
 		{
+			GetWorld()->GetTimerManager().ClearTimer(Ability->TimerHande);
+			Player->DeleteParticleImmortal();
 			Player->RAbilityStackPop(i);
 			break;
 		}
@@ -38,7 +40,7 @@ void UConsumableAbility_ArmoryZelie::UseAbilityServer(AChel* Player)
 	Player->CreateParticleImmortal();
 	StackIndex = Player->RAbilityStack.Num();
 	Player->RAbilityStack.Add(this);
-	Player->IsNowInvisible = true;
+	Player->ArmoryZelieEffect = 0.f;
 	TmpPlayer = Player;
 	TimerHande = FTimerHandle();
 	GetWorld()->GetTimerManager().SetTimer(TimerHande, this, &UConsumableAbility_ArmoryZelie::EndEffect, Duration, false);

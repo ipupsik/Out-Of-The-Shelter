@@ -35,6 +35,7 @@ void UConsumableAbility_Invisible::UseAbilityServer(AChel* Player)
 			UConsumableAbility_Invisible* Ability = Cast<UConsumableAbility_Invisible>(Player->RAbilityStack[i]);
 			if (Ability)
 			{
+				GetWorld()->GetTimerManager().ClearTimer(Ability->TimerHande);
 				Player->RAbilityStackPop(i);
 				break;
 			}

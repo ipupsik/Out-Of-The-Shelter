@@ -31,6 +31,7 @@ void UConsumableAbility_TempAntiDot::UseAbilityServer(AChel* Player)
 		UConsumableAbility_TempAntiDot* Ability = Cast<UConsumableAbility_TempAntiDot>(Player->RAbilityStack[i]);
 		if (Ability)
 		{
+			GetWorld()->GetTimerManager().ClearTimer(Ability->TimerHande);
 			Player->RAbilityStackPop(i);
 			break;
 		}
@@ -38,7 +39,7 @@ void UConsumableAbility_TempAntiDot::UseAbilityServer(AChel* Player)
 
 	StackIndex = Player->RAbilityStack.Num();
 	Player->RAbilityStack.Add(this);
-	Player->IsNowInvisible = true;
+	Player->TempAntiDotEffect = 0.0f;
 	TmpPlayer = Player;
 	TimerHande = FTimerHandle();
 	GetWorld()->GetTimerManager().SetTimer(TimerHande, this, &UConsumableAbility_TempAntiDot::EndEffect, Duration, false);
