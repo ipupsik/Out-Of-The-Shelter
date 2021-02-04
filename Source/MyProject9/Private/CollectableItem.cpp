@@ -30,12 +30,11 @@ void ACollectableItem::OnLineTraced(AChel* Player)
 {
 	if (bCanInterract) {
 		ToggleCustomDepth(true, Player);
-		if (Player->GI->bIsEnabledPrompt)
-			Player->UserView->PropmptTextInterract->SetText(PromptText);
+		Player->UserView->PropmptTextInterract->SetText(PromptText);
 		if (!Player->UserView->E_Mark->IsVisible()) {
 			Player->UserView->E_Mark->SetVisibility(ESlateVisibility::Visible);
-			if(Player->GI->bIsEnabledPrompt)
-				Player->UserView->PropmptTextInterract->SetVisibility(ESlateVisibility::Visible);
 		}
+		if(Player->GI->bIsEnabledPrompt)
+				Player->UserView->PropmptTextInterract->SetVisibility(ESlateVisibility::Visible);
 	}
 }

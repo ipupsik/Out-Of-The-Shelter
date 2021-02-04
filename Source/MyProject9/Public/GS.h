@@ -41,7 +41,7 @@ class ACollectableItem;
 #define STONE_DAMAGE 0.15f
 #define DeltaRadiation 0.1f
 
-#define SPAWN_TIME 20.f
+#define SPAWN_TIME 15.f
 #define ShowRandomItem_TIME 6
 #define ShowMainExis_TIME 8
 
@@ -238,7 +238,7 @@ public:
 
 	int CurrentButtonCount;
 
-	int CurrentTime;
+	float CurrentTime;
 
 	int32 GeneralLayer;
 	UPROPERTY(Replicated)
