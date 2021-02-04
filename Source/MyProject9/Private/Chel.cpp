@@ -805,9 +805,12 @@ void AChel::PlaySpawnAnimationSleep_Implementation() {
 			CanThrowStone = false;
 			UserView->RadiationPoints->SetPercent(1.0f);
 			UserView->DarkScreen->SetRenderOpacity(1.0f);
-			SetActorEnableCollision(false);
 			GetCharacterMovement()->GravityScale = 0;
 			GetCharacterMovement()->StopMovementImmediately();
+			GetCharacterMovement()->Velocity = { 0,0,0 };
+			SetActorEnableCollision(false);
+			GetCharacterMovement()->Deactivate();
+			GetCharacterMovement()->Activate();
 		}
 		VerstakViewWidget->SetVisibility(ESlateVisibility::Collapsed);
 		Widget_Note->SetVisibility(ESlateVisibility::Collapsed);
@@ -1205,6 +1208,12 @@ void AChel::KillPlayer()
 	}
 	GetCharacterMovement()->StopMovementImmediately();
 	DisableCollisionEverywhere();
+	GetCharacterMovement()->GravityScale = 0;
+	GetCharacterMovement()->StopMovementImmediately();
+	GetCharacterMovement()->Velocity = { 0,0,0 };
+	SetActorEnableCollision(false);
+	GetCharacterMovement()->Deactivate();
+	GetCharacterMovement()->Activate();
 	HideCustomItems(true);
 	SetActorHiddenInGame(true);
 	IsInGame = false;
@@ -1277,16 +1286,20 @@ void AChel::SetAvaliableSpawnPoint() {
 
 void AChel::DisableCollisionEverywhere_Implementation()
 {
-	SetActorEnableCollision(false);
 	GetCharacterMovement()->GravityScale = 0;
 	GetCharacterMovement()->StopMovementImmediately();
+	GetCharacterMovement()->Velocity = { 0,0,0 };
+	GetCharacterMovement()->Deactivate();
+	GetCharacterMovement()->Activate();
+	SetActorEnableCollision(false);
 }
 
 void AChel::EnableCollisionEverywhere_Implementation()
 {
-	SetActorEnableCollision(true);
 	GetCharacterMovement()->GravityScale = 1.2f;
 	GetCharacterMovement()->StopMovementImmediately();
+	SetActorEnableCollision(true);
+	GetCharacterMovement()->Activate();
 	CameraComp->SetFieldOfView(90.0f);
 	CameraComp->SetRelativeRotation({ 0,0,0 });
 }
