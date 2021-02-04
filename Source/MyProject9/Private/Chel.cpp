@@ -129,7 +129,7 @@ void AChel::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimePro
 
 void AChel::QAbilityEnable()
 {
-	if (CurQAbility && !IsQAbilityUsing && !IsQAbilityRefreshing)
+	if (IsNotInWebCam && bCanWalkingAndWatching && !bInEscMenu && !bInShopMenu && CurQAbility && !IsQAbilityUsing && !IsQAbilityRefreshing)
 	{
 		if (CurQAbility->IsValidLowLevel())
 			if (CurQAbility->UseAbilityClient(this))
@@ -144,7 +144,7 @@ void AChel::QAbilityEnableAvaliable()
 
 void AChel::RAbilityEnable_Client()
 {
-	if (LastRAbilityIndex != -1 && !bInShopMenu && !bInEscMenu && bCanWalkingAndWatching && IsInGame)
+	if (LastRAbilityIndex != -1 && !bInShopMenu && !bInEscMenu && bCanWalkingAndWatching && IsInGame && IsNotInWebCam) 
 	{
 		if (RAbilityPanel[RAbilityTypeIndex]->UseAbilityClient(this))
 			RAbilityEnable_Server(RAbilityPanel[RAbilityTypeIndex]->GetClass());
