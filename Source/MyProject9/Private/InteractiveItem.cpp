@@ -10,6 +10,10 @@ AInteractiveItem::AInteractiveItem()
 	bCanInterract = true;
 }
 
+void AInteractiveItem::CallOnLineTraceFromBP(AChel* Player) {
+	OnLineTraced(Player);
+}
+
 void AInteractiveItem::ToggleCustomDepth(bool NewIsOutliningNow, AChel* Player)
 {
 	if (bCanInterract) {

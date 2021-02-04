@@ -25,6 +25,11 @@ public:
 	bool IsOutliningNow;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		FText PromptText;
+
+	UFUNCTION(BlueprintCallable)
+	void CallOnLineTraceFromBP(AChel* Player);
+
+
 	virtual void ToggleCustomDepth(bool NewIsOutliningNow, AChel* Player);
 	virtual void SetOutlineColor(int32 ColorOutline);
 

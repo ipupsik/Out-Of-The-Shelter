@@ -520,6 +520,7 @@ public:
 		TArray<bool>DoesHave;
 	TArray<int32>KeysCount;
 	bool DoesHave_Owner;
+	UPROPERTY(BlueprintReadWrite)
 	AInteractiveItem* LastInteractiveItem;
 	AInteractiveItem* LastInteractiveItem_Server;
 	ACoreItem* LastOutlineItem;

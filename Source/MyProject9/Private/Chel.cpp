@@ -2288,8 +2288,9 @@ void AChel::InvertMovement(float timeToOff)
 {
 	InverseCoeff = -1.f;
 	AddChromaticInvet();
+	if(AmountBottleEffects == 0)
+		UserView->AddIconToPanel(6);
 	AmountBottleEffects += 1;
-	UserView->AddIconToPanel(6);
 
 	FTimerHandle FuzeTimerHandle;
 	World->GetTimerManager().SetTimer(FuzeTimerHandle, this, &AChel::RemoveInvertMovement, timeToOff, false);
