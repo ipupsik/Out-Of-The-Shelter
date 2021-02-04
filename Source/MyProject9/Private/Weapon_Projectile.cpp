@@ -22,6 +22,7 @@ float AWeapon_Projectile::GetDamage(AChel* Player)
 			{
 				Player->IsNowInvisible = false;
 				Player->ReverceInvisibleEverywhere();
+				Player->World->GetTimerManager().ClearTimer(Ability->TimerHande);
 				Player->RAbilityStackPop(i);
 				break;
 			}

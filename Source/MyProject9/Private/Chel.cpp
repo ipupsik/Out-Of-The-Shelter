@@ -373,6 +373,7 @@ void AChel::Tick(float DeltaTime)
 						{
 							IsNowInvisible = false;
 							ReverceInvisibleEverywhere();
+							World->GetTimerManager().ClearTimer(Ability->TimerHande);
 							RAbilityStackPop(i);
 							break;
 						}
@@ -2089,7 +2090,7 @@ void AChel::RAbilityStackPop(int32 TmpIndex)
 		RAbilityStack[i]->StackIndex--;
 	}
 	if (RAbilityStack[TmpIndex]) {
-		World->GetTimerManager().ClearTimer(RAbilityStack[TmpIndex]->TimerHande);
+		RemoveIconFromPanel_Client(RAbilityStack[TmpIndex]->IdentificatorIcon);
 		RAbilityStack[TmpIndex]->ConditionalBeginDestroy();
 	}
 	RAbilityStack.RemoveAt(TmpIndex);
