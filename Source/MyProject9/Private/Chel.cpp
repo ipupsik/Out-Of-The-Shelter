@@ -2472,7 +2472,10 @@ void AChel::CreateParticleImmortal_Implementation() {
 
 void AChel::DeleteParticleImmortal_Implementation() {
 	if (CurParticleImmortal) {
-		CurParticleImmortal->Destroy();
+		if (CurParticleImmortal->IsValidLowLevel()) {
+			CurParticleImmortal->Destroy();
+			CurParticleImmortal = nullptr;
+		}
 	}
 }
 
