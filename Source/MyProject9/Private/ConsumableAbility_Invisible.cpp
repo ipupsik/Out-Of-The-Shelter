@@ -30,19 +30,33 @@ void UConsumableAbility_Invisible::UseAbilityServer(AChel* Player)
 		Player->InvisibleEverywhere();
 	else
 	{
-		if (Player->LastInvisibleAbilityObj)
-			Player->LastInvisibleAbilityObj->DestroyNonNativeProperties();
-		Player->World->GetTimerManager().ClearTimer(Player->TimerHandleInvisible);
+		for (int i = 0; i < Player->RAbilityStack.Num(); i++)
+		{
+			UConsumableAbility_Invisible* Ability = Cast<UConsumableAbility_Invisible>(Player->RAbilityStack[i]);
+			if (Ability)
+			{
+				Player->RAbilityStackPop(i);
+				break;
+			}
+		}
 	}
-	Player->LastInvisibleAbilityObj = this;
+	StackIndex = Player->RAbilityStack.Num();
+	Player->RAbilityStack.Add(this);
 	Player->IsNowInvisible = true;
 	TmpPlayer = Player;
-	Player->TimerHandleInvisible = FTimerHandle();
-	GetWorld()->GetTimerManager().SetTimer(Player->TimerHandleInvisible, Player, &AChel::InvisibleEnd, Duration, false);
+	TimerHande = FTimerHandle();
+	GetWorld()->GetTimerManager().SetTimer(TimerHande, this, &UConsumableAbility_Invisible::InvisibleEnd, Duration, false);
 }
 
 bool UConsumableAbility_Invisible::UseAbilityClient(AChel* Player)
 {
 	UConsumableAbility::UseAbilityClient(Player);
 	return true;
+}
+
+void UConsumableAbility_Invisible::InvisibleEnd()
+{
+	TmpPlayer->IsNowInvisible = false;
+	TmpPlayer->ReverceInvisibleEverywhere();
+	TmpPlayer->RAbilityStackPop(StackIndex);
 }

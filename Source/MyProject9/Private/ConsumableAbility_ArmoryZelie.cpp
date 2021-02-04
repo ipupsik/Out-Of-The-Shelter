@@ -26,24 +26,30 @@ FVector UConsumableAbility_ArmoryZelie::GetCacheLocation(int32 CacheIndex)
 
 void UConsumableAbility_ArmoryZelie::UseAbilityServer(AChel* Player)
 {
-	Player->ArmoryZelieCount++;
-	Player->ArmoryZelieEffect = 0;
+	for (int i = 0; i < Player->RAbilityStack.Num(); i++)
+	{
+		UConsumableAbility_ArmoryZelie* Ability = Cast<UConsumableAbility_ArmoryZelie>(Player->RAbilityStack[i]);
+		if (Ability)
+		{
+			Player->RAbilityStackPop(i);
+			break;
+		}
+	}
+	Player->CreateParticleImmortal();
+	StackIndex = Player->RAbilityStack.Num();
+	Player->RAbilityStack.Add(this);
+	Player->IsNowInvisible = true;
 	TmpPlayer = Player;
-	TmpPlayer->CreateParticleImmortal();
-	FTimerHandle FuzeTimerHandle;
-	GetWorld()->GetTimerManager().SetTimer(FuzeTimerHandle, this, &UConsumableAbility_ArmoryZelie::EndEffect, Duration, false);
+	TimerHande = FTimerHandle();
+	GetWorld()->GetTimerManager().SetTimer(TimerHande, this, &UConsumableAbility_ArmoryZelie::EndEffect, Duration, false);
 }
 
 void UConsumableAbility_ArmoryZelie::EndEffect()
 {
-	TmpPlayer->ArmoryZelieCount--;
-	if (TmpPlayer->ArmoryZelieCount == 0)
-	{
-		TmpPlayer->DeleteParticleImmortal();
-		TmpPlayer->ArmoryZelieEffect = 1.0f;
-		TmpPlayer->RemoveIconFromPanel_Client(IdentificatorIcon);
-	}
-	DestroyNonNativeProperties();
+	TmpPlayer->DeleteParticleImmortal();
+	TmpPlayer->ArmoryZelieEffect = 1.0f;
+	TmpPlayer->RemoveIconFromPanel_Client(IdentificatorIcon);
+	TmpPlayer->RAbilityStackPop(StackIndex);
 }
 
 bool UConsumableAbility_ArmoryZelie::UseAbilityClient(AChel* Player)

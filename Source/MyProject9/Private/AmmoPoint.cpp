@@ -28,7 +28,7 @@ void AAmmoPoint::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* Oth
 	bool bFromSweep, const FHitResult& SweepResult)
 {
 	AChel* Player = Cast<AChel>(OtherActor);
-	if (Player) {
+	if (Player && Player->GetCapsuleComponent() == OtherComp) {
 		if (Player->IsServerAuth && Enable && Player->CurrentWeapons[0]->LeftAmmo < Player->CurrentWeapons[0]->MaxAmmo)
 		{
 			Player->CurrentWeapons[0]->LeftAmmo = Player->CurrentWeapons[0]->MaxAmmo;

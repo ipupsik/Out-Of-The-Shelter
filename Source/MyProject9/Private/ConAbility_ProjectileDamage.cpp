@@ -26,22 +26,29 @@ FVector UConAbility_ProjectileDamage::GetCacheLocation(int32 CacheIndex)
 
 void UConAbility_ProjectileDamage::UseAbilityServer(AChel* Player)
 {
-	Player->ProjectileDamageCount++;
-	Player->ProjectileDamageEffect = 2.0;
+	for (int i = 0; i < Player->RAbilityStack.Num(); i++)
+	{
+		UConAbility_ProjectileDamage* Ability = Cast<UConAbility_ProjectileDamage>(Player->RAbilityStack[i]);
+		if (Ability)
+		{
+			Player->RAbilityStackPop(i);
+			break;
+		}
+	}
+
+	StackIndex = Player->RAbilityStack.Num();
+	Player->RAbilityStack.Add(this);
+	Player->IsNowInvisible = true;
 	TmpPlayer = Player;
-	FTimerHandle FuzeTimerHandle;
-	GetWorld()->GetTimerManager().SetTimer(FuzeTimerHandle, this, &UConAbility_ProjectileDamage::EndEffect, Duration, false);
+	TimerHande = FTimerHandle();
+	GetWorld()->GetTimerManager().SetTimer(TimerHande, this, &UConAbility_ProjectileDamage::EndEffect, Duration, false);
 }
 
 void UConAbility_ProjectileDamage::EndEffect()
 {
-	TmpPlayer->ProjectileDamageCount--;
-	if (TmpPlayer->ProjectileDamageCount == 0)
-	{
-		TmpPlayer->ProjectileDamageEffect = 1.0f;
-		TmpPlayer->RemoveIconFromPanel_Client(IdentificatorIcon);
-	}
-	DestroyNonNativeProperties();
+	TmpPlayer->ProjectileDamageEffect = 1.0f;
+	TmpPlayer->RemoveIconFromPanel_Client(IdentificatorIcon);
+	TmpPlayer->RAbilityStackPop(StackIndex);
 }
 
 bool UConAbility_ProjectileDamage::UseAbilityClient(AChel* Player)

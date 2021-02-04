@@ -87,8 +87,6 @@ protected:
 	void EnableChelDetector();
 	void DisableChelDetector();
 
-	void StopUseSpeedBust();
-
 	/*void ThrowStoneLeft();*/
 	void PickUp();
 	void PickUp_Released();
@@ -103,7 +101,9 @@ protected:
 public:
 	void QAbilityEnable();
 	UFUNCTION()
-	void QAbilityEnableAvaliable();
+		void QAbilityEnableAvaliable();
+	UFUNCTION()
+		void RAbilityStackPop(int32 Index);
 	void RAbilityEnable_Client();
 	void AddExtraCacheKeys();
 	void AddExtraDetails();
@@ -186,10 +186,6 @@ public:
 	//StoneThrowReplication
 	/*UFUNCTION(Server, Reliable, WithValidation)
 		void ThrowStoneServer(bool Type);*/
-
-	UFUNCTION(Server, Reliable, WithValidation)
-		void AddImmortalServer();
-	void RemoveImmortalServer();
 
 	/*UFUNCTION(NetMulticast, Reliable)
 		void ThrowStoneMulticast(bool Type);*/
@@ -299,9 +295,6 @@ public:
 
 	UFUNCTION(Server, Reliable, WithValidation)
 		void OutlineBad_Server();
-
-	UFUNCTION(Server, Reliable, WithValidation)
-		void UseSpeedBust_Server();
 
 	UFUNCTION(NetMulticast, Reliable) //легендарна€ св€зќчка
 		void OutlineBad_Multicast();
@@ -595,14 +588,9 @@ public:
 	int8 ExtraCacheKeysTimer;
 	int8 ExtraDetailsTimer;
 
-	int32 DoesRadiationAntidot;
-	int32 CurrentSpeedBustCount;
-	float SpeedBustValue;
 	float StoneDamageBuffTempValue;
-	int32 CurrentStoneDamageBuffTempCount;
 	int32 WebCamIterator;
 	int32 DoesNotImmortal;
-	int32 DoesNotImmortalCount;
 	UPROPERTY(BlueprintReadWrite)
 	FRotator BaseWebCamRotation;
 	
@@ -618,11 +606,9 @@ public:
 	float ProjectileDamageEffect;
 
 	bool IsNowInvisible;
-	FTimerHandle TimerHandleInvisible;
 	FTimerHandle QAbilityTimer;
 	bool IsQAbilityUsing;
 	bool IsQAbilityRefreshing;
-	UConsumableAbility_Invisible* LastInvisibleAbilityObj;
 	//RAbility
 
 	//Logic Boolean Variables
@@ -661,7 +647,9 @@ public:
 
 	TArray<UKDA_Stat*>MyKDA_Stat;
 	UPROPERTY(BlueprintReadWrite)
-	TArray<UConsumableAbility*>RAbilityPanel;
+		TArray<UConsumableAbility*>RAbilityPanel;
+	UPROPERTY()
+		TArray<UConsumableAbility*>RAbilityStack;
 	UPROPERTY()
 	UQAbility* CurQAbility;
 	FTransform MeshTrans;

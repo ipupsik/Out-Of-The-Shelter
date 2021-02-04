@@ -18,8 +18,5 @@ public:
 	AWebCamPoint();
 
 public:
-	bool is_Enabled;
-	UPROPERTY(EditAnywhere)
-		int Index;
 	AChel* CurChelix;
 };

@@ -91,19 +91,7 @@ void AGS::BeginPlay()
 		UGameplayStatics::GetAllActorsOfClass(GetWorld(), AWebCamPoint::StaticClass(), WebCamSpectators);
 		for (int i = 0; i < WebCamSpectators.Num(); ++i)
 		{
-			for (int j = 0; j < WebCamSpectators.Num() - 1 - i; ++j)
-			{
-				if (Cast<AWebCamPoint>(WebCamSpectators[j])->Index > Cast<AWebCamPoint>(WebCamSpectators[j + 1])->Index)
-				{
-					Swap<AActor*>(WebCamSpectators[j], WebCamSpectators[j + 1]);
-				}
-			}
-		}
-		for (int i = 0; i < WebCamSpectators.Num(); ++i)
-		{
-			UE_LOG(LogTemp, Warning, TEXT("Index - %d"), Cast<AWebCamPoint>(WebCamSpectators[i])->Index);
 			WebCams.Add(Cast<AWebCamPoint>(WebCamSpectators[i]));
-			WebCams[i]->is_Enabled = true;
 		}
 
 		TArray<AActor*>VentilaciaRubilnick;
@@ -223,6 +211,24 @@ void AGS::BeginPlay()
 			NewItem->SetActorScale3D(ShiledsTransform[Caches[ArrayIndex]->CacheIndex].GetScale3D());
 			NewItem->AddActorLocalOffset(ShiledsTransform[Caches[ArrayIndex]->CacheIndex].GetLocation());
 			NewItem->AddActorLocalRotation(ShiledsTransform[Caches[ArrayIndex]->CacheIndex].GetRotation());
+			Cast<ACollectableItem>(NewItem)->EnabledArrayIndex = ArrayIndex;
+			CacheItems_Stuff_IsAvaliable[ArrayIndex] = false;
+		}
+
+		for (int i = 0; i < 4; ++i) {
+			int ArrayIndex = FMath::RandRange(0, CacheItems_Stuff_IsAvaliable.Num() - 1);
+			while (!CacheItems_Stuff_IsAvaliable[ArrayIndex])
+			{
+				ArrayIndex++;
+				if (ArrayIndex >= CacheItems_Stuff_IsAvaliable.Num())
+					ArrayIndex = 0;
+			}
+			AActor* NewItem = GetWorld()->SpawnActor<AActor>(AmmoBackPack_Class);
+			FAttachmentTransformRules AttachmentRules = FAttachmentTransformRules(EAttachmentRule::KeepRelative, true);
+			NewItem->AttachToActor(Caches[ArrayIndex], AttachmentRules);
+			NewItem->SetActorScale3D(AmmoBackPackTransform[Caches[ArrayIndex]->CacheIndex].GetScale3D());
+			NewItem->AddActorLocalOffset(AmmoBackPackTransform[Caches[ArrayIndex]->CacheIndex].GetLocation());
+			NewItem->AddActorLocalRotation(AmmoBackPackTransform[Caches[ArrayIndex]->CacheIndex].GetRotation());
 			Cast<ACollectableItem>(NewItem)->EnabledArrayIndex = ArrayIndex;
 			CacheItems_Stuff_IsAvaliable[ArrayIndex] = false;
 		}

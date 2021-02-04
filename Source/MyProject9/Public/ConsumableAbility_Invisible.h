@@ -21,6 +21,9 @@ public:
 	FRotator GetCacheRotation(int32 CacheIndex) override;
 	FVector GetCacheLocation(int32 CacheIndex) override;
 
+	UFUNCTION()
+		void InvisibleEnd();
+
 	int32 CurAbilityUsing;
 
 	AChel* TmpPlayer;

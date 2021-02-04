@@ -63,11 +63,7 @@ AChel::AChel()
 	IsQAbilityRefreshing = false;
 	LastRAbilityIndex = -1;
 	DoesNotImmortal = 1;
-	CurrentStoneDamageBuffTempCount = 0;
 	StoneDamageBuffTempValue = 1.0f;
-	SpeedBustValue = 0;
-	DoesRadiationAntidot = 1;
-	StoneDamageBuffCount = 0;
 	AmountBottleEffects = 0;
 	ShieldsCount = 0;
 	bCanSwitchWebCam = false;
@@ -144,13 +140,6 @@ void AChel::QAbilityEnable()
 void AChel::QAbilityEnableAvaliable()
 {
 	IsQAbilityRefreshing = false;
-}
-
-void AChel::InvisibleEnd()
-{
-	IsNowInvisible = false;
-	ReverceInvisibleEverywhere();
-	LastInvisibleAbilityObj = nullptr;
 }
 
 void AChel::RAbilityEnable_Client()
@@ -377,8 +366,17 @@ void AChel::Tick(float DeltaTime)
 				if (IsNowInvisible)
 				{
 					IsNowInvisible = false;
-					ReverceInvisibleEverywhere();
-					LastInvisibleAbilityObj = nullptr;
+					for (int i = 0; i < RAbilityStack.Num(); i++)
+					{
+						UConsumableAbility_Invisible* Ability = Cast<UConsumableAbility_Invisible>(RAbilityStack[i]);
+						if (Ability)
+						{
+							IsNowInvisible = false;
+							ReverceInvisibleEverywhere();
+							RAbilityStackPop(i);
+							break;
+						}
+					}
 				}
 				KillPlayer();
 				DoesHave.Init(false, 3);
@@ -761,7 +759,7 @@ void AChel::MyJump()
 //Sprint-----------------------
 void AChel::StartSprint_Server_Implementation()
 {
-	GetCharacterMovement()->MaxWalkSpeed = 1200.f + SpeedBustValue;
+	GetCharacterMovement()->MaxWalkSpeed = 1100.f;
 }
 
 bool AChel::StartSprint_Server_Validate()
@@ -770,13 +768,13 @@ bool AChel::StartSprint_Server_Validate()
 }
 
 void AChel::StartSprint() {
-	GetCharacterMovement()->MaxWalkSpeed = 1200.f + SpeedBustValue;
+	GetCharacterMovement()->MaxWalkSpeed = 1100.f;
 	StartSprint_Server();
 }
 
 void AChel::StopSprint_Server_Implementation()
 {
-	GetCharacterMovement()->MaxWalkSpeed = 800.f + SpeedBustValue;
+	GetCharacterMovement()->MaxWalkSpeed = 500.f;
 }
 
 bool AChel::StopSprint_Server_Validate()
@@ -785,7 +783,7 @@ bool AChel::StopSprint_Server_Validate()
 }
 
 void AChel::StopSprint() {
-	GetCharacterMovement()->MaxWalkSpeed = 800.f + SpeedBustValue;
+	GetCharacterMovement()->MaxWalkSpeed = 500.f;
 	StopSprint_Server();
 }
 //-----------------------------
@@ -806,6 +804,9 @@ void AChel::PlaySpawnAnimationSleep_Implementation() {
 			CanThrowStone = false;
 			UserView->RadiationPoints->SetPercent(1.0f);
 			UserView->DarkScreen->SetRenderOpacity(1.0f);
+			SetActorEnableCollision(false);
+			GetCharacterMovement()->GravityScale = 0;
+			GetCharacterMovement()->StopMovementImmediately();
 		}
 		VerstakViewWidget->SetVisibility(ESlateVisibility::Collapsed);
 		Widget_Note->SetVisibility(ESlateVisibility::Collapsed);
@@ -813,7 +814,6 @@ void AChel::PlaySpawnAnimationSleep_Implementation() {
 		UserView->PlayAnimation(UserView->Shading);
 		AmountBottleEffects = 1;
 		RemoveInvertMovement();
-
 		if (LastInteractiveItem)
 		{
 			LastInteractiveItem->ToggleCustomDepth(false, this);
@@ -1227,14 +1227,6 @@ void AChel::GoToWebCamServer(int32 Iterator)
 {
 	SetActorLocation(GS->WebCams[Iterator]->GetActorLocation());
 	GS->WebCams[Iterator]->CurChelix = this;
-	if (GS->WebCams[Iterator]->is_Enabled == true)
-	{
-		ShowNoiseWebCamUI(false);
-	}
-	else
-	{
-		ShowNoiseWebCamUI(true);
-	}
 
 	UE_LOG(LogTemp, Warning, TEXT("Staying on webcam"));
 }
@@ -2007,15 +1999,6 @@ void AChel::ResetCacheKeys()
 	RefreshAmountDetails();
 }
 
-void AChel::StopUseSpeedBust()
-{
-	CurrentSpeedBustCount--;
-	if (CurrentSpeedBustCount == 0)
-	{
-		SpeedBustValue = 0;
-	}
-}
-
 void AChel::AddExtraDetails()
 {
 	if (IsNotInWebCam) {
@@ -2040,42 +2023,6 @@ void AChel::AddExtraCacheKeys()
 
 	FTimerHandle FuzeTimerHandle;
 	GetWorld()->GetTimerManager().SetTimer(FuzeTimerHandle, this, &AChel::AddExtraCacheKeys, 35, false);
-}
-
-void AChel::UseSpeedBust_Server_Implementation()
-{
-	SpeedBustValue = 300;
-	GetCharacterMovement()->MaxWalkSpeed = 800.f + SpeedBustValue;
-	CurrentSpeedBustCount++;
-	FTimerHandle FuzeTimerHandle;
-	GetWorld()->GetTimerManager().SetTimer(FuzeTimerHandle, this, &AChel::StopUseSpeedBust, 20, false);
-}
-
-bool AChel::UseSpeedBust_Server_Validate()
-{
-	return true;
-}
-
-void AChel::AddImmortalServer_Implementation()
-{
-	DoesNotImmortal = 0;
-	DoesNotImmortalCount++;
-	FTimerHandle FuzeTimerHandle2;
-	GetWorld()->GetTimerManager().SetTimer(FuzeTimerHandle2, this, &AChel::RemoveImmortalServer, 4, false);
-}
-
-bool AChel::AddImmortalServer_Validate()
-{
-	return true;
-}
-
-void AChel::RemoveImmortalServer()
-{
-	DoesNotImmortalCount--;
-	if (DoesNotImmortalCount == 0)
-	{
-		DoesNotImmortal = 1;
-	}
 }
 
 void AChel::CreateKDAWidget_Implementation(int32 PlayerIndex, const FText& newNickName)
@@ -2133,6 +2080,19 @@ void AChel::ShowInventory()
 void AChel::UnShowInventory()
 {
 	MyInventory->SetVisibility(ESlateVisibility::Hidden);
+}
+
+void AChel::RAbilityStackPop(int32 TmpIndex)
+{
+	for (int i = TmpIndex + 1; i < RAbilityStack.Num(); i++)
+	{
+		RAbilityStack[i]->StackIndex--;
+	}
+	if (RAbilityStack[TmpIndex]) {
+		World->GetTimerManager().ClearTimer(RAbilityStack[TmpIndex]->TimerHande);
+		RAbilityStack[TmpIndex]->ConditionalBeginDestroy();
+	}
+	RAbilityStack.RemoveAt(TmpIndex);
 }
 
 void AChel::UseRAbility()

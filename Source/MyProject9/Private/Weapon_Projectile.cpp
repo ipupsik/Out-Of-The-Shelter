@@ -14,12 +14,18 @@ float AWeapon_Projectile::GetDamage(AChel* Player)
 {
 	if (Player->IsNowInvisible)
 	{
-		Player->ReverceInvisibleEverywhere();
-		if (Player->LastInvisibleAbilityObj)
-			Player->LastInvisibleAbilityObj->DestroyNonNativeProperties();
-		Player->LastInvisibleAbilityObj = nullptr;
-		Player->World->GetTimerManager().ClearTimer(Player->TimerHandleInvisible);
 		Player->IsNowInvisible = false;
+		for (int i = 0; i < Player->RAbilityStack.Num(); i++)
+		{
+			UConsumableAbility_Invisible* Ability = Cast<UConsumableAbility_Invisible>(Player->RAbilityStack[i]);
+			if (Ability)
+			{
+				Player->IsNowInvisible = false;
+				Player->ReverceInvisibleEverywhere();
+				Player->RAbilityStackPop(i);
+				break;
+			}
+		}
 	}
 	return Damage / (1 + 0.2 * Player->ShieldsCount) * Player->ArmoryZelieEffect;
 }

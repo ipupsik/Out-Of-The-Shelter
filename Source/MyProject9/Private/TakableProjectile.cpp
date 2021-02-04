@@ -69,7 +69,7 @@ void ATakableProjectile::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherA
 	AChel* Player = nullptr;
 	Player = Cast<AChel>(OtherActor);
 	if (!Player) {
-		if (OtherActor) {
+		if (!Cast<AWeapon_Projectile>(OtherActor)) {
 			PlaySoundHitNotChel();
 			if (OtherActor->GetLocalRole() == ROLE_Authority) {
 				UE_LOG(LogTemp, Warning, TEXT("WeaponWasSpawned"));

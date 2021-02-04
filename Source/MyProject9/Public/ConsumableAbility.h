@@ -51,4 +51,7 @@ public:
 
 	UPROPERTY(EditAnywhere, Category = "Main_Vars")
 		TSubclassOf<class AConsumable> Consumable_class;
+
+	int32 StackIndex;
+	FTimerHandle TimerHande;
 };
