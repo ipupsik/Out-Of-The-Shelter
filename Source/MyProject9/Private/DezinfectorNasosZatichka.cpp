@@ -55,8 +55,8 @@ bool ADezinfectorNasosZatichka::PickUpEventClient(AChel* Player)
 
 void ADezinfectorNasosZatichka::OnLineTraced(AChel* Player)
 {
-	if (Player->GS->IsCanalizaciaPlayed && !Player->GS->IsCanalizaciaAvaliable) {
-		if (Nasos->bIsAvaliable) {
+	if (Player->GS->IsCanalizaciaPlayed) {
+		if (Nasos->bIsAvaliable && !Player->GS->IsCanalizaciaAvaliable) {
 			ToggleCustomDepth(true, Player);
 			if (!Player->UserView->E_Mark->IsVisible())
 				Player->UserView->E_Mark->SetVisibility(ESlateVisibility::Visible);
