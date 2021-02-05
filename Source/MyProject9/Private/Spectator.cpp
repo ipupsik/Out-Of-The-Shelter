@@ -37,8 +37,9 @@ void ASpectator::BeginPlay()
 		Sensetivity = GetWorld()->GetGameInstance<UGI>()->Sensetivity;
 		TArray<UUserWidget*>Widgets;
 		UWidgetBlueprintLibrary::GetAllWidgetsOfClass(GetWorld(), Widgets, SpectatorWidget_class);
-		if (Widgets.Num() == 0)
+		if (Widgets.Num() == 0) {
 			CreateWidget(GetWorld(), SpectatorWidget_class)->AddToViewport();
+		}
 	}
 }
 

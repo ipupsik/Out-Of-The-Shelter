@@ -468,8 +468,8 @@ public:
 		TSubclassOf<UWebCamWidget> WebCamWidget_class;
 	UPROPERTY(EditAnywhere, Category = "UI HUD")
 		TSubclassOf<UKDA_Stat> KDA_Stat_class;
-	UPROPERTY(EditAnywhere, Category = "UI HUD")
-		TSubclassOf<UTab> Tab_Stat_class;
+	/*UPROPERTY(EditAnywhere, Category = "UI HUD")
+		TSubclassOf<UTab> Tab_Stat_class;*/
 	UPROPERTY(EditAnywhere, Category = "UI HUD")
 		TSubclassOf<UInventory> Inventory_class;
 	UPROPERTY(EditAnywhere, Category = "UI HUD")

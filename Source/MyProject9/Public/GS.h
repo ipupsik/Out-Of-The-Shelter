@@ -12,6 +12,7 @@
 #include "CodeNote_New.h"
 #include "FinalMenuPawn.h"
 #include "Cache.h"
+#include "UI/Tab.h"
 #include "WebCamPoint.h"
 #include "ItemPromtArrow.h"
 #include "Weapon_Level.h"
@@ -235,6 +236,13 @@ public:
 	int32 CanalizaciaNasosCount;
 	UPROPERTY(Replicated)
 	int32 MaxCanalizaciaNasosCount;
+
+
+	UPROPERTY(EditAnywhere, Category = "UI HUD")
+		TSubclassOf<UTab> Tab_Stat_class;
+
+	UTab* TabWidgetGS;
+
 
 	int CurrentButtonCount;
 

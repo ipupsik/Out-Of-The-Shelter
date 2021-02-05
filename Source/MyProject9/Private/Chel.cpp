@@ -251,8 +251,10 @@ void AChel::MyBeginPlay()
 		WebCamUI = Cast<UWebCamWidget>(CreateWidget(World, WebCamWidget_class));
 		MyInventory = Cast<UInventory>(CreateWidget(World, Inventory_class));
 		MyInventory->AddToViewport(2);
-		MyController->TabWidget = Cast<UTab>(CreateWidget(World, Tab_Stat_class));
-		MyController->TabWidget->AddToViewport(1);
+		//MyController->TabWidget = Cast<UTab>(CreateWidget(World, Tab_Stat_class));
+		GS->TabWidgetGS = Cast<UTab>(CreateWidget(GetWorld(), GS->Tab_Stat_class));
+		MyController->TabWidget = GS->TabWidgetGS;
+		GS->TabWidgetGS->AddToViewport(1);
 		WebCamUI->AddToViewport();
 		UserView->AddToViewport();
 		KillFeed->AddToViewport();
@@ -892,9 +894,10 @@ void AChel::PlaySpawnAnimationAwake_Implementation() {
 		ShowNoiseWebCamUI(false);
 		IsNotInWebCam = true;
 		bCanSwitchWebCam = false;
+		CanThrowStone = true;
 		FTimerHandle FuzeTimerHandle;
 		World->GetTimerManager().SetTimer(FuzeTimerHandle, this, &AChel::AwakeAnimation_End, 2, false);
-		CanThrowStone = true;
+		CanFireWeapon = true;
 		CameraComp->SetRelativeLocation({ 0,0,0 });
 		CameraComp->SetRelativeRotation({ 0,0,0 });
 		if (bCanPossessWebCam)

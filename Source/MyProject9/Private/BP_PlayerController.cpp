@@ -21,6 +21,7 @@ void ABP_PlayerController::BeginPlay()
 	Super::BeginPlay();
 
 	GS = GetWorld()->GetGameState<AGS>();
+	//TabWidget->AddToViewport(1);
 }
 
 void ABP_PlayerController::RefreshPlayersVoteCount_Implementation(int32 Agreed, int32 Amount)
@@ -44,12 +45,16 @@ void ABP_PlayerController::ShowTab()
 	bShowMouseCursor = true;
 	WidgetStack++;
 	TabWidget->SetVisibility(ESlateVisibility::Visible);
-	FInputModeGameAndUI InputUI;
-	InputUI.SetWidgetToFocus(Cast<AChel>(GetPawn())->MyInventory->TakeWidget());
-	InputUI.SetLockMouseToViewportBehavior(EMouseLockMode::LockAlways);
-	SetInputMode(InputUI);
-	if (Cast<AChel>(GetPawn())) {
-		Cast<AChel>(GetPawn())->ShowInventory();
+
+	AChel* CurPawn = Cast<AChel>(GetPawn());
+	if (CurPawn) {
+		FInputModeGameAndUI InputUI;
+		InputUI.SetWidgetToFocus(CurPawn->MyInventory->TakeWidget());
+		InputUI.SetLockMouseToViewportBehavior(EMouseLockMode::LockAlways);
+		SetInputMode(InputUI);
+		if (CurPawn) {
+			CurPawn->ShowInventory();
+		}
 	}
 }
 
