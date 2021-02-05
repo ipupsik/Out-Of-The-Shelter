@@ -49,8 +49,6 @@ void ABP_PlayerController::ShowTab()
 	AChel* CurPawn = Cast<AChel>(GetPawn());
 	if (CurPawn) {
 		FInputModeGameAndUI InputUI;
-		InputUI.SetWidgetToFocus(CurPawn->MyInventory->TakeWidget());
-		InputUI.SetLockMouseToViewportBehavior(EMouseLockMode::LockAlways);
 		SetInputMode(InputUI);
 		if (CurPawn) {
 			CurPawn->ShowInventory();

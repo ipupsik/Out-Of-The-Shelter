@@ -608,7 +608,9 @@ void AChel::TimelineFloatReturn_FOV_WebCam(float value)
 }
 
 void AChel::FireEvent() {
-	if (IsNotInWebCam && bCanWalkingAndWatching && !bInEscMenu && !bInShopMenu && CanFireWeapon && CurrentWeapons[CurrentIndex] && CurrentWeapons[CurrentIndex]->LeftAmmo > 0 ) {
+	if (IsNotInWebCam && bCanWalkingAndWatching && !bInEscMenu 
+		&& !bInShopMenu && CanFireWeapon && CurrentWeapons[CurrentIndex] 
+		&& CurrentWeapons[CurrentIndex]->LeftAmmo > 0 && !MyController->bInTabMenu) {
 		FireEvent_Server();
 	}
 }
