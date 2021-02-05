@@ -12,10 +12,10 @@ void AUpgrates_Shields::PickUpEventServer(AChel* Player)
 
 bool AUpgrates_Shields::PickUpEventClient(AChel* Player)
 {
+	PlayPickUpSound();
 	if (GetLocalRole() != ROLE_Authority)
 	{
 		Player->ShieldsCount++;
-		PlayPickUpSound();
 		Destroy();
 	}
 	return true;
