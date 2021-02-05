@@ -16,6 +16,7 @@ AWeapon_Level::AWeapon_Level() {
 }
 
 bool AWeapon_Level::PickUpEventClient(AChel* Player) {
+	PlayPickUpSound();
 	return true;
 }
 

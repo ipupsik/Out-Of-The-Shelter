@@ -11,6 +11,7 @@ void AUpgrates_ExtraCacheKeys::PickUpEventServer(AChel* Player)
 
 bool AUpgrates_ExtraCacheKeys::PickUpEventClient(AChel* Player)
 {
+	PlayPickUpSound();
 	if (Player->ExtraCacheKeysTimer == 0)
 	{
 		Player->ExtraCacheKeysTimer++;

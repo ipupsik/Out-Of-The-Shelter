@@ -33,63 +33,67 @@ void UUserView::NativeConstruct() {
 void UUserView::OnAnimationFinished_Implementation(const UWidgetAnimation* Animation)
 {
 	UE_LOG(LogTemp, Warning, TEXT("Ya v Animacii"))
-	if (Animation == CanalizaciaAnim)
-	{
-		if (Player->IsSuccessOpening && !Player->GS->AreaAvaliables[0]) {
-			Player->StuffAvaliableUpdate(0);
-			//HoldText->SetVisibility(ESlateVisibility::Hidden);
-			//EscapeText->SetVisibility(ESlateVisibility::Visible);
-			if (Player->CurCoreArea)
-				PropmptTextArea->SetText(Player->CurCoreArea->AreaOpenAndCanEscape);
-			Player->DeleteArrowDelayBoltorez();
-			Player->PlayerOpenAreaUpdate(0);
-			Player->PlaySoundOpenNoShelter();
+		if (Animation == CanalizaciaAnim)
+		{
+			if (Player->IsSuccessOpening && !Player->GS->AreaAvaliables[0]) {
+				Player->StuffAvaliableUpdate(0);
+				//HoldText->SetVisibility(ESlateVisibility::Hidden);
+				//EscapeText->SetVisibility(ESlateVisibility::Visible);
+				if (Player->CurCoreArea)
+					PropmptTextArea->SetText(Player->CurCoreArea->AreaOpenAndCanEscape);
+				Player->DeleteArrowDelayBoltorez();
+				Player->PlayerOpenAreaUpdate(0);
+				Player->PlaySoundOpenNoShelter();
+			}
 		}
-	}
-	else if (Animation == ShelterAnim)
-	{
-		if (Player->IsSuccessOpening && !Player->GS->AreaAvaliables[1]) {
-			Player->StuffAvaliableUpdate(1);
-			//HoldText->SetVisibility(ESlateVisibility::Hidden);
-			if (!Player->LastInteractiveItem)
-				E_Mark->SetVisibility(ESlateVisibility::Hidden);
-			if (Player->CurCoreArea)
-				PropmptTextArea->SetText(Player->CurCoreArea->AreaOpenAndCanEscape);
-			Player->PlayerOpenAreaUpdate(1);
-			Player->DeleteArrowDelayKeyShelter();
-			Player->PlaySoundOpenShelter();
+		else if (Animation == ShelterAnim)
+		{
+			if (Player->IsSuccessOpening && !Player->GS->AreaAvaliables[1]) {
+				Player->StuffAvaliableUpdate(1);
+				//HoldText->SetVisibility(ESlateVisibility::Hidden);
+				if (!Player->LastInteractiveItem)
+					E_Mark->SetVisibility(ESlateVisibility::Hidden);
+				if (Player->CurCoreArea)
+					PropmptTextArea->SetText(Player->CurCoreArea->AreaOpenAndCanEscape);
+				Player->PlayerOpenAreaUpdate(1);
+				Player->DeleteArrowDelayKeyShelter();
+				Player->PlaySoundOpenShelter();
+			}
 		}
-	}
-	else if (Animation == VentilaciaAnim)
-	{
-		if (Player->IsSuccessOpening && !Player->GS->AreaAvaliables[2]) {
-			Player->StuffAvaliableUpdate(2);
-			//HoldText->SetVisibility(ESlateVisibility::Hidden);
-			//EscapeText->SetVisibility(ESlateVisibility::Visible);
-			if (Player->CurCoreArea)
-				PropmptTextArea->SetText(Player->CurCoreArea->AreaOpenAndCanEscape);
-			Player->DeleteArrowDelayOtvertka();
-			Player->PlayerOpenAreaUpdate(2);
-			Player->PlaySoundOpenNoShelter();
+		else if (Animation == VentilaciaAnim)
+		{
+			if (Player->IsSuccessOpening && !Player->GS->AreaAvaliables[2]) {
+				Player->StuffAvaliableUpdate(2);
+				//HoldText->SetVisibility(ESlateVisibility::Hidden);
+				//EscapeText->SetVisibility(ESlateVisibility::Visible);
+				if (Player->CurCoreArea)
+					PropmptTextArea->SetText(Player->CurCoreArea->AreaOpenAndCanEscape);
+				Player->DeleteArrowDelayOtvertka();
+				Player->PlayerOpenAreaUpdate(2);
+				Player->PlaySoundOpenNoShelter();
+			}
 		}
-	}
-	else if (Animation == OpenAreaAnim) {
-		PB_Opening->SetPercent(0);
-		PB_Opening->SetVisibility(ESlateVisibility::Hidden);
-		TimeLeft->SetVisibility(ESlateVisibility::Hidden);
-		if (Player->LastInteractiveItem && Player->IsSuccessOpening) {
+		else if (Animation == OpenAreaAnim) {
+			PB_Opening->SetPercent(0);
+			PB_Opening->SetVisibility(ESlateVisibility::Hidden);
+			TimeLeft->SetVisibility(ESlateVisibility::Hidden);
+			if (Player->LastInteractiveItem && Player->IsSuccessOpening) {
 				Player->CallEnableGasVent();
+			}
+			//		if (Cast<AOpenArea>(Player->LastItem) && Player->IsSuccessOpening) {
+			//			Player->CallDoThomethinkArea();
+			//		}
 		}
-//		if (Cast<AOpenArea>(Player->LastItem) && Player->IsSuccessOpening) {
-//			Player->CallDoThomethinkArea();
-//		}
-	}
-	else if (Animation == HideTextAnimation3) {
-		TB_Task3Player->SetVisibility(ESlateVisibility::Collapsed);
-	}
-	else if (Animation == HideTextAnimation4) {
-		TB_Task4Player->SetVisibility(ESlateVisibility::Collapsed);
-	}
+		else if (Animation == HideTextAnimation3) {
+			TB_Task3Player->SetVisibility(ESlateVisibility::Collapsed);
+		}
+		else if (Animation == HideTextAnimation4) {
+			TB_Task4Player->SetVisibility(ESlateVisibility::Collapsed);
+		}
+		else if (Animation == HideAdditiveInformation)
+		{
+			Player->IsHAnimationPlay = false;
+		}
 	PB_Opening->SetVisibility(ESlateVisibility::Hidden);
 	TimeLeft->SetVisibility(ESlateVisibility::Hidden);
 }

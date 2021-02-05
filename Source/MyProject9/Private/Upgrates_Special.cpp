@@ -23,6 +23,7 @@ bool AUpgrates_Special::PickUpEventClient(AChel* Player)
 {
 	if (!Player->HaveSpecialAmmo) {
 		Player->HaveSpecialAmmo = true;
+		PlayPickUpSound();
 		if (GetLocalRole() != ROLE_Authority)
 		{
 			Destroy();

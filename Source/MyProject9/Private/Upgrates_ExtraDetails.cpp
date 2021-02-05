@@ -11,6 +11,7 @@ void AUpgrates_ExtraDetails::PickUpEventServer(AChel* Player)
 
 bool AUpgrates_ExtraDetails::PickUpEventClient(AChel* Player)
 {
+	PlayPickUpSound();
 	if (Player->ExtraDetailsTimer == 0)
 	{
 		Player->ExtraDetailsTimer++;

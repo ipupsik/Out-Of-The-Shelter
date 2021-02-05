@@ -513,13 +513,16 @@ void AChel::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 
 void AChel::H_Pressed() {
 	if (!bInShopMenu && bCanWalkingAndWatching && !bInEscMenu && !(MyController->bInTabMenu)) {
-		if (IsAdditiveVisible) {
-			IsAdditiveVisible = false;
-			UserView->PlayAnimation(UserView->HideAdditiveInformation, 0, 1, EUMGSequencePlayMode::Reverse);
-		}
-		else {
-			IsAdditiveVisible = true;
-			UserView->PlayAnimation(UserView->HideAdditiveInformation, 0, 1, EUMGSequencePlayMode::Forward);
+		if (!IsHAnimationPlay) {
+			IsHAnimationPlay = true;
+			if (IsAdditiveVisible) {
+				IsAdditiveVisible = false;
+				UserView->PlayAnimation(UserView->HideAdditiveInformation, 0, 1, EUMGSequencePlayMode::Reverse);
+			}
+			else {
+				IsAdditiveVisible = true;
+				UserView->PlayAnimation(UserView->HideAdditiveInformation, 0, 1, EUMGSequencePlayMode::Forward);
+			}
 		}
 	}
 }
@@ -806,6 +809,7 @@ void AChel::PlaySpawnAnimationSleep_Implementation() {
 			UserView->RadiationPoints->SetPercent(1.0f);
 			UserView->DarkScreen->SetRenderOpacity(1.0f);
 			GetCharacterMovement()->GravityScale = 0;
+			GetCharacterMovement()->MaxWalkSpeed = 0;
 			GetCharacterMovement()->StopMovementImmediately();
 			GetCharacterMovement()->Velocity = { 0,0,0 };
 			SetActorEnableCollision(false);
@@ -1209,11 +1213,10 @@ void AChel::KillPlayer()
 	GetCharacterMovement()->StopMovementImmediately();
 	DisableCollisionEverywhere();
 	GetCharacterMovement()->GravityScale = 0;
+	GetCharacterMovement()->MaxWalkSpeed = 0;
 	GetCharacterMovement()->StopMovementImmediately();
 	GetCharacterMovement()->Velocity = { 0,0,0 };
 	SetActorEnableCollision(false);
-	GetCharacterMovement()->Deactivate();
-	GetCharacterMovement()->Activate();
 	HideCustomItems(true);
 	SetActorHiddenInGame(true);
 	IsInGame = false;
@@ -1287,16 +1290,16 @@ void AChel::SetAvaliableSpawnPoint() {
 void AChel::DisableCollisionEverywhere_Implementation()
 {
 	GetCharacterMovement()->GravityScale = 0;
+	GetCharacterMovement()->MaxWalkSpeed = 0;
 	GetCharacterMovement()->StopMovementImmediately();
 	GetCharacterMovement()->Velocity = { 0,0,0 };
-	GetCharacterMovement()->Deactivate();
-	GetCharacterMovement()->Activate();
 	SetActorEnableCollision(false);
 }
 
 void AChel::EnableCollisionEverywhere_Implementation()
 {
 	GetCharacterMovement()->GravityScale = 1.2f;
+	GetCharacterMovement()->MaxWalkSpeed = 500;
 	GetCharacterMovement()->StopMovementImmediately();
 	SetActorEnableCollision(true);
 	GetCharacterMovement()->Activate();

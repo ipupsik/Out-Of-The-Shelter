@@ -157,7 +157,7 @@ public:
 	/*UFUNCTION(Client, Reliable)
 		void StoneCountUpdate(int32 Count);*/
 
-	UFUNCTION(NetMulticast, Reliable)
+	UFUNCTION(Client, Reliable)
 		void DisableCollisionEverywhere();
 
 	UFUNCTION(NetMulticast, Reliable)
@@ -737,6 +737,8 @@ public:
 		void DropSpecialGun_Server();
 
 	void DropCoreItems(); //вываливает из себя имеющиеся ключевые предметы при смерти
+
+	bool IsHAnimationPlay;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 		TArray<AWeapon_Character*> CurrentWeapons; //текущие оружия(камень + особое)

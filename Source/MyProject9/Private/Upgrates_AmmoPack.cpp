@@ -21,6 +21,7 @@ void AUpgrates_AmmoPack::PickUpEventServer(AChel* Player)
 
 bool AUpgrates_AmmoPack::PickUpEventClient(AChel* Player) 
 {
+	PlayPickUpSound();
 	if (GetLocalRole() != ROLE_Authority)
 	{
 		Destroy();

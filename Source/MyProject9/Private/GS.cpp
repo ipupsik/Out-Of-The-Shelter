@@ -484,7 +484,7 @@ void AGS::BeginPlay()
 
 		for (int Keys = 0; Keys < 3; ++Keys)
 		{
-			for (int i = 0; i < 13; ++i)
+			for (int i = 0; i < 14; ++i)
 			{
 				int ArrayIndex = FMath::RandRange(0, Keys_IsAvaliable.Num() - 1);
 				while (!Keys_IsAvaliable[ArrayIndex])
@@ -523,7 +523,7 @@ void AGS::BeginPlay()
 			Details_IsAvaliable.Add(true);
 		}
 
-		for (int Det = 0; Det < 25; ++Det)
+		for (int Det = 0; Det < 35; ++Det)
 		{
 			int ArrayIndex = FMath::RandRange(0, Details_IsAvaliable.Num() - 1);
 			while (!Details_IsAvaliable[ArrayIndex])
