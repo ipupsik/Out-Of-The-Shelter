@@ -46,6 +46,7 @@ void ACollectableItem_ExtraDetails::PickUpEventServer(AChel* Player)
 bool ACollectableItem_ExtraDetails::PickUpEventClient(AChel* Player)
 {
 	Player->AmountDetails += Amount;
+	PlayPickUpSound();
 	Player->UserView->Details->SetText(FText::AsNumber(Player->AmountDetails));
 	if (GetLocalRole() != ROLE_Authority)
 	{
