@@ -15,6 +15,12 @@ ACoreItem_Dropped::ACoreItem_Dropped() {
 void ACoreItem_Dropped::PickUpEventServer(AChel* Player) {
 	PlayPickUpSound();
 	Player->DoesHave[TypeItem] = true;
+	TArray<AActor*>Players;
+	UGameplayStatics::GetAllActorsOfClass(Player->World, AChel::StaticClass(), Players);
+	for (auto& itPlayer : Players) {
+		AChel* TmpPlayer = Cast<AChel>(itPlayer);
+		TmpPlayer->PickUpCoreItem(TypeItem, Player->GS->NickNames[Player->Index]);
+	}
 	Destroy();
 }
 

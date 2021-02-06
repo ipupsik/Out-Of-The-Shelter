@@ -13,6 +13,7 @@ ABP_PlayerController::ABP_PlayerController()
 	IsAccept = true;
 	IsHost = false;
 	bInTabMenu = false;
+	IsShiftPressed = false;
 	WidgetStack = 0;
 }
 
@@ -36,40 +37,55 @@ void ABP_PlayerController::SetupInputComponent()
 
 	InputComponent->BindAction("TabStat", IE_Pressed, this, &ABP_PlayerController::ShowTab);
 	InputComponent->BindAction("TabStat", IE_Released, this, &ABP_PlayerController::UnShowTab);
+
+	InputComponent->BindAction("Sprint", IE_Pressed, this, &ABP_PlayerController::StartSprintContr);
+	InputComponent->BindAction("Sprint", IE_Released, this, &ABP_PlayerController::StopSprintContr);
+}
+
+void ABP_PlayerController::StartSprintContr() {
+	IsShiftPressed = true;
+}
+
+void ABP_PlayerController::StopSprintContr() {
+	IsShiftPressed = false;
 }
 
 //KillFeed --------------------
 void ABP_PlayerController::ShowTab()
 {
-	bInTabMenu = true;
-	bShowMouseCursor = true;
-	WidgetStack++;
-	TabWidget->SetVisibility(ESlateVisibility::Visible);
+	if (!IsShiftPressed) {
+		bInTabMenu = true;
+		bShowMouseCursor = true;
+		WidgetStack++;
+		TabWidget->SetVisibility(ESlateVisibility::Visible);
 
-	AChel* CurPawn = Cast<AChel>(GetPawn());
-	if (CurPawn) {
-		FInputModeGameAndUI InputUI;
-		SetInputMode(InputUI);
+		AChel* CurPawn = Cast<AChel>(GetPawn());
 		if (CurPawn) {
-			CurPawn->ShowInventory();
+			FInputModeGameAndUI InputUI;
+			SetInputMode(InputUI);
+			if (CurPawn) {
+				CurPawn->ShowInventory();
+			}
 		}
 	}
 }
 
 void ABP_PlayerController::UnShowTab()
 {
-	bInTabMenu = false;
-	WidgetStack--;
-	AChel* Plr = Cast<AChel>(GetPawn());
-	if (WidgetStack == 0)
-	{
-		bShowMouseCursor = false;
-		FInputModeGameOnly GameUI;
-		SetInputMode(GameUI);
-	}
-	TabWidget->SetVisibility(ESlateVisibility::Hidden);
-	if (Cast<AChel>(GetPawn())) {
-		Cast<AChel>(GetPawn())->UnShowInventory();
+	if (!IsShiftPressed) {
+		bInTabMenu = false;
+		WidgetStack--;
+		AChel* Plr = Cast<AChel>(GetPawn());
+		if (WidgetStack == 0)
+		{
+			bShowMouseCursor = false;
+			FInputModeGameOnly GameUI;
+			SetInputMode(GameUI);
+		}
+		TabWidget->SetVisibility(ESlateVisibility::Hidden);
+		if (Cast<AChel>(GetPawn())) {
+			Cast<AChel>(GetPawn())->UnShowInventory();
+		}
 	}
 }
 

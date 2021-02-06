@@ -41,6 +41,11 @@ public:
 	UFUNCTION(BlueprintImplementableEvent)
 		void PlayGameplayMusic();
 
+	void StartSprintContr();
+	void StopSprintContr();
+
+	bool IsShiftPressed;
+
 	void PlayMore();
 
 	void BeginPlay() override;

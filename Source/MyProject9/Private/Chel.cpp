@@ -820,7 +820,14 @@ void AChel::PlaySpawnAnimationSleep_Implementation() {
 			GetCharacterMovement()->Deactivate();
 			GetCharacterMovement()->Activate();
 		}
-		VerstakViewWidget->SetVisibility(ESlateVisibility::Collapsed);
+		if (VerstakViewWidget->IsVisible()) {
+			VerstakViewWidget->SetVisibility(ESlateVisibility::Collapsed);
+			MyController->WidgetStack--;
+			if (MyController->WidgetStack == 0) {
+				FInputModeGameOnly GameOnly;
+				MyController->SetInputMode(GameOnly);
+			}
+		}
 		Widget_Note->SetVisibility(ESlateVisibility::Collapsed);
 		SpawnDeadSound();
 		UserView->PlayAnimation(UserView->Shading);
@@ -1298,6 +1305,11 @@ void AChel::DisableCollisionEverywhere_Implementation()
 	GetCharacterMovement()->MaxWalkSpeed = 0;
 	GetCharacterMovement()->StopMovementImmediately();
 	GetCharacterMovement()->Velocity = { 0,0,0 };
+	for (auto& CustomItem : CustomizationChilds)
+	{
+		if (CustomItem)
+			CustomItem->SetActorHiddenInGame(true);
+	}
 	SetActorEnableCollision(false);
 }
 
@@ -1307,6 +1319,11 @@ void AChel::EnableCollisionEverywhere_Implementation()
 	GetCharacterMovement()->MaxWalkSpeed = 500;
 	GetCharacterMovement()->StopMovementImmediately();
 	SetActorEnableCollision(true);
+	for (auto& CustomItem : CustomizationChilds)
+	{
+		if (CustomItem)
+			CustomItem->SetActorHiddenInGame(false);
+	}
 	GetCharacterMovement()->Activate();
 	CameraComp->SetFieldOfView(90.0f);
 	CameraComp->SetRelativeRotation({ 0,0,0 });
