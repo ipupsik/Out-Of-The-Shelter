@@ -46,6 +46,7 @@ void ADezinfectorNasos::TurnOn()
 	if (GS->CanalizaciaNasosCount == 0)
 	{
 		GS->IsCanalizaciaAvaliable = true;
+
 	}
 	TurnOnMulticast();
 }

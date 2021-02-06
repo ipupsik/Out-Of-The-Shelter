@@ -131,10 +131,11 @@ void AVentil::CreateGasOnLevel() {
 	//добавление текста всем игрокам
 	TArray<AActor*> Chls;
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AChel::StaticClass(), Chls);
+	AChel* WhoActivate = Cast<AChel>(GetOwner());
 	for (auto& it : Chls) {
 		AChel* Plr = Cast<AChel>(it);
-		if (Plr) {
-			Plr->AddMessagePlayerActiveVentil(areaType, Plr->NickName);
+		if (Plr && WhoActivate) {
+			Plr->AddMessagePlayerActiveVentil(areaType, WhoActivate->NickName);
 		}
 	}
 

@@ -207,6 +207,14 @@ public:
 	void InvisibleEnd();
 
 	UFUNCTION(Client, Reliable)
+		void EventRubilnicCollisionOff_Client();
+	void EventRubilnicCollisionOff();
+
+	UFUNCTION(Client, Reliable)
+		void EventNasosCollisionOff_Client();
+	void EventNasosCollisionOff();
+
+	UFUNCTION(Client, Reliable)
 	void AddHitMarker();
 	void RemoveHitMarker();
 
@@ -681,6 +689,10 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	UNoteWidget* Widget_Note;
+
+
+	bool IsInCollisionOutlRubilnici;
+	bool IsInCollisionOutlNasos;
 
 	AItemPromtArrow_MainExis* MainExis_Shelter;
 	AItemPromtArrow_MainExis* MainExis_Ventilacia;

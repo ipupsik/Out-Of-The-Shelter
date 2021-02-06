@@ -13,6 +13,8 @@
 #include "PromptCollisionArea.h"
 #include "CollectableItem.h"
 #include "InteractiveCache.h"
+#include "CollisionOutlineRubilnici.h"
+#include "CollisionOutlineNasos.h"
 #include "Details.h"
 #include "Weapon_Character.h"
 
@@ -835,4 +837,42 @@ void AGS::RemoveGasFromFloor() {
 
 	FTimerHandle FuzeTimerHandle;
 	GetWorld()->GetTimerManager().SetTimer(FuzeTimerHandle, this, &AGS::CreateGasOnFloor, RandomEventDuration, false);
+}
+
+void AGS::OffCollisionRubilnici_Implementation() {
+	TArray<AActor*> CollisionOutlineRubilnic;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ACollisionOutlineRubilnici::StaticClass(), CollisionOutlineRubilnic);
+	ACollisionOutlineRubilnici* CurColisionRubilnic = Cast<ACollisionOutlineRubilnici>(CollisionOutlineRubilnic[0]);
+	if (CurColisionRubilnic) {
+		CurColisionRubilnic->IsEnabled = false;
+	}
+	if (GetLocalRole() == ROLE_Authority) {
+		TArray<AActor*> OvPlayers;
+		CurColisionRubilnic->GetOverlappingActors(OvPlayers);
+		for (auto& it : OvPlayers) {
+			AChel* CurOverlapPlayer = Cast<AChel>(it);
+			if (CurOverlapPlayer) {
+				CurOverlapPlayer->EventRubilnicCollisionOff_Client();
+			}
+		}
+	}
+}
+
+void AGS::OffCollisionNasosi_Implementation() {
+	TArray<AActor*> CollisionOutlineNasosi;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ACollisionOutlineNasos::StaticClass(), CollisionOutlineNasosi);
+	ACollisionOutlineNasos* CurColisionNasos = Cast<ACollisionOutlineNasos>(CollisionOutlineNasosi[0]);
+	if (CurColisionNasos) {
+		CurColisionNasos->IsEnabled = false;
+	}
+	if (GetLocalRole() == ROLE_Authority) {
+		TArray<AActor*> OvPlayers;
+		CurColisionNasos->GetOverlappingActors(OvPlayers);
+		for (auto& it : OvPlayers) {
+			AChel* CurOverlapPlayer = Cast<AChel>(it);
+			if (CurOverlapPlayer) {
+				CurOverlapPlayer->EventNasosCollisionOff_Client();
+			}
+		}
+	}
 }

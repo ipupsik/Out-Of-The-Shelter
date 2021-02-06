@@ -42,4 +42,8 @@ public:
 		USceneComponent* Scene;
 	UPROPERTY(EditAnywhere)
 	FSlateColor MyColor;
+
+
+	UPROPERTY(EditAnywhere)
+		bool IsEnableWhen3Player;
 };

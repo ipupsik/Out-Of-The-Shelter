@@ -18,6 +18,8 @@ ABP_VentilaciaRubilnick::ABP_VentilaciaRubilnick()
 
 	Item = CreateDefaultSubobject<UStaticMeshComponent>("Item");
 	Item->SetupAttachment(Scene);
+
+	IsEnableWhen3Player = true;
 }
 
 void ABP_VentilaciaRubilnick::ToggleCustomDepth(bool NewIsOutliningNow, AChel* Player)
@@ -54,6 +56,8 @@ void ABP_VentilaciaRubilnick::PickUpEventServer(AChel* Player)
 	ChangeAvaliable();
 	if (Player->GS->VentilaciaRubilnickCount == 0)
 	{
+		Player->GS->OffCollisionRubilnici();
+
 		Player->GS->IsVentilaciaAvaliable = true;
 		TArray<AActor*>VentilaciaGenerator;
 		UGameplayStatics::GetAllActorsOfClass(GetWorld(), AVentilaciaGenerator::StaticClass(), VentilaciaGenerator);

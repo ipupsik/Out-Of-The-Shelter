@@ -244,6 +244,11 @@ public:
 	UTab* TabWidgetGS;
 
 
+	UFUNCTION(NetMulticast, Reliable)
+		void OffCollisionRubilnici();
+	UFUNCTION(NetMulticast, Reliable)
+		void OffCollisionNasosi();
+
 	int CurrentButtonCount;
 
 	float CurrentTime;

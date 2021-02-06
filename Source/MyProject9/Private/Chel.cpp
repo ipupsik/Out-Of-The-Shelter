@@ -25,6 +25,8 @@
 #include "Ventil.h"
 #include "Consumable.h"
 #include "InteractiveCache.h"
+#include "BP_VentilaciaRubilnick.h"
+#include "DezinfectorNasos.h"
 #include "AreaCollision.h"
 
 // Sets default values
@@ -112,6 +114,8 @@ AChel::AChel()
 	CurrentWeapons.Init(nullptr, 2);
 	IsRentgenRender = false;
 	IsAdditiveVisible = false;
+	IsInCollisionOutlRubilnici = false;
+	IsInCollisionOutlNasos = false;
 }
 
 //SetupReplicationVariables----
@@ -830,6 +834,10 @@ void AChel::PlaySpawnAnimationSleep_Implementation() {
 				MyController->SetInputMode(GameOnly);
 			}
 		}
+		EventRubilnicCollisionOff();
+		if(GI->MaxPlayersCount)
+			EventNasosCollisionOff();
+
 		Widget_Note->SetVisibility(ESlateVisibility::Collapsed);
 		SpawnDeadSound();
 		UserView->PlayAnimation(UserView->Shading);
@@ -2533,5 +2541,39 @@ void AChel::DeleteParticleImmortal_Implementation() {
 void AChel::RefreshAmountDetails() {
 	if (UserView) {
 		UserView->Details->SetText(FText::AsNumber(AmountDetails));
+	}
+}
+
+void AChel::EventRubilnicCollisionOff_Client_Implementation() {
+	EventRubilnicCollisionOff();
+}
+
+void AChel::EventRubilnicCollisionOff() {
+	IsInCollisionOutlRubilnici = false;
+	TArray<AActor*> AllRubilnics;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ABP_VentilaciaRubilnick::StaticClass(), AllRubilnics);
+	for (auto& it : AllRubilnics) {
+		ABP_VentilaciaRubilnick* CurRubilnic = Cast<ABP_VentilaciaRubilnick>(it);
+		if (CurRubilnic->Item->bRenderCustomDepth && CurRubilnic->IsEnableWhen3Player) {
+			CurRubilnic->Item->SetRenderCustomDepth(false);
+			CurRubilnic->Item->MarkRenderStateDirty();
+		}
+	}
+}
+
+void AChel::EventNasosCollisionOff_Client_Implementation() {
+	EventNasosCollisionOff();
+}
+
+void AChel::EventNasosCollisionOff() {
+	IsInCollisionOutlNasos = false;
+	TArray<AActor*> AllNasoses;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ADezinfectorNasos::StaticClass(), AllNasoses);
+	for (auto& it : AllNasoses) {
+		ADezinfectorNasos* CurNasos = Cast<ADezinfectorNasos>(it);
+		if (CurNasos->Nasos->bRenderCustomDepth) {
+			CurNasos->Nasos->SetRenderCustomDepth(false);
+			CurNasos->Nasos->MarkRenderStateDirty();
+		}
 	}
 }
