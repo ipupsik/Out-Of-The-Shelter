@@ -26,8 +26,6 @@ public:
 		USlider* Corretca;
 
 	UPROPERTY(meta = (BindWidget))
-		UTextBlock* ESC;
-	UPROPERTY(meta = (BindWidget))
 		UTextBlock* RepairText;
 
 	UPROPERTY(meta = (BindWidget))

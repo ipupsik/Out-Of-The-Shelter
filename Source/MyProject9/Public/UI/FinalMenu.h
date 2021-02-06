@@ -30,9 +30,9 @@ public:
 		UButton* BTN_PlayMore;
 
 	UPROPERTY(EditAnywhere)
-	FLinearColor ColorAgreePlayer;
+		FSlateColor ColorAgreePlayer;
 	UPROPERTY(EditAnywhere)
-	FLinearColor ColorNotAgreePlayer;
+		FSlateColor ColorNotAgreePlayer;
 
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
 		UButton* BTN_Exit;
