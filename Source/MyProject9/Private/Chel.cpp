@@ -2401,6 +2401,16 @@ void AChel::ClearWeaponInfo() {
 	UserView->AmmoSlash->SetVisibility(ESlateVisibility::Hidden);
 }
 
+void AChel::AddMessagePlayerActiveVentil_Implementation(int32 FloorNum, const FText& NickNamePlayer) {
+	UPlayerActivateGasOnFloor* TmpWidget = Cast<UPlayerActivateGasOnFloor>(CreateWidget(World, GasOnFloorEnable_class));
+	if (TmpWidget) {
+		TmpWidget->Floor->SetText(FText::AsNumber(FloorNum));
+		TmpWidget->NickName->SetText(NickNamePlayer);
+	}
+	if (KillFeed)
+		KillFeed->VB_KillFeed->AddChild(TmpWidget);
+}
+
 void AChel::ClearWeaponInfoClient_Implementation() {
 	ClearWeaponInfo();
 }

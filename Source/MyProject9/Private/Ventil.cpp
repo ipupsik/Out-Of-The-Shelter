@@ -128,6 +128,17 @@ void AVentil::ChangeIndexOwner_Implementation(int32 idx) {
 }
 
 void AVentil::CreateGasOnLevel() {
+	//добавление текста всем игрокам
+	TArray<AActor*> Chls;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AChel::StaticClass(), Chls);
+	for (auto& it : Chls) {
+		AChel* Plr = Cast<AChel>(it);
+		if (Plr) {
+			Plr->AddMessagePlayerActiveVentil(areaType, Plr->NickName);
+		}
+	}
+
+	//cоздание самого газа
 	UE_LOG(LogTemp, Warning, TEXT("CreateGas"));
 	bCanInterract = false;
 	ChangeCanInterract(false);

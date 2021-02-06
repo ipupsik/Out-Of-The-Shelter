@@ -44,6 +44,7 @@
 #include "CoreItem_Dropped.h"
 #include "UI/GasOnRandomFloorMessage.h"
 #include "ParticleImmortal.h"
+#include "UI/PlayerActivateGasOnFloor.h"
 #include "Chel.generated.h"
 
 
@@ -482,9 +483,15 @@ public:
 		TSubclassOf<UPlayerFindCoreItem> PlayerFindCoreItem_class;
 	UPROPERTY(EditAnywhere, Category = "UI HUD")
 		TSubclassOf<UGasOnRandomFloorMessage> RandomGasWidget_class;
+	UPROPERTY(EditAnywhere, Category = "UI HUD")
+		TSubclassOf<UPlayerActivateGasOnFloor> GasOnFloorEnable_class;
+	
 
 	UFUNCTION(Client, Reliable)
 	void AddMessageRandomEvent(int32 FloorNum);
+
+	UFUNCTION(Client, Reliable)
+		void AddMessagePlayerActiveVentil(int32 FloorNum, const FText& NickNamePlayer);
 
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)

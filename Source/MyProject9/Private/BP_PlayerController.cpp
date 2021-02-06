@@ -25,8 +25,12 @@ void ABP_PlayerController::BeginPlay()
 	//TabWidget->AddToViewport(1);
 }
 
-void ABP_PlayerController::RefreshPlayersVoteCount_Implementation(int32 Agreed, int32 Amount)
+void ABP_PlayerController::RefreshPlayersVoteCount_Implementation(int32 Agreed, int32 Amount, bool IsPressed)
 {
+	if(IsPressed)
+		FinalMenu->TB_Restart->SetColorAndOpacity(FinalMenu->ColorAgreePlayer);
+	else
+		FinalMenu->TB_Restart->SetColorAndOpacity(FinalMenu->ColorNotAgreePlayer);
 	FText NewText = FText::Format(FText::FromString(TEXT("Play More {0}/{1}")), Agreed, Amount);
 	FinalMenu->TB_PlayMore->SetText(NewText);
 }
@@ -103,21 +107,19 @@ void ABP_PlayerController::ChangePlayersVoteCount_Implementation()
 			TArray<AActor*>PlayerControllers;
 			UGameplayStatics::GetAllActorsOfClass(GetWorld(), ABP_PlayerController::StaticClass(), PlayerControllers);
 			for (auto PC : PlayerControllers) {
-				Cast<ABP_PlayerController>(PC)->RefreshPlayersVoteCount(GS->AgreedPlayers + 1, GS->AmountOfPlayers);
+				Cast<ABP_PlayerController>(PC)->RefreshPlayersVoteCount(GS->AgreedPlayers + 1, GS->AmountOfPlayers, true);
 			}
 			GS->AgreedPlayers++;
 		}
-		FinalMenu->TB_Restart->SetColorAndOpacity(FinalMenu->ColorAgreePlayer);
 	}
 	else
 	{
 		TArray<AActor*>PlayerControllers;
 		UGameplayStatics::GetAllActorsOfClass(GetWorld(), ABP_PlayerController::StaticClass(), PlayerControllers);
 		for (auto PC : PlayerControllers) {
-			Cast<ABP_PlayerController>(PC)->RefreshPlayersVoteCount(GS->AgreedPlayers - 1, GS->AmountOfPlayers);
+			Cast<ABP_PlayerController>(PC)->RefreshPlayersVoteCount(GS->AgreedPlayers - 1, GS->AmountOfPlayers, false);
 		}
 		GS->AgreedPlayers--;
-		FinalMenu->TB_Restart->SetColorAndOpacity(FinalMenu->ColorNotAgreePlayer);
 	}
 	IsAccept = !IsAccept;
 }

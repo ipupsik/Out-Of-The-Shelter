@@ -53,7 +53,7 @@ public:
 		void ChangePlayersVoteCount();
 
 	UFUNCTION(Client, Reliable, BlueprintCallable)
-		void RefreshPlayersVoteCount(int32 Agreed, int32 Amount);
+		void RefreshPlayersVoteCount(int32 Agreed, int32 Amount, bool IsPressed);
 
 	UFUNCTION(Client, Reliable, BlueprintCallable)
 		void RemoveFinalMenu();
