@@ -37,55 +37,40 @@ void ABP_PlayerController::SetupInputComponent()
 
 	InputComponent->BindAction("TabStat", IE_Pressed, this, &ABP_PlayerController::ShowTab);
 	InputComponent->BindAction("TabStat", IE_Released, this, &ABP_PlayerController::UnShowTab);
-
-	InputComponent->BindAction("Sprint", IE_Pressed, this, &ABP_PlayerController::StartSprintContr);
-	InputComponent->BindAction("Sprint", IE_Released, this, &ABP_PlayerController::StopSprintContr);
 }
-
-void ABP_PlayerController::StartSprintContr() {
-	IsShiftPressed = true;
-}
-
-void ABP_PlayerController::StopSprintContr() {
-	IsShiftPressed = false;
-}
-
 //KillFeed --------------------
 void ABP_PlayerController::ShowTab()
 {
-	if (!IsShiftPressed) {
-		bInTabMenu = true;
-		bShowMouseCursor = true;
-		WidgetStack++;
-		TabWidget->SetVisibility(ESlateVisibility::Visible);
+	bInTabMenu = true;
+	bShowMouseCursor = true;
+	WidgetStack++;
+	TabWidget->SetVisibility(ESlateVisibility::Visible);
 
-		AChel* CurPawn = Cast<AChel>(GetPawn());
+	AChel* CurPawn = Cast<AChel>(GetPawn());
+	if (CurPawn) {
+		FInputModeGameAndUI InputUI;
+		SetInputMode(InputUI);
 		if (CurPawn) {
-			FInputModeGameAndUI InputUI;
-			SetInputMode(InputUI);
-			if (CurPawn) {
-				CurPawn->ShowInventory();
-			}
+			CurPawn->ShowInventory();
 		}
 	}
 }
 
 void ABP_PlayerController::UnShowTab()
 {
-	if (!IsShiftPressed) {
-		bInTabMenu = false;
+	bInTabMenu = false;
+	if(WidgetStack != 0)
 		WidgetStack--;
-		AChel* Plr = Cast<AChel>(GetPawn());
-		if (WidgetStack == 0)
-		{
-			bShowMouseCursor = false;
-			FInputModeGameOnly GameUI;
-			SetInputMode(GameUI);
-		}
-		TabWidget->SetVisibility(ESlateVisibility::Hidden);
-		if (Cast<AChel>(GetPawn())) {
-			Cast<AChel>(GetPawn())->UnShowInventory();
-		}
+	AChel* Plr = Cast<AChel>(GetPawn());
+	if (WidgetStack == 0)
+	{
+		bShowMouseCursor = false;
+		FInputModeGameOnly GameUI;
+		SetInputMode(GameUI);
+	}
+	TabWidget->SetVisibility(ESlateVisibility::Hidden);
+	if (Cast<AChel>(GetPawn())) {
+		Cast<AChel>(GetPawn())->UnShowInventory();
 	}
 }
 

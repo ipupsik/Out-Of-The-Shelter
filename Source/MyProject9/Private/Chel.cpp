@@ -777,6 +777,7 @@ bool AChel::StartSprint_Server_Validate()
 
 void AChel::StartSprint() {
 	GetCharacterMovement()->MaxWalkSpeed = 1100.f;
+	MyController->IsShiftPressed = true;
 	StartSprint_Server();
 }
 
@@ -792,6 +793,7 @@ bool AChel::StopSprint_Server_Validate()
 
 void AChel::StopSprint() {
 	GetCharacterMovement()->MaxWalkSpeed = 500.f;
+	MyController->IsShiftPressed = false;
 	StopSprint_Server();
 }
 //-----------------------------
