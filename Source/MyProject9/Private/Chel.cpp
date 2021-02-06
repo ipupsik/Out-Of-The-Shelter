@@ -349,7 +349,6 @@ void AChel::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	UE_LOG(LogTemp, Warning, TEXT("%d"), MyController->WidgetStack);
 	if (IsInGame == true) {
 		if (IsServerAuth) {
 			Health += DeltaTime * 2 * 0.01f * RadCoeff * CanalizationDamage / 1.5f  * TempAntiDotEffect;
