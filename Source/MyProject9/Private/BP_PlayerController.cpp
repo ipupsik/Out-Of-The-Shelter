@@ -107,6 +107,7 @@ void ABP_PlayerController::ChangePlayersVoteCount_Implementation()
 			}
 			GS->AgreedPlayers++;
 		}
+		FinalMenu->TB_Restart->SetColorAndOpacity(FinalMenu->ColorAgreePlayer);
 	}
 	else
 	{
@@ -116,6 +117,7 @@ void ABP_PlayerController::ChangePlayersVoteCount_Implementation()
 			Cast<ABP_PlayerController>(PC)->RefreshPlayersVoteCount(GS->AgreedPlayers - 1, GS->AmountOfPlayers);
 		}
 		GS->AgreedPlayers--;
+		FinalMenu->TB_Restart->SetColorAndOpacity(FinalMenu->ColorNotAgreePlayer);
 	}
 	IsAccept = !IsAccept;
 }

@@ -29,6 +29,11 @@ public:
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
 		UButton* BTN_PlayMore;
 
+	UPROPERTY(EditAnywhere)
+	FLinearColor ColorAgreePlayer;
+	UPROPERTY(EditAnywhere)
+	FLinearColor ColorNotAgreePlayer;
+
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
 		UButton* BTN_Exit;
 
