@@ -2545,6 +2545,8 @@ void AChel::RefreshAmountDetails() {
 }
 
 void AChel::EventRubilnicCollisionOff_Client_Implementation() {
+	if (CurCoreArea)
+		UserView->PropmptTextArea->SetText(CurCoreArea->AreaAvaliableAndHaveNoItem);
 	EventRubilnicCollisionOff();
 }
 
@@ -2562,6 +2564,8 @@ void AChel::EventRubilnicCollisionOff() {
 }
 
 void AChel::EventNasosCollisionOff_Client_Implementation() {
+	if (CurCoreArea) 
+		UserView->PropmptTextArea->SetText(CurCoreArea->AreaAvaliableAndHaveNoItem);
 	EventNasosCollisionOff();
 }
 
