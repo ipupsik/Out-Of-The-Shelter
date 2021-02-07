@@ -43,6 +43,8 @@ public:
 	UPROPERTY(meta = (BindWidget))
 		UTextBlock* TB_Exit;
 
+	bool IsClicked;
+
 	UPROPERTY(meta = (BindWidget))
 		UTextBlock* TB_Restart;
 

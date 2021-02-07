@@ -52,10 +52,9 @@ void AAreaCollision::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor*
 					}
 					else
 					{
-						if (AreaType != 1) {
-							Player->UserView->E_Mark->SetVisibility(ESlateVisibility::Visible);
-							Player->UserView->PropmptTextArea->SetText(AreaOpenAndCanEscape);
-						}
+						Player->UserView->E_Mark->SetVisibility(ESlateVisibility::Visible);
+						Player->UserView->PropmptTextArea->SetText(AreaOpenAndCanEscape);
+						
 						//Player->UserView->EscapeText->SetVisibility(ESlateVisibility::Visible);
 					}
 				}

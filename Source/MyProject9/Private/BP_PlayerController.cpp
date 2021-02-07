@@ -27,10 +27,6 @@ void ABP_PlayerController::BeginPlay()
 
 void ABP_PlayerController::RefreshPlayersVoteCount_Implementation(int32 Agreed, int32 Amount, bool IsPressed)
 {
-	if(IsPressed)
-		FinalMenu->TB_PlayMore->SetColorAndOpacity(FinalMenu->ColorAgreePlayer);
-	else
-		FinalMenu->TB_PlayMore->SetColorAndOpacity(FinalMenu->ColorNotAgreePlayer);
 	FText NewText = FText::Format(FText::FromString(TEXT("Play More {0}/{1}")), Agreed, Amount);
 	FinalMenu->TB_PlayMore->SetText(NewText);
 }

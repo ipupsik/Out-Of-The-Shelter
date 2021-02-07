@@ -330,7 +330,8 @@ void AChel::MyBeginPlay()
 
 void AChel::RemoveIconFromPanel_Client_Implementation(int32 IdEffect)
 {
-	UserView->RemoveIconFromPanel(IdEffect);
+	if (UserView)
+		UserView->RemoveIconFromPanel(IdEffect);
 }
 
 void AChel::PossessedBy(AController* NewController)
@@ -391,7 +392,7 @@ void AChel::Tick(float DeltaTime)
 			}
 		}
 
-		if (IsPlayerOwner) {
+		if (IsPlayerOwner && UserView) {
 			//----------------------------------------------------для генератора Start--------------------------------------
 			if (TickEnableGeneratorWidget) {
 				if (bToRight) {
@@ -519,7 +520,7 @@ void AChel::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 
 void AChel::H_Pressed() {
 	if (!bInShopMenu && bCanWalkingAndWatching && !bInEscMenu && !(MyController->bInTabMenu)) {
-		if (!IsHAnimationPlay) {
+		if (!IsHAnimationPlay && UserView) {
 			IsHAnimationPlay = true;
 			if (IsAdditiveVisible) {
 				IsAdditiveVisible = false;
@@ -970,7 +971,7 @@ void AChel::PickUp_Released()
 				if (LastInteractiveItem->PickUpEventReleaseClient(this))
 					PickUp_Released_Server();
 			}
-			else if (CurCoreArea) {
+			else if (CurCoreArea && UserView) {
 				if (UserView->IsAnimationPlaying(UserView->CanalizaciaAnim))
 					UserView->StopAnimation(UserView->CanalizaciaAnim);
 				else if (UserView->IsAnimationPlaying(UserView->VentilaciaAnim))
@@ -1066,12 +1067,14 @@ bool AChel::PickUp_Server_Validate()
 
 void AChel::ReplaceRAbilityItem_Client(UClass* AbilityItemclass)
 {
-	ReplaceRAbilityItem_Server(RAbilityPanel[RAbilityTypeIndex]->GetClass());
-	RAbilityPanel[RAbilityTypeIndex]->ConditionalBeginDestroy();
-	RAbilityPanel[RAbilityTypeIndex] = NewObject<UConsumableAbility>(this, AbilityItemclass);
-	RAbilityPanel[RAbilityTypeIndex]->UserViewSlot = Cast<URAbilitySlot>(MyInventory->RAbilityPanel->GetChildAt(RAbilityTypeIndex));
-	RAbilityPanel[RAbilityTypeIndex]->SetAbilityToSlot();
-	SetCurRAbilityUserView();
+	if (RAbilityPanel[RAbilityTypeIndex]) {
+		ReplaceRAbilityItem_Server(RAbilityPanel[RAbilityTypeIndex]->GetClass());
+		RAbilityPanel[RAbilityTypeIndex]->ConditionalBeginDestroy();
+		RAbilityPanel[RAbilityTypeIndex] = NewObject<UConsumableAbility>(this, AbilityItemclass);
+		RAbilityPanel[RAbilityTypeIndex]->UserViewSlot = Cast<URAbilitySlot>(MyInventory->RAbilityPanel->GetChildAt(RAbilityTypeIndex));
+		RAbilityPanel[RAbilityTypeIndex]->SetAbilityToSlot();
+		SetCurRAbilityUserView();
+	}
 }
 
 void AChel::ReplaceRAbilityItem_Server_Implementation(UClass* AbilityItemclass)
@@ -1148,14 +1151,18 @@ void AChel::NewHaveItemClient_Implementation(int32 ItemType)
 
 void AChel::AddHitMarker_Implementation()
 {
-	UserView->Marker->SetVisibility(ESlateVisibility::Visible);
-	FTimerHandle FuzeTimerHandle;
-	World->GetTimerManager().SetTimer(FuzeTimerHandle, this, &AChel::RemoveHitMarker, 0.05, false);
+	if (UserView) {
+		UserView->Marker->SetVisibility(ESlateVisibility::Visible);
+		FTimerHandle FuzeTimerHandle;
+		World->GetTimerManager().SetTimer(FuzeTimerHandle, this, &AChel::RemoveHitMarker, 0.05, false);
+	}
 }
 
 void AChel::RemoveHitMarker()
 {
-	UserView->Marker->SetVisibility(ESlateVisibility::Collapsed);
+	if (UserView) {
+		UserView->Marker->SetVisibility(ESlateVisibility::Collapsed);
+	}
 }
 
 void AChel::RefreshWidgets_Implementation(const TArray<bool>& whatToUpdate, const FText& KillerNickName, 
@@ -1370,23 +1377,25 @@ bool AChel::PlayerOpenAreaUpdate_Validate(int32 EscapeWay)
 
 void AChel::RefreshWidgets_Winner_Implementation(int32 EscapeWay)
 {
-	switch (EscapeWay)
-	{
-	case 0:
-	{
-		UserView->WS_Boltorez->SetVisibility(ESlateVisibility::Collapsed);
-		break;
-	}
-	case 2:
-	{
-		UserView->WS_Otvertka->SetVisibility(ESlateVisibility::Collapsed);
-		break;
-	}
-	case 1:
-	{
-		UserView->WS_KeyShelter->SetVisibility(ESlateVisibility::Collapsed);
-		break;
-	}
+	if (UserView) {
+		switch (EscapeWay)
+		{
+		case 0:
+		{
+			UserView->WS_Boltorez->SetVisibility(ESlateVisibility::Collapsed);
+			break;
+		}
+		case 2:
+		{
+			UserView->WS_Otvertka->SetVisibility(ESlateVisibility::Collapsed);
+			break;
+		}
+		case 1:
+		{
+			UserView->WS_KeyShelter->SetVisibility(ESlateVisibility::Collapsed);
+			break;
+		}
+		}
 	}
 }
 
@@ -1404,7 +1413,7 @@ bool AChel::StuffAvaliableUpdate_Validate(int32 EscapeWay)
 void AChel::ExitAvaliableUpdate_Implementation(int32 EscapeWay)
 {
 	//AreaCode = EscapeWay; //хз нужно ли
-	if (CurCoreArea) {
+	if (CurCoreArea && UserView) {
 		if (EscapeWay != 1)
 			UserView->E_Mark->SetVisibility(ESlateVisibility::Visible);
 		else
@@ -1500,11 +1509,13 @@ bool AChel::PlayerEscape_Validate(int32 EscapeWay)
 void AChel::AreaClosedUpdate_Implementation(int32 EscapeWay)
 {
 	//AreaCode = -1;
-	if(!LastInteractiveItem)
-		UserView->E_Mark->SetVisibility(ESlateVisibility::Collapsed);
-	UserView->PropmptTextArea->SetText(CurCoreArea->AreaClose);
-	//UserView->EscapeText->SetVisibility(ESlateVisibility::Hidden);
-	CurCoreArea = nullptr;
+	if (UserView) {
+		if (!LastInteractiveItem)
+			UserView->E_Mark->SetVisibility(ESlateVisibility::Collapsed);
+		UserView->PropmptTextArea->SetText(CurCoreArea->AreaClose);
+		//UserView->EscapeText->SetVisibility(ESlateVisibility::Hidden);
+		CurCoreArea = nullptr;
+	}
 }
 
 
@@ -1628,15 +1639,19 @@ bool AChel::CallDoThomethinkArea_Validate()
 }
 void AChel::DeleteGameHUD_Implementation()
 {
-	UserView->RemoveFromParent();
-	UserView->Destruct();
+	if (UserView) {
+		UserView->RemoveFromParent();
+		UserView = nullptr;
+	}
+	if (KillFeed) {
+		KillFeed->RemoveFromParent();
+		KillFeed = nullptr;
+	}
+	if (WebCamUI) {
+		WebCamUI->RemoveFromParent();
+		WebCamUI = nullptr;
+	}
 
-	KillFeed->RemoveFromParent();
-	KillFeed->Destruct();
-
-	WebCamUI->RemoveFromParent();
-	WebCamUI->Destruct();	
-	
 	Destroy();
 }
 
@@ -1657,11 +1672,13 @@ void AChel::ChangePB_Client_Implementation(int32 ValueV)
 
 void AChel::HideWidgetStas_Implementation()
 {
-	if(GI->bIsEnabledPrompt)
-		UserView->PropmptTextArea->SetText(GenAreaObj->PromptGenTextNotActive);
-	GeneratorView->SetVisibility(ESlateVisibility::Collapsed);
-	UserView->E_Mark->SetVisibility(ESlateVisibility::Collapsed);
-	TickEnableGeneratorWidget = false;
+	if (UserView) {
+		if (GI->bIsEnabledPrompt)
+			UserView->PropmptTextArea->SetText(GenAreaObj->PromptGenTextNotActive);
+		GeneratorView->SetVisibility(ESlateVisibility::Collapsed);
+		UserView->E_Mark->SetVisibility(ESlateVisibility::Collapsed);
+		TickEnableGeneratorWidget = false;
+	}
 }
 
 void AChel::RefreshOutline()
@@ -1756,8 +1773,10 @@ void AChel::HideNoteWidget_Implementation()
 
 void AChel::RefreshGeneratorArea_Implementation()
 {
-	UserView->PropmptTextArea->SetText(GenAreaObj->PromptGenNotRepairing);
-	UserView->E_Mark->SetVisibility(ESlateVisibility::Visible);
+	if (UserView) {
+		UserView->PropmptTextArea->SetText(GenAreaObj->PromptGenNotRepairing);
+		UserView->E_Mark->SetVisibility(ESlateVisibility::Visible);
+	}
 }
 
 void AChel::AddNumToTerminalServer_Implementation(int32 ButtonType)
@@ -1988,7 +2007,7 @@ void AChel::ShowUIAfterTerminalAndGenerator_Implementation(int32 NewAreaType, bo
 		}
 		if (NewAreaType <= 2 && !GS->AreaAvaliables[NewAreaType])
 		{
-			if (CurCoreArea) {
+			if (CurCoreArea && UserView) {
 				if (DoesHave[NewAreaType]) {
 					UserView->E_Mark->SetVisibility(ESlateVisibility::Visible);
 					UserView->PropmptTextArea->SetText(CurCoreArea->AreaAvaliableAndCanOpen);
@@ -2016,7 +2035,7 @@ void AChel::ShowUIAfterTerminalAndGenerator_Implementation(int32 NewAreaType, bo
 			GNRTR->PromtCollisionGenerator[0]->PromptedItems[i]->Mesh->SetRenderCustomDepth(true);
 			GNRTR->PromtCollisionGenerator[0]->PromptedItems[i]->Mesh->MarkRenderStateDirty();
 		}
-		if (NewAreaType <= 2 && !GS->AreaAvaliables[NewAreaType])
+		if (NewAreaType <= 2 && !GS->AreaAvaliables[NewAreaType] && UserView)
 		{
 			if (DoesHave[NewAreaType]) { //на случай, если чел открывал дверь букера, но вырубили генератор
 				IsSuccessOpening = false;
@@ -2034,23 +2053,25 @@ void AChel::ShowUIAfterTerminalAndGenerator_Implementation(int32 NewAreaType, bo
 
 void AChel::ResetCacheKeys()
 {
-	DeleteArrowDelayKeyShelter();
-	DeleteArrowDelayBoltorez();
-	DeleteArrowDelayOtvertka();
-	KeysCount[0] = 0;
-	KeysCount[1] = 0;
-	KeysCount[2] = 0;
-	UserView->KeyLeft_Gold->SetText(FText::AsNumber(0));
-	UserView->KeyLeft_Silver->SetText(FText::AsNumber(0));
-	UserView->KeyLeft_Bronze->SetText(FText::AsNumber(0));
+	if (UserView) {
+		DeleteArrowDelayKeyShelter();
+		DeleteArrowDelayBoltorez();
+		DeleteArrowDelayOtvertka();
+		KeysCount[0] = 0;
+		KeysCount[1] = 0;
+		KeysCount[2] = 0;
+		UserView->KeyLeft_Gold->SetText(FText::AsNumber(0));
+		UserView->KeyLeft_Silver->SetText(FText::AsNumber(0));
+		UserView->KeyLeft_Bronze->SetText(FText::AsNumber(0));
 
-	AmountDetails = 0;
-	RefreshAmountDetails();
+		AmountDetails = 0;
+		RefreshAmountDetails();
+	}
 }
 
 void AChel::AddExtraDetails()
 {
-	if (IsNotInWebCam) {
+	if (IsNotInWebCam && UserView) {
 		AmountDetails += ExtraDetailsTimer;
 		UserView->Details->SetText(FText::AsNumber(AmountDetails));
 	}
@@ -2061,7 +2082,7 @@ void AChel::AddExtraDetails()
 
 void AChel::AddExtraCacheKeys()
 {
-	if (IsNotInWebCam) {
+	if (IsNotInWebCam && UserView) {
 		KeysCount[0] += ExtraCacheKeysTimer;
 		KeysCount[1] += ExtraCacheKeysTimer;
 		KeysCount[2] += ExtraCacheKeysTimer;
@@ -2123,12 +2144,14 @@ void AChel::DeleteKDATab_Implementation(int32 newPlayerIndex)
 
 void AChel::ShowInventory()
 {
-	MyInventory->SetVisibility(ESlateVisibility::Visible);
+	if (MyInventory)
+		MyInventory->SetVisibility(ESlateVisibility::Visible);
 }
 
 void AChel::UnShowInventory()
 {
-	MyInventory->SetVisibility(ESlateVisibility::Hidden);
+	if (MyInventory)
+		MyInventory->SetVisibility(ESlateVisibility::Hidden);
 }
 
 void AChel::RAbilityStackPop(int32 TmpIndex)
@@ -2170,9 +2193,11 @@ void AChel::UseRAbility()
 		RAbilityTypeIndex = LastRAbilityIndex;
 	}
 	SetCurRAbilityUserView();
-	RAbilityPanel[LastRAbilityIndex + 1]->UserViewSlot->SetVisibility(ESlateVisibility::Hidden);
-	RAbilityPanel[LastRAbilityIndex + 1]->UserViewSlot->SelectImage->SetVisibility(ESlateVisibility::Hidden);
-	RAbilityPanel[LastRAbilityIndex + 1] = nullptr;
+	if (RAbilityPanel[LastRAbilityIndex + 1]) {
+		RAbilityPanel[LastRAbilityIndex + 1]->UserViewSlot->SetVisibility(ESlateVisibility::Hidden);
+		RAbilityPanel[LastRAbilityIndex + 1]->UserViewSlot->SelectImage->SetVisibility(ESlateVisibility::Hidden);
+		RAbilityPanel[LastRAbilityIndex + 1] = nullptr;
+	}
 }
 
 bool AChel::NewRAbility(const UClass* Ability_class)
@@ -2182,7 +2207,7 @@ bool AChel::NewRAbility(const UClass* Ability_class)
 		RAbilityTypeIndex = 0;
 	}
 
-	if (LastRAbilityIndex != 2)
+	if (LastRAbilityIndex != 2 && RAbilityPanel[LastRAbilityIndex])
 	{
 		LastRAbilityIndex++;
 		RAbilityPanel[LastRAbilityIndex] = NewObject<UConsumableAbility>(this, Ability_class);
@@ -2203,7 +2228,7 @@ void AChel::SetCurRAbilityUserView()
 	if (LastRAbilityIndex != -1) {
 		RAbilityPanel[RAbilityTypeIndex]->SetCurRAbilityUserView(this);
 	}
-	else
+	else if (UserView)
 	{
 		FSlateBrush NewBrush;
 		NewBrush.SetResourceObject(DefaultRAbilityImage);
@@ -2323,32 +2348,36 @@ void AChel::SwitchToFreeWeapon() {
 	}
 }
 void AChel::RefreshWidgetAmmoOwning(int32 NewLeftAmmo, int32 NewMaxAmmo, int32 NewCurIndex) {
-	CurrentIndex = NewCurIndex;
-	UserView->AmmoLabel->SetVisibility(ESlateVisibility::Visible);
-	UserView->AmmoMax->SetVisibility(ESlateVisibility::Visible);
-	UserView->WeaponName->SetVisibility(ESlateVisibility::Visible);
-	UserView->AmmoSlash->SetVisibility(ESlateVisibility::Visible);
-	UserView->AmmoLabel->SetText(FText::AsNumber(CurrentWeapons[CurrentIndex]->LeftAmmo));
-	UserView->AmmoMax->SetText(FText::AsNumber(CurrentWeapons[CurrentIndex]->MaxAmmo));
-	UserView->WeaponName->SetText(CurrentWeapons[CurrentIndex]->WeaponName);
+	if (UserView) {
+		CurrentIndex = NewCurIndex;
+		UserView->AmmoLabel->SetVisibility(ESlateVisibility::Visible);
+		UserView->AmmoMax->SetVisibility(ESlateVisibility::Visible);
+		UserView->WeaponName->SetVisibility(ESlateVisibility::Visible);
+		UserView->AmmoSlash->SetVisibility(ESlateVisibility::Visible);
+		UserView->AmmoLabel->SetText(FText::AsNumber(CurrentWeapons[CurrentIndex]->LeftAmmo));
+		UserView->AmmoMax->SetText(FText::AsNumber(CurrentWeapons[CurrentIndex]->MaxAmmo));
+		UserView->WeaponName->SetText(CurrentWeapons[CurrentIndex]->WeaponName);
+	}
 }
 
 void AChel::InvertMovement(float timeToOff)
 {
-	InverseCoeff = -1.f;
-	AddChromaticInvet();
-	if(AmountBottleEffects == 0)
-		UserView->AddIconToPanel(6);
-	AmountBottleEffects += 1;
+	if (UserView) {
+		InverseCoeff = -1.f;
+		AddChromaticInvet();
+		if (AmountBottleEffects == 0)
+			UserView->AddIconToPanel(6);
+		AmountBottleEffects += 1;
 
-	FTimerHandle FuzeTimerHandle;
-	World->GetTimerManager().SetTimer(FuzeTimerHandle, this, &AChel::RemoveInvertMovement, timeToOff, false);
+		FTimerHandle FuzeTimerHandle;
+		World->GetTimerManager().SetTimer(FuzeTimerHandle, this, &AChel::RemoveInvertMovement, timeToOff, false);
+	}
 }
 
 void AChel::RemoveInvertMovement()
 {
 	AmountBottleEffects -= 1;
-	if (InverseCoeff < 0 && AmountBottleEffects == 0) {
+	if (InverseCoeff < 0 && AmountBottleEffects == 0 && UserView) {
 		InverseCoeff = 1.f;
 		RemoveChromaticInvet();
 		UserView->RemoveIconFromPanel(6);
@@ -2403,10 +2432,12 @@ void AChel::StartAnimInCurSlotReverse_Implementation(bool HaveAmmo)
 
 }
 void AChel::ClearWeaponInfo() {
-	UserView->AmmoLabel->SetVisibility(ESlateVisibility::Hidden);
-	UserView->AmmoMax->SetVisibility(ESlateVisibility::Hidden);
-	UserView->WeaponName->SetVisibility(ESlateVisibility::Hidden);
-	UserView->AmmoSlash->SetVisibility(ESlateVisibility::Hidden);
+	if (UserView) {
+		UserView->AmmoLabel->SetVisibility(ESlateVisibility::Hidden);
+		UserView->AmmoMax->SetVisibility(ESlateVisibility::Hidden);
+		UserView->WeaponName->SetVisibility(ESlateVisibility::Hidden);
+		UserView->AmmoSlash->SetVisibility(ESlateVisibility::Hidden);
+	}
 }
 
 void AChel::AddMessagePlayerActiveVentil_Implementation(int32 FloorNum, const FText& NickNamePlayer) {
@@ -2509,7 +2540,8 @@ void AChel::PickUpCoreItem_Implementation(int32 ItemType, const FText& ThrowNick
 		break;
 	}
 	}
-	KillFeed->VB_KillFeed->AddChild(TmpWidget);
+	if (KillFeed)
+		KillFeed->VB_KillFeed->AddChild(TmpWidget);
 }
 
 void AChel::AddMessageRandomEvent_Implementation(int32 FloorNum) {
@@ -2564,7 +2596,7 @@ void AChel::EventRubilnicCollisionOff() {
 }
 
 void AChel::EventNasosCollisionOff_Client_Implementation() {
-	if (CurCoreArea) 
+	if (CurCoreArea && UserView) 
 		UserView->PropmptTextArea->SetText(CurCoreArea->AreaAvaliableAndHaveNoItem);
 	EventNasosCollisionOff();
 }
