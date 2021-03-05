@@ -144,6 +144,7 @@ void AChel::QAbilityEnable()
 void AChel::QAbilityEnableAvaliable()
 {
 	IsQAbilityRefreshing = false;
+	UserView->CurQSlot->SetColorAndOpacity(FLinearColor(1, 1, 1, 1));
 }
 
 void AChel::RAbilityEnable_Client()
@@ -2097,7 +2098,7 @@ void AChel::AddExtraCacheKeys()
 
 void AChel::CreateKDAWidget_Implementation(int32 PlayerIndex, const FText& newNickName)
 {
-	if (IsAlreadyCreated && newNickName.ToString() != "") {
+	if (IsPlayerOwner && IsAlreadyCreated && newNickName.ToString() != "" && MyController->TabWidget->Tab_KD_Stat->GetChildrenCount() < 4) {
 		UKDA_Stat* NewKDAWidget = Cast<UKDA_Stat>(CreateWidget(World, KDA_Stat_class));
 		NewKDAWidget->NickName->SetText(newNickName);
 		NewKDAWidget->Deaths->SetText(FText::AsNumber(0));
@@ -2207,7 +2208,7 @@ bool AChel::NewRAbility(const UClass* Ability_class)
 		RAbilityTypeIndex = 0;
 	}
 
-	if (LastRAbilityIndex != 2 && RAbilityPanel[LastRAbilityIndex])
+	if (LastRAbilityIndex != 2)
 	{
 		LastRAbilityIndex++;
 		RAbilityPanel[LastRAbilityIndex] = NewObject<UConsumableAbility>(this, Ability_class);

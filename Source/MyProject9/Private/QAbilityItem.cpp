@@ -41,11 +41,13 @@ bool AQAbilityItem::PickUpEventClient(AChel* Player)
 			Player->IsQAbilityUsing = false;
 			GetWorld()->GetTimerManager().ClearTimer(Player->QAbilityTimer);
 			Player->CurQAbility->DeUseAbilityClient();
+			Player->UserView->CurQSlot->SetColorAndOpacity(FLinearColor(1, 1, 1, 1));
 		}
 		else if (Player->IsQAbilityRefreshing)
 		{
 			Player->IsQAbilityRefreshing = false;
 			GetWorld()->GetTimerManager().ClearTimer(Player->QAbilityTimer);
+			Player->UserView->CurQSlot->SetColorAndOpacity(FLinearColor(1, 1, 1, 1));
 		}
 		Player->CurQAbility->ConditionalBeginDestroy();
 		Player->CurQAbility = nullptr;

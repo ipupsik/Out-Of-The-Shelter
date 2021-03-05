@@ -35,6 +35,7 @@ bool UQAbility_Rentgen::UseAbilityClient(AChel* Player)
 		Cast<ACoreItem>(it)->ToggleCustomDepth(true, Player);
 	}
 	Player->IsQAbilityUsing = true;
+	Player->UserView->CurQSlot->SetColorAndOpacity(FLinearColor(1, 0.078579, 0, 1));
 	Player->QAbilityTimer = FTimerHandle();
 	TmpPlayer = Player;
 	GetWorld()->GetTimerManager().SetTimer(Player->QAbilityTimer, this, &UQAbility_Rentgen::DeUseAbilityClient, Duration, false);
@@ -54,6 +55,7 @@ void UQAbility_Rentgen::DeUseAbilityClient()
 	if (TmpPlayer->IsQAbilityUsing) {
 		TmpPlayer->IsQAbilityUsing = false;
 		TmpPlayer->IsQAbilityRefreshing = true;
+		TmpPlayer->UserView->CurQSlot->SetColorAndOpacity(FLinearColor(1, 1, 1, 0.3));
 		TmpPlayer->QAbilityTimer = FTimerHandle();
 		GetWorld()->GetTimerManager().SetTimer(TmpPlayer->QAbilityTimer, TmpPlayer, &AChel::QAbilityEnableAvaliable, DurationAvaliable, false);
 	}
