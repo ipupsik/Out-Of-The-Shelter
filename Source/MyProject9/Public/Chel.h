@@ -518,7 +518,9 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	UWebCamWidget* WebCamUI;
 	//GameInstance + GameState
-	AGS* GS;
+
+	UPROPERTY(BlueprintReadWrite)
+		AGS* GS;
 	UGI* GI;
 	//PlayerVariables
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Replicated, Category = "PlayerVariables")
@@ -629,6 +631,7 @@ public:
 
 	//Logic Boolean Variables
 	bool bLineTrace_is_need_refresh;
+	UPROPERTY(BlueprintReadWrite)
 		bool bCanPossessWebCam;
 	bool isTracedBad;
 	UPROPERTY(BlueprintReadWrite)
