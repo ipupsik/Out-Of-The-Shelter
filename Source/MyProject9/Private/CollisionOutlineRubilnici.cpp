@@ -23,7 +23,7 @@ void ACollisionOutlineRubilnici::OnOverlapBegin(class UPrimitiveComponent* Overl
 	int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult) {
 	if (IsEnabled) {
 		AChel* Player = Cast<AChel>(OtherActor);
-		if (Player) {
+		if (Player && Player->GS->IsVentilationPlayed) {
 			if (Player->IsPlayerOwner) {
 				Player->IsInCollisionOutlRubilnici = true;
 				TArray<AActor*> AllRubilnics;
@@ -47,7 +47,7 @@ void ACollisionOutlineRubilnici::OnOverlapEnd(class UPrimitiveComponent* Overlap
 	int32 OtherBodyIndex) {
 	if (IsEnabled) {
 		AChel* Player = Cast<AChel>(OtherActor);
-		if (Player) {
+		if (Player && Player->GS->IsVentilationPlayed) {
 			if (Player->IsPlayerOwner) {
 				Player->IsInCollisionOutlRubilnici = false;
 				TArray<AActor*> AllRubilnics;

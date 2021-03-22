@@ -22,6 +22,9 @@ void AAreaCollision::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor*
 	if (Player && Player->DamageCollision == OtherComp) {
 		if (Player->IsPlayerOwner) {
 			if (AreaType != 3) { //Не в двери выхода шелтора
+				if (AreaType == 2 && !(Player->GS->IsVentilationPlayed))
+					return;
+
 				if (Player->GI->bIsEnabledPrompt)
 					Player->UserView->PropmptTextArea->SetVisibility(ESlateVisibility::Visible);
 				if (Player->IsPlayerOwner && !Player->GS->AreaClosed[AreaType]) {
@@ -99,6 +102,9 @@ void AAreaCollision::OnOverlapEnd(UPrimitiveComponent* OverlappedComp, AActor* O
 	if (Player && Player->DamageCollision == OtherComp) {
 		if (Player->IsPlayerOwner) {
 			if (AreaType != 3) { //Не в двери выхода шелтора
+				if (AreaType == 2 && !(Player->GS->IsVentilationPlayed))
+					return;
+
 				if (Player->IsPlayerOwner && !Player->GS->AreaClosed[AreaType]) {
 					//Player->AreaCode = -1;
 					Player->CurCoreArea = nullptr;
@@ -178,6 +184,9 @@ void AAreaCollision::PressedEAreaCollision(AChel* Player) {
 			}
 			case 2: //вентиляция
 			{
+				if (!(Player->GS->IsVentilationPlayed))
+					return;
+
 				if (Player->GS->AreaAvaliables[AreaType])
 				{
 					Player->MainExis_Ventilacia->Mesh->SetRenderCustomDepth(false);

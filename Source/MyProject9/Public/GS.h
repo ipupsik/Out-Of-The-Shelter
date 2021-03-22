@@ -262,7 +262,9 @@ public:
 		bool IsCanalizaciaAvaliable;
 	bool IsGameStarted;
 	UPROPERTY(Replicated)
-	bool IsCanalizaciaPlayed;
+		bool IsCanalizaciaPlayed;
+	UPROPERTY(Replicated)
+		bool IsVentilationPlayed;
 
 	TArray<FTransform>Keys_Transform;
 	TArray<bool>Keys_IsAvaliable;

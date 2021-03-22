@@ -32,6 +32,7 @@ AGS::AGS() {
 	AmountOfPlayers = 0;
 	AgreedPlayers = 0;
 	IsCanalizaciaPlayed = true;
+	IsVentilationPlayed = true;
 	GeneralLayer = 0;
 	AreaAvaliables.Init(false, 3);
 	AreaClosed.Init(false, 3);
@@ -65,6 +66,7 @@ void AGS::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps
 	DOREPLIFETIME(AGS, IsVentilaciaAvaliable);
 	DOREPLIFETIME(AGS, IsCanalizaciaAvaliable);
 	DOREPLIFETIME(AGS, IsCanalizaciaPlayed);
+	DOREPLIFETIME(AGS, IsVentilationPlayed);
 	DOREPLIFETIME(AGS, VentilaciaRubilnickCount);
 	DOREPLIFETIME(AGS, MaxVentilaciaRubilnickCount);
 	DOREPLIFETIME(AGS, CanalizaciaNasosCount);
@@ -100,7 +102,7 @@ void AGS::BeginPlay()
 		UGameplayStatics::GetAllActorsOfClass(GetWorld(), ABP_VentilaciaRubilnick::StaticClass(), VentilaciaRubilnick);
 		MaxVentilaciaRubilnickCount = VentilaciaRubilnickCount = VentilaciaRubilnick.Num();
 
-		if (MaxPlayersCount == 3) {
+		if (MaxPlayersCount <= 3) {
 			VentilaciaRubilnickCount -= 2;
 			MaxVentilaciaRubilnickCount -= 2;
 		}
@@ -160,6 +162,7 @@ void AGS::BeginPlay()
 		else
 			IsCanalizaciaPlayed = false;
 
+
 		if (MaxPlayersCount >= 3) {
 			for (int i = 0; i < 1; ++i) {
 				int ArrayIndex = FMath::RandRange(0, CacheItems_Stuff_IsAvaliable.Num() - 1);
@@ -179,6 +182,9 @@ void AGS::BeginPlay()
 				Cast<ACollectableItem>(NewItem)->EnabledArrayIndex = ArrayIndex;
 				CacheItems_Stuff_IsAvaliable[ArrayIndex] = false;
 			}
+		}
+		else {
+			IsVentilationPlayed = false;
 		}
 
 		for (int i = 0; i < 6; ++i) {
