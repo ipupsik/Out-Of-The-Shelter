@@ -138,9 +138,9 @@ void AAreaCollision::OnOverlapEnd(UPrimitiveComponent* OverlappedComp, AActor* O
 						//Player->UserView->EscapeText->SetVisibility(ESlateVisibility::Hidden);
 					//}
 				}
-				if (!Player->LastInteractiveItem)
+				if (!Player->LastInteractiveItem && Player->UserView)
 					Player->UserView->E_Mark->SetVisibility(ESlateVisibility::Hidden);
-				if (Player->GI->bIsEnabledPrompt)
+				if (Player->GI->bIsEnabledPrompt && Player->UserView)
 					Player->UserView->PropmptTextArea->SetVisibility(ESlateVisibility::Hidden);
 			}
 		}
@@ -161,8 +161,8 @@ void AAreaCollision::PressedEAreaCollision(AChel* Player) {
 					Player->MainExis_Shelter->Mesh->MarkRenderStateDirty();
 					Player->MainExis_Canalizacia->Mesh->SetRenderCustomDepth(false);
 					Player->MainExis_Canalizacia->Mesh->MarkRenderStateDirty();
-					Player->PlayerEscape(AreaType);
 					Player->UserView->RemoveFromParent();
+					Player->PlayerEscape(AreaType);
 				}
 				else if (Player->DoesHave[AreaType] && Player->GS->IsCanalizaciaAvaliable && !Player->GS->AreaAvaliables[AreaType])
 				{
@@ -210,7 +210,6 @@ void AAreaCollision::PressedEAreaCollision(AChel* Player) {
 			case 3: //выход шелтора(сама дверь)
 			{
 				if (Player->GS->AreaAvaliables[1] && !Player->GS->AreaClosed[1]) {
-					Player->PlayerEscape(1);
 					Player->MainExis_Ventilacia->Mesh->SetRenderCustomDepth(false);
 					Player->MainExis_Ventilacia->Mesh->MarkRenderStateDirty();
 					Player->MainExis_Shelter->Mesh->SetRenderCustomDepth(false);
@@ -218,6 +217,7 @@ void AAreaCollision::PressedEAreaCollision(AChel* Player) {
 					Player->MainExis_Canalizacia->Mesh->SetRenderCustomDepth(false);
 					Player->MainExis_Canalizacia->Mesh->MarkRenderStateDirty();
 					Player->UserView->RemoveFromParent();
+					Player->PlayerEscape(1);
 				}
 			}
 		}

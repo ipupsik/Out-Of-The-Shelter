@@ -1466,6 +1466,9 @@ void AChel::PlayerEscape_Implementation(int32 EscapeWay)
 		for (auto& Spec : Spectators) {
 			Spec->Destroy();
 		}
+
+		UGameplayStatics::GetAllActorsOfClass(World, AChel::StaticClass(), Players);
+
 		for (auto& Player : Players) {
 			Destroy();
 		}
