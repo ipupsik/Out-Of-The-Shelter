@@ -90,6 +90,9 @@ void UUserView::OnAnimationFinished_Implementation(const UWidgetAnimation* Anima
 		else if (Animation == HideTextAnimation4) {
 			TB_Task4Player->SetVisibility(ESlateVisibility::Collapsed);
 		}
+		else if (Animation == HideTextAnimation2) {
+			TB_Task2Player->SetVisibility(ESlateVisibility::Collapsed);
+		}
 		else if (Animation == HideAdditiveInformation)
 		{
 			Player->IsHAnimationPlay = false;
@@ -105,9 +108,13 @@ void UUserView::ShowTaskOfGame(int32 AmountPlayersInGame) {
 		TB_Task4Player->SetVisibility(ESlateVisibility::Visible);
 		PlayAnimation(HideTextAnimation4);
 	}
-	else {
+	else if (AmountPlayersInGame == 3) {
 		TB_Task3Player->SetVisibility(ESlateVisibility::Visible);
 		PlayAnimation(HideTextAnimation3);
+	}
+	else {
+		TB_Task2Player->SetVisibility(ESlateVisibility::Visible);
+		PlayAnimation(HideTextAnimation2);
 	}
 }
 

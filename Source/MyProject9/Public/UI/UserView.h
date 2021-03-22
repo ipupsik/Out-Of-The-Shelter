@@ -121,6 +121,9 @@ public:
 		UTextBlock* TB_Task3Player;
 
 	UPROPERTY(meta = (BindWidget))
+		UTextBlock* TB_Task2Player;
+
+	UPROPERTY(meta = (BindWidget))
 		UCanvasPanel* CP_HiddenItems;
 	//---------------------------
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))  //!!!!!!!!!!!!!!!!!!!!!!!
@@ -167,6 +170,9 @@ public:
 	
 	UPROPERTY(meta = (BindWidgetAnim))
 		UWidgetAnimation* OpenAreaAnim;
+
+	UPROPERTY(meta = (BindWidgetAnim))
+		UWidgetAnimation* HideTextAnimation2;
 
 	UPROPERTY(meta = (BindWidgetAnim))
 		UWidgetAnimation* HideTextAnimation3;
