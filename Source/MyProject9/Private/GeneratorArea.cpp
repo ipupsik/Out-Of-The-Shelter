@@ -55,23 +55,19 @@ void AGeneratorArea::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, c
 		if (Player->IsPlayerOwner) {
 			Player->GenAreaObj = this;
 			if (IsAvalible) {
+				Player->UserView->E_Mark->SetVisibility(ESlateVisibility::Visible);
+				Player->UserView->PropmptTextArea->SetText(PromptGenNotRepairing);
 				if (Player->GI->bIsEnabledPrompt) {
-					Player->UserView->E_Mark->SetVisibility(ESlateVisibility::Visible);
-					Player->UserView->PropmptTextArea->SetText(PromptGenNotRepairing);
-					if (Player->GI->bIsEnabledPrompt) {
-						Player->UserView->PropmptTextArea->SetVisibility(ESlateVisibility::Visible);
-					}
+					Player->UserView->PropmptTextArea->SetVisibility(ESlateVisibility::Visible);
 				}
 			}
 			else {
+				Player->UserView->PropmptTextArea->SetText(PromptGenTextNotActive);
 				if (Player->GI->bIsEnabledPrompt) {
-					Player->UserView->PropmptTextArea->SetText(PromptGenTextNotActive);
-					if (Player->GI->bIsEnabledPrompt) {
-						Player->UserView->PropmptTextArea->SetVisibility(ESlateVisibility::Visible);
-					}
+					Player->UserView->PropmptTextArea->SetVisibility(ESlateVisibility::Visible);
 				}
-			}
 
+			}
 		}
 	}
 }

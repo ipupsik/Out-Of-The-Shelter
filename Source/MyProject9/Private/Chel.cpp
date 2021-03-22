@@ -275,8 +275,10 @@ void AChel::MyBeginPlay()
 		UserView->Player = this;
 		UserView->AmmoLabel->SetText(FText::AsNumber((int32)Ammo));
 		UserView->CurRSlot->PromtText->SetJustification(ETextJustify::Type::Center);
-		if (GI->MaxPlayersCount == 3)
+		if (GI->MaxPlayersCount <= 3)
 			UserView->WS_Boltorez->SetVisibility(ESlateVisibility::Collapsed);
+		if (GI->MaxPlayersCount == 2)
+			UserView->WS_Otvertka->SetVisibility(ESlateVisibility::Collapsed);
 
 		MyController->SetInputMode(FInputModeGameOnly());
 		TArray<AActor*>MainExis;
