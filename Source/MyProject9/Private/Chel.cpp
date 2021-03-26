@@ -2302,7 +2302,7 @@ void AChel::CreateWeapon(UClass* WeaponCreatedClass, int32 Amount, int32 IndexSl
 		SetWeaponToSlot(0);
 	}
 	else {
-		if (CurrentIndex == 0 && CurrentWeapons[0]->LeftAmmo == 0 || CurrentIndex == 1) {
+		if (((CurrentIndex == 0) && (CurrentWeapons[0]->LeftAmmo == 0)) || (CurrentIndex == 1)) {
 			SetWeaponToSlot(1);
 		}
 		else {
