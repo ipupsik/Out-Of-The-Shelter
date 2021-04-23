@@ -43,7 +43,7 @@ void AVentil::ToggleCustomDepth(bool NewIsOutliningNow, AChel* Player)
 		Mesh->SetRenderCustomDepth(NewIsOutliningNow);
 		Mesh->MarkRenderStateDirty();
 		this->IsOutliningNow = NewIsOutliningNow;
-		if (NewIsOutliningNow == false && IndexOwner == Player->Index) {
+		if (NewIsOutliningNow == false && IndexOwner == Player->Index && Player->UserView) {
 			Player->IsSuccessOpening = false;
 			Player->UserView->StopAllAnimations();
 			CallReverseAnimation();
@@ -64,35 +64,36 @@ void AVentil::OnLineTraced(AChel* Player)
 {
 	if(bCanInterract)
 		ToggleCustomDepth(true, Player);
+	if (Player->UserView) {
+		if (bCanInterract && (IndexOwner == Player->Index || IndexOwner == -1)) {
+			if (Player->GI->bIsEnabledPrompt && Player->UserView->PropmptTextInterract->GetText().ToString() != PromptText.ToString())
+				Player->UserView->PropmptTextInterract->SetText(PromptText);
+			if (!Player->UserView->E_Mark->IsVisible()) {
+				Player->UserView->E_Mark->SetVisibility(ESlateVisibility::Visible);
+				if (Player->GI->bIsEnabledPrompt && !Player->UserView->PropmptTextInterract->IsVisible())
+					Player->UserView->PropmptTextInterract->SetVisibility(ESlateVisibility::Visible);
+			}
+			SetOutlineColor(2);
+		}
+		else if (bCanInterract) {
 
-	if (bCanInterract && (IndexOwner == Player->Index || IndexOwner == -1)) {
-		if (Player->GI->bIsEnabledPrompt && Player->UserView->PropmptTextInterract->GetText().ToString() != PromptText.ToString())
-			Player->UserView->PropmptTextInterract->SetText(PromptText);
-		if (!Player->UserView->E_Mark->IsVisible()) {
-			Player->UserView->E_Mark->SetVisibility(ESlateVisibility::Visible);
+			if (Player->UserView->E_Mark->IsVisible()) {
+				Player->UserView->E_Mark->SetVisibility(ESlateVisibility::Hidden);
+				if (Player->GI->bIsEnabledPrompt && Player->UserView->PropmptTextInterract->IsVisible())
+					Player->UserView->PropmptTextInterract->SetVisibility(ESlateVisibility::Hidden);
+			}
+			SetOutlineColor(1);
+		}
+		else {
+			if (Player->GI->bIsEnabledPrompt && Player->UserView->PropmptTextInterract->GetText().ToString() != AreaUsedText.ToString())
+				Player->UserView->PropmptTextInterract->SetText(AreaUsedText);
+			if (Player->UserView->E_Mark->IsVisible()) {
+				Player->UserView->E_Mark->SetVisibility(ESlateVisibility::Hidden);
+			}
 			if (Player->GI->bIsEnabledPrompt && !Player->UserView->PropmptTextInterract->IsVisible())
 				Player->UserView->PropmptTextInterract->SetVisibility(ESlateVisibility::Visible);
+			ToggleCustomDepth(false, Player);
 		}
-		SetOutlineColor(2);
-	}
-	else if(bCanInterract) {
-		
-		if (Player->UserView->E_Mark->IsVisible()) {
-			Player->UserView->E_Mark->SetVisibility(ESlateVisibility::Hidden);
-			if (Player->GI->bIsEnabledPrompt && Player->UserView->PropmptTextInterract->IsVisible())
-				Player->UserView->PropmptTextInterract->SetVisibility(ESlateVisibility::Hidden);
-		}
-		SetOutlineColor(1);
-	}
-	else {
-		if (Player->GI->bIsEnabledPrompt && Player->UserView->PropmptTextInterract->GetText().ToString() != AreaUsedText.ToString())
-			Player->UserView->PropmptTextInterract->SetText(AreaUsedText);
-		if (Player->UserView->E_Mark->IsVisible()) {
-			Player->UserView->E_Mark->SetVisibility(ESlateVisibility::Hidden);
-		}
-		if (Player->GI->bIsEnabledPrompt && !Player->UserView->PropmptTextInterract->IsVisible())
-			Player->UserView->PropmptTextInterract->SetVisibility(ESlateVisibility::Visible);
-		ToggleCustomDepth(false, Player);
 	}
 }
 
@@ -106,7 +107,7 @@ void AVentil::PickUpEventServer(AChel * Player)
 
 bool AVentil::PickUpEventClient(AChel * Player)
 {
-	if (bCanInterract && (IndexOwner == Player->Index || IndexOwner == -1)) {
+	if (bCanInterract && (IndexOwner == Player->Index || IndexOwner == -1) && Player->UserView) {
 		Player->UserView->PB_Opening->SetVisibility(ESlateVisibility::Visible);
 		Player->UserView->TimeLeft->SetVisibility(ESlateVisibility::Visible);
 		Player->UserView->PlayAnimation(Player->UserView->OpenAreaAnim, TimeVentilAnim);
@@ -203,7 +204,7 @@ void AVentil::DeleteAllObjects() {
 }
 
 bool AVentil::PickUpEventReleaseClient(AChel* Player) {
-	if (bCanInterract) {
+	if (bCanInterract && Player->UserView) {
 		Player->UserView->StopAllAnimations();
 		return true;
 	}

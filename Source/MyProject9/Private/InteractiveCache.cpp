@@ -31,7 +31,7 @@ void AInteractiveCache::ToggleCustomDepth(bool NewIsOutliningNow, AChel* Player)
 
 bool AInteractiveCache::PickUpEventClient(AChel* Player)
 {
-	if (Player->KeysCount[CacheType] > 0 && bCanInterract)
+	if (Player->KeysCount[CacheType] > 0 && bCanInterract && Player->UserView)
 	{
 		bCanInterract = false;
 		Player->UserView->ArrayCacheKey[CacheType]->SetText(FText::AsNumber(Player->KeysCount[CacheType] - 1));
@@ -51,18 +51,20 @@ void AInteractiveCache::PickUpEventServer(AChel* Player)
 
 void AInteractiveCache::OnLineTraced(AChel* Player)
 {
-	if (bCanInterract) {
-		if (Player->KeysCount[CacheType] > 0) {
-			if (!Player->UserView->E_Mark->IsVisible()) {
-				Player->UserView->E_Mark->SetVisibility(ESlateVisibility::Visible);
+	if (Player->UserView) {
+		if (bCanInterract) {
+			if (Player->KeysCount[CacheType] > 0) {
+				if (!Player->UserView->E_Mark->IsVisible()) {
+					Player->UserView->E_Mark->SetVisibility(ESlateVisibility::Visible);
+				}
 			}
+			Player->UserView->PropmptTextInterract->SetText(PromptText);
+			if (Player->GI->bIsEnabledPrompt)
+				Player->UserView->PropmptTextInterract->SetVisibility(ESlateVisibility::Visible);
 		}
-		Player->UserView->PropmptTextInterract->SetText(PromptText);
-		if (Player->GI->bIsEnabledPrompt)
-			Player->UserView->PropmptTextInterract->SetVisibility(ESlateVisibility::Visible);
-	}
-	else {
-		Player->UserView->E_Mark->SetVisibility(ESlateVisibility::Collapsed);
-		Player->UserView->PropmptTextInterract->SetVisibility(ESlateVisibility::Collapsed);
+		else {
+			Player->UserView->E_Mark->SetVisibility(ESlateVisibility::Collapsed);
+			Player->UserView->PropmptTextInterract->SetVisibility(ESlateVisibility::Collapsed);
+		}
 	}
 }

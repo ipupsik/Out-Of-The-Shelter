@@ -47,7 +47,8 @@ bool ACoreItem_Dropped::PickUpEventClient(AChel * Player)
 		break;
 	}
 	}
-	Player->UserView->ArraySwitcher[TypeItem]->SetActiveWidgetIndex(1);
+	if (Player->UserView)
+		Player->UserView->ArraySwitcher[TypeItem]->SetActiveWidgetIndex(1);
 	PlayPickUpSound();
 	if (GetLocalRole() != ROLE_Authority)
 		Destroy();

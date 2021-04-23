@@ -23,7 +23,7 @@ void ADamageAreaCPP::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor*
 {
 	UE_LOG(LogTemp, Warning, TEXT("IN"));
 	AChel* Player = Cast<AChel>(OtherActor);
-	if (Player) {
+	if (Player && Player->UserView) {
 		if (Player->GetLocalRole() == ROLE_Authority)
 		{
 			UE_LOG(LogTemp, Warning, TEXT("IsNotNullptr"));
@@ -41,7 +41,7 @@ void ADamageAreaCPP::OnOverlapEnd(UPrimitiveComponent* OverlappedComp, AActor* O
 {
 	UE_LOG(LogTemp, Warning, TEXT("OUT"));
 	AChel* Player = Cast<AChel>(OtherActor);
-	if (Player) {
+	if (Player && Player->UserView) {
 		if (Player->GetLocalRole() == ROLE_Authority)
 		{
 			Player->RadCoeff /= 2;

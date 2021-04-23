@@ -52,7 +52,7 @@ void AGeneratorArea::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, c
 		{
 			Player->GenAreaObj = this;
 		}
-		if (Player->IsPlayerOwner) {
+		if (Player->IsPlayerOwner && Player->UserView) {
 			Player->GenAreaObj = this;
 			if (IsAvalible) {
 				Player->UserView->E_Mark->SetVisibility(ESlateVisibility::Visible);
@@ -80,7 +80,7 @@ void AGeneratorArea::OnOverlapEnd(UPrimitiveComponent * OverlappedComp, AActor *
 		{
 			Player->GenAreaObj = nullptr;
 		}
-		if (Player->IsPlayerOwner) {
+		if (Player->IsPlayerOwner && Player->UserView) {
 			Player->GenAreaObj = nullptr;
 			Player->TickEnableGeneratorWidget = false;
 			Player->UserView->E_Mark->SetVisibility(ESlateVisibility::Hidden);
@@ -116,7 +116,7 @@ void AGeneratorArea::ChangeLampochka_Implementation(int32 type)
 
 void AGeneratorArea::PressedEGenerator(AChel* Player) {
 	if (Player->GenAreaObj) {
-		if (Player->GenAreaObj->IsAvalible) {
+		if (Player->GenAreaObj->IsAvalible && Player->UserView) {
 			if (Player->GeneratorView->IsVisible()) {
 				if (Player->GeneratorView->Corretca->Value >= Player->GeneratorView->PB_Repair->Percent) {
 					Player->ChangeGeneratorStas();

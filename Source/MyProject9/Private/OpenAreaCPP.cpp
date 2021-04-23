@@ -21,7 +21,7 @@ AOpenAreaCPP::AOpenAreaCPP()
 void AOpenAreaCPP::OnOverlapBegin(UPrimitiveComponent * OverlappedComp, AActor * OtherActor, UPrimitiveComponent * OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult)
 {
 	AChel* Player = Cast<AChel>(OtherActor);
-	if (Player != nullptr) {	
+	if (Player != nullptr && Player->UserView) {	
 //		Player->OpenAreaObj = this;
 		UUserView* PlayerView = Player->UserView;
 		if (PlayerView != nullptr) {

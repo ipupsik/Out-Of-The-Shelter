@@ -32,7 +32,7 @@ void AVerstak::PickUpEventServer(AChel * Player)
 
 void AVerstak::OnLineTraced(AChel * Player)
 {
-	if (bCanInterract) {
+	if (bCanInterract && Player->UserView) {
 		ToggleCustomDepth(true, Player);
 		if (!Player->UserView->E_Mark->IsVisible())
 			Player->UserView->E_Mark->SetVisibility(ESlateVisibility::Visible);

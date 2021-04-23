@@ -28,7 +28,7 @@ void ACollectableItem::SetOutlineColor(int32 ColorOutline) {
 
 void ACollectableItem::OnLineTraced(AChel* Player)
 {
-	if (bCanInterract) {
+	if (bCanInterract && Player->UserView) {
 		ToggleCustomDepth(true, Player);
 		Player->UserView->PropmptTextInterract->SetText(PromptText);
 		if (!Player->UserView->E_Mark->IsVisible()) {

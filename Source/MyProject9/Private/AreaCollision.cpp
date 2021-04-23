@@ -19,7 +19,7 @@ void AAreaCollision::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor*
 	bool bFromSweep, const FHitResult& SweepResult)
 {
 	AChel* Player = Cast<AChel>(OtherActor);
-	if (Player && Player->DamageCollision == OtherComp) {
+	if (Player && Player->DamageCollision == OtherComp && Player->UserView) {
 		if (Player->IsPlayerOwner) {
 			if (AreaType != 3) { //Не в двери выхода шелтора
 				if (AreaType == 2 && !(Player->GS->IsVentilationPlayed))

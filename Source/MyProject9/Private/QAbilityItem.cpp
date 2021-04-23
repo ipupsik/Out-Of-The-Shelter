@@ -26,14 +26,15 @@ void AQAbilityItem::PickUpEventServer(AChel* Player)
 	{
 		FSlateBrush NewBrush;
 		NewBrush.SetResourceObject(Player->CurQAbility->Icon);
-		Player->UserView->CurQSlot->AbilityImage->SetBrush(NewBrush);
+		if (Player->UserView)
+			Player->UserView->CurQSlot->AbilityImage->SetBrush(NewBrush);
 	}
 	Destroy();
 }
 
 bool AQAbilityItem::PickUpEventClient(AChel* Player)
 {
-	if (Player->CurQAbility) {
+	if (Player->CurQAbility && Player->UserView) {
 		if (Player->CurQAbility->GetClass() == QAbility_class)
 			return false;
 		if (Player->IsQAbilityUsing)
@@ -53,7 +54,7 @@ bool AQAbilityItem::PickUpEventClient(AChel* Player)
 		Player->CurQAbility = nullptr;
 	}
 	PlayPickUpSound();
-	if (!Player->IsServerAuth) {
+	if (!Player->IsServerAuth && Player->UserView) {
 		Player->CurQAbility = NewObject<UQAbility>(Player, QAbility_class);
 		FSlateBrush NewBrush;
 		NewBrush.SetResourceObject(Player->CurQAbility->Icon);

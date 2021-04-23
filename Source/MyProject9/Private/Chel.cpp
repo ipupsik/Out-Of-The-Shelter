@@ -144,7 +144,8 @@ void AChel::QAbilityEnable()
 void AChel::QAbilityEnableAvaliable()
 {
 	IsQAbilityRefreshing = false;
-	UserView->CurQSlot->SetColorAndOpacity(FLinearColor(1, 1, 1, 1));
+	if (UserView)
+		UserView->CurQSlot->SetColorAndOpacity(FLinearColor(1, 1, 1, 1));
 }
 
 void AChel::RAbilityEnable_Client()

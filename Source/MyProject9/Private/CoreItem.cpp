@@ -30,7 +30,8 @@ void ACoreItem::PickUpEventServer(AChel* Player) {
 
 bool ACoreItem::PickUpEventClient(AChel * Player)
 {
-	Player->UserView->ArraySwitcher[TypeItem]->SetActiveWidgetIndex(1);
+	if (Player->UserView)
+		Player->UserView->ArraySwitcher[TypeItem]->SetActiveWidgetIndex(1);
 	switch (TypeItem)
 	{
 	case 0:

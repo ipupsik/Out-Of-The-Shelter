@@ -67,7 +67,7 @@ bool AButtonClick::PickUpEventClient(AChel* Player)
 
 void AButtonClick::OnLineTraced(AChel* Player)
 {
-	if (bCanInterract && Player->GS->IsShelterAvaliable) {
+	if (bCanInterract && Player->GS->IsShelterAvaliable && Player->UserView) {
 		ToggleCustomDepth(true, Player);
 		if (Player->GI->bIsEnabledPrompt)
 			Player->UserView->PropmptTextInterract->SetText(PromptText);

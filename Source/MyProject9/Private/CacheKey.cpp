@@ -23,7 +23,8 @@ void ACacheKey::PickUpEventServer(AChel* Player) {
 }
 
 bool ACacheKey::PickUpEventClient(AChel* Player) {
-	Player->UserView->ArrayCacheKey[TypeKey]->SetText(FText::AsNumber(Player->KeysCount[TypeKey] + 1));
+	if (Player->UserView)
+		Player->UserView->ArrayCacheKey[TypeKey]->SetText(FText::AsNumber(Player->KeysCount[TypeKey] + 1));
 	Player->KeysCount[TypeKey]++;
 	PlayPickUpSound();
 	if (GetLocalRole() != ROLE_Authority) {

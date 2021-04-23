@@ -75,7 +75,7 @@ void ABP_VentilaciaRubilnick::ChangeAvaliable_Implementation()
 
 void ABP_VentilaciaRubilnick::OnLineTraced(AChel* Player)
 {
-	if (Player->GS->IsVentilationPlayed)
+	if (Player->GS->IsVentilationPlayed && Player->UserView)
 	{
 		if (bCanInterract) {
 			ToggleCustomDepth(true, Player);

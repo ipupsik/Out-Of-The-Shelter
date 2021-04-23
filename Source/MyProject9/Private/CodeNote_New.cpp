@@ -36,7 +36,7 @@ bool ACodeNote_New::PickUpEventClient(AChel* Player)
 
 void ACodeNote_New::OnLineTraced(AChel* Player)
 {
-	if (bCanInterract) {
+	if (bCanInterract && Player->UserView) {
 		ToggleCustomDepth(true, Player);
 		if (Player->GI->bIsEnabledPrompt)
 			Player->UserView->PropmptTextInterract->SetText(PromptText);
